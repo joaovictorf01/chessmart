@@ -47,12 +47,17 @@ TRAINER_PRESETS = (
     TrainerPreset(
         preset_id="guidedBasics",
         label="Guided basics",
-        description="Start with the most common tactical patterns and short positions.",
+        description="Start with the most common tactical patterns. Pick an easier challenge level to keep the positions short.",
+        # `short` e `oneMove` saíram. O filtro de temas é um OU, então incluir
+        # "posição curta" numa lista de motivos não restringia nada: liberava
+        # QUALQUER puzzle curto, sem motivo algum. Como `short` sozinho cobre
+        # metade do banco, o plano alcançava 75% dele e os motivos viravam
+        # enfeite. Sem os dois, cai para 49,6% e volta a significar o que diz.
+        # A intenção de "manter curto" pertence ao nível de dificuldade.
         theme_slugs=(
             "mateIn1",
             "mateIn2",
-            "oneMove",
-            "short",
+            "backRankMate",
             "hangingPiece",
             "fork",
             "pin",
@@ -77,13 +82,19 @@ TRAINER_PRESETS = (
         preset_id="kingAttack",
         label="Attack the king",
         description="Focus on mating nets and direct attacking play.",
+        # `mate` saiu: ele só diz que a posição termina em mate, aparece em
+        # 31,6% dos puzzles e, num filtro que é OU, engolia os motivos de
+        # ataque ao rei que dão nome ao plano. Sem ele o plano passa de 38,4%
+        # para 17,5% do banco -- e o que sobra é ataque ao rei de verdade.
         theme_slugs=(
-            "mate",
             "mateIn1",
             "mateIn2",
+            "mateIn3",
             "backRankMate",
             "exposedKing",
             "kingsideAttack",
+            "queensideAttack",
+            "attackingF2F7",
             "doubleCheck",
         ),
     ),
