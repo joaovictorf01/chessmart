@@ -127,7 +127,7 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
     def get_highlight_color(self):
         return Color.Blue
 
-    def update_visuall_highlight(self):
+    def update_visual_highlight(self):
         if not self.parent.use_visuals:
             return
         arrows = [
@@ -153,7 +153,7 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
         self.parent._focused_cell = self.index
         if self.square_color is chess.BLACK:
             GameSound.black_square.play()
-        self.update_visuall_highlight()
+        self.update_visual_highlight()
 
     def script_activate_cell(self, gesture):
         self.on_activate()
@@ -327,15 +327,14 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 
     @property
     def is_board_flipped(self):
-        return self.prospective == False
+        return not self.prospective
 
     @property
     def is_board_visually_flipped(self):
         return self.is_board_flipped
 
     def get_highlighted_squares(self):
-        if self._focused_square is not None:
-            yield self._focused_square.index
+        yield self._focused_cell
 
     def get_containing_row(self, index):
         for rng in self.row_ranges:

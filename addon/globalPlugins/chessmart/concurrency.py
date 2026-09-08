@@ -2,14 +2,10 @@
 
 import threading
 import typing as t
+import asyncio
 from functools import wraps
+from concurrent.futures import ThreadPoolExecutor
 from logHandler import log
-from .helpers import import_bundled
-
-
-with import_bundled():
-    import asyncio
-    from concurrent.futures import ThreadPoolExecutor
 
 
 THREADED_EXECUTOR = ThreadPoolExecutor(max_workers=8, thread_name_prefix="chessmart")

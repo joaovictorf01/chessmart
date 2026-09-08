@@ -87,11 +87,11 @@ class ChessTimeControl:
         clock = self.chess_clocks[last_move_maker]
         if clock.state is ClockState.TICKING:
             clock.pause(True)
-        apponent_clock = self.chess_clocks[not last_move_maker]
-        if apponent_clock.state is ClockState.NOT_STARTED:
-            apponent_clock.start()
+        opponent_clock = self.chess_clocks[not last_move_maker]
+        if opponent_clock.state is ClockState.NOT_STARTED:
+            opponent_clock.start()
         else:
-            apponent_clock.resume()
+            opponent_clock.resume()
 
     def start_game(self):
         self.chess_clocks[chess.WHITE].start()
@@ -99,7 +99,7 @@ class ChessTimeControl:
     def stop(self):
         self.chess_clocks.clear()
 
-    def get_remaining_time(self) -> tuple:
+    def get_remaining_time(self) -> dict:
         return {color: self.chess_clocks[color].remaining for color in chess.COLORS}
 
     def is_time_forfeit(self):

@@ -70,7 +70,7 @@ class InternetChessboardCell(UserDrivenCell):
             response = future.result()
             if response.entity.content["ok"]:
                 self.parent.chat_list.add_item(f"You said {message}")
-        except:
+        except Exception:
             log.exception("Failed to send chat message.")
             queueHandler.queueFunction(
                 queueHandler.eventQueue, ui.message, "Failed to send chat message"
@@ -104,7 +104,7 @@ class InternetChessboard(UserDrivenChessboard):
         try:
             future.result()
             super(InternetChessboard, self).user_play(from_index, to_index)
-        except:
+        except Exception:
             speak_next(
                 speech.commands.WaveFileCommand(GameSound.error.filename),
                 speech.commands.BreakCommand(100),
@@ -149,7 +149,7 @@ class InternetChessboard(UserDrivenChessboard):
         self.game_resigned(event)
 
     def on_game_abort(self, event):
-        color_name = self.game_anouncer.color_name(event.loser)
+        color_name = self.game_announcer.color_name(event.loser)
         self.game_error(f"{color_name} aborted the game")
         GameSound.error.play()
 

@@ -10,6 +10,7 @@ import queueHandler
 import eventHandler
 import gui
 from io import BytesIO
+from logHandler import log
 from .game_elements import GameInfo
 from .helpers import import_bundled, BIN_DIRECTORY, GameSound
 from .signals import (
@@ -22,12 +23,11 @@ from .concurrency import call_threaded
 
 
 with import_bundled():
-    from wx_svg import SVGimage
     import chess
     import chess.svg
 
-
 TIME_CHECK_INTERVAL = 1000
+TIME_NOTIFICATION_MINUTES = 7
 RSVG_CONVERT_EXECUTABLE = os.path.join(
     BIN_DIRECTORY, "rsvg_convert", "rsvg_convert.exe"
 )
@@ -66,7 +66,7 @@ class ChessboardDialog(wx.Frame):
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.onChessTimer, id=self.timer.GetId())
         self.notification_records = {
-            color: {i: False for i in range(1, 8)} for color in chess.COLORS
+            color: {i: False for i in range(1, TIME_NOTIFICATION_MINUTES + 1)} for color in chess.COLORS
         }
 
     @classmethod
@@ -104,14 +104,7 @@ class ChessboardDialog(wx.Frame):
         dc = wx.BufferedPaintDC(self)
         dc.SetBackground(wx.Brush("white"))
         dc.Clear()
-        if self.chessboard is None:
-            ctx = wx.GraphicsContext.Create(dc)
-            board_svg = self.get_board_svg(
-                chess.Board(), size=self.width, flipped=False
-            )
-            svg_image = SVGimage.CreateFromBytes(board_svg)
-            svg_image.RenderToGC(ctx, 1)
-        else:
+        if self.chessboard is not None:
             dc.DrawBitmap(self.bitmap_buffer, 0, 0)
 
     def onClose(self, event):
@@ -167,7 +160,7 @@ class ChessboardDialog(wx.Frame):
     def set_background_png(self, future):
         sp_result = future.result()
         if sp_result.returncode != 0:
-            log.exception("Failed to convert svg to png.\n{sp_result.stderr}")
+            log.exception(f"Failed to convert svg to png.\n{sp_result.stderr}")
             return
         board_image = wx.Image(BytesIO(sp_result.stdout))
         wx.CallAfter(self._set_bitmap_data, board_image.GetData())

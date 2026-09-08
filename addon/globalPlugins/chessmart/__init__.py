@@ -10,8 +10,11 @@ import ui
 import tones
 import queueHandler
 import winUser
+from logHandler import log
 from scriptHandler import script
 from .helpers import import_bundled
+from .i18n import _
+
 
 with import_bundled():
     # Import some packages  replacing NVDA builtin packages
@@ -29,9 +32,11 @@ with import_bundled():
     import chess
 
 from . import concurrency
+from .addon_config import ensure_config_spec
 from .time_control import NULL_TIME_CONTROL
 from .chessboard import ChessboardDialog
 from .game_elements import GameInfo, ChessVariant
+from .graphical_interface.settings_panel import ChessboardSettingsDialog
 from .virtual_chessboard import (
     PGNGame,
     PGNGameInfo,
@@ -40,8 +45,7 @@ from .virtual_chessboard import (
     UserEngineChessboard,
     PuzzleChessboard,
 )
-from .graphical_interface.new_game_dialog import NewGameOptionsDialog
-from .internet_chess import LichessAPIClient
+from .puzzle_database import PuzzleSet, RandomPuzzleSet
 
 
 class ChessboardMenu(wx.Menu):
@@ -54,6 +58,9 @@ class ChessboardMenu(wx.Menu):
         new_game_item = self.Append(
             wx.ID_ANY, _("&New Game..."), _("Start a new chess game")
         )
+        tactics_item = self.Append(
+            wx.ID_ANY, _("&Tactics..."), _("Open tactics from the Lichess tactics database")
+        )
         random_puzzle_item = self.Append(
             wx.ID_ANY, _("&Random Puzzle"), _("Play a random puzzle")
         )
@@ -62,39 +69,95 @@ class ChessboardMenu(wx.Menu):
             _("&Replay PGN File..."),
             _("Load an replay a portable game notation (.pgn) file"),
         )
-        # Insert this menu in NVDA's menu
-        self.itemHandle = gui.mainFrame.sysTrayIcon.menu.Insert(
-            3,
+        self.AppendSeparator()
+        settings_item = self.Append(
             wx.ID_ANY,
-            _("Chess&board"),
+            _("&Settings..."),
+            _("Open Chessboard settings"),
+        )
+        # Attach this submenu under NVDA's Tools menu.
+        self.itemHandle = gui.mainFrame.sysTrayIcon.toolsMenu.AppendSubMenu(
             self,
-            _("Start a new chess game or re open an existing one"),
+            _("&Chessboard"),
+            _("Open a chess game, tactics session, replay, or settings"),
         )
         # Bind menu items to events
         self.Bind(wx.EVT_MENU, self.onNewGame, new_game_item)
+        self.Bind(wx.EVT_MENU, self.onTactics, tactics_item)
         self.Bind(wx.EVT_MENU, self.onRandomPuzzle, random_puzzle_item)
         self.Bind(wx.EVT_MENU, self.onReplayPGN, replay_pgn_file_item)
+        self.Bind(wx.EVT_MENU, self.onSettings, settings_item)
 
     def onNewGame(self, event):
+        from .graphical_interface.new_game_dialog import NewGameOptionsDialog
+
         dialog = NewGameOptionsDialog(gui.mainFrame, callback=self.create_new_game)
         gui.runScriptModalDialog(dialog)
 
     def create_new_game(self, vboard_cls, game_info):
         self.global_plugin_object.initialize_and_show_chessboard_dialog(vboard_cls, game_info)
 
+    def onTactics(self, event):
+        from .graphical_interface.tactics_dialog import TacticsOptionsDialog
+
+        dialog = TacticsOptionsDialog(
+            gui.mainFrame,
+            callback=self.open_tactics_session,
+        )
+        gui.runScriptModalDialog(dialog)
+
+    def open_tactics_session(self, session_options):
+        puzzles = PuzzleSet(options=session_options)
+        try:
+            puzzles.ensure_ready()
+        except FileNotFoundError:
+            gui.messageBox(
+                _(
+                    "The tactics database was not found. Set a valid SQLite path, for example C:\\projetos\\tactic\\data\\tactic.db."
+                ),
+                _("Tactics Database Not Found"),
+                style=wx.ICON_ERROR,
+            )
+            return
+        except LookupError as error:
+            gui.messageBox(
+                str(error),
+                _("No Tactics Found"),
+                style=wx.ICON_WARNING,
+            )
+            return
+        self.open_puzzle_set(puzzles)
+
     def onRandomPuzzle(self, event):
-        from .puzzle_database import RandomPuzzleSet
         puzzles = RandomPuzzleSet()
+        try:
+            puzzles.ensure_ready()
+        except FileNotFoundError:
+            gui.messageBox(
+                _(
+                    "The tactics database was not found. Choose a valid database in Chessboard settings first."
+                ),
+                _("Tactics Database Not Found"),
+                style=wx.ICON_ERROR,
+            )
+            return
+        self.open_puzzle_set(puzzles)
+
+    def onSettings(self, event):
+        dialog = ChessboardSettingsDialog(gui.mainFrame)
+        gui.runScriptModalDialog(dialog)
+
+    def open_puzzle_set(self, puzzles):
         game_info = GameInfo(
             pychess_board=chess.Board(),
             variant=ChessVariant.STANDARD,
             time_control=NULL_TIME_CONTROL,
             prospective=None,
-            vboard_kwargs=dict(puzzles=puzzles)
+            vboard_kwargs=dict(puzzles=puzzles),
         )
         self.global_plugin_object.initialize_and_show_chessboard_dialog(
             PuzzleChessboard,
-            game_info
+            game_info,
         )
 
     def onReplayPGN(self, event):
@@ -161,15 +224,18 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self._active_board_dialogs = {}
         # The following is the GUI part
         if not globalVars.appArgs.secure:
+            ensure_config_spec()
             self.chessboard_menu = ChessboardMenu(self)
 
     def terminate(self):
-        gui.mainFrame.sysTrayIcon.menu.DestroyItem(self.chessboard_menu.itemHandle)
+        chessboard_menu = getattr(self, "chessboard_menu", None)
+        if chessboard_menu is not None:
+            gui.mainFrame.sysTrayIcon.toolsMenu.DestroyItem(chessboard_menu.itemHandle)
         try:
             concurrency.terminate()
-            for cdlg in self._active_board_dialogs:
+            for cdlg in self._active_board_dialogs.values():
                 cdlg.Destroy()
-        except:
+        except Exception:
             log.exception("Failed to terminate concurrency primitives")
 
     def initialize_and_show_chessboard_dialog(self, vboard_cls, game_info):

@@ -91,7 +91,7 @@ class UserDrivenCell(BaseChessboardCell):
             self.parent.undrag_cell()
         if announce:
             eventHandler.executeEvent("stateChange", self)
-        self.update_visuall_highlight()
+        self.update_visual_highlight()
 
     @script(gesture="kb:control+d")
     def script_make_draw_offer(self, gesture):

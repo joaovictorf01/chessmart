@@ -9,16 +9,40 @@ from gui import guiHelper
 from logHandler import log
 from ..chessboard import GameInfo, ChessboardDialog
 from ..helpers import import_bundled
-from ..internet_chess import LichessAPIClient
+from ..i18n import _
 from .components import EnumRadioBox, EnumChoice, AsyncSnakDialog
 from ..game_elements import PlayMode, TimeControl, ChessVariant, PlayerColor
 from ..time_control import ChessTimeControl
-from ..internet_chess import (
-    OperationTimeout,
-    ChallengeRejected,
-    InternetChessConnectionError,
-    ChallengedUserIsOffline,
-)
+
+try:
+    from ..internet_chess import (
+        LichessAPIClient,
+        OperationTimeout,
+        ChallengeRejected,
+        InternetChessConnectionError,
+        ChallengedUserIsOffline,
+    )
+except Exception as internet_chess_import_error:
+    LichessAPIClient = None
+
+    class OperationTimeout(Exception):
+        pass
+
+    class ChallengeRejected(Exception):
+        pass
+
+    class InternetChessConnectionError(Exception):
+        pass
+
+    class ChallengedUserIsOffline(Exception):
+        def __init__(self, username=""):
+            self.username = username
+            super().__init__(username)
+
+    log.warning(
+        "Internet chess support is unavailable in this environment: %s",
+        internet_chess_import_error,
+    )
 
 
 with import_bundled():
@@ -26,7 +50,7 @@ with import_bundled():
 
 
 class NewGameOptionsDialog(gui.SettingsDialog):
-    title = "New Game Options"
+    title = _("New Game")
 
     def __init__(self, *args, callback, **kwargs):
         super().__init__(*args, **kwargs)

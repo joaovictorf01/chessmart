@@ -85,6 +85,6 @@ def intersperse(lst, item):
 
 
 def speak_next(
-    speech_sequence: speech.SpeechSequence, priority: speech.Spri = speech.Spri.NEXT
+    speech_sequence: speech.SpeechSequence, priority = speech.priorities.Spri.NEXT
 ) -> None:
     speech.speak(speech_sequence, priority=priority)
