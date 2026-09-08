@@ -366,40 +366,22 @@ class PuzzleChessboard(UserDrivenChessboard):
         )
 
     def _play_opponent_reply(self, callback_token):
-        # Instrumentação temporária: a resposta do adversário é jogada no
-        # tabuleiro mas não está sendo falada, e a leitura do código não
-        # explicou por quê. Registrar cada desvio possível diz qual deles é.
-        if callback_token != self._callback_token:
-            log.info("chessmart: resposta abortada, token mudou durante a espera")
-            return
-        if self.puzzle is None:
-            log.info("chessmart: resposta abortada, nao ha puzzle carregado")
+        if callback_token != self._callback_token or self.puzzle is None:
             return
         reply = self.current_expected_move
-        if reply is None:
-            log.info(
-                "chessmart: resposta abortada, indice %s sem lance na solucao",
-                self._solution_index,
-            )
+        if reply is None or self.board.turn == self.prospective:
             return
-        if self.board.turn == self.prospective:
-            log.info("chessmart: resposta abortada, ainda e a vez do jogador")
-            return
-        log.info(
-            "chessmart: jogando resposta %s, legal=%s, indice=%s",
-            reply.uci(),
-            reply in self.board.legal_moves,
-            self._solution_index,
-        )
         # A mudanca de foco precisa ser ADIADA para a fila de eventos, e nao
         # chamada direto daqui. Chamada direto, ela roda no meio do
         # processamento da fala: o evento de foco cancela a propria sequencia
         # que estava sendo falada, e a descricao do lance do adversario nunca
         # sai -- que era o bug. O pgn_player, que toca lances do mesmo jeito e
         # sempre funcionou, ja usava este padrao.
-        king_square = self.board.king(self.prospective)
+        # Vai para a casa ONDE A PEÇA PAROU, não para o rei: quem está
+        # resolvendo tática precisa saber onde o adversário jogou, que é de
+        # onde vai calcular. É o mesmo destino que o pgn_player usa.
         focus_callback = lambda: queueHandler.queueFunction(
-            queueHandler.eventQueue, self.set_focus_to_cell, king_square
+            queueHandler.eventQueue, self.set_focus_to_cell, reply.to_square
         )
         color_name = self.game_announcer.color_name(self.prospective)
         super().move_piece_and_check_game_status(

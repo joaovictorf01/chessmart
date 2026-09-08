@@ -479,7 +479,14 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
                     ]
                 )
         spoken_commands.append(post_speech)
-        speak_next(itertools.chain(*spoken_commands))
+        # O list() aqui não é estilo, é o conserto: itertools.chain devolve um
+        # ITERADOR preguiçoso, e a fala do NVDA espera uma sequência de
+        # verdade. Recebendo o iterador, o NVDA o percorre uma vez ao inspecionar
+        # a sequência e depois não sobra nada para falar -- o lance ia para o
+        # tabuleiro e o anúncio simplesmente desaparecia, sem erro nenhum.
+        # Medido com o log de io do NVDA: a sequência tinha 15 itens e 7 textos,
+        # e mesmo assim não havia registro de "Speaking".
+        speak_next(list(itertools.chain(*spoken_commands)))
         self.dialog.set_board_image(lastmove=move)
         move_completed_signal.send(self, move=move, move_maker=move_maker)
 
