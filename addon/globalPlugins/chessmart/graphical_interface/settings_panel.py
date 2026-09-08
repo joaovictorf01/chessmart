@@ -9,6 +9,7 @@ from ..i18n import _
 from ..puzzle_database import get_default_tactic_db_path
 from ..theme_catalog import describe_theme_filter, format_theme_filter, load_theme_catalog, parse_theme_filter
 from ..trainer import (
+    describe_rating_range,
     iter_challenge_levels,
     iter_trainer_presets,
     resolve_training_selection,
@@ -172,15 +173,15 @@ class ChessboardSettingsDialog(gui.SettingsDialog):
 
     def _updateTrainerSummary(self):
         resolved = self._resolved_selection()
+        # Translators: Summary of the saved default training selection.
         summary = _(
-            "{plan}. {plan_desc}\n{challenge}. {challenge_desc}\nDefault range: rating {min_rating} to {max_rating}; minimum popularity {min_popularity}."
+            "{plan}. {plan_desc}\n{challenge}. {challenge_desc}\nDefault: {rating_text}; minimum popularity {min_popularity}."
         ).format(
             plan=resolved.preset.label,
             plan_desc=resolved.preset.description,
             challenge=resolved.challenge.label,
             challenge_desc=resolved.challenge.description,
-            min_rating=resolved.min_rating,
-            max_rating=resolved.max_rating,
+            rating_text=describe_rating_range(resolved),
             min_popularity=resolved.min_popularity,
         )
         self.trainerSummaryTextCtrl.SetValue(summary)

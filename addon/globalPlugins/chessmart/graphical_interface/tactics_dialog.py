@@ -9,6 +9,7 @@ from ..i18n import _
 from ..puzzle_database import TacticSessionOptions, get_default_tactic_db_path
 from ..theme_catalog import describe_theme_filter, format_theme_filter, load_theme_catalog, parse_theme_filter
 from ..trainer import (
+    describe_rating_range,
     iter_challenge_levels,
     iter_trainer_presets,
     resolve_training_selection,
@@ -211,23 +212,7 @@ class TacticsOptionsDialog(gui.SettingsDialog):
         # Uma ponta sem limite é None, e interpolar None faria o leitor de tela
         # anunciar a palavra "None". Cada caso ganha a frase que descreve o que
         # o filtro realmente faz.
-        if resolved.adaptive:
-            rating_text = _("puzzles picked around your own tactics rating")
-        elif resolved.min_rating is None and resolved.max_rating is None:
-            rating_text = _("puzzles of any rating")
-        elif resolved.min_rating is None:
-            rating_text = _("puzzles rated up to {max_rating}").format(
-                max_rating=resolved.max_rating
-            )
-        elif resolved.max_rating is None:
-            rating_text = _("puzzles rated {min_rating} and above").format(
-                min_rating=resolved.min_rating
-            )
-        else:
-            rating_text = _("puzzles rated {min_rating} to {max_rating}").format(
-                min_rating=resolved.min_rating,
-                max_rating=resolved.max_rating,
-            )
+        rating_text = describe_rating_range(resolved)
         # O plano decide QUAIS temas e o nível decide QUÃO DIFÍCIL -- são duas
         # escolhas independentes, e nada nos rótulos das caixas diz isso. Nomear
         # os temas aqui faz deste resumo a única coisa que precisa ser lida para

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import dataclasses
 
+from .i18n import _
 from .theme_catalog import format_theme_filter, parse_theme_filter
 
 
@@ -228,6 +229,40 @@ def get_challenge_level(challenge_id: str | None) -> ChallengeLevel:
 
 def uses_custom_themes(preset_id: str | None) -> bool:
     return get_trainer_preset(preset_id).uses_custom_themes
+
+
+def describe_rating_range(selection: ResolvedTrainingSelection) -> str:
+    """A faixa de rating em palavras, para ser lida em voz alta.
+
+    Vive aqui, e não em cada diálogo, porque são dois -- o de sessão e o painel
+    de configurações -- e eles já divergiram uma vez: um tratava a ponta aberta
+    e o outro anunciava a palavra "None" para o usuário. Regra de leitura de
+    tela em uma frase só, num lugar só.
+
+    A tradução acontece na chamada, não na importação, para que trocar o idioma
+    do NVDA não exija reiniciar o add-on.
+    """
+    if selection.adaptive:
+        # Translators: Rating description when the trainer follows the user's own rating.
+        return _("puzzles picked around your own tactics rating")
+    if selection.min_rating is None and selection.max_rating is None:
+        # Translators: Rating description when no rating limit applies.
+        return _("puzzles of any rating")
+    if selection.min_rating is None:
+        # Translators: Rating description with an upper limit only. {max_rating} is a number.
+        return _("puzzles rated up to {max_rating}").format(
+            max_rating=selection.max_rating
+        )
+    if selection.max_rating is None:
+        # Translators: Rating description with a lower limit only. {min_rating} is a number.
+        return _("puzzles rated {min_rating} and above").format(
+            min_rating=selection.min_rating
+        )
+    # Translators: Rating description with both limits. Both are numbers.
+    return _("puzzles rated {min_rating} to {max_rating}").format(
+        min_rating=selection.min_rating,
+        max_rating=selection.max_rating,
+    )
 
 
 def resolve_training_selection(
