@@ -36,7 +36,15 @@ def ensure_config_spec():
         config.conf.spec[CONFIG_SECTION][key] = value
 
 
-def normalize_rating_range(min_rating: int, max_rating: int):
+def normalize_rating_range(min_rating: int | None, max_rating: int | None):
+    """Põe a faixa em ordem, aceitando pontas abertas.
+
+    `sorted` compara os dois valores, e comparar None com um número levanta
+    TypeError em Python. Como None aqui significa "sem limite", não há o que
+    ordenar quando ele aparece: a faixa já está na ordem certa.
+    """
+    if min_rating is None or max_rating is None:
+        return (min_rating, max_rating)
     return tuple(sorted((min_rating, max_rating)))
 
 

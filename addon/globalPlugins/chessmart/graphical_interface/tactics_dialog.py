@@ -208,15 +208,32 @@ class TacticsOptionsDialog(gui.SettingsDialog):
             self.trainerSummaryTextCtrl.SetValue(_("Specific puzzle mode. Training plan filters are ignored."))
             return
         resolved = self._resolved_selection()
+        # Uma ponta sem limite é None, e interpolar None faria o leitor de tela
+        # anunciar a palavra "None". Cada caso ganha a frase que descreve o que
+        # o filtro realmente faz.
+        if resolved.min_rating is None and resolved.max_rating is None:
+            rating_text = _("puzzles of any rating")
+        elif resolved.min_rating is None:
+            rating_text = _("puzzles rated up to {max_rating}").format(
+                max_rating=resolved.max_rating
+            )
+        elif resolved.max_rating is None:
+            rating_text = _("puzzles rated {min_rating} and above").format(
+                min_rating=resolved.min_rating
+            )
+        else:
+            rating_text = _("puzzles rated {min_rating} to {max_rating}").format(
+                min_rating=resolved.min_rating,
+                max_rating=resolved.max_rating,
+            )
         summary = _(
-            "{plan}. {plan_desc}\n{challenge}. {challenge_desc}\nUses puzzle rating {min_rating} to {max_rating} and minimum popularity {min_popularity}."
+            "{plan}. {plan_desc}\n{challenge}. {challenge_desc}\nUses {rating_text} and minimum popularity {min_popularity}."
         ).format(
             plan=resolved.preset.label,
             plan_desc=resolved.preset.description,
             challenge=resolved.challenge.label,
             challenge_desc=resolved.challenge.description,
-            min_rating=resolved.min_rating,
-            max_rating=resolved.max_rating,
+            rating_text=rating_text,
             min_popularity=resolved.min_popularity,
         )
         self.trainerSummaryTextCtrl.SetValue(summary)

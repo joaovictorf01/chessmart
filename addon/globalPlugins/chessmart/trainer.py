@@ -21,8 +21,11 @@ class ChallengeLevel:
     challenge_id: str
     label: str
     description: str
-    min_rating: int
-    max_rating: int
+    # None em qualquer das pontas significa "sem limite": o filtro SQL
+    # simplesmente não acrescenta a cláusula, então o treino alcança o banco
+    # inteiro em vez de uma faixa arbitrária.
+    min_rating: int | None
+    max_rating: int | None
     min_popularity: int
 
 
@@ -31,8 +34,8 @@ class ResolvedTrainingSelection:
     preset: TrainerPreset
     challenge: ChallengeLevel
     theme_text: str
-    min_rating: int
-    max_rating: int
+    min_rating: int | None
+    max_rating: int | None
     min_popularity: int
 
 
@@ -109,7 +112,9 @@ CHALLENGE_LEVELS = (
         challenge_id="veryAccessible",
         label="Very accessible",
         description="Favor shorter, cleaner and more popular examples.",
-        min_rating=600,
+        # Sem piso: o banco desce até rating 399 hoje, e um número fixo aqui
+        # esconderia os puzzles mais fáceis de quem mais precisa deles.
+        min_rating=None,
         max_rating=1100,
         min_popularity=70,
     ),
@@ -133,8 +138,10 @@ CHALLENGE_LEVELS = (
         challenge_id="challenge",
         label="Challenge",
         description="Use a harder range with fewer popularity restrictions.",
+        # Sem teto: o banco sobe até 3329, e travar em 2400 tiraria do treino
+        # justamente os puzzles que ainda teriam algo a ensinar.
         min_rating=1600,
-        max_rating=2400,
+        max_rating=None,
         min_popularity=0,
     ),
 )
