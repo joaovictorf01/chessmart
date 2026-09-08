@@ -8,6 +8,14 @@ import sqlite3
 import sys
 from pathlib import Path
 
+# Este arquivo é executado como script solto pelo run_bridge, e nesse caso o
+# import relativo não existe. Importado como parte do pacote, o absoluto é que
+# não vale. As duas formas cobrem os dois modos de uso.
+try:
+    from . import glicko2
+except ImportError:
+    import glicko2
+
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS attempts (
@@ -23,9 +31,56 @@ CREATE TABLE IF NOT EXISTS attempts (
 
 CREATE INDEX IF NOT EXISTS idx_attempts_puzzle_id ON attempts(puzzle_id);
 CREATE INDEX IF NOT EXISTS idx_attempts_created_at ON attempts(created_at);
+
+-- Uma linha só: o rating atual do jogador. O CHECK garante isso.
+CREATE TABLE IF NOT EXISTS player_rating (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  rating REAL NOT NULL,
+  deviation REAL NOT NULL,
+  volatility REAL NOT NULL,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Uma linha por atualização, para desenhar a evolução ao longo do tempo.
+CREATE TABLE IF NOT EXISTS rating_history (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  attempt_id INTEGER,
+  rating REAL NOT NULL,
+  deviation REAL NOT NULL,
+  volatility REAL NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (attempt_id) REFERENCES attempts(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_rating_history_created_at ON rating_history(created_at);
 """
 
+# Colunas acrescentadas a `attempts` depois que ela já existia em bancos reais.
+# O SQLite não tem "ADD COLUMN IF NOT EXISTS", então a migração é feita à mão.
+# Guardar o rating do puzzle no momento da tentativa é o que torna o histórico
+# reproduzível: se o banco do Lichess for atualizado, aquele puzzle pode valer
+# outra coisa, e sem isto o passado mudaria junto.
+ATTEMPT_COLUMNS = (
+    ("puzzle_rating", "REAL"),
+    ("puzzle_deviation", "REAL"),
+    ("rating_before", "REAL"),
+    ("rating_after", "REAL"),
+)
+
 THEME_SPLIT_PATTERN = re.compile(r"[\s,;]+")
+
+
+def _migrate_attempts(connection: sqlite3.Connection) -> None:
+    """Acrescenta a `attempts` as colunas de rating que faltarem.
+
+    Roda a cada conexão e é barata: uma consulta ao catálogo do SQLite e, na
+    imensa maioria das vezes, nenhum ALTER. Bancos criados antes do rating
+    existir continuam funcionando, ganhando as colunas na primeira abertura.
+    """
+    existing = {row[1] for row in connection.execute("PRAGMA table_info(attempts)")}
+    for column, column_type in ATTEMPT_COLUMNS:
+        if column not in existing:
+            connection.execute(f"ALTER TABLE attempts ADD COLUMN {column} {column_type}")
 
 
 def connect(db_path: Path) -> sqlite3.Connection:
@@ -33,7 +88,45 @@ def connect(db_path: Path) -> sqlite3.Connection:
     connection.row_factory = sqlite3.Row
     connection.execute("PRAGMA foreign_keys = ON")
     connection.executescript(SCHEMA)
+    _migrate_attempts(connection)
     return connection
+
+
+def _load_rating(connection: sqlite3.Connection) -> glicko2.Rating:
+    """O rating atual, ou o inicial se ainda não houver nenhum registrado."""
+    row = connection.execute(
+        "SELECT rating, deviation, volatility FROM player_rating WHERE id = 1"
+    ).fetchone()
+    if row is None:
+        return glicko2.Rating()
+    return glicko2.Rating(row["rating"], row["deviation"], row["volatility"])
+
+
+def _store_rating(
+    connection: sqlite3.Connection,
+    rating: glicko2.Rating,
+    attempt_id: int | None = None,
+) -> None:
+    """Grava o rating atual e acrescenta uma linha ao histórico."""
+    connection.execute(
+        """
+        INSERT INTO player_rating (id, rating, deviation, volatility, updated_at)
+        VALUES (1, ?, ?, ?, CURRENT_TIMESTAMP)
+        ON CONFLICT(id) DO UPDATE SET
+          rating = excluded.rating,
+          deviation = excluded.deviation,
+          volatility = excluded.volatility,
+          updated_at = excluded.updated_at
+        """,
+        (rating.rating, rating.deviation, rating.volatility),
+    )
+    connection.execute(
+        """
+        INSERT INTO rating_history (attempt_id, rating, deviation, volatility)
+        VALUES (?, ?, ?, ?)
+        """,
+        (attempt_id, rating.rating, rating.deviation, rating.volatility),
+    )
 
 
 def _build_puzzle_filters(
@@ -140,21 +233,84 @@ def cmd_record_attempt(
     hints_used: str,
     elapsed_ms: str,
 ):
-    connection.execute(
+    solved_flag = int(solved)
+    cursor = connection.execute(
         """
         INSERT INTO attempts (puzzle_id, solved, mistakes, hints_used, elapsed_ms)
         VALUES (?, ?, ?, ?, ?)
         """,
         (
             puzzle_id,
-            int(solved),
+            solved_flag,
             int(mistakes),
             int(hints_used),
             int(elapsed_ms),
         ),
     )
+    attempt_id = cursor.lastrowid
+
+    puzzle = connection.execute(
+        "SELECT rating, rating_deviation FROM puzzles WHERE id = ?", (puzzle_id,)
+    ).fetchone()
+
+    before = _load_rating(connection)
+    after = before
+    if puzzle is not None:
+        # A tentativa vira uma partida contra este puzzle. Só o jogador muda:
+        # o rating do puzzle vem do Lichess, calculado sobre milhões de
+        # tentativas, e não é nosso para mexer.
+        after = glicko2.update(
+            before,
+            float(puzzle["rating"]),
+            float(puzzle["rating_deviation"]),
+            bool(solved_flag),
+        )
+        connection.execute(
+            """
+            UPDATE attempts
+               SET puzzle_rating = ?, puzzle_deviation = ?,
+                   rating_before = ?, rating_after = ?
+             WHERE id = ?
+            """,
+            (
+                float(puzzle["rating"]),
+                float(puzzle["rating_deviation"]),
+                before.rating,
+                after.rating,
+                attempt_id,
+            ),
+        )
+        _store_rating(connection, after, attempt_id)
+
     connection.commit()
-    return {"ok": True}
+    return {
+        "ok": True,
+        "attemptId": attempt_id,
+        "ratingBefore": before.rounded(),
+        "rating": after.rounded(),
+        "ratingDelta": after.rounded() - before.rounded(),
+        "deviation": round(after.deviation, 1),
+    }
+
+
+def cmd_rating(connection: sqlite3.Connection):
+    """O rating atual, com a faixa de confiança e quantas tentativas o formaram."""
+    rating = _load_rating(connection)
+    low, high = rating.confidence_interval()
+    attempts = connection.execute(
+        "SELECT COUNT(*) FROM attempts WHERE rating_after IS NOT NULL"
+    ).fetchone()[0]
+    return {
+        "rating": rating.rounded(),
+        "deviation": round(rating.deviation, 1),
+        "volatility": round(rating.volatility, 5),
+        "intervalLow": low,
+        "intervalHigh": high,
+        "ratedAttempts": attempts,
+        # Enquanto o desvio é grande o número ainda é chute: vale dizer isso a
+        # quem lê, em vez de apresentar 1500 como se fosse medida.
+        "provisional": rating.deviation > 110.0,
+    }
 
 
 def cmd_attempt_stats(connection: sqlite3.Connection):
@@ -195,6 +351,7 @@ COMMANDS = {
     "recordAttempt": cmd_record_attempt,
     "attemptStats": cmd_attempt_stats,
     "themeCatalog": cmd_theme_catalog,
+    "rating": cmd_rating,
 }
 
 
