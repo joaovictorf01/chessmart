@@ -228,13 +228,25 @@ class TacticsOptionsDialog(gui.SettingsDialog):
                 min_rating=resolved.min_rating,
                 max_rating=resolved.max_rating,
             )
+        # O plano decide QUAIS temas e o nível decide QUÃO DIFÍCIL -- são duas
+        # escolhas independentes, e nada nos rótulos das caixas diz isso. Nomear
+        # os temas aqui faz deste resumo a única coisa que precisa ser lida para
+        # saber o que a sessão vai realmente servir.
+        theme_count = len(parse_theme_filter(resolved.theme_text))
+        if not theme_count:
+            theme_text = _("Themes: all of them.")
+        else:
+            theme_text = _(
+                "Themes: {count} in play, chosen by the training plan and not by the level."
+            ).format(count=theme_count)
         summary = _(
-            "{plan}. {plan_desc}\n{challenge}. {challenge_desc}\nUses {rating_text} and minimum popularity {min_popularity}."
+            "{plan}. {plan_desc}\n{challenge}. {challenge_desc}\n{theme_text}\nUses {rating_text} and minimum popularity {min_popularity}."
         ).format(
             plan=resolved.preset.label,
             plan_desc=resolved.preset.description,
             challenge=resolved.challenge.label,
             challenge_desc=resolved.challenge.description,
+            theme_text=theme_text,
             rating_text=rating_text,
             min_popularity=resolved.min_popularity,
         )

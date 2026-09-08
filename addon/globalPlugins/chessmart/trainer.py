@@ -103,6 +103,15 @@ TRAINER_PRESETS = (
         ),
     ),
     TrainerPreset(
+        preset_id="allThemes",
+        label="All themes",
+        description="No theme filter at all: the whole puzzle database is in play.",
+        # Nenhum slug, e sem ser tema personalizado: o filtro sai vazio e a
+        # consulta não acrescenta cláusula de tema. Existe como escolha
+        # explícita porque antes o único jeito de chegar aqui era escolher
+        # "Custom themes" e deixar o campo em branco, o que ninguém descobre.
+    ),
+    TrainerPreset(
         preset_id="customThemes",
         label="Custom themes",
         description="Choose the exact Lichess themes you want to include in the session.",
