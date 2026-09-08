@@ -90,16 +90,37 @@ TRAINER_PRESETS = (
     TrainerPreset(
         preset_id="mixedPractice",
         label="Mixed practice",
-        description="Use a broad mix of popular tactical positions without forcing a single theme family.",
+        description="A broad spread across the tactical motif families: material, mating, sacrifice, defence and conversion.",
+        # Antes esta lista trazia `short`, `middlegame`, `advantage` e `mate`,
+        # que não são motivos táticos e sim comprimento da solução, fase do
+        # jogo, avaliação e desfecho. Como `short` sozinho aparece em metade
+        # dos puzzles, o filtro alcançava 89,5% do banco: era "todos os temas"
+        # com outro nome. Esta lista cobre 72,7%, e cada puzzle entra por causa
+        # de um motivo de verdade. Quem quer o banco inteiro escolhe o plano
+        # "All themes", que diz o que faz.
         theme_slugs=(
-            "short",
-            "middlegame",
-            "advantage",
-            "mate",
+            # ganho de material
             "fork",
             "pin",
             "skewer",
             "hangingPiece",
+            "discoveredAttack",
+            "trappedPiece",
+            # sacrifício e desvio
+            "sacrifice",
+            "deflection",
+            "attraction",
+            "clearance",
+            # mate
+            "mateIn1",
+            "mateIn2",
+            "backRankMate",
+            # defesa e lance quieto
+            "defensiveMove",
+            "quietMove",
+            # conversão de vantagem
+            "advancedPawn",
+            "promotion",
         ),
     ),
     TrainerPreset(
