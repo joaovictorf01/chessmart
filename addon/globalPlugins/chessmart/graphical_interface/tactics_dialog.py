@@ -1,5 +1,13 @@
 # coding: utf-8
 
+"""Diálogo que abre uma sessão de treino de táticas.
+
+O que esta tela tem de próprio: o campo de ID de puzzle -- que desliga os
+filtros, porque pedir um puzzle pelo id é pedir aquele puzzle --, a caixa de
+salvar como padrão, e o que acontece ao confirmar. O resto vem de
+`TacticsSetupMixin`, compartilhado com o painel de preferências.
+"""
+
 import wx
 import gui
 from gui import guiHelper
@@ -7,227 +15,124 @@ from gui import guiHelper
 from ..addon_config import get_tactics_defaults, save_tactics_defaults
 from ..i18n import _
 from ..puzzle_database import TacticSessionOptions, get_default_tactic_db_path
-from ..theme_catalog import describe_theme_filter, format_theme_filter, load_theme_catalog, parse_theme_filter
+from ..theme_catalog import parse_theme_filter
 from ..trainer import (
     challenge_description,
     challenge_label,
+    describe_rating_range,
     preset_description,
     preset_label,
-    describe_rating_range,
-    iter_challenge_levels,
-    iter_trainer_presets,
-    resolve_training_selection,
     uses_custom_themes,
 )
+from .tactics_setup import TacticsSetupMixin
 
 
-class TacticsOptionsDialog(gui.SettingsDialog):
+class TacticsOptionsDialog(TacticsSetupMixin, gui.SettingsDialog):
+    # Translators: Title of the tactics session dialog.
     title = _("Tactics")
 
     def __init__(self, *args, callback, **kwargs):
-        # SettingsDialog.__init__ chama makeSettings() por dentro, então tudo
-        # que makeSettings lê precisa existir antes desta chamada.
+        # Antes do super: o SettingsDialog do NVDA chama makeSettings() de
+        # dentro do próprio construtor. Ver _init_trainer_state.
         self.callback = callback
-        self._theme_filter_text = ""
-        self._trainer_presets = iter_trainer_presets()
-        self._challenge_levels = iter_challenge_levels()
+        self._init_trainer_state()
         super().__init__(*args, **kwargs)
 
     def makeSettings(self, sizer):
         defaults = get_tactics_defaults()
         self._theme_filter_text = defaults.theme
-        mainSizerHelper = guiHelper.BoxSizerHelper(self, sizer=sizer)
+        helper = guiHelper.BoxSizerHelper(self, sizer=sizer)
 
         intro_label = wx.StaticText(
             self,
             -1,
-            _(
-                "Start a guided training session, or type a puzzle ID to open one exact Lichess tactic."
-            ),
+            # Translators: Intro text of the tactics session dialog.
+            _("Start a guided training session, or type a puzzle ID to open one exact Lichess tactic."),
             style=wx.ST_ELLIPSIZE_END,
         )
         intro_label.Wrap(self.GetSize().Width)
-        mainSizerHelper.addItem(intro_label)
+        helper.addItem(intro_label)
 
-        databasePathLabel = wx.StaticText(self, -1, _("Tactics database"))
-        self.databasePathTextCtrl = wx.TextCtrl(
-            self,
-            -1,
-            value=defaults.db_path or get_default_tactic_db_path() or "",
+        self._build_database_row(
+            helper, defaults.db_path or get_default_tactic_db_path() or ""
         )
-        guiHelper.associateElements(databasePathLabel, self.databasePathTextCtrl)
-        self.browseDatabaseButton = wx.Button(self, -1, _("&Browse..."))
-        databasePathSizer = wx.BoxSizer(wx.HORIZONTAL)
-        databasePathSizer.Add(self.databasePathTextCtrl, 1, wx.RIGHT | wx.EXPAND, 5)
-        databasePathSizer.Add(self.browseDatabaseButton, 0)
-        mainSizerHelper.addItem(databasePathLabel)
-        mainSizerHelper.addItem(databasePathSizer)
 
+        # Translators: Label for the field where a single puzzle id can be typed.
         puzzleIdLabel = wx.StaticText(self, -1, _("Puzzle ID"))
         self.puzzleIdTextCtrl = wx.TextCtrl(self, -1)
         guiHelper.associateElements(puzzleIdLabel, self.puzzleIdTextCtrl)
-        mainSizerHelper.addItem(puzzleIdLabel)
-        mainSizerHelper.addItem(self.puzzleIdTextCtrl)
+        helper.addItem(puzzleIdLabel)
+        helper.addItem(self.puzzleIdTextCtrl)
 
-        trainerPresetLabel = wx.StaticText(self, -1, _("Training plan"))
-        self.trainerPresetChoice = wx.Choice(
-            self,
-            -1,
-            choices=[preset_label(preset) for preset in self._trainer_presets],
+        self._build_choice_rows(
+            helper,
+            defaults,
+            # Translators: Label for the training plan combo box.
+            _("Training plan"),
+            # Translators: Label for the challenge level combo box.
+            _("Challenge level"),
         )
-        self._set_choice_by_id(
-            self.trainerPresetChoice,
-            [preset.preset_id for preset in self._trainer_presets],
-            defaults.trainer_preset,
-        )
-        guiHelper.associateElements(trainerPresetLabel, self.trainerPresetChoice)
-        mainSizerHelper.addItem(trainerPresetLabel)
-        mainSizerHelper.addItem(self.trainerPresetChoice)
-
-        challengeLabel = wx.StaticText(self, -1, _("Challenge level"))
-        self.challengeChoice = wx.Choice(
-            self,
-            -1,
-            choices=[challenge_label(level) for level in self._challenge_levels],
-        )
-        self._set_choice_by_id(
-            self.challengeChoice,
-            [level.challenge_id for level in self._challenge_levels],
-            defaults.challenge_level,
-        )
-        guiHelper.associateElements(challengeLabel, self.challengeChoice)
-        mainSizerHelper.addItem(challengeLabel)
-        mainSizerHelper.addItem(self.challengeChoice)
-
-        trainerSummaryLabel = wx.StaticText(self, -1, _("Trainer summary"))
-        self.trainerSummaryTextCtrl = wx.TextCtrl(
-            self,
-            -1,
-            style=wx.TE_MULTILINE | wx.TE_READONLY,
-        )
-        guiHelper.associateElements(trainerSummaryLabel, self.trainerSummaryTextCtrl)
-        mainSizerHelper.addItem(trainerSummaryLabel)
-        mainSizerHelper.addItem(self.trainerSummaryTextCtrl)
-
-        themeLabel = wx.StaticText(self, -1, _("Themes"))
-        self.themeSummaryTextCtrl = wx.TextCtrl(
-            self,
-            -1,
-            style=wx.TE_MULTILINE | wx.TE_READONLY,
-        )
-        guiHelper.associateElements(themeLabel, self.themeSummaryTextCtrl)
-        self.selectThemesButton = wx.Button(self, -1, _("Select &themes..."))
-        self.clearThemesButton = wx.Button(self, -1, _("C&lear themes"))
-        themeButtonSizer = wx.BoxSizer(wx.HORIZONTAL)
-        themeButtonSizer.Add(self.selectThemesButton, 0, wx.RIGHT, 5)
-        themeButtonSizer.Add(self.clearThemesButton, 0)
-        mainSizerHelper.addItem(themeLabel)
-        mainSizerHelper.addItem(self.themeSummaryTextCtrl)
-        mainSizerHelper.addItem(themeButtonSizer)
+        self._build_summary_row(helper)
+        # Translators: Label for the themes field.
+        self._build_theme_rows(helper, _("Themes"))
 
         self.saveDefaultsCheckbox = wx.CheckBox(
             self,
             -1,
+            # Translators: Checkbox that stores the current setup as the default.
             _("&Save training setup as default"),
         )
-        mainSizerHelper.addItem(self.saveDefaultsCheckbox)
+        helper.addItem(self.saveDefaultsCheckbox)
 
-        self.Bind(wx.EVT_BUTTON, self.onBrowseDatabase, self.browseDatabaseButton)
-        self.Bind(wx.EVT_BUTTON, self.onSelectThemes, self.selectThemesButton)
-        self.Bind(wx.EVT_BUTTON, self.onClearThemes, self.clearThemesButton)
+        self._bind_shared_events()
         self.Bind(wx.EVT_TEXT, self.onPuzzleIdChanged, self.puzzleIdTextCtrl)
-        self.Bind(wx.EVT_TEXT, self.onDatabasePathChanged, self.databasePathTextCtrl)
-        self.Bind(wx.EVT_CHOICE, self.onTrainerPresetChanged, self.trainerPresetChoice)
-        self.Bind(wx.EVT_CHOICE, self.onChallengeChanged, self.challengeChoice)
 
     def postInit(self):
         self._updateTrainerSummary()
         self._updateThemeSummary()
         self.databasePathTextCtrl.SetFocus()
-        self._updateTrainingControls()
-
-    def onBrowseDatabase(self, event):
-        dialog = wx.FileDialog(
-            parent=self,
-            message=_("Select tactics database"),
-            wildcard=_("SQLite databases (*.db;*.sqlite)|*.db;*.sqlite|All files|*.*"),
-            style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST,
-        )
-        if dialog.ShowModal() == wx.ID_OK:
-            self.databasePathTextCtrl.SetValue(dialog.GetPath())
-            self._updateTrainerSummary()
-            self._updateThemeSummary()
-        dialog.Destroy()
-
-    def onDatabasePathChanged(self, event):
-        self._updateTrainerSummary()
-        self._updateThemeSummary()
-        event.Skip()
+        self._refresh_theme_controls()
 
     def onPuzzleIdChanged(self, event):
         self._updateTrainerSummary()
         self._updateThemeSummary()
-        self._updateTrainingControls()
+        self._refresh_theme_controls()
         event.Skip()
 
-    def onTrainerPresetChanged(self, event):
-        self._updateTrainerSummary()
-        self._updateThemeSummary()
-        self._updateTrainingControls()
-        event.Skip()
+    def _in_puzzle_id_mode(self):
+        return bool(self.puzzleIdTextCtrl.GetValue().strip())
 
-    def onChallengeChanged(self, event):
-        self._updateTrainerSummary()
-        event.Skip()
-
-    def _trainer_preset_id(self):
-        return self._trainer_presets[self.trainerPresetChoice.GetSelection()].preset_id
-
-    def _challenge_id(self):
-        return self._challenge_levels[self.challengeChoice.GetSelection()].challenge_id
-
-    def _resolved_db_path(self):
-        return self.databasePathTextCtrl.GetValue().strip() or get_default_tactic_db_path() or ""
-
-    def _updateTrainingControls(self):
-        filters_enabled = not bool(self.puzzleIdTextCtrl.GetValue().strip())
+    def _refresh_theme_controls(self):
+        # Com um id digitado os filtros não valem, então as caixas de plano e
+        # nível também são desligadas -- senão a tela sugere uma escolha que
+        # não terá efeito nenhum.
+        filters_enabled = not self._in_puzzle_id_mode()
         is_custom = uses_custom_themes(self._trainer_preset_id())
-        for control in (
-            self.trainerPresetChoice,
-            self.challengeChoice,
-        ):
-            control.Enable(filters_enabled)
+        self.trainerPresetChoice.Enable(filters_enabled)
+        self.challengeChoice.Enable(filters_enabled)
         self.selectThemesButton.Enable(filters_enabled and is_custom)
-        self.clearThemesButton.Enable(filters_enabled and is_custom and bool(parse_theme_filter(self._theme_filter_text)))
+        self.clearThemesButton.Enable(
+            filters_enabled
+            and is_custom
+            and bool(parse_theme_filter(self._theme_filter_text))
+        )
         self.themeSummaryTextCtrl.Enable(True)
 
-    def _resolved_selection(self):
-        return resolve_training_selection(
-            self._trainer_preset_id(),
-            self._challenge_id(),
-            custom_theme_text=self._theme_filter_text,
-        )
+    def _theme_summary_text(self):
+        if self._in_puzzle_id_mode():
+            # Translators: Shown in the themes field when a puzzle id was typed.
+            return _("Puzzle ID mode")
+        return super()._theme_summary_text()
 
     def _updateTrainerSummary(self):
-        if self.puzzleIdTextCtrl.GetValue().strip():
-            self.trainerSummaryTextCtrl.SetValue(_("Specific puzzle mode. Training plan filters are ignored."))
+        if self._in_puzzle_id_mode():
+            self.trainerSummaryTextCtrl.SetValue(
+                # Translators: Summary shown when a specific puzzle id was typed.
+                _("Specific puzzle mode. Training plan filters are ignored.")
+            )
             return
         resolved = self._resolved_selection()
-        # Uma ponta sem limite é None, e interpolar None faria o leitor de tela
-        # anunciar a palavra "None". Cada caso ganha a frase que descreve o que
-        # o filtro realmente faz.
-        rating_text = describe_rating_range(resolved)
-        # O plano decide QUAIS temas e o nível decide QUÃO DIFÍCIL -- são duas
-        # escolhas independentes, e nada nos rótulos das caixas diz isso. Nomear
-        # os temas aqui faz deste resumo a única coisa que precisa ser lida para
-        # saber o que a sessão vai realmente servir.
-        theme_count = len(parse_theme_filter(resolved.theme_text))
-        if not theme_count:
-            theme_text = _("Themes: all of them.")
-        else:
-            theme_text = _(
-                "Themes: {count} in play, chosen by the training plan and not by the level."
-            ).format(count=theme_count)
+        # Translators: Summary of the training session about to start.
         summary = _(
             "{plan}. {plan_desc}\n{challenge}. {challenge_desc}\n{theme_text}\nUses {rating_text} and minimum popularity {min_popularity}."
         ).format(
@@ -235,92 +140,11 @@ class TacticsOptionsDialog(gui.SettingsDialog):
             plan_desc=preset_description(resolved.preset),
             challenge=challenge_label(resolved.challenge),
             challenge_desc=challenge_description(resolved.challenge),
-            theme_text=theme_text,
-            rating_text=rating_text,
+            theme_text=self._theme_count_sentence(resolved),
+            rating_text=describe_rating_range(resolved),
             min_popularity=resolved.min_popularity,
         )
         self.trainerSummaryTextCtrl.SetValue(summary)
-
-    def _updateThemeSummary(self):
-        if self.puzzleIdTextCtrl.GetValue().strip():
-            self.themeSummaryTextCtrl.SetValue(_("Puzzle ID mode"))
-            return
-        resolved = self._resolved_selection()
-        if uses_custom_themes(self._trainer_preset_id()):
-            theme_slugs = parse_theme_filter(self._theme_filter_text)
-            if not theme_slugs:
-                summary = _("All themes")
-            else:
-                labels = describe_theme_filter(self._theme_filter_text, db_path=self._resolved_db_path())
-                summary = _("{count} selected: {themes}").format(
-                    count=len(theme_slugs),
-                    themes=labels or ", ".join(theme_slugs),
-                )
-        else:
-            labels = describe_theme_filter(resolved.theme_text, db_path=self._resolved_db_path())
-            summary = labels or _("All themes")
-        self.themeSummaryTextCtrl.SetValue(summary)
-
-    def onSelectThemes(self, event):
-        db_path = self._resolved_db_path()
-        if not db_path:
-            gui.messageBox(
-                _("Choose a tactics database before selecting themes."),
-                _("No Database Selected"),
-                style=wx.ICON_WARNING,
-            )
-            return
-        try:
-            entries = load_theme_catalog(db_path)
-        except Exception as error:
-            gui.messageBox(
-                str(error),
-                _("Could Not Load Themes"),
-                style=wx.ICON_ERROR,
-            )
-            return
-        if not entries:
-            gui.messageBox(
-                _("No themes were found in the selected database."),
-                _("Themes Not Found"),
-                style=wx.ICON_WARNING,
-            )
-            return
-        dialog = wx.MultiChoiceDialog(
-            self,
-            _("Choose one or more Lichess themes to use in the custom training plan."),
-            _("Select Themes"),
-            choices=[
-                _("{label} ({count} puzzles) [{slug}]").format(
-                    label=entry.label,
-                    count=entry.count,
-                    slug=entry.slug,
-                )
-                for entry in entries
-            ],
-        )
-        selected_slugs = set(parse_theme_filter(self._theme_filter_text))
-        selections = [index for index, entry in enumerate(entries) if entry.slug in selected_slugs]
-        if selections:
-            dialog.SetSelections(selections)
-        if dialog.ShowModal() == wx.ID_OK:
-            self._theme_filter_text = format_theme_filter(
-                [entries[index].slug for index in dialog.GetSelections()]
-            )
-            self._updateThemeSummary()
-            self._updateTrainingControls()
-        dialog.Destroy()
-
-    def onClearThemes(self, event):
-        self._theme_filter_text = ""
-        self._updateThemeSummary()
-        self._updateTrainingControls()
-
-    def _set_choice_by_id(self, choice, ids, selected_id):
-        try:
-            choice.SetSelection(ids.index(selected_id))
-        except ValueError:
-            choice.SetSelection(0)
 
     def get_options(self):
         puzzle_id = self.puzzleIdTextCtrl.GetValue().strip()
