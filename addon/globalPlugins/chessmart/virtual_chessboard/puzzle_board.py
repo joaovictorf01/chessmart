@@ -366,11 +366,31 @@ class PuzzleChessboard(UserDrivenChessboard):
         )
 
     def _play_opponent_reply(self, callback_token):
-        if callback_token != self._callback_token or self.puzzle is None:
+        # Instrumentação temporária: a resposta do adversário é jogada no
+        # tabuleiro mas não está sendo falada, e a leitura do código não
+        # explicou por quê. Registrar cada desvio possível diz qual deles é.
+        if callback_token != self._callback_token:
+            log.info("chessmart: resposta abortada, token mudou durante a espera")
+            return
+        if self.puzzle is None:
+            log.info("chessmart: resposta abortada, nao ha puzzle carregado")
             return
         reply = self.current_expected_move
-        if reply is None or self.board.turn == self.prospective:
+        if reply is None:
+            log.info(
+                "chessmart: resposta abortada, indice %s sem lance na solucao",
+                self._solution_index,
+            )
             return
+        if self.board.turn == self.prospective:
+            log.info("chessmart: resposta abortada, ainda e a vez do jogador")
+            return
+        log.info(
+            "chessmart: jogando resposta %s, legal=%s, indice=%s",
+            reply.uci(),
+            reply in self.board.legal_moves,
+            self._solution_index,
+        )
         focus_callback = functools.partial(self.set_focus_to_cell, self.board.king(self.prospective))
         color_name = self.game_announcer.color_name(self.prospective)
         super().move_piece_and_check_game_status(
