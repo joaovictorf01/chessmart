@@ -20,10 +20,12 @@ class ChessboardSettingsDialog(gui.SettingsDialog):
     title = _("Chessboard")
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        # SettingsPanel.__init__ chama makeSettings() por dentro, então tudo
+        # que makeSettings lê precisa existir antes desta chamada.
         self._theme_filter_text = ""
         self._trainer_presets = iter_trainer_presets()
         self._challenge_levels = iter_challenge_levels()
+        super().__init__(*args, **kwargs)
 
     def makeSettings(self, settingsSizer):
         defaults = get_tactics_defaults()

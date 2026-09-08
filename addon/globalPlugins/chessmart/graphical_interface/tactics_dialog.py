@@ -20,11 +20,13 @@ class TacticsOptionsDialog(gui.SettingsDialog):
     title = _("Tactics")
 
     def __init__(self, *args, callback, **kwargs):
-        super().__init__(*args, **kwargs)
+        # SettingsDialog.__init__ chama makeSettings() por dentro, então tudo
+        # que makeSettings lê precisa existir antes desta chamada.
         self.callback = callback
         self._theme_filter_text = ""
         self._trainer_presets = iter_trainer_presets()
         self._challenge_levels = iter_challenge_levels()
+        super().__init__(*args, **kwargs)
 
     def makeSettings(self, sizer):
         defaults = get_tactics_defaults()
