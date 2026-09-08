@@ -27,6 +27,9 @@ class ChallengeLevel:
     min_rating: int | None
     max_rating: int | None
     min_popularity: int
+    # No modo adaptativo as faixas acima são ignoradas: a dificuldade passa a
+    # seguir o rating do jogador, sorteio a sorteio.
+    adaptive: bool = False
 
 
 @dataclasses.dataclass(frozen=True)
@@ -37,6 +40,7 @@ class ResolvedTrainingSelection:
     min_rating: int | None
     max_rating: int | None
     min_popularity: int
+    adaptive: bool = False
 
 
 TRAINER_PRESETS = (
@@ -144,6 +148,15 @@ CHALLENGE_LEVELS = (
         max_rating=None,
         min_popularity=0,
     ),
+    ChallengeLevel(
+        challenge_id="adaptive",
+        label="Adaptive",
+        description="Follows your tactics rating: the difficulty tracks you as you improve.",
+        min_rating=None,
+        max_rating=None,
+        min_popularity=25,
+        adaptive=True,
+    ),
 )
 
 DEFAULT_TRAINER_PRESET_ID = TRAINER_PRESETS[0].preset_id
@@ -194,4 +207,5 @@ def resolve_training_selection(
         min_rating=challenge.min_rating,
         max_rating=challenge.max_rating,
         min_popularity=challenge.min_popularity,
+        adaptive=challenge.adaptive,
     )

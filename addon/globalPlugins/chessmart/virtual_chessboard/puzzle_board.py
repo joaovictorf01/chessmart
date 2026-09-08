@@ -11,6 +11,7 @@ import speech
 import tones
 import ui
 import wx
+from logHandler import log
 from scriptHandler import getLastScriptRepeatCount, script
 
 from ..helpers import GameSound, import_bundled, speak_next
@@ -132,6 +133,10 @@ class PuzzleChessboard(UserDrivenChessboard):
         self._session_solved = 0
         self._session_mistakes = 0
         self._session_hints = 0
+        # Resposta da ponte à última tentativa gravada: rating, ratingDelta e
+        # deviation. Fica guardado porque quem grava a tentativa e quem anuncia
+        # o resultado são momentos diferentes.
+        self._last_rating = None
         self._actions_bar = TrainingActionsBar(
             parent=self,
             name=_("Training actions"),
@@ -395,6 +400,7 @@ class PuzzleChessboard(UserDrivenChessboard):
                 speech.commands.BreakCommand(150),
                 _("Tactic solved."),
                 speech.commands.BreakCommand(120),
+                *self._rating_speech(),
                 _("Control+N loads another puzzle."),
                 speech.commands.BreakCommand(100),
                 _("Press Tab for training actions."),
@@ -402,6 +408,74 @@ class PuzzleChessboard(UserDrivenChessboard):
                 _("Control+R restarts this one."),
             ]
         )
+
+    def _rating_speech(self):
+        """A frase do rating para o anúncio, ou nada quando não há o que dizer.
+
+        Devolve uma lista para ser desempacotada dentro do speak_next: assim,
+        quando não há rating, nada é acrescentado e nenhuma pausa sobra soando
+        como hesitação.
+        """
+        result = self._last_rating
+        if not result or result.get("rating") is None:
+            return []
+        rating = result["rating"]
+        delta = result.get("ratingDelta", 0)
+        # Enquanto o desvio é alto o número ainda é chute, e dizer isso é mais
+        # útil do que anunciar um valor preciso que vai oscilar centenas de
+        # pontos nas próximas tentativas.
+        provisional = (result.get("deviation") or 0) > 110.0
+        if delta > 0:
+            text = _("Rating {rating}, up {delta}.")
+        elif delta < 0:
+            text = _("Rating {rating}, down {delta}.")
+        else:
+            text = _("Rating {rating}, unchanged.")
+        if provisional:
+            text = _("Provisional ") + text
+        return [
+            text.format(rating=rating, delta=abs(delta)),
+            speech.commands.BreakCommand(120),
+        ]
+
+    @script(
+        # Translators: Input help message for the report tactics rating command.
+        description=_("Report your current tactics rating"),
+        gesture="kb:control+shift+r",
+    )
+    def script_report_rating(self, gesture):
+        """Fala o rating atual a qualquer momento, sem esperar o fim do puzzle."""
+        try:
+            result = self.puzzles.rating()
+        except Exception:
+            log.exception("chessmart: falha ao ler o rating")
+            result = None
+        if not result:
+            ui.message(_("No tactics rating yet."))
+            return
+        if result.get("ratedAttempts"):
+            attempts_text = _("from {count} rated attempts").format(
+                count=result["ratedAttempts"]
+            )
+        else:
+            attempts_text = _("no rated attempts yet")
+        if result.get("provisional"):
+            ui.message(
+                _(
+                    "Provisional rating {rating}, somewhere between {low} and {high}, {attempts}."
+                ).format(
+                    rating=result["rating"],
+                    low=result["intervalLow"],
+                    high=result["intervalHigh"],
+                    attempts=attempts_text,
+                )
+            )
+        else:
+            ui.message(
+                _("Rating {rating}, {attempts}.").format(
+                    rating=result["rating"], attempts=attempts_text
+                )
+            )
 
     def repeat_current_instruction(self):
         if self.puzzle is None:
@@ -558,13 +632,19 @@ class PuzzleChessboard(UserDrivenChessboard):
         if self.puzzle is None or self._attempt_started_at is None or self._attempt_recorded:
             return
         elapsed_ms = max(1, int((time.monotonic() - self._attempt_started_at) * 1000))
-        self.puzzles.record_attempt(
-            puzzle_id=self.puzzle.puzzle_id,
-            solved=solved,
-            mistakes=self._mistakes,
-            hints_used=self._hints_used,
-            elapsed_ms=elapsed_ms,
-        )
+        try:
+            self._last_rating = self.puzzles.record_attempt(
+                puzzle_id=self.puzzle.puzzle_id,
+                solved=solved,
+                mistakes=self._mistakes,
+                hints_used=self._hints_used,
+                elapsed_ms=elapsed_ms,
+            )
+        except Exception:
+            # Perder o rating de uma tentativa é chato; perder o puzzle
+            # resolvido porque o banco engasgou seria pior.
+            log.exception("chessmart: falha ao gravar a tentativa")
+            self._last_rating = None
         self._attempt_recorded = True
         self._session_attempts += 1
         self._session_mistakes += self._mistakes

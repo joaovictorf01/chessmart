@@ -58,6 +58,26 @@ class PuzzleRepository:
         )
         return puzzle_from_row(row) if row else None
 
+    def adaptive_random_puzzle(
+        self,
+        theme: str | list[str] | tuple[str, ...] | None = None,
+        min_popularity: int | None = 0,
+        excluded_ids: list[str] | tuple[str, ...] | None = None,
+    ) -> Puzzle | None:
+        """Sorteia calibrado pelo rating atual, sem faixa vinda de fora."""
+        if isinstance(theme, (list, tuple)):
+            theme_filter = ",".join(theme)
+        else:
+            theme_filter = theme or ""
+        row = run_bridge(
+            self.db_path,
+            "adaptiveRandom",
+            theme_filter,
+            "" if min_popularity is None else min_popularity,
+            json.dumps(list(excluded_ids or ()), ensure_ascii=False),
+        )
+        return puzzle_from_row(row) if row else None
+
     def record_attempt(
         self,
         puzzle_id: str,
@@ -65,8 +85,14 @@ class PuzzleRepository:
         mistakes: int,
         hints_used: int,
         elapsed_ms: int,
-    ) -> None:
-        run_bridge(
+    ):
+        """Grava a tentativa e devolve o rating resultante.
+
+        A ponte já calcula o Glicko-2 e responde com rating, ratingDelta e
+        deviation. Devolver isso aqui evita uma segunda ida ao banco só para
+        descobrir o que a tentativa mudou.
+        """
+        return run_bridge(
             self.db_path,
             "recordAttempt",
             puzzle_id,
@@ -75,6 +101,9 @@ class PuzzleRepository:
             hints_used,
             elapsed_ms,
         )
+
+    def rating(self):
+        return run_bridge(self.db_path, "rating")
 
     def attempt_stats(self):
         return run_bridge(self.db_path, "attemptStats")

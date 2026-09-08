@@ -58,6 +58,9 @@ class TacticSessionOptions:
     min_rating: int | None = 800
     max_rating: int | None = 1600
     min_popularity: int | None = 50
+    # Quando verdadeiro, min_rating e max_rating são ignorados: a faixa passa a
+    # ser derivada do rating do jogador a cada sorteio.
+    adaptive: bool = False
 
 
 def get_default_tactic_db_path() -> str | None:
@@ -99,6 +102,9 @@ def get_default_tactic_session_options() -> TacticSessionOptions:
         min_rating=defaults.min_rating,
         max_rating=defaults.max_rating,
         min_popularity=defaults.min_popularity,
+        # O nível escolhido é que decide se o sorteio é calibrado; a
+        # configuração guarda o identificador dele, não o comportamento.
+        adaptive=get_challenge_level(defaults.challenge_level).adaptive,
     )
 
 
@@ -174,6 +180,15 @@ class PuzzleSet:
             return self.repository.get(puzzle_id)
 
         theme_slugs = parse_theme_filter(self.options.theme)
+        if self.options.adaptive:
+            # No modo adaptativo a faixa de rating não vem da escolha do
+            # usuário: ela é derivada do rating dele a cada sorteio, do lado do
+            # banco, onde o rating vive.
+            return self.repository.adaptive_random_puzzle(
+                theme=theme_slugs or None,
+                min_popularity=self.options.min_popularity,
+                excluded_ids=self._seen_puzzle_ids,
+            )
         return self.repository.random_puzzle(
             min_rating=self.options.min_rating,
             max_rating=self.options.max_rating,
@@ -239,16 +254,23 @@ class PuzzleSet:
         mistakes: int,
         hints_used: int,
         elapsed_ms: int,
-    ) -> None:
+    ):
+        """Grava a tentativa e devolve o rating resultante, ou None sem banco."""
         if self.repository is None:
-            return
-        self.repository.record_attempt(
+            return None
+        return self.repository.record_attempt(
             puzzle_id=puzzle_id,
             solved=solved,
             mistakes=mistakes,
             hints_used=hints_used,
             elapsed_ms=elapsed_ms,
         )
+
+    def rating(self):
+        """O rating atual do jogador, ou None quando não há banco."""
+        if self.repository is None:
+            return None
+        return self.repository.rating()
 
     def attempt_stats(self):
         if self.repository is None:

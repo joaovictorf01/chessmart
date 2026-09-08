@@ -225,6 +225,84 @@ def cmd_random(
     return _row_to_dict(row)
 
 
+def _pick_in_window(
+    connection: sqlite3.Connection,
+    low: float,
+    high: float,
+    theme_filter: str | None,
+    min_popularity: int | None,
+    excluded_ids: list,
+):
+    """Sorteia um puzzle dentro da janela, ou None se ela estiver vazia."""
+    where, params = _build_puzzle_filters(
+        int(low), int(high), theme_filter, min_popularity, excluded_ids
+    )
+    total = connection.execute(
+        f"SELECT COUNT(*) FROM puzzles WHERE {where}", params
+    ).fetchone()[0]
+    if total == 0:
+        return None
+    offset = random.randrange(total)
+    return connection.execute(
+        f"SELECT * FROM puzzles WHERE {where} LIMIT 1 OFFSET ?",
+        [*params, offset],
+    ).fetchone()
+
+
+def cmd_adaptive_random(
+    connection: sqlite3.Connection,
+    theme_filter: str = "",
+    min_popularity: str = "",
+    excluded_ids_json: str = "[]",
+):
+    """Sorteia um puzzle calibrado pelo rating atual do jogador.
+
+    A janela é centrada um pouco ACIMA do rating -- um puzzle levemente além
+    do teu nível ensina mais do que um que você resolve no automático -- e a
+    largura dela acompanha o DESVIO: enquanto o sistema não te conhece, sorteia
+    largo (o que também é o jeito mais rápido de te conhecer); conforme a
+    confiança aumenta, a janela fecha em volta de você.
+
+    Se a janela vier vazia -- possível quando há filtro de tema estreito --,
+    ela é alargada em etapas, e no limite o rating é ignorado: é melhor um
+    puzzle fora da faixa ideal do que nenhum puzzle.
+    """
+    excluded_ids = json.loads(excluded_ids_json) if excluded_ids_json else []
+    popularity = int(min_popularity) if min_popularity else None
+    themes = theme_filter or None
+
+    player = _load_rating(connection)
+    # 2,5 desvios cobrem a faixa em que o jogador plausivelmente está. Os
+    # limites impedem os dois extremos ruins: janela estreita demais para achar
+    # puzzle, e larga a ponto de deixar de ser calibrada.
+    spread = max(120.0, min(2.5 * player.deviation, 700.0))
+    center = player.rating + 50.0
+
+    for multiplier in (1.0, 2.0, 4.0):
+        row = _pick_in_window(
+            connection,
+            center - spread * multiplier,
+            center + spread * multiplier,
+            themes,
+            popularity,
+            excluded_ids,
+        )
+        if row is not None:
+            result = _row_to_dict(row)
+            if result is not None:
+                result["playerRating"] = player.rounded()
+                result["expectedScore"] = round(
+                    glicko2.expected_score(
+                        player, float(row["rating"]), float(row["rating_deviation"])
+                    ),
+                    3,
+                )
+            return result
+
+    # Nada na vizinhança: cai para o sorteio sem restrição de rating.
+    return cmd_random(connection, "", "", theme_filter, min_popularity, excluded_ids_json)
+
+
 def cmd_record_attempt(
     connection: sqlite3.Connection,
     puzzle_id: str,
@@ -352,6 +430,7 @@ COMMANDS = {
     "attemptStats": cmd_attempt_stats,
     "themeCatalog": cmd_theme_catalog,
     "rating": cmd_rating,
+    "adaptiveRandom": cmd_adaptive_random,
 }
 
 

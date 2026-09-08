@@ -211,7 +211,9 @@ class TacticsOptionsDialog(gui.SettingsDialog):
         # Uma ponta sem limite é None, e interpolar None faria o leitor de tela
         # anunciar a palavra "None". Cada caso ganha a frase que descreve o que
         # o filtro realmente faz.
-        if resolved.min_rating is None and resolved.max_rating is None:
+        if resolved.adaptive:
+            rating_text = _("puzzles picked around your own tactics rating")
+        elif resolved.min_rating is None and resolved.max_rating is None:
             rating_text = _("puzzles of any rating")
         elif resolved.min_rating is None:
             rating_text = _("puzzles rated up to {max_rating}").format(
@@ -331,6 +333,9 @@ class TacticsOptionsDialog(gui.SettingsDialog):
             min_rating=None if puzzle_id else resolved.min_rating,
             max_rating=None if puzzle_id else resolved.max_rating,
             min_popularity=0 if puzzle_id else resolved.min_popularity,
+            # Pedir um puzzle pelo ID é pedir aquele puzzle: a calibração
+            # automática não tem o que fazer aí.
+            adaptive=False if puzzle_id else resolved.adaptive,
         )
 
     def onOk(self, event):
