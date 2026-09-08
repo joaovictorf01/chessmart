@@ -14,7 +14,7 @@ from gui import guiHelper
 
 from ..addon_config import get_tactics_defaults, save_tactics_defaults
 from ..i18n import _
-from ..puzzle_database import TacticSessionOptions, get_default_tactic_db_path
+from ..puzzle_database import TacticSessionOptions
 from ..theme_catalog import parse_theme_filter
 from ..trainer import (
     challenge_description,
@@ -54,7 +54,7 @@ class TacticsOptionsDialog(TacticsSetupMixin, gui.SettingsDialog):
         helper.addItem(intro_label)
 
         self._build_database_row(
-            helper, defaults.db_path or get_default_tactic_db_path() or ""
+            helper, self._default_database_value(defaults.db_path)
         )
 
         # Translators: Label for the field where a single puzzle id can be typed.

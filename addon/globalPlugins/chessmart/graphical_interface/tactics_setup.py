@@ -22,7 +22,7 @@ import gui
 from gui import guiHelper
 
 from ..i18n import _
-from ..puzzle_database import get_default_tactic_db_path
+from ..puzzle_database import get_default_tactic_db_path, usable_db_path
 from ..theme_catalog import (
     describe_theme_filter,
     format_theme_filter,
@@ -161,11 +161,24 @@ class TacticsSetupMixin:
         return self._challenge_levels[self.challengeChoice.GetSelection()].challenge_id
 
     def _resolved_db_path(self):
-        return (
-            self.databasePathTextCtrl.GetValue().strip()
-            or get_default_tactic_db_path()
-            or ""
-        )
+        """O banco que esta tela deve consultar, já validado.
+
+        Preenchido não é o mesmo que existente: o caminho pode ter sido salvo
+        meses atrás e o arquivo ter mudado de pasta. Sem esta checagem, o campo
+        entrega um caminho morto ao catálogo de temas e o usuário recebe "No
+        themes were found in the selected database" -- uma mensagem que culpa o
+        banco quando o problema é o caminho.
+        """
+        typed = self.databasePathTextCtrl.GetValue().strip()
+        return usable_db_path(typed) or get_default_tactic_db_path() or ""
+
+    def _default_database_value(self, saved_path):
+        """O que mostrar no campo do banco ao abrir a tela.
+
+        Um caminho salvo que não existe mais não deve ser oferecido como se
+        valesse: é preferível mostrar o banco que o add-on realmente encontrou.
+        """
+        return usable_db_path(saved_path) or get_default_tactic_db_path() or ""
 
     def _resolved_selection(self):
         return resolve_training_selection(
