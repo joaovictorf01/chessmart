@@ -9,6 +9,10 @@ from ..i18n import _
 from ..puzzle_database import TacticSessionOptions, get_default_tactic_db_path
 from ..theme_catalog import describe_theme_filter, format_theme_filter, load_theme_catalog, parse_theme_filter
 from ..trainer import (
+    challenge_description,
+    challenge_label,
+    preset_description,
+    preset_label,
     describe_rating_range,
     iter_challenge_levels,
     iter_trainer_presets,
@@ -69,7 +73,7 @@ class TacticsOptionsDialog(gui.SettingsDialog):
         self.trainerPresetChoice = wx.Choice(
             self,
             -1,
-            choices=[preset.label for preset in self._trainer_presets],
+            choices=[preset_label(preset) for preset in self._trainer_presets],
         )
         self._set_choice_by_id(
             self.trainerPresetChoice,
@@ -84,7 +88,7 @@ class TacticsOptionsDialog(gui.SettingsDialog):
         self.challengeChoice = wx.Choice(
             self,
             -1,
-            choices=[level.label for level in self._challenge_levels],
+            choices=[challenge_label(level) for level in self._challenge_levels],
         )
         self._set_choice_by_id(
             self.challengeChoice,
@@ -227,10 +231,10 @@ class TacticsOptionsDialog(gui.SettingsDialog):
         summary = _(
             "{plan}. {plan_desc}\n{challenge}. {challenge_desc}\n{theme_text}\nUses {rating_text} and minimum popularity {min_popularity}."
         ).format(
-            plan=resolved.preset.label,
-            plan_desc=resolved.preset.description,
-            challenge=resolved.challenge.label,
-            challenge_desc=resolved.challenge.description,
+            plan=preset_label(resolved.preset),
+            plan_desc=preset_description(resolved.preset),
+            challenge=challenge_label(resolved.challenge),
+            challenge_desc=challenge_description(resolved.challenge),
             theme_text=theme_text,
             rating_text=rating_text,
             min_popularity=resolved.min_popularity,

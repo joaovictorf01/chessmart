@@ -231,6 +231,124 @@ def uses_custom_themes(preset_id: str | None) -> bool:
     return get_trainer_preset(preset_id).uses_custom_themes
 
 
+def _preset_texts() -> dict[str, tuple[str, str]]:
+    """Rótulos e descrições dos planos, traduzidos no momento da chamada.
+
+    Por que uma função e não os campos da constante: `TRAINER_PRESETS` é
+    avaliada quando o módulo é importado. Se a tradução acontecesse ali, ela
+    ficaria congelada no idioma em que o NVDA estava naquele instante, e trocar
+    de idioma exigiria reiniciar. Aqui `_()` roda a cada chamada.
+
+    E por que os literais aparecem outra vez aqui: o xgettext extrai varrendo o
+    código atrás de literais dentro de `_()`. Uma chamada como `_(preset.label)`
+    não é extraível, porque o argumento não é literal -- a string nunca chegaria
+    ao arquivo do tradutor.
+
+    O inglês continua na constante e serve de reserva: se um plano novo entrar
+    sem linha aqui, ele aparece em inglês em vez de quebrar.
+    """
+    return {
+        "guidedBasics": (
+            # Translators: Name of the beginner training plan.
+            _("Guided basics"),
+            # Translators: Description of the beginner training plan.
+            _(
+                "Start with the most common tactical patterns. Pick an easier challenge level to keep the positions short."
+            ),
+        ),
+        "materialWins": (
+            # Translators: Name of the training plan about winning material.
+            _("Win material"),
+            # Translators: Description of the training plan about winning material.
+            _(
+                "Train forks, pins, skewers and defenders so you spot clean material gains."
+            ),
+        ),
+        "kingAttack": (
+            # Translators: Name of the training plan about attacking the king.
+            _("Attack the king"),
+            # Translators: Description of the training plan about attacking the king.
+            _("Focus on mating nets and direct attacking play."),
+        ),
+        "mixedPractice": (
+            # Translators: Name of the varied training plan.
+            _("Mixed practice"),
+            # Translators: Description of the varied training plan.
+            _(
+                "A broad spread across the tactical motif families: material, mating, sacrifice, defence and conversion."
+            ),
+        ),
+        "allThemes": (
+            # Translators: Name of the training plan that applies no theme filter.
+            _("All themes"),
+            # Translators: Description of the training plan that applies no theme filter.
+            _("No theme filter at all: the whole puzzle database is in play."),
+        ),
+        "customThemes": (
+            # Translators: Name of the training plan where the user picks the themes.
+            _("Custom themes"),
+            # Translators: Description of the training plan where the user picks the themes.
+            _("Choose the exact Lichess themes you want to include in the session."),
+        ),
+    }
+
+
+def _challenge_texts() -> dict[str, tuple[str, str]]:
+    """Rótulos e descrições dos níveis. Mesmo raciocínio de `_preset_texts`."""
+    return {
+        "veryAccessible": (
+            # Translators: Name of the easiest challenge level.
+            _("Very accessible"),
+            # Translators: Description of the easiest challenge level.
+            _("Favor shorter, cleaner and more popular examples."),
+        ),
+        "balanced": (
+            # Translators: Name of the middle challenge level.
+            _("Balanced"),
+            # Translators: Description of the middle challenge level.
+            _("A comfortable middle ground for daily training."),
+        ),
+        "stretch": (
+            # Translators: Name of the harder challenge level.
+            _("Stretch"),
+            # Translators: Description of the harder challenge level.
+            _("Push a bit higher and allow trickier positions."),
+        ),
+        "challenge": (
+            # Translators: Name of the hardest fixed challenge level.
+            _("Challenge"),
+            # Translators: Description of the hardest fixed challenge level.
+            _("Use a harder range with fewer popularity restrictions."),
+        ),
+        "adaptive": (
+            # Translators: Name of the challenge level that follows the user's rating.
+            _("Adaptive"),
+            # Translators: Description of the challenge level that follows the user's rating.
+            _(
+                "Follows your tactics rating: the difficulty tracks you as you improve."
+            ),
+        ),
+    }
+
+
+def preset_label(preset: TrainerPreset) -> str:
+    return _preset_texts().get(preset.preset_id, (preset.label, ""))[0] or preset.label
+
+
+def preset_description(preset: TrainerPreset) -> str:
+    texts = _preset_texts().get(preset.preset_id)
+    return texts[1] if texts else preset.description
+
+
+def challenge_label(level: ChallengeLevel) -> str:
+    return _challenge_texts().get(level.challenge_id, (level.label, ""))[0] or level.label
+
+
+def challenge_description(level: ChallengeLevel) -> str:
+    texts = _challenge_texts().get(level.challenge_id)
+    return texts[1] if texts else level.description
+
+
 def describe_rating_range(selection: ResolvedTrainingSelection) -> str:
     """A faixa de rating em palavras, para ser lida em voz alta.
 
