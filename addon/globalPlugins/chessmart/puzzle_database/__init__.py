@@ -65,6 +65,20 @@ def get_default_tactic_db_path() -> str | None:
     return None if db_path is None else str(db_path)
 
 
+def usable_db_path(candidate: str | None) -> str | None:
+    """Devolve `candidate` só se ele apontar para um arquivo que existe.
+
+    Um caminho guardado na configuração envelhece: o banco muda de pasta, o
+    disco sai da máquina, o usuário reinstala. Preencher não é o mesmo que
+    existir, e entregar um caminho morto ao SQLite estoura três camadas
+    abaixo com "unable to open database file", que não diz nada a quem lê.
+    Preferimos cair no caminho padrão, que é o que o usuário esperaria.
+    """
+    if candidate and Path(candidate).is_file():
+        return candidate
+    return None
+
+
 def _load_tactic_defaults():
     try:
         from ..addon_config import get_tactics_defaults
@@ -78,7 +92,7 @@ def get_default_tactic_session_options() -> TacticSessionOptions:
     if defaults is None:
         return TacticSessionOptions(db_path=get_default_tactic_db_path())
     return TacticSessionOptions(
-        db_path=defaults.db_path or get_default_tactic_db_path(),
+        db_path=usable_db_path(defaults.db_path) or get_default_tactic_db_path(),
         theme=defaults.theme,
         trainer_preset=defaults.trainer_preset,
         challenge_level=defaults.challenge_level,
@@ -130,7 +144,7 @@ class PuzzleSet:
 
     def __post_init__(self):
         default_options = get_default_tactic_session_options()
-        resolved_db_path = self.options.db_path or default_options.db_path
+        resolved_db_path = usable_db_path(self.options.db_path) or default_options.db_path
         self.db_path = None if not resolved_db_path else Path(resolved_db_path)
         self.repository = None if self.db_path is None else PuzzleRepository(self.db_path)
 
@@ -253,7 +267,7 @@ class RandomPuzzleSet(PuzzleSet):
         default_options = get_default_tactic_session_options()
         super().__init__(
             options=TacticSessionOptions(
-                db_path=db_path or default_options.db_path,
+                db_path=usable_db_path(db_path) or default_options.db_path,
                 puzzle_id="",
                 theme=default_options.theme,
                 trainer_preset=default_options.trainer_preset,

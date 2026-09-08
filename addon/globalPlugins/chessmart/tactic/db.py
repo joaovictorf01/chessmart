@@ -16,7 +16,6 @@ DEFAULT_DB_CANDIDATES = tuple(
     for candidate in (
         os.environ.get("CHESSMART_TACTIC_DB_PATH"),
         str(ADDON_DATA_DIRECTORY / "tactic.db"),
-        r"C:\projetos\tactic\data\tactic.db",
     )
     if candidate
 )
