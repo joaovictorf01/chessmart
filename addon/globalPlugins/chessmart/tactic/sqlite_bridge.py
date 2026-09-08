@@ -195,6 +195,47 @@ def cmd_get(connection: sqlite3.Connection, puzzle_id: str):
     return _row_to_dict(row)
 
 
+def _random_row(connection: sqlite3.Connection, where: str, params: list):
+    """Sorteia uma linha sem contar o conjunto inteiro.
+
+    O padrão COUNT(*) seguido de LIMIT 1 OFFSET n custa caro em tabela grande:
+    o COUNT percorre tudo e o OFFSET percorre de novo até a enésima linha. Com
+    filtro de tema é pior ainda, porque o LIKE não usa índice -- medido neste
+    banco, dava mais de 10 segundos por sorteio, com o NVDA mudo enquanto isso.
+
+    Aqui a ideia é outra: escolher um `rowid` ao acaso e pegar a PRIMEIRA linha
+    que casa dali para frente; se não houver nenhuma até o fim, procurar antes
+    do ponto escolhido. As duas consultas juntas cobrem a tabela exatamente uma
+    vez, então o pior caso (filtro que não casa com nada) é uma varredura, não
+    duas -- e o caso comum termina em algumas dezenas de linhas.
+
+    Ressalva honesta: isto não é uniforme. Uma linha que vem logo depois de uma
+    sequência longa de linhas que não casam tem chance maior de ser escolhida.
+    O viés é pequeno e o preço da uniformidade eram dez segundos de espera.
+    """
+    bounds = connection.execute("SELECT MIN(rowid), MAX(rowid) FROM puzzles").fetchone()
+    if bounds is None or bounds[0] is None:
+        return None
+    anchor = random.randint(bounds[0], bounds[1])
+    # NOT INDEXED é obrigatório aqui, e não é micro-otimização. Sem ele o
+    # SQLite prefere o índice de rating e percorre em ordem de rating, então
+    # "a primeira que casa" passa a ser sempre a de menor rating da faixa --
+    # medido: 20 sorteios seguidos devolveram exatamente o piso da janela.
+    # NOT INDEXED força a varredura pela ordem física da tabela, que é o que
+    # dá sentido à âncora sorteada. O rowid continua utilizável, porque é a
+    # chave da própria tabela e não um índice secundário.
+    row = connection.execute(
+        f"SELECT * FROM puzzles NOT INDEXED WHERE rowid >= ? AND {where} LIMIT 1",
+        [anchor, *params],
+    ).fetchone()
+    if row is not None:
+        return row
+    return connection.execute(
+        f"SELECT * FROM puzzles NOT INDEXED WHERE rowid < ? AND {where} LIMIT 1",
+        [anchor, *params],
+    ).fetchone()
+
+
 def cmd_random(
     connection: sqlite3.Connection,
     min_rating: str,
@@ -211,18 +252,7 @@ def cmd_random(
         int(min_popularity) if min_popularity else None,
         excluded_ids,
     )
-    total = connection.execute(
-        f"SELECT COUNT(*) FROM puzzles WHERE {where}",
-        params,
-    ).fetchone()[0]
-    if total == 0:
-        return None
-    offset = random.randrange(total)
-    row = connection.execute(
-        f"SELECT * FROM puzzles WHERE {where} LIMIT 1 OFFSET ?",
-        [*params, offset],
-    ).fetchone()
-    return _row_to_dict(row)
+    return _row_to_dict(_random_row(connection, where, params))
 
 
 def _pick_in_window(
@@ -237,16 +267,7 @@ def _pick_in_window(
     where, params = _build_puzzle_filters(
         int(low), int(high), theme_filter, min_popularity, excluded_ids
     )
-    total = connection.execute(
-        f"SELECT COUNT(*) FROM puzzles WHERE {where}", params
-    ).fetchone()[0]
-    if total == 0:
-        return None
-    offset = random.randrange(total)
-    return connection.execute(
-        f"SELECT * FROM puzzles WHERE {where} LIMIT 1 OFFSET ?",
-        [*params, offset],
-    ).fetchone()
+    return _random_row(connection, where, params)
 
 
 def cmd_adaptive_random(
