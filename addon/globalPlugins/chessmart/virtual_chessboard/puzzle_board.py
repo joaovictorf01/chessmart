@@ -391,7 +391,16 @@ class PuzzleChessboard(UserDrivenChessboard):
             reply in self.board.legal_moves,
             self._solution_index,
         )
-        focus_callback = functools.partial(self.set_focus_to_cell, self.board.king(self.prospective))
+        # A mudanca de foco precisa ser ADIADA para a fila de eventos, e nao
+        # chamada direto daqui. Chamada direto, ela roda no meio do
+        # processamento da fala: o evento de foco cancela a propria sequencia
+        # que estava sendo falada, e a descricao do lance do adversario nunca
+        # sai -- que era o bug. O pgn_player, que toca lances do mesmo jeito e
+        # sempre funcionou, ja usava este padrao.
+        king_square = self.board.king(self.prospective)
+        focus_callback = lambda: queueHandler.queueFunction(
+            queueHandler.eventQueue, self.set_focus_to_cell, king_square
+        )
         color_name = self.game_announcer.color_name(self.prospective)
         super().move_piece_and_check_game_status(
             reply,
