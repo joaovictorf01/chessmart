@@ -12,8 +12,14 @@ CONFIG_SPEC = {
     "tacticsTheme": 'string(default="")',
     "tacticsTrainerPreset": f'string(default="{DEFAULT_TRAINER_PRESET_ID}")',
     "tacticsChallengeLevel": f'string(default="{DEFAULT_CHALLENGE_ID}")',
-    "tacticsMinRating": "integer(default=800, min=0, max=4000)",
-    "tacticsMaxRating": "integer(default=1600, min=0, max=4000)",
+    # Texto, e não inteiro, porque None ("sem limite") é um valor legítimo destas
+    # pontas e o config do NVDA é validado por tipo: gravar None num campo
+    # `integer` escreve a palavra None no ini e faz a validação estourar depois,
+    # a cada troca de perfil de configuração. A string vazia diz "sem limite"
+    # sem mentir sobre o tipo, e é a mesma codificação que tactic/repository.py
+    # já usa para estes dois campos.
+    "tacticsMinRating": 'string(default="800")',
+    "tacticsMaxRating": 'string(default="1600")',
     "tacticsMinPopularity": "integer(default=50, min=0, max=1000000)",
 }
 
@@ -24,8 +30,8 @@ class TacticsDefaults:
     theme: str = ""
     trainer_preset: str = DEFAULT_TRAINER_PRESET_ID
     challenge_level: str = DEFAULT_CHALLENGE_ID
-    min_rating: int = 800
-    max_rating: int = 1600
+    min_rating: int | None = 800
+    max_rating: int | None = 1600
     min_popularity: int = 50
 
 
@@ -34,6 +40,27 @@ def ensure_config_spec():
         config.conf.spec[CONFIG_SECTION] = {}
     for key, value in CONFIG_SPEC.items():
         config.conf.spec[CONFIG_SECTION][key] = value
+
+
+def encode_rating(rating: int | None) -> str:
+    """Converte uma ponta da faixa para o texto que vai ao config do NVDA."""
+    return "" if rating is None else str(rating)
+
+
+def decode_rating(raw) -> int | None:
+    """Devolve uma ponta da faixa ao domínio, onde None é "sem limite".
+
+    Aceita também a palavra None: é o resto de quando estes campos eram
+    `integer` e o None do Python era gravado cru no ini. Tratá-la aqui faz um
+    config já escrito daquele jeito se consertar sozinho na primeira gravação.
+    """
+    text = str(raw).strip()
+    if not text or text == "None":
+        return None
+    try:
+        return int(text)
+    except ValueError:
+        return None
 
 
 def normalize_rating_range(min_rating: int | None, max_rating: int | None):
@@ -52,8 +79,8 @@ def get_tactics_defaults() -> TacticsDefaults:
     ensure_config_spec()
     addon_conf = config.conf[CONFIG_SECTION]
     min_rating, max_rating = normalize_rating_range(
-        addon_conf["tacticsMinRating"],
-        addon_conf["tacticsMaxRating"],
+        decode_rating(addon_conf["tacticsMinRating"]),
+        decode_rating(addon_conf["tacticsMaxRating"]),
     )
     return TacticsDefaults(
         db_path=addon_conf["tacticsDbPath"].strip(),
@@ -91,6 +118,6 @@ def save_tactics_defaults(
     addon_conf["tacticsTheme"] = (theme or "").strip()
     addon_conf["tacticsTrainerPreset"] = (trainer_preset or DEFAULT_TRAINER_PRESET_ID).strip()
     addon_conf["tacticsChallengeLevel"] = (challenge_level or DEFAULT_CHALLENGE_ID).strip()
-    addon_conf["tacticsMinRating"] = min_rating
-    addon_conf["tacticsMaxRating"] = max_rating
+    addon_conf["tacticsMinRating"] = encode_rating(min_rating)
+    addon_conf["tacticsMaxRating"] = encode_rating(max_rating)
     addon_conf["tacticsMinPopularity"] = min_popularity
