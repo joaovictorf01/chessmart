@@ -212,6 +212,10 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
     def script_announce_attackers(self, gesture):
         self.parent.announce_attackers(self.index)
 
+    @script(gesture="kb:m")
+    def script_announce_material(self, gesture):
+        self.parent.announce_material()
+
     @script(gesture="kb:f4")
     def script_score_sheet(self, gesture):
         if self.parent.score_sheet_menu:
@@ -640,6 +644,59 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
             ]
             spoken_commands.append(speech.commands.BreakCommand(350))
         speak_next(spoken_commands)
+
+    # Valores classicos. Bispo e cavalo valem o mesmo de proposito: contar os
+    # dois juntos e o que evita se perder quando houve troca de um pelo outro.
+    MATERIAL_VALUES = {
+        chess.QUEEN: 9,
+        chess.ROOK: 5,
+        chess.BISHOP: 3,
+        chess.KNIGHT: 3,
+        chess.PAWN: 1,
+    }
+
+    def announce_material(self):
+        """Conta o material pela foto do tabuleiro, tipo a tipo, e da o saldo.
+
+        Nada de historico de trocas: e o que esta no tabuleiro agora, do ponto
+        de vista de quem joga neste tabuleiro (brancas quando nao ha lado).
+        """
+        me = self.prospective if self.prospective is not None else chess.WHITE
+        them = not me
+
+        def count(piece_type, color):
+            return len(self.board.pieces(piece_type, color))
+
+        lines = [
+            ("queens", count(chess.QUEEN, me), count(chess.QUEEN, them)),
+            ("rooks", count(chess.ROOK, me), count(chess.ROOK, them)),
+            (
+                "minor pieces",
+                count(chess.BISHOP, me) + count(chess.KNIGHT, me),
+                count(chess.BISHOP, them) + count(chess.KNIGHT, them),
+            ),
+            ("pawns", count(chess.PAWN, me), count(chess.PAWN, them)),
+        ]
+        balance = sum(
+            value * (count(piece_type, me) - count(piece_type, them))
+            for piece_type, value in self.MATERIAL_VALUES.items()
+        )
+        spoken_commands = ["Material."]
+        for label, mine, theirs in lines:
+            spoken_commands.append(f"{label}: {mine} to {theirs}.")
+        if balance > 0:
+            spoken_commands.append(f"You are up {balance}.")
+        elif balance < 0:
+            spoken_commands.append(f"You are down {abs(balance)}.")
+        else:
+            spoken_commands.append("Material is even.")
+        my_bishops = count(chess.BISHOP, me)
+        their_bishops = count(chess.BISHOP, them)
+        if my_bishops == 2 and their_bishops < 2:
+            spoken_commands.append("You have the bishop pair.")
+        elif their_bishops == 2 and my_bishops < 2:
+            spoken_commands.append("Opponent has the bishop pair.")
+        speak_next(intersperse(spoken_commands, speech.commands.BreakCommand(150)))
 
     def announce_player_overview(self, color):
         square_set = itertools.chain(

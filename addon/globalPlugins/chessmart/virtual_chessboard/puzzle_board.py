@@ -127,10 +127,20 @@ class PuzzleChessboard(UserDrivenChessboard):
         self._mistakes = 0
         self._hints_used = 0
         self._attempt_recorded = False
+        # Regra do Lichess: o primeiro lance errado ja fecha a conta do rating
+        # como derrota. Terminar o puzzle depois disso, ou repeti-lo com
+        # Control+R, serve para aprender e nao mexe mais no numero. Estas duas
+        # flags guardam por que a tentativa atual nao esta valendo rating.
+        self._rating_settled_by_mistake = False
+        self._is_retry = False
+        # A sessao conta cada puzzle uma vez, no fim dele -- separado da
+        # gravacao no banco, que agora pode acontecer no meio.
+        self._session_counted = False
         self._solution_index = 0
         self._callback_token = 0
         self._session_attempts = 0
         self._session_solved = 0
+        self._session_solved_after_mistake = 0
         self._session_mistakes = 0
         self._session_hints = 0
         # Puzzle resolvido com Control+Enter conta como resolvido no banco, mas
@@ -240,6 +250,13 @@ class PuzzleChessboard(UserDrivenChessboard):
     def _load_current_puzzle(self, is_retry=False):
         self._callback_token += 1
         self._reset_attempt_state()
+        if is_retry:
+            # A primeira tentativa deste puzzle ja foi gravada (como falha ao
+            # pedir o restart, ou no primeiro lance errado). Repetir com a
+            # solucao na cabeca nao e medida de nada: nem rating, nem sessao.
+            self._is_retry = True
+            self._attempt_recorded = True
+            self._session_counted = True
         self.is_game_over = False
         self.board.reset()
         self.board.set_fen(self.puzzle.fen)
@@ -273,6 +290,9 @@ class PuzzleChessboard(UserDrivenChessboard):
         self._mistakes = 0
         self._hints_used = 0
         self._attempt_recorded = False
+        self._rating_settled_by_mistake = False
+        self._is_retry = False
+        self._session_counted = False
         self._solution_index = 0
         self._auto_solved = False
 
@@ -347,12 +367,22 @@ class PuzzleChessboard(UserDrivenChessboard):
 
         if move != expected_move:
             self._mistakes += 1
-            speak_next(
-                [
-                    speech.commands.WaveFileCommand(GameSound.invalid.filename),
-                    _("That move does not solve the tactic."),
-                ]
-            )
+            spoken = [
+                speech.commands.WaveFileCommand(GameSound.invalid.filename),
+                _("That move does not solve the tactic."),
+            ]
+            if self._mistakes == 1 and not self._attempt_recorded:
+                self._write_attempt(solved=False)
+                self._rating_settled_by_mistake = True
+                spoken.extend(
+                    [
+                        speech.commands.BreakCommand(120),
+                        _("Counted as a failure. Keep going to learn the solution."),
+                        speech.commands.BreakCommand(120),
+                        *self._rating_speech(),
+                    ]
+                )
+            speak_next(spoken)
             return
 
         follow_up = list(post_speech)
@@ -428,7 +458,7 @@ class PuzzleChessboard(UserDrivenChessboard):
                 speech.commands.BreakCommand(150),
                 _("Tactic solved."),
                 speech.commands.BreakCommand(120),
-                *self._rating_speech(),
+                *self._solved_rating_speech(),
                 _("Control+N loads another puzzle."),
                 speech.commands.BreakCommand(100),
                 _("Press Tab for training actions."),
@@ -436,6 +466,22 @@ class PuzzleChessboard(UserDrivenChessboard):
                 _("Control+R restarts this one."),
             ]
         )
+
+    def _solved_rating_speech(self):
+        """O que dizer de rating quando o puzzle termina resolvido.
+
+        So a tentativa limpa mexe no rating. Nas outras duas situacoes a conta
+        ja estava fechada antes, e dizer isso e melhor do que repetir o numero
+        da derrota logo depois de "Tactic solved".
+        """
+        if self._is_retry:
+            return [_("Retry: not rated."), speech.commands.BreakCommand(120)]
+        if self._rating_settled_by_mistake:
+            return [
+                _("Solved after a mistake: already counted as a failure."),
+                speech.commands.BreakCommand(120),
+            ]
+        return self._rating_speech()
 
     def _rating_speech(self):
         """A frase do rating para o anúncio, ou nada quando não há o que dizer.
@@ -654,6 +700,12 @@ class PuzzleChessboard(UserDrivenChessboard):
             attempts=self._session_attempts,
         )
         details = []
+        if self._session_solved_after_mistake:
+            details.append(
+                _("Solved after a mistake, not rated: {count}.").format(
+                    count=self._session_solved_after_mistake
+                )
+            )
         if self._session_revealed:
             details.append(
                 _("{count} of them revealed with Control+Enter.").format(
@@ -717,6 +769,14 @@ class PuzzleChessboard(UserDrivenChessboard):
         speak_next(spoken)
 
     def _record_current_attempt(self, solved: bool):
+        """Fecha a tentativa atual: banco (se ainda nao fechou) e sessao."""
+        if self.puzzle is None or self._attempt_started_at is None:
+            return
+        self._write_attempt(solved=solved)
+        self._count_session_attempt(solved=solved)
+
+    def _write_attempt(self, solved: bool):
+        """Grava no banco uma vez por tentativa. Quem chama decide o momento."""
         if self.puzzle is None or self._attempt_started_at is None or self._attempt_recorded:
             return
         elapsed_ms = max(1, int((time.monotonic() - self._attempt_started_at) * 1000))
@@ -734,10 +794,18 @@ class PuzzleChessboard(UserDrivenChessboard):
             log.exception("chessmart: falha ao gravar a tentativa")
             self._last_rating = None
         self._attempt_recorded = True
+
+    def _count_session_attempt(self, solved: bool):
+        """Soma o puzzle na sessao uma vez, quando ele termina."""
+        if self._session_counted:
+            return
+        self._session_counted = True
         self._session_attempts += 1
         self._session_mistakes += self._mistakes
         self._session_hints += self._hints_used
-        if solved:
+        if solved and self._rating_settled_by_mistake:
+            self._session_solved_after_mistake += 1
+        elif solved:
             self._session_solved += 1
             if self._auto_solved:
                 self._session_revealed += 1
