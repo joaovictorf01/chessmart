@@ -113,7 +113,7 @@ class ChessboardMenu(wx.Menu):
         except FileNotFoundError:
             gui.messageBox(
                 _(
-                    "The tactics database was not found. Use Browse in the tactics dialog to point at your puzzle database, or place it in the add-on's data folder as tactic.db."
+                    "The tactics database was not found. Use Browse in the tactics dialog to point at your puzzle database, or place it in the add-on's data folder as puzzles.db."
                 ),
                 _("Tactics Database Not Found"),
                 style=wx.ICON_ERROR,

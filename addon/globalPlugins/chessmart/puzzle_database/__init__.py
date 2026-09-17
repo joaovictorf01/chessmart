@@ -69,17 +69,23 @@ def get_default_tactic_db_path() -> str | None:
 
 
 def usable_db_path(candidate: str | None) -> str | None:
-    """Devolve `candidate` só se ele apontar para um arquivo que existe.
+    """Devolve `candidate` só se ele apontar para um banco de puzzles que existe.
 
     Um caminho guardado na configuração envelhece: o banco muda de pasta, o
     disco sai da máquina, o usuário reinstala. Preencher não é o mesmo que
     existir, e entregar um caminho morto ao SQLite estoura três camadas
     abaixo com "unable to open database file", que não diz nada a quem lê.
     Preferimos cair no caminho padrão, que é o que o usuário esperaria.
+
+    Existir também não basta: desde a divisão em dois arquivos, `tactic.db` é
+    o histórico, e uma configuração antiga ainda aponta para ele. Só vale o
+    arquivo que tem a tabela de puzzles.
     """
-    if candidate and Path(candidate).is_file():
-        return candidate
-    return None
+    if not candidate or not Path(candidate).is_file():
+        return None
+    from ..tactic.db import is_puzzles_database
+
+    return candidate if is_puzzles_database(Path(candidate)) else None
 
 
 def _load_tactic_defaults():

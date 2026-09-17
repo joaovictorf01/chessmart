@@ -8,9 +8,9 @@ import sqlite3
 import sys
 from pathlib import Path
 
-# Este arquivo é executado como script solto pelo run_bridge, e nesse caso o
-# import relativo não existe. Importado como parte do pacote, o absoluto é que
-# não vale. As duas formas cobrem os dois modos de uso.
+# Este arquivo é importado pelo add-on (tactic/db.py) e também pode rodar como
+# script solto, para testes na linha de comando. Importado como parte do pacote,
+# o relativo vale; solto, só o absoluto. As duas formas cobrem os dois usos.
 try:
     from . import glicko2
 except ImportError:
@@ -25,8 +25,7 @@ CREATE TABLE IF NOT EXISTS attempts (
   mistakes INTEGER NOT NULL,
   hints_used INTEGER NOT NULL,
   elapsed_ms INTEGER NOT NULL,
-  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (puzzle_id) REFERENCES puzzles(id)
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_attempts_puzzle_id ON attempts(puzzle_id);
@@ -83,13 +82,132 @@ def _migrate_attempts(connection: sqlite3.Connection) -> None:
             connection.execute(f"ALTER TABLE attempts ADD COLUMN {column} {column_type}")
 
 
-def connect(db_path: Path) -> sqlite3.Connection:
-    connection = sqlite3.connect(db_path)
+def has_puzzles_table(db_path: Path) -> bool:
+    """Diz se o arquivo tem a tabela `puzzles` do Lichess, isto é, se é um banco de puzzles."""
+    try:
+        connection = sqlite3.connect(_read_only_uri(db_path), uri=True)
+    except sqlite3.Error:
+        return False
+    try:
+        row = connection.execute(
+            "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'puzzles'"
+        ).fetchone()
+        return row is not None
+    except sqlite3.Error:
+        return False
+    finally:
+        connection.close()
+
+
+def _file_uri(db_path: Path, mode: str) -> str:
+    """URI de arquivo para o SQLite, com o modo de abertura.
+
+    Caminho absoluto com barras normais e prefixo `file:///`, que é a forma
+    que o SQLite documenta para Windows. `?` e `#` têm significado numa URI;
+    num caminho são raros, mas não impossíveis.
+    """
+    escaped = (
+        Path(db_path).resolve().as_posix().replace("%", "%25").replace("?", "%3F").replace("#", "%23")
+    )
+    return f"file:///{escaped.lstrip('/')}?mode={mode}"
+
+
+def _read_only_uri(db_path: Path) -> str:
+    return _file_uri(db_path, "ro")
+
+
+def connect(puzzles_path: Path, history_path: Path) -> sqlite3.Connection:
+    """Abre o histórico do jogador e anexa o banco de puzzles como `lichess`.
+
+    São dois arquivos de propósito: o de puzzles vem do Lichess e é trocado
+    inteiro a cada atualização; o histórico é do jogador e não pode ser tocado
+    por atualização nenhuma. O de puzzles é anexado só para leitura -- nada
+    aqui escreve nele, e assim fica garantido pelo SQLite, não por disciplina.
+    """
+    history_path.parent.mkdir(parents=True, exist_ok=True)
+    connection = sqlite3.connect(_file_uri(history_path, "rwc"), uri=True)
     connection.row_factory = sqlite3.Row
-    connection.execute("PRAGMA foreign_keys = ON")
     connection.executescript(SCHEMA)
     _migrate_attempts(connection)
+    try:
+        connection.execute("ATTACH DATABASE ? AS lichess", (_read_only_uri(puzzles_path),))
+        connection.execute("SELECT 1 FROM lichess.puzzles LIMIT 1")
+    except sqlite3.Error as error:
+        connection.close()
+        raise RuntimeError(f"not a puzzle database: {puzzles_path} ({error})") from error
     return connection
+
+
+HISTORY_TABLES = ("attempts", "player_rating", "rating_history")
+
+
+def split_legacy_database(legacy_path: Path, puzzles_path: Path, history_path: Path) -> Path:
+    """Divide um `tactic.db` antigo, que juntava puzzles e histórico num arquivo só.
+
+    Na ordem que deixa o pior caso recuperável:
+    1. o histórico é copiado para um arquivo novo e para um backup datado;
+    2. as tabelas de histórico são apagadas do arquivo antigo;
+    3. o antigo é renomeado para `puzzles.db` e o novo para `tactic.db`.
+    Se o passo 3 falhar no meio, o antigo (só puzzles) e o novo (só histórico)
+    ficam lado a lado com nomes provisórios, e nada se perdeu.
+    Devolve o caminho do backup.
+    """
+    if puzzles_path.exists():
+        raise FileExistsError(f"refusing to overwrite {puzzles_path}")
+    fresh_path = history_path.with_name(history_path.name + ".new")
+    backup_path = history_path.with_name(
+        f"{history_path.stem}.backup-{_today_stamp()}{history_path.suffix}"
+    )
+    for target in (fresh_path, backup_path):
+        if target.exists():
+            target.unlink()
+        _copy_history_tables(legacy_path, target)
+    legacy = sqlite3.connect(legacy_path)
+    try:
+        with legacy:
+            for table in HISTORY_TABLES:
+                legacy.execute(f"DROP TABLE IF EXISTS {table}")
+            placeholders = ", ".join("?" for _ in HISTORY_TABLES)
+            legacy.execute(
+                f"DELETE FROM sqlite_sequence WHERE name IN ({placeholders})", HISTORY_TABLES
+            )
+    finally:
+        legacy.close()
+    legacy_path.rename(puzzles_path)
+    fresh_path.rename(history_path)
+    return backup_path
+
+
+def _today_stamp() -> str:
+    import datetime
+
+    return datetime.date.today().strftime("%Y%m%d")
+
+
+def _copy_history_tables(legacy_path: Path, target_path: Path) -> None:
+    connection = sqlite3.connect(_file_uri(target_path, "rwc"), uri=True)
+    try:
+        connection.executescript(SCHEMA)
+        _migrate_attempts(connection)
+        connection.execute("ATTACH DATABASE ? AS old", (_read_only_uri(legacy_path),))
+        for table in HISTORY_TABLES:
+            exists = connection.execute(
+                "SELECT 1 FROM old.sqlite_master WHERE type = 'table' AND name = ?", (table,)
+            ).fetchone()
+            if exists is None:
+                continue
+            # Só as colunas que os dois lados conhecem: o antigo pode ter nascido
+            # antes de uma coluna existir, e o novo já nasce com todas.
+            old_columns = [row[1] for row in connection.execute(f"PRAGMA old.table_info({table})")]
+            new_columns = [row[1] for row in connection.execute(f"PRAGMA main.table_info({table})")]
+            columns = ", ".join(column for column in old_columns if column in new_columns)
+            connection.execute(
+                f"INSERT INTO main.{table} ({columns}) SELECT {columns} FROM old.{table}"
+            )
+        connection.commit()
+        connection.execute("DETACH DATABASE old")
+    finally:
+        connection.close()
 
 
 def _load_rating(connection: sqlite3.Connection) -> glicko2.Rating:
@@ -184,12 +302,12 @@ def _row_to_dict(row: sqlite3.Row | None):
 
 
 def cmd_count(connection: sqlite3.Connection):
-    return connection.execute("SELECT COUNT(*) FROM puzzles").fetchone()[0]
+    return connection.execute("SELECT COUNT(*) FROM lichess.puzzles").fetchone()[0]
 
 
 def cmd_get(connection: sqlite3.Connection, puzzle_id: str):
     row = connection.execute(
-        "SELECT * FROM puzzles WHERE id = ?",
+        "SELECT * FROM lichess.puzzles WHERE id = ?",
         (puzzle_id,),
     ).fetchone()
     return _row_to_dict(row)
@@ -213,7 +331,7 @@ def _random_row(connection: sqlite3.Connection, where: str, params: list):
     sequência longa de linhas que não casam tem chance maior de ser escolhida.
     O viés é pequeno e o preço da uniformidade eram dez segundos de espera.
     """
-    bounds = connection.execute("SELECT MIN(rowid), MAX(rowid) FROM puzzles").fetchone()
+    bounds = connection.execute("SELECT MIN(rowid), MAX(rowid) FROM lichess.puzzles").fetchone()
     if bounds is None or bounds[0] is None:
         return None
     anchor = random.randint(bounds[0], bounds[1])
@@ -225,13 +343,13 @@ def _random_row(connection: sqlite3.Connection, where: str, params: list):
     # dá sentido à âncora sorteada. O rowid continua utilizável, porque é a
     # chave da própria tabela e não um índice secundário.
     row = connection.execute(
-        f"SELECT * FROM puzzles NOT INDEXED WHERE rowid >= ? AND {where} LIMIT 1",
+        f"SELECT * FROM lichess.puzzles NOT INDEXED WHERE rowid >= ? AND {where} LIMIT 1",
         [anchor, *params],
     ).fetchone()
     if row is not None:
         return row
     return connection.execute(
-        f"SELECT * FROM puzzles NOT INDEXED WHERE rowid < ? AND {where} LIMIT 1",
+        f"SELECT * FROM lichess.puzzles NOT INDEXED WHERE rowid < ? AND {where} LIMIT 1",
         [anchor, *params],
     ).fetchone()
 
@@ -349,7 +467,7 @@ def cmd_record_attempt(
     attempt_id = cursor.lastrowid
 
     puzzle = connection.execute(
-        "SELECT rating, rating_deviation FROM puzzles WHERE id = ?", (puzzle_id,)
+        "SELECT rating, rating_deviation FROM lichess.puzzles WHERE id = ?", (puzzle_id,)
     ).fetchone()
 
     before = _load_rating(connection)
@@ -433,7 +551,7 @@ def cmd_attempt_stats(connection: sqlite3.Connection):
 
 def cmd_theme_catalog(connection: sqlite3.Connection):
     counts: Counter[str] = Counter()
-    cursor = connection.execute("SELECT themes FROM puzzles")
+    cursor = connection.execute("SELECT themes FROM lichess.puzzles")
     for (themes,) in cursor:
         for slug in (themes or "").split():
             counts[slug] += 1
@@ -456,16 +574,21 @@ COMMANDS = {
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) < 3:
-        raise SystemExit("usage: sqlite_bridge.py <db_path> <command> [args...]")
-    db_path = Path(argv[1])
-    command = argv[2]
-    args = argv[3:]
+    if len(argv) < 4:
+        raise SystemExit("usage: sqlite_bridge.py <puzzles_db> <history_db> <command> [args...]")
+    puzzles_path = Path(argv[1])
+    history_path = Path(argv[2])
+    command = argv[3]
+    args = argv[4:]
     handler = COMMANDS.get(command)
     if handler is None:
         raise SystemExit(f"unknown command: {command}")
-    with connect(db_path) as connection:
-        result = handler(connection, *args)
+    connection = connect(puzzles_path, history_path)
+    try:
+        with connection:
+            result = handler(connection, *args)
+    finally:
+        connection.close()
     sys.stdout.write(json.dumps(result, ensure_ascii=False))
     return 0
 
