@@ -2,7 +2,7 @@
 
 
 import abc
-from .helpers import import_bundled
+from .paths import import_bundled
 from .i18n import _
 from .ibca_notation import (
 	IBCA_COLOR_NAMES,

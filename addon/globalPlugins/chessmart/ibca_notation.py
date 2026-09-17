@@ -1,7 +1,7 @@
 # coding: utf-8
 
 
-from .helpers import import_bundled
+from .paths import import_bundled
 
 with import_bundled():
 	import chess

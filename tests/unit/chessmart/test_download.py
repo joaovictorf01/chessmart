@@ -139,7 +139,9 @@ class TestPartsDownload(unittest.TestCase):
 	def test_parts_are_joined_and_the_whole_is_verified(self):
 		progress = []
 		target = dl.download_tier(
-			self.tier, self.work / "p.db", progress=lambda d, t: progress.append((d, t))
+			self.tier,
+			self.work / "p.db",
+			progress=lambda d, t: progress.append((d, t)),
 		)
 		self.assertEqual(target.read_bytes(), self.payload)
 		self.assertEqual(progress[-1], (self.tier.download_bytes, self.tier.download_bytes))

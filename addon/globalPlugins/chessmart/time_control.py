@@ -5,7 +5,7 @@ import typing as t
 from .i18n import _
 import re
 import dataclasses
-from .helpers import import_bundled
+from .paths import import_bundled
 
 
 with import_bundled():

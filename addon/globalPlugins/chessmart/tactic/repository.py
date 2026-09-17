@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 """A fachada que o resto do add-on usa para falar com o banco.
 

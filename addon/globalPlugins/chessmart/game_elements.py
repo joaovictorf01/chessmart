@@ -5,7 +5,7 @@ import dataclasses
 import random
 from utils.displayString import DisplayStringIntEnum
 from .i18n import _
-from .helpers import import_bundled
+from .paths import import_bundled
 from .time_control import NULL_TIME_CONTROL, ChessTimeControl
 
 

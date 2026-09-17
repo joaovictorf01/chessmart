@@ -37,7 +37,7 @@ THEME_TEXTS: dict[str, tuple[str, str]] = {
 	"anastasiaMate": (
 		N_("Anastasia's mate"),
 		N_(
-			"A knight and a rook or queen trap the king between the edge of the board and one of its own pieces."
+			"A knight and a rook or queen trap the king between the edge of the board and one of its own pieces.",
 		),
 	),
 	# Translators: Name of a puzzle theme.
@@ -51,7 +51,7 @@ THEME_TEXTS: dict[str, tuple[str, str]] = {
 	"attraction": (
 		N_("Attraction"),
 		N_(
-			"A sacrifice or exchange lures an enemy piece, often the king, onto a square where it can be hit."
+			"A sacrifice or exchange lures an enemy piece, often the king, onto a square where it can be hit.",
 		),
 	),
 	# Translators: Name of a puzzle theme.
@@ -122,7 +122,7 @@ THEME_TEXTS: dict[str, tuple[str, str]] = {
 	"dovetailMate": (
 		N_("Dovetail mate"),
 		N_(
-			"A queen next to the king mates it, with the two escape squares behind blocked by its own pieces."
+			"A queen next to the king mates it, with the two escape squares behind blocked by its own pieces.",
 		),
 	),
 	# Translators: Name of a puzzle theme.
@@ -133,7 +133,7 @@ THEME_TEXTS: dict[str, tuple[str, str]] = {
 	"epauletteMate": (
 		N_("Epaulette mate"),
 		N_(
-			"The king's two sideways escape squares are taken by its own pieces, and the queen mates from the front."
+			"The king's two sideways escape squares are taken by its own pieces, and the queen mates from the front.",
 		),
 	),
 	# Translators: Name of a puzzle theme.
@@ -258,7 +258,7 @@ THEME_TEXTS: dict[str, tuple[str, str]] = {
 	"swallowstailMate": (
 		N_("Swallow's tail mate"),
 		N_(
-			"A queen mates the king, whose two diagonal escape squares behind it are blocked by its own pieces."
+			"A queen mates the king, whose two diagonal escape squares behind it are blocked by its own pieces.",
 		),
 	),
 	# Translators: Name of a puzzle theme.

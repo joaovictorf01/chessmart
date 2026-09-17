@@ -7,7 +7,7 @@ import gui
 from gui import guiHelper
 from logHandler import log
 from ..chessboard import GameInfo
-from ..helpers import import_bundled
+from ..paths import import_bundled
 from ..i18n import _
 from .components import EnumRadioBox, EnumChoice, AsyncSnakDialog
 from ..game_elements import PlayMode, TimeControl, ChessVariant, PlayerColor

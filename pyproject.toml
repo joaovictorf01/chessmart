@@ -124,9 +124,15 @@ exclude = [
 	"site_scons",
 	".github/scripts",
 	"tests",
-	# Codigo herdado do blindpandas/chessmart e bibliotecas embarcadas: fora da checagem estrita por ora.
+	# Bibliotecas embarcadas de terceiros: nunca.
 	"addon/globalPlugins/chessmart/lib",
-	"addon/globalPlugins/chessmart",
+	# O codigo que depende do NVDA (wx, speech, NVDAObjects) fica de fora por enquanto: os stubs
+	# do NVDA nao estao no ambiente. Entra so o pacote tactic/, que e Python puro, em modo basic
+	# (comentario `# pyright: basic` em cada arquivo).
+	"addon/globalPlugins/chessmart/*.py",
+	"addon/globalPlugins/chessmart/graphical_interface",
+	"addon/globalPlugins/chessmart/internet_chess",
+	"addon/globalPlugins/chessmart/virtual_chessboard",
 	"tools",
 	# When excluding concrete paths relative to a directory,
 	# not matching multiple folders by name e.g. `__pycache__`,

@@ -2,7 +2,7 @@
 
 from ...algebraic_type import AlgebraicType, Variant
 from ...time_control import ChessTimeControl
-from ...helpers import import_bundled
+from ...paths import import_bundled
 from .client import InternetGameInfo
 
 

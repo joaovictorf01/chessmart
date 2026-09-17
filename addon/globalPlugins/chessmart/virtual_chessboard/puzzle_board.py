@@ -14,7 +14,8 @@ import wx
 from logHandler import log
 from scriptHandler import getLastScriptRepeatCount, script
 
-from ..helpers import GameSound, speak_next
+from ..sounds import GameSound
+from ..speaking import speak_next
 from ..i18n import _
 from ..tactic.models import AttemptResult
 from ..training_session import PuzzleInfo, TrainingSession

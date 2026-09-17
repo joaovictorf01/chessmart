@@ -1,9 +1,11 @@
 # coding: utf-8
 
-import math
+import bisect
+import dataclasses
+import enum
 import functools
 import itertools
-import bisect
+import math
 import wx
 import inputCore
 import globalVars
@@ -26,7 +28,9 @@ from ..spoken_messages import standard_game_announcer, ibca_game_announcer, spok
 from ..i18n import _
 from ..notation import DESCRIPTIVE, render_san, render_square
 from ..addon_config import get_move_notation
-from ..helpers import import_bundled, intersperse, GameSound, speak_next, Color
+from ..paths import import_bundled
+from ..sounds import GameSound
+from ..speaking import intersperse, speak_next
 from ..concurrency import call_threaded
 from ..signals import (
 	move_completed_signal,
@@ -40,6 +44,74 @@ with import_bundled():
 	import chess
 	import chess.pgn
 	import chess.svg
+
+
+class Color(enum.Enum):
+	"""Cores do destaque desenhado no tabuleiro (a seta sobre a casa focada)."""
+
+	Red = "#96D454"
+	Blue = "#0000FF"
+	Green = "#00B050"
+	Yellow = "#FFFF00"
+	Purple = "#953553"
+	DarkGray = "#3C3C3C"
+
+
+@dataclasses.dataclass(frozen=True)
+class PlayedMove:
+	"""Tudo o que se precisa saber de um lance para descrevê-lo em voz alta.
+
+	Capturado ANTES de o lance entrar no tabuleiro, porque depois dele a
+	posição já é outra: a peça capturada sumiu, o SAN não se calcula mais
+	(a desambiguação de "Ngf3" depende das peças que podiam ir à mesma casa) e
+	o roque já moveu a torre.
+	"""
+
+	move: chess.Move
+	mover: chess.Color
+	moved_piece: chess.Piece | None
+	captured_piece: chess.Piece | None
+	is_castling: bool
+	is_kingside_castling: bool
+	is_en_passant: bool
+	san: str
+
+	@classmethod
+	def capture(cls, board: chess.Board, move: chess.Move) -> "PlayedMove":
+		is_castling = board.is_castling(move)
+		is_en_passant = board.is_en_passant(move)
+		if is_en_passant:
+			# O peão capturado não está na casa de destino, e sim atrás dela.
+			captured = board.piece_at(move.to_square - 8)
+		else:
+			captured = board.piece_at(move.to_square)
+		return cls(
+			move=move,
+			mover=board.turn,
+			moved_piece=board.piece_at(move.from_square),
+			captured_piece=captured,
+			is_castling=is_castling,
+			is_kingside_castling=is_castling and board.is_kingside_castling(move),
+			is_en_passant=is_en_passant,
+			san=board.san(move),
+		)
+
+	@property
+	def is_capture(self) -> bool:
+		return self.captured_piece is not None
+
+	@property
+	def sound(self) -> GameSound:
+		"""O som que anuncia o tipo do lance."""
+		if self.move.promotion is not None:
+			return GameSound.promotion
+		if self.is_castling:
+			return GameSound.castling
+		if self.move.drop:
+			return GameSound.drop_move
+		if self.is_capture:
+			return GameSound.en_passant if self.is_en_passant else GameSound.capture
+		return GameSound.drop_piece
 
 
 class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
@@ -454,31 +526,11 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 				],
 			)
 			return
-		move_maker = self.board.turn
-		old_piece_at_from_square = self.board.piece_at(move.from_square)
-		old_piece_at_target_square = self.board.piece_at(move.to_square)
-		is_castling = self.board.is_castling(move)
-		is_king_side_castling = False if not is_castling else self.board.is_kingside_castling(move)
-		is_en_passant = self.board.is_en_passant(move)
-		if is_en_passant:
-			old_piece_at_target_square = self.board.piece_at(move.to_square - 8)
-		# O SAN só existe antes do lance: depende da posição e das peças que
-		# podiam ir à mesma casa (a desambiguação de "Ngf3").
-		san_text = self.board.san(move)
+		played = PlayedMove.capture(self.board, move)
+		move_maker = played.mover
 		self.board.push(move)
 		self.time_control.time_move(not self.board.turn, total_moves=len(self.board.move_stack))
-		desc_generator = tuple(
-			self._get_move_description(
-				move,
-				move_maker,
-				old_piece_at_target_square,
-				old_piece_at_from_square,
-				is_castling,
-				is_king_side_castling,
-				is_en_passant,
-				san_text,
-			),
-		)
+		desc_generator = tuple(self._describe_move(played))
 		self.score_sheet_menu.add_item(" ".join(i for i in desc_generator if type(i) is str))
 		spoken_commands = [desc_generator]
 		spoken_commands.append(pre_speech)
@@ -523,93 +575,57 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 		self.dialog.set_board_image(lastmove=move)
 		move_completed_signal.send(self, move=move, move_maker=move_maker)
 
-	def _get_move_description(
-		self,
-		move,
-		move_maker,
-		old_piece_at_target_square,
-		old_piece_at_from_square,
-		is_castling,
-		is_king_side_castling,
-		is_en_passant,
-		san_text="",
-	):
+	def _describe_move(self, played: PlayedMove):
+		"""A sequência falada de um lance já jogado: som do tipo do lance e o texto."""
+		move = played.move
 		style = get_move_notation()
-		if style != DESCRIPTIVE and san_text:
+		if style != DESCRIPTIVE and played.san:
 			# Estilo curto (SAN, UCI, anna...): o som do tipo de lance continua,
 			# e o texto vem de uma só vez, como o Lichess fala.
-			if move.promotion is not None:
-				sound = GameSound.promotion
-			elif is_castling:
-				sound = GameSound.castling
-			elif move.drop:
-				sound = GameSound.drop_move
-			elif old_piece_at_target_square is not None:
-				sound = GameSound.en_passant if is_en_passant else GameSound.capture
-			else:
-				sound = GameSound.drop_piece
-			yield speech.commands.WaveFileCommand(sound.filename)
+			yield speech.commands.WaveFileCommand(played.sound.filename)
 			yield speech.commands.BreakCommand(150)
-			yield render_san(san_text, move.uci(), style)
+			yield render_san(played.san, move.uci(), style)
 			return
 		if move.promotion is not None:
-			yield from [
-				speech.commands.WaveFileCommand(GameSound.promotion.filename),
-				speech.commands.BreakCommand(300),
-			]
+			yield speech.commands.WaveFileCommand(GameSound.promotion.filename)
+			yield speech.commands.BreakCommand(300)
 			yield from intersperse(
-				self.game_announcer.promotion_move(move, move_maker=move_maker),
+				self.game_announcer.promotion_move(move, move_maker=played.mover),
 				speech.commands.BreakCommand(200),
 			)
 			return
-		if not is_castling:
-			yield from self._get_move_message(move, move_maker, old_piece_at_target_square, is_en_passant)
-		else:
-			yield from (
-				speech.commands.WaveFileCommand(GameSound.castling.filename),
-				speech.commands.BreakCommand(250),
-			)
+		if played.is_castling:
+			yield speech.commands.WaveFileCommand(GameSound.castling.filename)
+			yield speech.commands.BreakCommand(250)
 			yield from intersperse(
-				self.game_announcer.castling_move(move_maker, is_king_side_castling),
+				self.game_announcer.castling_move(played.mover, played.is_kingside_castling),
 				speech.commands.BreakCommand(200),
 			)
-
-	def _get_move_message(self, move, move_maker, old_piece_at_target_square, is_en_passant):
+			return
+		# Depois do push a peça movida está na casa de destino (já promovida, se for o caso).
 		moved_piece = self.board.piece_at(move.to_square)
 		if move.drop:
 			yield speech.commands.WaveFileCommand(GameSound.drop_move.filename)
 			yield from intersperse(
-				self.game_announcer.drop_move(move_maker, move=move),
+				self.game_announcer.drop_move(played.mover, move=move),
 				speech.commands.BreakCommand(200),
 			)
 			yield speech.commands.BreakCommand(300)
-		if old_piece_at_target_square is not None:
-			capture_sound = GameSound.capture if not is_en_passant else GameSound.en_passant
-			spoken_commands = [
-				speech.commands.WaveFileCommand(capture_sound.filename),
-			]
-			spoken_commands += intersperse(
-				self.game_announcer.capture_move(
-					move,
-					moved_piece,
-					old_piece_at_target_square,
-				),
+		if played.is_capture:
+			yield speech.commands.WaveFileCommand(played.sound.filename)
+			yield from intersperse(
+				self.game_announcer.capture_move(move, moved_piece, played.captured_piece),
 				speech.commands.BreakCommand(200),
 			)
-			if is_en_passant:
+			if played.is_en_passant:
 				# Translators: Spoken after an en passant capture.
-				spoken_commands.append(_("en passant"))
-			yield from spoken_commands
-		else:
-			yield speech.commands.WaveFileCommand(GameSound.drop_piece.filename)
-			yield from intersperse(
-				self.game_announcer.normal_move(
-					move,
-					moved_piece,
-					move_maker=move_maker,
-				),
-				speech.commands.BreakCommand(50),
-			)
+				yield _("en passant")
+			return
+		yield speech.commands.WaveFileCommand(GameSound.drop_piece.filename)
+		yield from intersperse(
+			self.game_announcer.normal_move(move, moved_piece, move_maker=played.mover),
+			speech.commands.BreakCommand(50),
+		)
 
 	def jump_to_piece(self, piece_type, piece_color):
 		target_squares = tuple(self.board.pieces(piece_type, piece_color))

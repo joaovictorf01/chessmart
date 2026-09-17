@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 """Download e atualização do banco de puzzles.
 
 O banco é publicado como asset da release fixa `puzzles-latest` do repositório,

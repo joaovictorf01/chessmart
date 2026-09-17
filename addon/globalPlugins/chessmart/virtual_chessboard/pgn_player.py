@@ -6,7 +6,7 @@ import queueHandler
 import ui
 import speech
 from scriptHandler import script
-from ..helpers import import_bundled
+from ..paths import import_bundled
 from ..i18n import _
 from .base import BaseVirtualChessboard, BaseChessboardCell
 

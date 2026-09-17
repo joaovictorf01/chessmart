@@ -115,6 +115,19 @@ The interface is in English and Brazilian Portuguese. Translations live in `addo
 
 The repository follows the [NVDA add-on template](https://github.com/nvaccess/addonTemplate): `uv sync` then `uv run scons` builds `chessmart-<version>.nvda-addon`; pushing a `v*` tag builds and publishes a GitHub release. `tools/build_puzzles.py` regenerates the puzzle databases from the Lichess CSV, and `.github/workflows/puzzles.yml` does it monthly.
 
+### Where things live
+
+Everything is under `addon/globalPlugins/chessmart/`. Read it in this order:
+
+* `tactic/` — the data layer, pure Python with no NVDA imports. `store.py` talks to the two SQLite files (`puzzles.db`, the Lichess base; `tactic.db`, the player's history) and returns the dataclasses in `models.py`; `glicko2.py` is the rating maths; `repository.py` is the facade the rest of the add-on calls; `download.py` fetches the database. This package is type-checked with pyright and covered by unit tests.
+* `trainer.py`, `theme_names.py`, `theme_catalog.py` — the rules: training plans, challenge levels, the name and description of every Lichess theme. Also pure Python.
+* `training_session.py` — one training session: the options the user chose (`TrainingOptions`) and the puzzle sequence (`TrainingSession`), with prefetch of the next puzzle.
+* `virtual_chessboard/` — the boards the screen reader user navigates: `base.py` (squares, moves, speech), `user_driven.py` (drag and drop of pieces), `user_engine.py` (against Stockfish), `user_user.py`, `internet_chessboard.py` (Lichess), `pgn_player.py`, `puzzle_board.py` (the trainer).
+* `graphical_interface/` — the wx dialogs: new game, tactics session, settings, download.
+* `chessboard.py` is the wx window that hosts a board; `__init__.py` is the NVDA plugin and menu; `addon_config.py`, `notation.py`, `spoken_messages.py`, `signals.py`, `concurrency.py`, `paths.py`, `sounds.py` and `speaking.py` are the small shared pieces their names say.
+
+Tests run with `uv run python -m unittest discover -s tests`; they stub the NVDA modules they need and never touch the user's history. User-visible text goes through `_()` (or `N_()` for constants translated later) with a `# Translators:` comment, and `py -3 tools/i18n.py update pt_BR` refreshes the catalog.
+
 ## Credits
 
 * [Musharraf Omer](https://github.com/mush42) — the original Chessmart: board, engines, variants, PGN replay.

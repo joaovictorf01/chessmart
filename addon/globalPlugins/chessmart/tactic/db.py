@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 from __future__ import annotations
 
@@ -20,7 +21,7 @@ def _user_data_directory() -> Path:
 	(testes, ferramentas) é `data/` ao lado do código, como sempre foi.
 	"""
 	try:
-		import globalVars
+		import globalVars  # pyright: ignore[reportMissingImports] - módulo do NVDA
 
 		config_path = globalVars.appArgs.configPath
 	except (ImportError, AttributeError):
@@ -77,7 +78,7 @@ def _ensure_sqlite3_importable() -> None:
 
 def _log(message: str) -> None:
 	try:
-		from logHandler import log
+		from logHandler import log  # pyright: ignore[reportMissingImports] - módulo do NVDA
 	except ImportError:
 		print(message, file=sys.stderr)
 	else:

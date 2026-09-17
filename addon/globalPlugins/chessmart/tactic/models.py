@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 """Os valores que circulam entre o banco de puzzles e o resto do add-on.
 

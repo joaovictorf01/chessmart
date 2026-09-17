@@ -10,7 +10,7 @@ import ui
 import queueHandler
 import winUser
 from logHandler import log
-from .helpers import import_bundled
+from .paths import import_bundled
 from .i18n import _
 
 

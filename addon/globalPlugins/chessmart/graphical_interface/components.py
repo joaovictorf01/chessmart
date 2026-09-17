@@ -5,7 +5,7 @@ import contextlib
 from concurrent.futures import Future
 import wx
 import gui
-from ..helpers import import_bundled
+from ..paths import import_bundled
 from ..i18n import _
 
 

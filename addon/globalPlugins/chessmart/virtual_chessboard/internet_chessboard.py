@@ -10,7 +10,9 @@ import eventHandler
 import speech.commands
 from scriptHandler import script
 from logHandler import log
-from ..helpers import import_bundled, speak_next, GameSound
+from ..paths import import_bundled
+from ..sounds import GameSound
+from ..speaking import speak_next
 from ..i18n import _
 from .ui_components import SimpleList
 from .user_driven import UserDrivenChessboard, UserDrivenCell
@@ -182,7 +184,12 @@ class InternetChessboard(UserDrivenChessboard):
 				black_rating=info.black_rating,
 			),
 		)
-		self.dialog.set_time_control(info.time_control, True)
+		# O relógio da partida online é o do servidor: cada `clock_tick` chega
+		# com o tempo restante dos dois lados, e `on_clock_tick` troca o controle
+		# inteiro. Aqui só se adota o inicial; nada é iniciado localmente, senão
+		# o tempo seria contado duas vezes. (Antes isto chamava um método que a
+		# janela nunca teve, e o início de toda partida online estourava no log.)
+		self.time_control = info.time_control
 
 	def on_game_checkmate(self, event):
 		print(f"Checkmate: winner is {event.winner}")

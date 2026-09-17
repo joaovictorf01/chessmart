@@ -155,7 +155,8 @@ class TestHistory(StoreTestCase):
 		self.assertEqual(summary.rating, loss.rating)
 		self.assertEqual(summary.rated_attempts, 2)
 		self.assertEqual(
-			self.repository.attempt_stats(), AttemptStats(total=2, solved=1, mistakes=1, hints_used=2)
+			self.repository.attempt_stats(),
+			AttemptStats(total=2, solved=1, mistakes=1, hints_used=2),
 		)
 
 	def test_unknown_puzzle_is_logged_but_not_rated(self):

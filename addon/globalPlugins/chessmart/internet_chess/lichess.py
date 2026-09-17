@@ -6,7 +6,8 @@ import os
 import tones
 from logHandler import log
 from ..concurrency import ASYNCIO_EVENT_LOOP
-from ..helpers import import_bundled, LIB_DIRECTORY
+from ..i18n import _
+from ..paths import LIB_DIRECTORY, import_bundled
 from ..signals import chessboard_signals
 from ..time_control import ChessTimeControl
 from ..concurrency import asyncio_coroutine_to_concurrent_future
@@ -237,7 +238,8 @@ class LichessBoardClient(InternetChessBoardClient):
 
 	def on_game_finish(self, sender):
 		self.close()
-		self.board.game_over("Game Finished")
+		# Translators: Window title when the online game finished on the server.
+		self.board.game_over(_("Game Finished"))
 
 	@asyncio_coroutine_to_concurrent_future
 	async def abort_game(self):

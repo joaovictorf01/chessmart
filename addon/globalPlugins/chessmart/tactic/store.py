@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 """Acesso ao banco de puzzles e ao histórico do jogador, em SQLite.
 

@@ -11,7 +11,7 @@ import eventHandler
 from contextlib import suppress
 from NVDAObjects import NVDAObject
 from scriptHandler import script
-from ..helpers import GameSound
+from ..sounds import GameSound
 
 
 class KeyboardNavigableNVDAObjectMixin:

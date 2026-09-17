@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 from .db import DEFAULT_DB_CANDIDATES, resolve_default_db_path
 from .models import AttemptResult, AttemptStats, Puzzle, PuzzleFilters, RatingSummary

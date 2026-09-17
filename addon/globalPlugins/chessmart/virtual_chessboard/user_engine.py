@@ -6,7 +6,7 @@ import subprocess
 import wx
 import queueHandler
 from logHandler import log
-from ..helpers import import_bundled, BIN_DIRECTORY
+from ..paths import BIN_DIRECTORY, import_bundled
 from ..i18n import _
 from ..signals import move_completed_signal, game_started_signal, game_over_signal
 from ..concurrency import call_threaded

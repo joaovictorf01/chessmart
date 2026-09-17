@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 """Glicko-2 para o treinador de táticas.
 

@@ -12,10 +12,12 @@ from .ui_components import (
 	MenuObject,
 	MenuItemObject,
 )
-from ..helpers import import_bundled, GameSound, Color, speak_next
+from ..paths import import_bundled
+from ..sounds import GameSound
+from ..speaking import speak_next
 from ..i18n import _
 from ..spoken_messages import spoken_piece_name
-from .base import BaseChessboardCell, BaseVirtualChessboard
+from .base import BaseChessboardCell, BaseVirtualChessboard, Color
 from .ui_components import SimpleList
 
 

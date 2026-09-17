@@ -14,7 +14,7 @@ import dataclasses
 from concurrent.futures import Future
 from pathlib import Path
 
-from .helpers import import_bundled
+from .paths import import_bundled
 from .i18n import _
 from .tactic.db import is_puzzles_database, resolve_default_db_path
 from .tactic.models import AttemptResult, AttemptStats, Puzzle, PuzzleFilters, RatingSummary
@@ -139,12 +139,13 @@ def default_training_options() -> TrainingOptions:
 
 
 class TrainingSession:
-	def __init__(self, options: TrainingOptions):
+	def __init__(self, options: TrainingOptions, history_path: Path | None = None):
+		"""`history_path` só existe para os testes não tocarem o histórico do usuário."""
 		self.options = options
 		self.selection = options.selection
 		resolved_db_path = usable_db_path(options.db_path) or default_db_path()
 		self.db_path = None if not resolved_db_path else Path(resolved_db_path)
-		self.repository = None if self.db_path is None else PuzzleRepository(self.db_path)
+		self.repository = None if self.db_path is None else PuzzleRepository(self.db_path, history_path)
 		self._served = 0
 		self._seen_ids: list[str] = []
 		# O próximo puzzle, já sorteado e convertido numa thread enquanto o
@@ -246,12 +247,12 @@ class TrainingSession:
 		if self.selection.theme_text:
 			# Translators: Part of the session description, e.g. "Themes: Fork, Pin".
 			parts.append(
-				_("Themes: {themes}").format(themes=describe_theme_filter(self.selection.theme_text))
+				_("Themes: {themes}").format(themes=describe_theme_filter(self.selection.theme_text)),
 			)
 		if self.selection.min_popularity:
 			# Translators: Part of the session description.
 			parts.append(
-				_("Minimum popularity: {popularity}").format(popularity=self.selection.min_popularity)
+				_("Minimum popularity: {popularity}").format(popularity=self.selection.min_popularity),
 			)
 		# A faixa de rating já vem dentro de challenge_label; repeti-la seria falar duas vezes.
 		return "; ".join(parts)

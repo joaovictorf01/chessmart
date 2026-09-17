@@ -2,7 +2,7 @@
 
 import dataclasses
 from abc import ABC, abstractmethod
-from ...helpers import import_bundled
+from ...paths import import_bundled
 from ...game_elements import GameInfo
 from ...time_control import ChessTimeControl
 

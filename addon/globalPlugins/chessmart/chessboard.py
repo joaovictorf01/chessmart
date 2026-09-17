@@ -11,7 +11,8 @@ from .i18n import _
 from io import BytesIO
 from logHandler import log
 from .game_elements import GameInfo
-from .helpers import import_bundled, BIN_DIRECTORY, GameSound
+from .paths import BIN_DIRECTORY, import_bundled
+from .sounds import GameSound
 from .signals import (
 	chessboard_opened_signal,
 	chessboard_closed_signal,
