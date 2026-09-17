@@ -1,11 +1,19 @@
 # coding: utf-8
 
 from .abstract.exceptions import (
-    InternetChessConnectionError,
-    AuthenticationError,
-    OperationTimeout,
-    ChallengeRejected,
-    InternetChessConnectionError,
-    ChallengedUserIsOffline,
+	AuthenticationError,
+	OperationTimeout,
+	ChallengeRejected,
+	InternetChessConnectionError,
+	ChallengedUserIsOffline,
 )
 from .lichess import LichessAPIClient
+
+__all__ = [
+	"AuthenticationError",
+	"OperationTimeout",
+	"ChallengeRejected",
+	"InternetChessConnectionError",
+	"ChallengedUserIsOffline",
+	"LichessAPIClient",
+]

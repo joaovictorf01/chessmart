@@ -26,19 +26,14 @@ addon_info = AddonInfo(
 	# Add-on description
 	# Translators: Long description to be shown for this add-on on add-on information from add-on store
 	addon_description=_(
-		"An accessible chessboard and tactics trainer for NVDA. "
-		"Play against Stockfish or a friend, replay PGN files, "
-		"and train tactics from the Lichess puzzle database with a rating that follows you.",
+		"An accessible chessboard and tactics trainer for NVDA. Play against Stockfish or a friend, replay PGN files, and train tactics from the Lichess puzzle database with a rating that follows you.",
 	),
 	# version
 	addon_version="1.0.0",
 	# Brief changelog for this version
 	# Translators: what's new content for the add-on version to be shown in the add-on store
 	addon_changelog=_(
-		"First public release of the tactics trainer: Lichess puzzle database downloaded on demand "
-		"(light or complete) and updated monthly, Glicko-2 tactics rating with adaptive difficulty, "
-		"training plans by theme, configurable move notation (descriptive, SAN, UCI, literate, NATO, anna) "
-		"and Brazilian Portuguese translation.",
+		"First public release of the tactics trainer: Lichess puzzle database downloaded on demand (light or complete) and updated monthly, Glicko-2 tactics rating with adaptive difficulty, training plans by theme, configurable move notation (descriptive, SAN, UCI, literate, NATO, anna) and Brazilian Portuguese translation.",
 	),
 	# Author(s)
 	addon_author="João Victor <joaovictorf01@gmail.com>, Musharraf Omer <ibnomer2011@hotmail.com>",

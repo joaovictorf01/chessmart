@@ -19,20 +19,21 @@ from logHandler import log
 
 
 def _identity(message):
-    return message
+	return message
 
 
 try:
-    import addonHandler
+	import addonHandler
 
-    addonHandler.initTranslation()
+	addonHandler.initTranslation()
 except Exception as error:  # noqa: BLE001 - fora do NVDA ou fora de um add-on instalado
-    log.debug("Chessmart translation is unavailable in this context: %s", error)
-    _ = builtins.__dict__.get("_", _identity)
-    ngettext = builtins.__dict__.get("ngettext", lambda singular, plural, n: singular if n == 1 else plural)
-    pgettext = builtins.__dict__.get("pgettext", lambda context, message: message)
-    npgettext = builtins.__dict__.get(
-        "npgettext", lambda context, singular, plural, n: singular if n == 1 else plural
-    )
+	log.debug("Chessmart translation is unavailable in this context: %s", error)
+	_ = builtins.__dict__.get("_", _identity)
+	ngettext = builtins.__dict__.get("ngettext", lambda singular, plural, n: singular if n == 1 else plural)
+	pgettext = builtins.__dict__.get("pgettext", lambda context, message: message)
+	npgettext = builtins.__dict__.get(
+		"npgettext",
+		lambda context, singular, plural, n: singular if n == 1 else plural,
+	)
 
 __all__ = ["_", "ngettext", "pgettext", "npgettext"]

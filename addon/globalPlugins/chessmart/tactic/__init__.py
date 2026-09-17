@@ -5,8 +5,8 @@ from .models import Puzzle
 from .repository import PuzzleRepository
 
 __all__ = [
-    "DEFAULT_DB_CANDIDATES",
-    "resolve_default_db_path",
-    "Puzzle",
-    "PuzzleRepository",
+	"DEFAULT_DB_CANDIDATES",
+	"resolve_default_db_path",
+	"Puzzle",
+	"PuzzleRepository",
 ]

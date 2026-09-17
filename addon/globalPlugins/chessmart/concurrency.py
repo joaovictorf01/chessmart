@@ -4,7 +4,7 @@ import threading
 import typing as t
 import asyncio
 from functools import wraps
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import Future, ThreadPoolExecutor
 from logHandler import log
 
 
@@ -14,52 +14,54 @@ ASYNCIO_LOOP_THREAD = None
 
 
 def start_asyncio_event_loop():
-    global ASYNCIO_LOOP_THREAD, ASYNCIO_EVENT_LOOP
-    if ASYNCIO_LOOP_THREAD:
-        log.debug("Attempted to start the asyncio eventloop while it is already running")
-        return
+	global ASYNCIO_LOOP_THREAD, ASYNCIO_EVENT_LOOP
+	if ASYNCIO_LOOP_THREAD:
+		log.debug("Attempted to start the asyncio eventloop while it is already running")
+		return
 
-    def _thread_target():
-        log.info("Starting asyncio event loop")
-        asyncio.set_event_loop(ASYNCIO_EVENT_LOOP)
-        ASYNCIO_EVENT_LOOP.run_forever()
+	def _thread_target():
+		log.info("Starting asyncio event loop")
+		asyncio.set_event_loop(ASYNCIO_EVENT_LOOP)
+		ASYNCIO_EVENT_LOOP.run_forever()
 
-    ASYNCIO_LOOP_THREAD = threading.Thread(target=_thread_target, daemon=True, name="chessmart.asyncio.thread")
-    ASYNCIO_LOOP_THREAD.start()
+	ASYNCIO_LOOP_THREAD = threading.Thread(
+		target=_thread_target,
+		daemon=True,
+		name="chessmart.asyncio.thread",
+	)
+	ASYNCIO_LOOP_THREAD.start()
 
 
 def terminate():
-    global THREADED_EXECUTOR, ASYNCIO_LOOP_THREAD, ASYNCIO_EVENT_LOOP
-    log.info("Shutting down the thread pool executor")
-    THREADED_EXECUTOR.shutdown()
-    if ASYNCIO_LOOP_THREAD:
-        log.info("Shutting down asyncio event loop")
-        ASYNCIO_EVENT_LOOP.call_soon_threadsafe(ASYNCIO_EVENT_LOOP.stop)
+	global THREADED_EXECUTOR, ASYNCIO_LOOP_THREAD, ASYNCIO_EVENT_LOOP
+	log.info("Shutting down the thread pool executor")
+	THREADED_EXECUTOR.shutdown()
+	if ASYNCIO_LOOP_THREAD:
+		log.info("Shutting down asyncio event loop")
+		ASYNCIO_EVENT_LOOP.call_soon_threadsafe(ASYNCIO_EVENT_LOOP.stop)
 
 
 def asyncio_coroutine_to_concurrent_future(func):
-    """Returns a concurrent.futures.Future that wrapps the decorated async function."""
+	"""Returns a concurrent.futures.Future that wrapps the decorated async function."""
 
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        return asyncio.run_coroutine_threadsafe(func(*args, **kwargs), ASYNCIO_EVENT_LOOP)
+	@wraps(func)
+	def wrapper(*args, **kwargs):
+		return asyncio.run_coroutine_threadsafe(func(*args, **kwargs), ASYNCIO_EVENT_LOOP)
 
-    return wrapper
+	return wrapper
 
 
-def call_threaded(func: t.Callable[..., None]) -> t.Callable[..., "Future"]:
-    """Call `func` in a separate thread. It wraps the function
-    in another function that returns a `concurrent.futures.Future`
-    object when called.
-    """
+def call_threaded(func: t.Callable[..., None]) -> t.Callable[..., Future]:
+	"""Call `func` in a separate thread. It wraps the function
+	in another function that returns a `concurrent.futures.Future`
+	object when called.
+	"""
 
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            return THREADED_EXECUTOR.submit(func, *args, **kwargs)
-        except RuntimeError:
-            log.debug(
-                f"Failed to submit function {func}."
-            )
+	@wraps(func)
+	def wrapper(*args, **kwargs):
+		try:
+			return THREADED_EXECUTOR.submit(func, *args, **kwargs)
+		except RuntimeError:
+			log.debug(f"Failed to submit function {func}.")
 
-    return wrapper
+	return wrapper

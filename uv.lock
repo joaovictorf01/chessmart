@@ -3,80 +3,6 @@ revision = 3
 requires-python = "==3.13.*"
 
 [[package]]
-name = "addontemplate"
-source = { editable = "." }
-
-[package.dev-dependencies]
-build = [
-    { name = "markdown" },
-    { name = "scons" },
-]
-dev = [
-    { name = "crowdin-api-client" },
-    { name = "lxml" },
-    { name = "markdown" },
-    { name = "markdown-link-attr-modifier" },
-    { name = "mdx-gh-links" },
-    { name = "mdx-truly-sane-lists" },
-    { name = "nh3" },
-    { name = "prek" },
-    { name = "pyright", extra = ["nodejs"] },
-    { name = "ruff" },
-    { name = "scons" },
-    { name = "uv" },
-]
-l10n = [
-    { name = "crowdin-api-client" },
-    { name = "lxml" },
-    { name = "markdown-link-attr-modifier" },
-    { name = "mdx-gh-links" },
-    { name = "mdx-truly-sane-lists" },
-    { name = "nh3" },
-]
-lint = [
-    { name = "prek" },
-    { name = "pyright", extra = ["nodejs"] },
-    { name = "ruff" },
-    { name = "uv" },
-]
-
-[package.metadata]
-
-[package.metadata.requires-dev]
-build = [
-    { name = "markdown", specifier = "==3.10" },
-    { name = "scons", specifier = "==4.10.1" },
-]
-dev = [
-    { name = "crowdin-api-client", specifier = "==1.24.1" },
-    { name = "lxml", specifier = "==6.1.0" },
-    { name = "markdown", specifier = "==3.10" },
-    { name = "markdown-link-attr-modifier", specifier = "==0.2.1" },
-    { name = "mdx-gh-links", specifier = "==0.4" },
-    { name = "mdx-truly-sane-lists", specifier = "==1.3" },
-    { name = "nh3", specifier = "==0.3.2" },
-    { name = "prek", specifier = "==0.4.8" },
-    { name = "pyright", extras = ["nodejs"], specifier = "==1.1.407" },
-    { name = "ruff", specifier = "==0.14.5" },
-    { name = "scons", specifier = "==4.10.1" },
-    { name = "uv", specifier = "==0.11.15" },
-]
-l10n = [
-    { name = "crowdin-api-client", specifier = "==1.24.1" },
-    { name = "lxml", specifier = "==6.1.0" },
-    { name = "markdown-link-attr-modifier", specifier = "==0.2.1" },
-    { name = "mdx-gh-links", specifier = "==0.4" },
-    { name = "mdx-truly-sane-lists", specifier = "==1.3" },
-    { name = "nh3", specifier = "==0.3.2" },
-]
-lint = [
-    { name = "prek", specifier = "==0.4.8" },
-    { name = "pyright", extras = ["nodejs"], specifier = "==1.1.407" },
-    { name = "ruff", specifier = "==0.14.5" },
-    { name = "uv", specifier = "==0.11.15" },
-]
-
-[[package]]
 name = "certifi"
 version = "2026.5.20"
 source = { registry = "https://pypi.org/simple" }
@@ -108,6 +34,84 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/5d/78/1b74c5bbb3f99b77a1715c91b3e0b5bdb6fe302d95ace4f5b1bec37b0167/charset_normalizer-3.4.7-cp313-cp313-win_amd64.whl", hash = "sha256:3946fa46a0cf3e4c8cb1cc52f56bb536310d34f25f01ca9b6c16afa767dab110", size = 158819, upload-time = "2026-04-02T09:27:04.454Z" },
     { url = "https://files.pythonhosted.org/packages/68/86/46bd42279d323deb8687c4a5a811fd548cb7d1de10cf6535d099877a9a9f/charset_normalizer-3.4.7-cp313-cp313-win_arm64.whl", hash = "sha256:80d04837f55fc81da168b98de4f4b797ef007fc8a79ab71c6ec9bc4dd662b15b", size = 147915, upload-time = "2026-04-02T09:27:05.971Z" },
     { url = "https://files.pythonhosted.org/packages/db/8f/61959034484a4a7c527811f4721e75d02d653a35afb0b6054474d8185d4c/charset_normalizer-3.4.7-py3-none-any.whl", hash = "sha256:3dce51d0f5e7951f8bb4900c257dad282f49190fdbebecd4ba99bcc41fef404d", size = 61958, upload-time = "2026-04-02T09:28:37.794Z" },
+]
+
+[[package]]
+name = "chessmart"
+source = { editable = "." }
+
+[package.dev-dependencies]
+build = [
+    { name = "markdown" },
+    { name = "scons" },
+]
+dev = [
+    { name = "crowdin-api-client" },
+    { name = "lxml" },
+    { name = "markdown" },
+    { name = "markdown-link-attr-modifier" },
+    { name = "mdx-gh-links" },
+    { name = "mdx-truly-sane-lists" },
+    { name = "nh3" },
+    { name = "polib" },
+    { name = "prek" },
+    { name = "pyright", extra = ["nodejs"] },
+    { name = "ruff" },
+    { name = "scons" },
+    { name = "uv" },
+]
+l10n = [
+    { name = "crowdin-api-client" },
+    { name = "lxml" },
+    { name = "markdown-link-attr-modifier" },
+    { name = "mdx-gh-links" },
+    { name = "mdx-truly-sane-lists" },
+    { name = "nh3" },
+    { name = "polib" },
+]
+lint = [
+    { name = "prek" },
+    { name = "pyright", extra = ["nodejs"] },
+    { name = "ruff" },
+    { name = "uv" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+build = [
+    { name = "markdown", specifier = "==3.10" },
+    { name = "scons", specifier = "==4.10.1" },
+]
+dev = [
+    { name = "crowdin-api-client", specifier = "==1.24.1" },
+    { name = "lxml", specifier = "==6.1.0" },
+    { name = "markdown", specifier = "==3.10" },
+    { name = "markdown-link-attr-modifier", specifier = "==0.2.1" },
+    { name = "mdx-gh-links", specifier = "==0.4" },
+    { name = "mdx-truly-sane-lists", specifier = "==1.3" },
+    { name = "nh3", specifier = "==0.3.2" },
+    { name = "polib", specifier = "==1.2.0" },
+    { name = "prek", specifier = "==0.4.8" },
+    { name = "pyright", extras = ["nodejs"], specifier = "==1.1.407" },
+    { name = "ruff", specifier = "==0.14.5" },
+    { name = "scons", specifier = "==4.10.1" },
+    { name = "uv", specifier = "==0.11.15" },
+]
+l10n = [
+    { name = "crowdin-api-client", specifier = "==1.24.1" },
+    { name = "lxml", specifier = "==6.1.0" },
+    { name = "markdown-link-attr-modifier", specifier = "==0.2.1" },
+    { name = "mdx-gh-links", specifier = "==0.4" },
+    { name = "mdx-truly-sane-lists", specifier = "==1.3" },
+    { name = "nh3", specifier = "==0.3.2" },
+    { name = "polib", specifier = "==1.2.0" },
+]
+lint = [
+    { name = "prek", specifier = "==0.4.8" },
+    { name = "pyright", extras = ["nodejs"], specifier = "==1.1.407" },
+    { name = "ruff", specifier = "==0.14.5" },
+    { name = "uv", specifier = "==0.11.15" },
 ]
 
 [[package]]
@@ -261,6 +265,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/04/96/d931255cf9d11a84d6b54d882dba7434646467d568ccf070ea3418638df3/nodejs_wheel_binaries-24.16.0-py2.py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:f1a3d8f7b4491cbbd023ba3fc4e901fcca2d9fb80d57f24ba3890de8b1dbac03", size = 62841759, upload-time = "2026-05-30T16:51:59.407Z" },
     { url = "https://files.pythonhosted.org/packages/a2/7b/8b7a3f41bc255411be30b6d7d288aab8ffd9ea2055db8555ced3548007b9/nodejs_wheel_binaries-24.16.0-py2.py3-none-win_amd64.whl", hash = "sha256:bb136be9944f0662dcf1120f45193a6b75b13fac378971a95cc42c9f879a81aa", size = 42027734, upload-time = "2026-05-30T16:52:03.348Z" },
     { url = "https://files.pythonhosted.org/packages/17/66/1ed71f1f529b8ca727d42c7ceb9db0bef145ce4a13dfc86fb50aa44f3be6/nodejs_wheel_binaries-24.16.0-py2.py3-none-win_arm64.whl", hash = "sha256:8308940b5edd0a50dc5267ea36ba21c9f668e83fe0d9f293937174d3a7e31c36", size = 39714528, upload-time = "2026-05-30T16:52:06.421Z" },
+]
+
+[[package]]
+name = "polib"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/10/9a/79b1067d27e38ddf84fe7da6ec516f1743f31f752c6122193e7bce38bdbf/polib-1.2.0.tar.gz", hash = "sha256:f3ef94aefed6e183e342a8a269ae1fc4742ba193186ad76f175938621dbfc26b", size = 161658, upload-time = "2023-02-23T17:53:56.873Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6b/99/45bb1f9926efe370c6dbe324741c749658e44cb060124f28dad201202274/polib-1.2.0-py2.py3-none-any.whl", hash = "sha256:1c77ee1b81feb31df9bca258cbc58db1bbb32d10214b173882452c73af06d62d", size = 20634, upload-time = "2023-02-23T17:53:59.919Z" },
 ]
 
 [[package]]

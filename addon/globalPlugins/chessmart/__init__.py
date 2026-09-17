@@ -7,29 +7,27 @@ import globalPluginHandler
 import gui
 import globalVars
 import ui
-import tones
 import queueHandler
 import winUser
 from logHandler import log
-from scriptHandler import script
 from .helpers import import_bundled
 from .i18n import _
 
 
 with import_bundled():
-    # Import some packages  replacing NVDA builtin packages
-    # with original packages obtained from a Python 3.7 installation
-    # to fix some missing sub packages and modules
-    if "http" in sys.modules:
-        sys.modules.pop("http")
-    import http
+	# Import some packages  replacing NVDA builtin packages
+	# with original packages obtained from a Python 3.7 installation
+	# to fix some missing sub packages and modules
+	if "http" in sys.modules:
+		sys.modules.pop("http")
+	import http  # noqa: F401 - substitui o pacote do NVDA pela versão completa
 
-    if "xml" in sys.modules:
-        sys.modules.pop("xml")
-    import xml
+	if "xml" in sys.modules:
+		sys.modules.pop("xml")
+	import xml  # noqa: F401 - idem
 
-    # Normal imports
-    import chess
+	# Normal imports
+	import chess
 
 from . import concurrency
 from .addon_config import ensure_config_spec
@@ -38,247 +36,243 @@ from .chessboard import ChessboardDialog
 from .game_elements import GameInfo, ChessVariant
 from .graphical_interface.settings_panel import ChessboardSettingsDialog
 from .virtual_chessboard import (
-    PGNGame,
-    PGNGameInfo,
-    PGNPlayerChessboard,
-    UserUserChessboard,
-    UserEngineChessboard,
-    PuzzleChessboard,
+	PGNGame,
+	PGNGameInfo,
+	PGNPlayerChessboard,
+	PuzzleChessboard,
 )
 from .puzzle_database import PuzzleSet, RandomPuzzleSet
 
 
 class ChessboardMenu(wx.Menu):
-    def __init__(self, global_plugin_object):
-        super().__init__()
-        # Start an asyncio event loop for running io tasks
-        concurrency.start_asyncio_event_loop()
-        self.global_plugin_object = global_plugin_object
-        # Append the menu items
-        new_game_item = self.Append(
-            wx.ID_ANY, _("&New Game..."), _("Start a new chess game")
-        )
-        tactics_item = self.Append(
-            wx.ID_ANY, _("&Tactics..."), _("Open tactics from the Lichess tactics database")
-        )
-        random_puzzle_item = self.Append(
-            wx.ID_ANY, _("&Random Puzzle"), _("Play a random puzzle")
-        )
-        replay_pgn_file_item = self.Append(
-            wx.ID_ANY,
-            _("&Replay PGN File..."),
-            _("Load an replay a portable game notation (.pgn) file"),
-        )
-        self.AppendSeparator()
-        settings_item = self.Append(
-            wx.ID_ANY,
-            _("&Settings..."),
-            _("Open Chessboard settings"),
-        )
-        # Attach this submenu under NVDA's Tools menu.
-        self.itemHandle = gui.mainFrame.sysTrayIcon.toolsMenu.AppendSubMenu(
-            self,
-            _("&Chessboard"),
-            _("Open a chess game, tactics session, replay, or settings"),
-        )
-        # Bind menu items to events
-        self.Bind(wx.EVT_MENU, self.onNewGame, new_game_item)
-        self.Bind(wx.EVT_MENU, self.onTactics, tactics_item)
-        self.Bind(wx.EVT_MENU, self.onRandomPuzzle, random_puzzle_item)
-        self.Bind(wx.EVT_MENU, self.onReplayPGN, replay_pgn_file_item)
-        self.Bind(wx.EVT_MENU, self.onSettings, settings_item)
+	def __init__(self, global_plugin_object):
+		super().__init__()
+		# Start an asyncio event loop for running io tasks
+		concurrency.start_asyncio_event_loop()
+		self.global_plugin_object = global_plugin_object
+		# Append the menu items
+		new_game_item = self.Append(wx.ID_ANY, _("&New Game..."), _("Start a new chess game"))
+		tactics_item = self.Append(
+			wx.ID_ANY,
+			_("&Tactics..."),
+			_("Open tactics from the Lichess tactics database"),
+		)
+		random_puzzle_item = self.Append(wx.ID_ANY, _("&Random Puzzle"), _("Play a random puzzle"))
+		replay_pgn_file_item = self.Append(
+			wx.ID_ANY,
+			_("&Replay PGN File..."),
+			_("Load an replay a portable game notation (.pgn) file"),
+		)
+		self.AppendSeparator()
+		settings_item = self.Append(
+			wx.ID_ANY,
+			_("&Settings..."),
+			_("Open Chessboard settings"),
+		)
+		# Attach this submenu under NVDA's Tools menu.
+		self.itemHandle = gui.mainFrame.sysTrayIcon.toolsMenu.AppendSubMenu(
+			self,
+			_("&Chessboard"),
+			_("Open a chess game, tactics session, replay, or settings"),
+		)
+		# Bind menu items to events
+		self.Bind(wx.EVT_MENU, self.onNewGame, new_game_item)
+		self.Bind(wx.EVT_MENU, self.onTactics, tactics_item)
+		self.Bind(wx.EVT_MENU, self.onRandomPuzzle, random_puzzle_item)
+		self.Bind(wx.EVT_MENU, self.onReplayPGN, replay_pgn_file_item)
+		self.Bind(wx.EVT_MENU, self.onSettings, settings_item)
 
-    def onNewGame(self, event):
-        from .graphical_interface.new_game_dialog import NewGameOptionsDialog
+	def onNewGame(self, event):
+		from .graphical_interface.new_game_dialog import NewGameOptionsDialog
 
-        dialog = NewGameOptionsDialog(gui.mainFrame, callback=self.create_new_game)
-        gui.runScriptModalDialog(dialog)
+		dialog = NewGameOptionsDialog(gui.mainFrame, callback=self.create_new_game)
+		gui.runScriptModalDialog(dialog)
 
-    def create_new_game(self, vboard_cls, game_info):
-        self.global_plugin_object.initialize_and_show_chessboard_dialog(vboard_cls, game_info)
+	def create_new_game(self, vboard_cls, game_info):
+		self.global_plugin_object.initialize_and_show_chessboard_dialog(vboard_cls, game_info)
 
-    def onTactics(self, event):
-        from .graphical_interface.tactics_dialog import TacticsOptionsDialog
+	def onTactics(self, event):
+		from .graphical_interface.tactics_dialog import TacticsOptionsDialog
 
-        if not self._ensure_puzzle_database():
-            return
-        dialog = TacticsOptionsDialog(
-            gui.mainFrame,
-            callback=self.open_tactics_session,
-        )
-        gui.runScriptModalDialog(dialog)
+		if not self._ensure_puzzle_database():
+			return
+		dialog = TacticsOptionsDialog(
+			gui.mainFrame,
+			callback=self.open_tactics_session,
+		)
+		gui.runScriptModalDialog(dialog)
 
-    def open_tactics_session(self, session_options):
-        puzzles = PuzzleSet(options=session_options)
-        try:
-            puzzles.ensure_ready()
-        except FileNotFoundError:
-            gui.messageBox(
-                _(
-                    "The tactics database was not found. Use Browse in the tactics dialog to point at your puzzle database, or place it in the add-on's data folder as puzzles.db."
-                ),
-                _("Tactics Database Not Found"),
-                style=wx.ICON_ERROR,
-            )
-            return
-        except LookupError as error:
-            gui.messageBox(
-                str(error),
-                _("No Tactics Found"),
-                style=wx.ICON_WARNING,
-            )
-            return
-        self.open_puzzle_set(puzzles)
+	def open_tactics_session(self, session_options):
+		puzzles = PuzzleSet(options=session_options)
+		try:
+			puzzles.ensure_ready()
+		except FileNotFoundError:
+			gui.messageBox(
+				_(
+					"The tactics database was not found. Use Browse in the tactics dialog to point at your puzzle database, or place it in the add-on's data folder as puzzles.db.",
+				),
+				_("Tactics Database Not Found"),
+				style=wx.ICON_ERROR,
+			)
+			return
+		except LookupError as error:
+			gui.messageBox(
+				str(error),
+				_("No Tactics Found"),
+				style=wx.ICON_WARNING,
+			)
+			return
+		self.open_puzzle_set(puzzles)
 
-    def _ensure_puzzle_database(self) -> bool:
-        """Sem banco de puzzles, oferece o download antes de seguir."""
-        from .puzzle_database import get_default_tactic_db_path, usable_db_path
-        from .addon_config import get_tactics_defaults
+	def _ensure_puzzle_database(self) -> bool:
+		"""Sem banco de puzzles, oferece o download antes de seguir."""
+		from .puzzle_database import get_default_tactic_db_path, usable_db_path
+		from .addon_config import get_tactics_defaults
 
-        if usable_db_path(get_tactics_defaults().db_path) or get_default_tactic_db_path():
-            return True
-        answer = gui.messageBox(
-            # Translators: Asked when tactics are opened and no puzzle database is installed yet.
-            _("Tactics need a puzzle database, which is downloaded once (about 76 MB for the light version). Download it now?"),
-            _("Puzzle Database"),
-            style=wx.YES_NO | wx.ICON_QUESTION,
-        )
-        if answer != wx.YES:
-            return False
-        from .graphical_interface.download_dialog import PuzzleDownloadDialog
+		if usable_db_path(get_tactics_defaults().db_path) or get_default_tactic_db_path():
+			return True
+		answer = gui.messageBox(
+			# Translators: Asked when tactics are opened and no puzzle database is installed yet.
+			_(
+				"Tactics need a puzzle database, which is downloaded once (about 76 MB for the light version). Download it now?",
+			),
+			_("Puzzle Database"),
+			style=wx.YES_NO | wx.ICON_QUESTION,
+		)
+		if answer != wx.YES:
+			return False
+		from .graphical_interface.download_dialog import PuzzleDownloadDialog
 
-        dialog = PuzzleDownloadDialog(gui.mainFrame)
-        result = dialog.ShowModal()
-        dialog.Destroy()
-        return result == wx.ID_OK
+		dialog = PuzzleDownloadDialog(gui.mainFrame)
+		result = dialog.ShowModal()
+		dialog.Destroy()
+		return result == wx.ID_OK
 
-    def onRandomPuzzle(self, event):
-        if not self._ensure_puzzle_database():
-            return
-        puzzles = RandomPuzzleSet()
-        try:
-            puzzles.ensure_ready()
-        except FileNotFoundError:
-            gui.messageBox(
-                _(
-                    "The tactics database was not found. Choose a valid database in Chessboard settings first."
-                ),
-                _("Tactics Database Not Found"),
-                style=wx.ICON_ERROR,
-            )
-            return
-        self.open_puzzle_set(puzzles)
+	def onRandomPuzzle(self, event):
+		if not self._ensure_puzzle_database():
+			return
+		puzzles = RandomPuzzleSet()
+		try:
+			puzzles.ensure_ready()
+		except FileNotFoundError:
+			gui.messageBox(
+				_(
+					"The tactics database was not found. Choose a valid database in Chessboard settings first.",
+				),
+				_("Tactics Database Not Found"),
+				style=wx.ICON_ERROR,
+			)
+			return
+		self.open_puzzle_set(puzzles)
 
-    def onSettings(self, event):
-        dialog = ChessboardSettingsDialog(gui.mainFrame)
-        gui.runScriptModalDialog(dialog)
+	def onSettings(self, event):
+		dialog = ChessboardSettingsDialog(gui.mainFrame)
+		gui.runScriptModalDialog(dialog)
 
-    def open_puzzle_set(self, puzzles):
-        game_info = GameInfo(
-            pychess_board=chess.Board(),
-            variant=ChessVariant.STANDARD,
-            time_control=NULL_TIME_CONTROL,
-            prospective=None,
-            vboard_kwargs=dict(puzzles=puzzles),
-        )
-        self.global_plugin_object.initialize_and_show_chessboard_dialog(
-            PuzzleChessboard,
-            game_info,
-        )
+	def open_puzzle_set(self, puzzles):
+		game_info = GameInfo(
+			pychess_board=chess.Board(),
+			variant=ChessVariant.STANDARD,
+			time_control=NULL_TIME_CONTROL,
+			prospective=None,
+			vboard_kwargs=dict(puzzles=puzzles),
+		)
+		self.global_plugin_object.initialize_and_show_chessboard_dialog(
+			PuzzleChessboard,
+			game_info,
+		)
 
-    def onReplayPGN(self, event):
-        openFileDialog = wx.FileDialog(
-            parent=gui.mainFrame,
-            # Translators: Title of the dialog that opens a PGN file.
-            message=_("Open PGN File"),
-            defaultDir=wx.GetUserHome(),
-            # Translators: File type filter of the PGN open dialog.
-            wildcard=_("Portable Game Notation *.pgn | *.pgn"),
-            style=wx.FD_OPEN,
-        )
-        gui.runScriptModalDialog(
-            openFileDialog, functools.partial(self.list_games_in_pgn, openFileDialog)
-        )
+	def onReplayPGN(self, event):
+		openFileDialog = wx.FileDialog(
+			parent=gui.mainFrame,
+			# Translators: Title of the dialog that opens a PGN file.
+			message=_("Open PGN File"),
+			defaultDir=wx.GetUserHome(),
+			# Translators: File type filter of the PGN open dialog.
+			wildcard=_("Portable Game Notation *.pgn | *.pgn"),
+			style=wx.FD_OPEN,
+		)
+		gui.runScriptModalDialog(openFileDialog, functools.partial(self.list_games_in_pgn, openFileDialog))
 
-    def list_games_in_pgn(self, dialog, res):
-        if res != wx.ID_OK:
-            return
-        filepath = dialog.GetPath().strip()
-        if not filepath:
-            return
-        games = tuple(PGNGameInfo.game_info_from_pgn_filename(filepath))
-        if not games:
-            queueHandler.queueFunction(
-                # Translators: Spoken when the chosen PGN file has no games.
-                queueHandler.eventQueue, ui.message, _("The file contains no games")
-            )
-        elif len(games) == 1:
-            self.open_pgn_game(games[0])
-        else:
-            choiceDg = wx.SingleChoiceDialog(
-                gui.mainFrame,
-                _("The file contains the following games"),
-                _("Select Game"),
-                choices=[g.description for g in games],
-            )
-            gui.runScriptModalDialog(
-                choiceDg,
-                functools.partial(self.on_pgn_game_chosen, filepath, choiceDg, games),
-            )
+	def list_games_in_pgn(self, dialog, res):
+		if res != wx.ID_OK:
+			return
+		filepath = dialog.GetPath().strip()
+		if not filepath:
+			return
+		games = tuple(PGNGameInfo.game_info_from_pgn_filename(filepath))
+		if not games:
+			queueHandler.queueFunction(
+				# Translators: Spoken when the chosen PGN file has no games.
+				queueHandler.eventQueue,
+				ui.message,
+				_("The file contains no games"),
+			)
+		elif len(games) == 1:
+			self.open_pgn_game(games[0])
+		else:
+			choiceDg = wx.SingleChoiceDialog(
+				gui.mainFrame,
+				_("The file contains the following games"),
+				_("Select Game"),
+				choices=[g.description for g in games],
+			)
+			gui.runScriptModalDialog(
+				choiceDg,
+				functools.partial(self.on_pgn_game_chosen, filepath, choiceDg, games),
+			)
 
-    def on_pgn_game_chosen(self, filepath, dialog, games, res):
-        if res != wx.ID_OK:
-            return
-        selected_game_info = games[dialog.GetSelection()]
-        self.open_pgn_game(selected_game_info)
+	def on_pgn_game_chosen(self, filepath, dialog, games, res):
+		if res != wx.ID_OK:
+			return
+		selected_game_info = games[dialog.GetSelection()]
+		self.open_pgn_game(selected_game_info)
 
-    def open_pgn_game(self, game_Info):
-        pgn_game = PGNGame.from_game_info(game_Info)
-        chess_new_game_info = GameInfo(
-            variant=None,
-            time_control=NULL_TIME_CONTROL,
-            pychess_board=None,
-            prospective=None,
-            vboard_kwargs=dict(game=pgn_game, use_visuals=True, visual_arrows=True),
-        )
-        self.global_plugin_object.initialize_and_show_chessboard_dialog(
-            PGNPlayerChessboard,
-            chess_new_game_info
-        )
+	def open_pgn_game(self, game_Info):
+		pgn_game = PGNGame.from_game_info(game_Info)
+		chess_new_game_info = GameInfo(
+			variant=None,
+			time_control=NULL_TIME_CONTROL,
+			pychess_board=None,
+			prospective=None,
+			vboard_kwargs=dict(game=pgn_game, use_visuals=True, visual_arrows=True),
+		)
+		self.global_plugin_object.initialize_and_show_chessboard_dialog(
+			PGNPlayerChessboard,
+			chess_new_game_info,
+		)
 
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._active_board_dialogs = {}
-        # The following is the GUI part
-        if not globalVars.appArgs.secure:
-            ensure_config_spec()
-            self.chessboard_menu = ChessboardMenu(self)
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self._active_board_dialogs = {}
+		# The following is the GUI part
+		if not globalVars.appArgs.secure:
+			ensure_config_spec()
+			self.chessboard_menu = ChessboardMenu(self)
 
-    def terminate(self):
-        chessboard_menu = getattr(self, "chessboard_menu", None)
-        if chessboard_menu is not None:
-            gui.mainFrame.sysTrayIcon.toolsMenu.DestroyItem(chessboard_menu.itemHandle)
-        try:
-            concurrency.terminate()
-            for cdlg in self._active_board_dialogs.values():
-                cdlg.Destroy()
-        except Exception:
-            log.exception("Failed to terminate concurrency primitives")
+	def terminate(self):
+		chessboard_menu = getattr(self, "chessboard_menu", None)
+		if chessboard_menu is not None:
+			gui.mainFrame.sysTrayIcon.toolsMenu.DestroyItem(chessboard_menu.itemHandle)
+		try:
+			concurrency.terminate()
+			for cdlg in self._active_board_dialogs.values():
+				cdlg.Destroy()
+		except Exception:
+			log.exception("Failed to terminate concurrency primitives")
 
-    def initialize_and_show_chessboard_dialog(self, vboard_cls, game_info):
-        chessboard_dialog = ChessboardDialog.from_game_info(vboard_cls, game_info)
-        self._active_board_dialogs[chessboard_dialog.GetHandle()] = chessboard_dialog
-        chessboard_dialog.Show()
-        winUser.setForegroundWindow(chessboard_dialog.GetHandle())
+	def initialize_and_show_chessboard_dialog(self, vboard_cls, game_info):
+		chessboard_dialog = ChessboardDialog.from_game_info(vboard_cls, game_info)
+		self._active_board_dialogs[chessboard_dialog.GetHandle()] = chessboard_dialog
+		chessboard_dialog.Show()
+		winUser.setForegroundWindow(chessboard_dialog.GetHandle())
 
-    def event_gainFocus(self, obj, nextHandler):
-        nextHandler()
-        board_dialog = self._active_board_dialogs.get(obj.windowHandle)
-        if (not board_dialog) or (not board_dialog.IsActive()):
-            return
-        if board_dialog.IsShown():
-            queueHandler.queueFunction(
-                queueHandler.eventQueue, board_dialog.set_focus_to_board
-            )
+	def event_gainFocus(self, obj, nextHandler):
+		nextHandler()
+		board_dialog = self._active_board_dialogs.get(obj.windowHandle)
+		if (not board_dialog) or (not board_dialog.IsActive()):
+			return
+		if board_dialog.IsShown():
+			queueHandler.queueFunction(queueHandler.eventQueue, board_dialog.set_focus_to_board)
