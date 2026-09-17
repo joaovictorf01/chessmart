@@ -100,6 +100,8 @@ class ChessboardMenu(wx.Menu):
     def onTactics(self, event):
         from .graphical_interface.tactics_dialog import TacticsOptionsDialog
 
+        if not self._ensure_puzzle_database():
+            return
         dialog = TacticsOptionsDialog(
             gui.mainFrame,
             callback=self.open_tactics_session,
@@ -128,7 +130,31 @@ class ChessboardMenu(wx.Menu):
             return
         self.open_puzzle_set(puzzles)
 
+    def _ensure_puzzle_database(self) -> bool:
+        """Sem banco de puzzles, oferece o download antes de seguir."""
+        from .puzzle_database import get_default_tactic_db_path, usable_db_path
+        from .addon_config import get_tactics_defaults
+
+        if usable_db_path(get_tactics_defaults().db_path) or get_default_tactic_db_path():
+            return True
+        answer = gui.messageBox(
+            # Translators: Asked when tactics are opened and no puzzle database is installed yet.
+            _("Tactics need a puzzle database, which is downloaded once (about 76 MB for the light version). Download it now?"),
+            _("Puzzle Database"),
+            style=wx.YES_NO | wx.ICON_QUESTION,
+        )
+        if answer != wx.YES:
+            return False
+        from .graphical_interface.download_dialog import PuzzleDownloadDialog
+
+        dialog = PuzzleDownloadDialog(gui.mainFrame)
+        result = dialog.ShowModal()
+        dialog.Destroy()
+        return result == wx.ID_OK
+
     def onRandomPuzzle(self, event):
+        if not self._ensure_puzzle_database():
+            return
         puzzles = RandomPuzzleSet()
         try:
             puzzles.ensure_ready()

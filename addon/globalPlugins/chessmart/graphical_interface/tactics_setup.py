@@ -17,6 +17,8 @@ Os pontos de variação são explícitos, como métodos que a subclasse sobrescr
 `_refresh_theme_controls` e `_theme_picker_prompt`.
 """
 
+from pathlib import Path
+
 import wx
 import gui
 from gui import guiHelper
@@ -65,9 +67,12 @@ class TacticsSetupMixin:
         guiHelper.associateElements(label, self.databasePathTextCtrl)
         # Translators: Button that opens a file picker for the tactics database.
         self.browseDatabaseButton = wx.Button(self, -1, _("&Browse..."))
+        # Translators: Button that opens the dialog to download or update the puzzle database.
+        self.downloadDatabaseButton = wx.Button(self, -1, _("Do&wnload or update..."))
         row = wx.BoxSizer(wx.HORIZONTAL)
         row.Add(self.databasePathTextCtrl, 1, wx.RIGHT | wx.EXPAND, 5)
-        row.Add(self.browseDatabaseButton, 0)
+        row.Add(self.browseDatabaseButton, 0, wx.RIGHT, 5)
+        row.Add(self.downloadDatabaseButton, 0)
         helper.addItem(label)
         helper.addItem(row)
 
@@ -140,6 +145,7 @@ class TacticsSetupMixin:
 
     def _bind_shared_events(self):
         self.Bind(wx.EVT_BUTTON, self.onBrowseDatabase, self.browseDatabaseButton)
+        self.Bind(wx.EVT_BUTTON, self.onDownloadDatabase, self.downloadDatabaseButton)
         self.Bind(wx.EVT_BUTTON, self.onSelectThemes, self.selectThemesButton)
         self.Bind(wx.EVT_BUTTON, self.onClearThemes, self.clearThemesButton)
         self.Bind(wx.EVT_TEXT, self.onDatabasePathChanged, self.databasePathTextCtrl)
@@ -254,6 +260,25 @@ class TacticsSetupMixin:
             self._updateTrainerSummary()
             self._updateThemeSummary()
         dialog.Destroy()
+
+    def onDownloadDatabase(self, event):
+        from .download_dialog import PuzzleDownloadDialog
+
+        current = self._resolved_db_path()
+        dialog = PuzzleDownloadDialog(
+            self,
+            installed_path=Path(current) if current else None,
+            on_installed=self._on_database_installed,
+        )
+        dialog.ShowModal()
+        dialog.Destroy()
+
+    def _on_database_installed(self, path):
+        # O download vai sempre para a pasta padrão; o campo passa a apontar
+        # para lá, mesmo que antes apontasse para um arquivo em outro lugar.
+        self.databasePathTextCtrl.SetValue(str(path))
+        self._updateTrainerSummary()
+        self._updateThemeSummary()
 
     def onDatabasePathChanged(self, event):
         self._updateTrainerSummary()
