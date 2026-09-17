@@ -9,7 +9,29 @@ from pathlib import Path
 
 
 PLUGIN_DIRECTORY = Path(__file__).resolve().parents[1]
-ADDON_DATA_DIRECTORY = PLUGIN_DIRECTORY / "data"
+
+
+def _user_data_directory() -> Path:
+    """Onde ficam os dados do usuário: o banco de puzzles, o histórico e o cache.
+
+    Dentro do NVDA é `<pasta de configuração do NVDA>/chessmart`, como os
+    outros add-ons fazem: a pasta do add-on é apagada e recriada a cada
+    atualização, e o histórico do jogador não pode ir junto. Fora do NVDA
+    (testes, ferramentas) é `data/` ao lado do código, como sempre foi.
+    """
+    try:
+        import globalVars
+
+        config_path = globalVars.appArgs.configPath
+    except (ImportError, AttributeError):
+        config_path = None
+    if config_path:
+        return Path(config_path) / "chessmart"
+    return PLUGIN_DIRECTORY / "data"
+
+
+ADDON_DATA_DIRECTORY = _user_data_directory()
+LEGACY_DATA_DIRECTORY = PLUGIN_DIRECTORY / "data"
 # O Python do NVDA não traz `sqlite3`; a pasta abaixo carrega a extensão e o
 # pacote da biblioteca padrão do CPython 3.13 x64 (ver o README que está lá).
 SQLITE_RUNTIME_DIRECTORY = PLUGIN_DIRECTORY / "lib" / "sqlite3_runtime"
@@ -59,6 +81,36 @@ def _log(message: str) -> None:
         print(message, file=sys.stderr)
     else:
         log.info(message)
+
+
+def _move_legacy_data_if_needed() -> None:
+    """Leva os dados da pasta antiga (dentro do add-on) para a pasta do usuário, uma vez.
+
+    Só move o que ainda não existe no destino; é rename, não cópia, então
+    o banco de 1,4 GB não custa nada.
+    """
+    if LEGACY_DATA_DIRECTORY == ADDON_DATA_DIRECTORY or not LEGACY_DATA_DIRECTORY.is_dir():
+        return
+    moved = []
+    for name in ("puzzles.db", "tactic.db", "theme_catalog_cache.json", "manifest_url.txt"):
+        source = LEGACY_DATA_DIRECTORY / name
+        target = ADDON_DATA_DIRECTORY / name
+        if source.is_file() and not target.exists():
+            ADDON_DATA_DIRECTORY.mkdir(parents=True, exist_ok=True)
+            try:
+                source.replace(target)
+                moved.append(name)
+            except OSError:
+                continue
+    for backup in LEGACY_DATA_DIRECTORY.glob("tactic.backup-*.db"):
+        target = ADDON_DATA_DIRECTORY / backup.name
+        if not target.exists():
+            try:
+                backup.replace(target)
+            except OSError:
+                continue
+    if moved:
+        _log(f"chessmart: dados movidos de {LEGACY_DATA_DIRECTORY} para {ADDON_DATA_DIRECTORY}: {', '.join(moved)}")
 
 
 def _split_legacy_if_needed() -> None:
@@ -118,6 +170,7 @@ def is_puzzles_database(db_path: Path) -> bool:
 
 def resolve_default_db_path() -> Path | None:
     """O banco de puzzles em uso, ou None se ainda não houver nenhum."""
+    _move_legacy_data_if_needed()
     _split_legacy_if_needed()
     for candidate in DEFAULT_DB_CANDIDATES:
         db_path = Path(candidate)
