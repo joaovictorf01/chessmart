@@ -65,7 +65,17 @@ jobs:
           else
             gh release edit "$RELEASE_TAG" --notes "$notes"
           fi
-          gh release upload "$RELEASE_TAG" dist/puzzles/manifest.json dist/puzzles/*.db.gz --clobber
+          # Um arquivo por vez, com tentativas: o upload de asset grande no GitHub falha
+          # com HTTP 500 de vez em quando. O manifesto vai por ultimo, quando os
+          # bancos que ele descreve ja estao no ar.
+          for asset in dist/puzzles/*.db.gz dist/puzzles/manifest.json; do
+            for attempt in 1 2 3 4 5; do
+              if gh release upload "$RELEASE_TAG" "$asset" --clobber; then break; fi
+              echo "upload de $asset falhou (tentativa $attempt); esperando..."
+              sleep $((attempt * 30))
+              [ "$attempt" = 5 ] && exit 1
+            done
+          done
 
       - name: Nada a publicar
         if: steps.fresh.outputs.publish != 'true'
