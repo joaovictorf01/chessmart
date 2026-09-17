@@ -8,6 +8,7 @@ from concurrent.futures import Future
 from pathlib import Path
 
 from ..helpers import import_bundled
+from ..i18n import _
 from ..theme_catalog import (
     describe_theme_filter,
     get_theme_entry,
@@ -17,7 +18,7 @@ from ..theme_catalog import (
 )
 from ..tactic.db import resolve_default_db_path
 from ..tactic.repository import PuzzleRepository
-from ..trainer import get_challenge_level, get_trainer_preset
+from ..trainer import challenge_label, get_challenge_level, get_trainer_preset, preset_label
 
 
 with import_bundled():
@@ -127,7 +128,8 @@ def _theme_info_from_slug(theme_slug: str, db_path: Path | None = None) -> Theme
     return ThemeInfo(
         slug=theme_slug,
         label=label,
-        description=f"Tema do Lichess: {label}.",
+        # Translators: Description of a puzzle theme that is not in the catalog yet.
+        description=_("Lichess theme: {label}.").format(label=label),
     )
 
 
@@ -257,7 +259,8 @@ class PuzzleSet:
         if self.options.puzzle_id.strip():
             if self.repository.get(self.options.puzzle_id.strip()) is None:
                 raise LookupError(
-                    f"Puzzle not found: {self.options.puzzle_id.strip()}"
+                    # Translators: Error shown when the typed puzzle id does not exist in the database.
+                    _("Puzzle not found: {puzzle_id}").format(puzzle_id=self.options.puzzle_id.strip())
                 )
             return
 
@@ -268,33 +271,40 @@ class PuzzleSet:
             min_popularity=self.options.min_popularity,
         )
         if preview is None:
-            raise LookupError("No puzzles found for the selected filters.")
+            # Translators: Error shown when no puzzle matches the chosen plan, level and themes.
+            raise LookupError(_("No puzzles found for the selected filters."))
 
     def describe_filters(self) -> str:
         if self.options.puzzle_id.strip():
-            return f"Puzzle ID {self.options.puzzle_id.strip()}"
+            # Translators: Session description when one puzzle was opened by id.
+            return _("Puzzle ID {puzzle_id}").format(puzzle_id=self.options.puzzle_id.strip())
 
         parts = []
         if self.options.trainer_preset:
             preset = get_trainer_preset(self.options.trainer_preset)
-            parts.append(f"Training plan: {preset.label}")
+            # Translators: Part of the session description, e.g. "Training plan: Guided basics".
+            parts.append(_("Training plan: {plan}").format(plan=preset_label(preset)))
         if self.options.challenge_level:
             challenge = get_challenge_level(self.options.challenge_level)
-            parts.append(f"Challenge: {challenge.label}")
+            # Translators: Part of the session description, e.g. "Challenge: Balanced".
+            parts.append(_("Challenge: {level}").format(level=challenge_label(challenge)))
         if self.options.theme.strip():
             parts.append(
-                "Themes: "
-                + (
-                    describe_theme_filter(self.options.theme, db_path=self.db_path)
+                # Translators: Part of the session description, e.g. "Themes: Fork, Pin".
+                _("Themes: {themes}").format(
+                    themes=describe_theme_filter(self.options.theme, db_path=self.db_path)
                     or self.options.theme.strip()
                 )
             )
         if self.options.min_rating is not None or self.options.max_rating is not None:
-            min_rating = "any" if self.options.min_rating is None else str(self.options.min_rating)
-            max_rating = "any" if self.options.max_rating is None else str(self.options.max_rating)
-            parts.append(f"Rating: {min_rating} to {max_rating}")
+            # Translators: Used for an open end of the rating range, e.g. "Rating: any to 1600".
+            min_rating = _("any") if self.options.min_rating is None else str(self.options.min_rating)
+            max_rating = _("any") if self.options.max_rating is None else str(self.options.max_rating)
+            # Translators: Part of the session description, e.g. "Rating: 800 to 1600".
+            parts.append(_("Rating: {low} to {high}").format(low=min_rating, high=max_rating))
         if self.options.min_popularity:
-            parts.append(f"Minimum popularity: {self.options.min_popularity}")
+            # Translators: Part of the session description.
+            parts.append(_("Minimum popularity: {popularity}").format(popularity=self.options.min_popularity))
         return "; ".join(parts)
 
     def available_themes(self):

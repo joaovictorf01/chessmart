@@ -9,6 +9,7 @@ import tones
 import queueHandler
 import eventHandler
 import gui
+from .i18n import _
 from io import BytesIO
 from logHandler import log
 from .game_elements import GameInfo
@@ -46,10 +47,12 @@ class ChessboardDialog(wx.Frame):
 
     def __init__(self, chessboard_class, **vboard_kwargs):
         super().__init__()
-        super().Create(title="Chess Board", parent=gui.mainFrame, style=wx.NO_BORDER)
+        # Translators: Title of the chessboard window.
+        super().Create(title=_("Chess Board"), parent=gui.mainFrame, style=wx.NO_BORDER)
         self.chessboard_class = chessboard_class
         self.vboard_kwargs = vboard_kwargs
-        self.SetName("Chessboard")
+        # Translators: Accessible name of the chessboard window.
+        self.SetName(_("Chessboard"))
         self.SetBackgroundColour(wx.WHITE)
         self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
         size = wx.Size(900, 900)

@@ -267,7 +267,8 @@ class NewGameOptionsDialog(gui.SettingsDialog):
         dg = AsyncSnakDialog(
             task=task,
             parent=None,
-            message=f"Seeking game...",
+            # Translators: Shown while waiting for an online opponent.
+            message=_("Seeking game..."),
             done_callback=functools.partial(self._on_lichess_api_callback, chessboard_cls, game_info),
             dismiss_callback=lambda: 1,
         )
@@ -298,7 +299,8 @@ class NewGameOptionsDialog(gui.SettingsDialog):
         dg = AsyncSnakDialog(
             task=task,
             parent=None,
-            message=f"Creating Challenge with {challenge_whom}...",
+            # Translators: Shown while an online challenge is being created, e.g. "Creating challenge with MagnusCarlsen...".
+            message=_("Creating challenge with {opponent}...").format(opponent=challenge_whom),
             done_callback=functools.partial(self._on_lichess_api_callback, chessboard_cls, game_info),
             dismiss_callback=lambda: 1,
         )

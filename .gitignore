@@ -12,3 +12,5 @@ __pycache__/
 # Saída do gerador de puzzles e cache do download
 build/
 dist/
+*.pot
+*.mo

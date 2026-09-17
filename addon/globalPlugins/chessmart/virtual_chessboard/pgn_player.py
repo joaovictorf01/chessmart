@@ -8,6 +8,7 @@ import ui
 import speech
 from scriptHandler import script
 from ..helpers import import_bundled
+from ..i18n import _
 from .base import BaseVirtualChessboard, BaseChessboardCell
 
 
@@ -65,14 +66,18 @@ class PGNGameInfo:
     @staticmethod
     def parse_pgn_result_string(result_string):
         if result_string.strip() == "*":
-            return "Game not finished"
+            # Translators: Result of a PGN game that has no result yet.
+            return _("Game not finished")
         w_score, b_score = [s.strip() for s in result_string.strip().split("-")]
         if w_score == "1":
-            return "White Won"
+            # Translators: Result of a PGN game.
+            return _("White won")
         elif b_score == "1":
-            return "Black won"
+            # Translators: Result of a PGN game.
+            return _("Black won")
         elif w_score == b_score == "1/2":
-            return "Game ended in a draw"
+            # Translators: Result of a PGN game.
+            return _("Game ended in a draw")
         raise ValueError(f"Cannot parse PGN result {result_string}")
 
 
@@ -141,7 +146,8 @@ class PGNPlayerChessboard(BaseVirtualChessboard):
             self.current_move = next_move
         else:
             if self.game.info.termination is not None:
-                message = f"The game has been terminated because of: {self.game.info.termination}"
+                # Translators: Spoken at the end of a replayed PGN game, with the Termination tag of the file.
+                message = _("The game has been terminated because of: {reason}").format(reason=self.game.info.termination)
             else:
                 message = self.game.info.result
             queueHandler.queueFunction(queueHandler.eventQueue, ui.message, message)

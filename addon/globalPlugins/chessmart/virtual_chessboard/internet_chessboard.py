@@ -12,6 +12,7 @@ import speech.commands
 from scriptHandler import script
 from logHandler import log
 from ..helpers import import_bundled, speak_next, GameSound
+from ..i18n import _
 from ..signals import move_completed_signal, chessboard_opened_signal
 from .ui_components import SimpleList
 from .user_driven import UserDrivenChessboard, UserDrivenCell
@@ -25,7 +26,8 @@ class InternetChessboardCell(UserDrivenCell):
     @script(gesture="kb:control+shift+r")
     def script_resign_game(self, gesture):
         """Resigns the game."""
-        ui.message("Resigning...")
+        # Translators: Spoken while the resignation is sent to the online server.
+        ui.message(_("Resigning..."))
         self.parent.client.resign_game().add_done_callback(
             lambda f: GameSound.resigned.play()
         )
@@ -69,11 +71,13 @@ class InternetChessboardCell(UserDrivenCell):
         try:
             response = future.result()
             if response.entity.content["ok"]:
-                self.parent.chat_list.add_item(f"You said {message}")
+                # Translators: Chat line for a message the player sent, e.g. "You said good game".
+                self.parent.chat_list.add_item(_("You said {message}").format(message=message))
         except Exception:
             log.exception("Failed to send chat message.")
             queueHandler.queueFunction(
-                queueHandler.eventQueue, ui.message, "Failed to send chat message"
+                # Translators: Spoken when an online chat message could not be sent.
+                queueHandler.eventQueue, ui.message, _("Failed to send chat message")
             )
 
 
@@ -87,8 +91,10 @@ class InternetChessboard(UserDrivenChessboard):
         self.client = client(board=self)
         self.prospective = self.prospective if self.prospective is not None else True
         self._is_game_started = False
-        self.chat_list = SimpleList(parent=self, name="Chat", close_gesture="kb:f5")
-        self.dialog.SetTitle("Starting Game...")
+        # Translators: Name of the online chat list.
+        self.chat_list = SimpleList(parent=self, name=_("Chat"), close_gesture="kb:f5")
+        # Translators: Window title while an online game is being set up.
+        self.dialog.SetTitle(_("Starting Game..."))
 
     def is_busy(self, index):
         if not self._is_game_started:
@@ -150,7 +156,8 @@ class InternetChessboard(UserDrivenChessboard):
 
     def on_game_abort(self, event):
         color_name = self.game_announcer.color_name(event.loser)
-        self.game_error(f"{color_name} aborted the game")
+        # Translators: Shown when the online opponent aborted the game, e.g. "black aborted the game".
+        self.game_error(_("{color} aborted the game").format(color=color_name))
         GameSound.error.play()
 
     def on_game_error(self, event):

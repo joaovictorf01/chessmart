@@ -3,6 +3,7 @@
 
 import abc
 from .helpers import import_bundled
+from .i18n import _
 from .ibca_notation import (
     IBCA_COLOR_NAMES,
     IBCA_FILE_MAP,
@@ -67,12 +68,42 @@ class GameAnnouncer(abc.ABC):
         """Return a list of string describing a promotion move."""
 
 
+def spoken_piece_name(piece_type: chess.PieceType) -> str:
+    """O nome da peça no idioma do NVDA. Resolvido a cada chamada, como o resto."""
+    return {
+        # Translators: Name of the chess piece.
+        chess.PAWN: _("pawn"),
+        # Translators: Name of the chess piece.
+        chess.KNIGHT: _("knight"),
+        # Translators: Name of the chess piece.
+        chess.BISHOP: _("bishop"),
+        # Translators: Name of the chess piece.
+        chess.ROOK: _("rook"),
+        # Translators: Name of the chess piece.
+        chess.QUEEN: _("queen"),
+        # Translators: Name of the chess piece.
+        chess.KING: _("king"),
+    }[piece_type]
+
+
+def spoken_color_name(color: chess.Color) -> str:
+    # Translators: The side that plays the white pieces.
+    # Translators: The side that plays the black pieces.
+    return _("white") if color == chess.WHITE else _("black")
+
+
 class StandardGameAnnouncer(GameAnnouncer):
     def piece_name(self, piece_type: chess.PieceType) -> str:
-        return chess.piece_name(piece_type)
+        return spoken_piece_name(piece_type)
 
     def color_name(self, color: chess.Color) -> str:
-        return chess.COLOR_NAMES[color]
+        return spoken_color_name(color)
+
+    def describe_piece(self, piece: chess.Piece):
+        # Translators: A piece with its color, e.g. "white knight". Reorder the placeholders as your language needs.
+        return _("{color} {piece}").format(
+            color=self.color_name(piece.color), piece=self.piece_name(piece.piece_type)
+        )
 
     def square_name(self, square: chess.Square) -> str:
         return chess.square_name(square)
@@ -88,11 +119,12 @@ class StandardGameAnnouncer(GameAnnouncer):
     ) -> list:
         move_desc = [
             self.describe_piece(moved_piece),
-            "to",
-            self.square_name(move.to_square),
+            # Translators: Destination of a move, spoken after the piece, e.g. "to f3".
+            _("to {square}").format(square=self.square_name(move.to_square)),
         ]
         if (moved_piece.piece_type is not chess.PAWN) and (move.from_square != move.to_square):
-            move_desc.insert(1, f"from {self.square_name(move.from_square)}")
+            # Translators: Origin of a move, spoken after the piece, e.g. "from g1".
+            move_desc.insert(1, _("from {square}").format(square=self.square_name(move.from_square)))
         return move_desc
 
     def capture_move(
@@ -100,37 +132,42 @@ class StandardGameAnnouncer(GameAnnouncer):
     ) -> list:
         return [
             self.describe_piece(moved_piece),
-            f"was at {self.square_name(move.from_square)}",
-            "captured",
+            # Translators: Origin of a capturing piece, e.g. "was at g1".
+            _("was at {square}").format(square=self.square_name(move.from_square)),
+            # Translators: Spoken between the capturing piece and the captured piece.
+            _("captured"),
             self.describe_piece(captured),
-            "at",
-            self.square_name(move.to_square),
+            # Translators: Square where a capture happened, e.g. "at f3".
+            _("at {square}").format(square=self.square_name(move.to_square)),
         ]
 
     def castling_move(self, move_maker: chess.Color, is_king_side: bool) -> list:
         return [
             self.color_name(move_maker),
-            "castled",
-            "king side" if is_king_side else "queen side",
+            # Translators: Spoken after the color that castled.
+            _("castled"),
+            # Translators: King-side castling.
+            # Translators: Queen-side castling.
+            _("king side") if is_king_side else _("queen side"),
         ]
 
     def drop_move(self, move_maker, move):
         return (
             self.color_name(move_maker),
-            "dropped a ",
-            self.piece_name(move.drop),
+            # Translators: A piece dropped on the board (Crazyhouse), e.g. "dropped a knight".
+            _("dropped a {piece}").format(piece=self.piece_name(move.drop)),
         )
 
     def promotion_move(self, move, move_maker):
         return [
             self.color_name(move_maker),
-            f"Promoted {self.piece_name(chess.PAWN)}",
-            "at",
-            self.square_name(move.from_square),
-            "to",
-            f"a {self.piece_name(move.promotion)}",
-            "at",
-            self.square_name(move.to_square),
+            # Translators: Pawn promotion, e.g. "promoted pawn at b7 to a queen at b8".
+            _("promoted {pawn} at {origin} to a {piece} at {target}").format(
+                pawn=self.piece_name(chess.PAWN),
+                origin=self.square_name(move.from_square),
+                piece=self.piece_name(move.promotion),
+                target=self.square_name(move.to_square),
+            ),
         ]
 
 
@@ -163,10 +200,9 @@ class IBCAGameAnnouncer(GameAnnouncer):
     ) -> list:
         return [
             self.describe_piece(moved_piece),
-            "captured",
+            _("captured"),
             self.describe_piece(captured),
-            "at",
-            self.square_name(move.to_square),
+            _("at {square}").format(square=self.square_name(move.to_square)),
         ]
 
     def castling_move(self, move_maker: chess.Color, is_king_side: bool) -> list:
@@ -178,22 +214,19 @@ class IBCAGameAnnouncer(GameAnnouncer):
     def drop_move(self, move_maker, move):
         return (
             self.color_name(move_maker),
-            "dropped a ",
-            self.piece_name(move.drop),
-            "at ",
-            self.square_name(move.to_square),
+            _("dropped a {piece}").format(piece=self.piece_name(move.drop)),
+            _("at {square}").format(square=self.square_name(move.to_square)),
         )
 
     def promotion_move(self, move, move_maker):
         return [
             self.color_name(move_maker),
-            f"Promoted {self.piece_name(chess.PAWN)}",
-            "at",
-            self.square_name(move.from_square),
-            "to",
-            f"a {self.piece_name(move.promotion)}",
-            "at",
-            self.square_name(move.to_square),
+            _("promoted {pawn} at {origin} to a {piece} at {target}").format(
+                pawn=self.piece_name(chess.PAWN),
+                origin=self.square_name(move.from_square),
+                piece=self.piece_name(move.promotion),
+                target=self.square_name(move.to_square),
+            ),
         ]
 
 

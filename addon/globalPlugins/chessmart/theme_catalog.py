@@ -9,6 +9,7 @@ import threading
 from pathlib import Path
 
 from .tactic.db import ADDON_DATA_DIRECTORY, resolve_default_db_path, run_bridge
+from .i18n import _
 
 
 THEME_FILTER_SPLIT_PATTERN = re.compile(r"[\s,;]+")
@@ -114,7 +115,8 @@ def _payload_to_entries(payload: dict[str, object]) -> tuple[ThemeCatalogEntry, 
             ThemeCatalogEntry(
                 slug=slug,
                 label=label,
-                description=f"Lichess theme: {label}. {count} puzzles in this database.",
+                # Translators: Description of a puzzle theme, e.g. "Lichess theme: Fork. 1,234 puzzles in this database.".
+                description=_("Lichess theme: {label}. {count:,} puzzles in this database.").format(label=label, count=count),
                 count=count,
             )
         )

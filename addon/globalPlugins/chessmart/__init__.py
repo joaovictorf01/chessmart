@@ -189,9 +189,11 @@ class ChessboardMenu(wx.Menu):
     def onReplayPGN(self, event):
         openFileDialog = wx.FileDialog(
             parent=gui.mainFrame,
-            message="Open PGN File",
+            # Translators: Title of the dialog that opens a PGN file.
+            message=_("Open PGN File"),
             defaultDir=wx.GetUserHome(),
-            wildcard="Portable Game Notation *.pgn | *.pgn",
+            # Translators: File type filter of the PGN open dialog.
+            wildcard=_("Portable Game Notation *.pgn | *.pgn"),
             style=wx.FD_OPEN,
         )
         gui.runScriptModalDialog(
@@ -207,7 +209,8 @@ class ChessboardMenu(wx.Menu):
         games = tuple(PGNGameInfo.game_info_from_pgn_filename(filepath))
         if not games:
             queueHandler.queueFunction(
-                queueHandler.eventQueue, ui.message, "The file contains no games"
+                # Translators: Spoken when the chosen PGN file has no games.
+                queueHandler.eventQueue, ui.message, _("The file contains no games")
             )
         elif len(games) == 1:
             self.open_pgn_game(games[0])

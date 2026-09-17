@@ -28,7 +28,8 @@ from .ui_components import (
     SimpleList,
 )
 from ..time_control import ChessTimeControl, NULL_TIME_CONTROL
-from ..spoken_messages import standard_game_announcer, ibca_game_announcer
+from ..spoken_messages import standard_game_announcer, ibca_game_announcer, spoken_color_name
+from ..i18n import _
 from ..notation import DESCRIPTIVE, render_san, render_square
 from ..addon_config import get_move_notation
 from ..helpers import import_bundled, intersperse, GameSound, speak_next, Color
@@ -84,7 +85,8 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
     @property
     def roleText(self):
         if self.parent.board.piece_at(self.index) is None:
-            return "Square"
+            # Translators: Role of an empty board square, spoken by the screen reader.
+            return _("Square")
 
     @property
     def states(self):
@@ -116,15 +118,20 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
         return chess.WHITE if (is_row_even != is_cell_even) else chess.BLACK
 
     def get_remaining_time(self, color: chess.Color):
-        color_name = chess.COLOR_NAMES[color]
+        color_name = spoken_color_name(color)
         total_seconds = self.parent.time_control.get_remaining_time()[color]
         minutes = math.floor(total_seconds / 60)
         seconds = math.floor(total_seconds % 60)
         if not minutes:
-            return f"{seconds} seconds remaining for {color_name}"
+            # Translators: Remaining clock time, e.g. "45 seconds remaining for white".
+            return _("{seconds} seconds remaining for {color}").format(seconds=seconds, color=color_name)
         elif not seconds:
-            return f"{minutes} minutes remaining for {color_name}"
-        return f"{minutes} minutes and {seconds} seconds remaining for {color_name}"
+            # Translators: Remaining clock time, e.g. "5 minutes remaining for white".
+            return _("{minutes} minutes remaining for {color}").format(minutes=minutes, color=color_name)
+        # Translators: Remaining clock time, e.g. "5 minutes and 30 seconds remaining for white".
+        return _("{minutes} minutes and {seconds} seconds remaining for {color}").format(
+            minutes=minutes, seconds=seconds, color=color_name
+        )
 
     def get_highlight_color(self):
         return Color.Blue
@@ -178,13 +185,14 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 
     @script(gesture="kb:f3")
     def script_cell_info(self, gesture):
-        color = chess.COLOR_NAMES[self.square_color]
+        color = spoken_color_name(self.square_color)
         spoken_commands = [
             ibca_game_announcer.square_file(self.index),
             speech.commands.BreakCommand(100),
             ibca_game_announcer.square_rank(self.index),
             speech.commands.BreakCommand(250),
-            f"square color: {color},",
+            # Translators: Color of the focused square, e.g. "square color: white,".
+            _("square color: {color},").format(color=color),
         ]
         piece_type = self.parent.board.piece_type_at(self.index)
         if piece_type is not None:
@@ -196,7 +204,8 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
     def script_announce_time_for_current_turn(self, gesture):
         if self.parent.time_control is NULL_TIME_CONTROL:
             GameSound.invalid.play()
-            return ui.message("No Time Control")
+            # Translators: Spoken when the clock is asked for in a game without time control.
+            return ui.message(_("No Time Control"))
         color = self.parent.board.turn
         remaining = self.get_remaining_time(color)
         ui.message(remaining)
@@ -205,7 +214,7 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
     def script_announce_time_for_other_turn(self, gesture):
         if self.parent.time_control is NULL_TIME_CONTROL:
             GameSound.invalid.play()
-            return ui.message("No Time Control")
+            return ui.message(_("No Time Control"))
         color = not self.parent.board.turn
         remaining = self.get_remaining_time(color)
         ui.message(remaining)
@@ -223,18 +232,20 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
         if self.parent.score_sheet_menu:
             eventHandler.queueEvent("gainFocus", self.parent.score_sheet_menu)
         else:
-            ui.message("Score sheet is empty")
+            # Translators: Spoken when the score sheet is opened before any move.
+            ui.message(_("Score sheet is empty"))
 
     @script(gesture="kb:control+s")
     def script_save_board_pgn(self, gesture):
         if globalVars.appArgs.secure:
-            return ui.message("Could not save game. NVDA running in secure mode.")
+            # Translators: Spoken when saving is refused because NVDA runs in secure mode.
+            return ui.message(_("Could not save game. NVDA running in secure mode."))
         self.parent.save_game()
 
     @script(gesture="kb:control+shift+s")
     def script_save_board_image(self, gesture):
         if globalVars.appArgs.secure:
-            return ui.message("Could not save game. NVDA running in secure mode.")
+            return ui.message(_("Could not save game. NVDA running in secure mode."))
         self.parent.save_board_image()
 
     @script(gesture="kb:escape")
@@ -278,8 +289,10 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 
 class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
     role = controlTypes.Role.TABLE
-    roleText = "Board"
-    name = "Chess"
+    # Translators: Role of the chessboard control, spoken by the screen reader.
+    roleText = _("Board")
+    # Translators: Name of the chessboard control, spoken by the screen reader.
+    name = _("Chess")
     row_ranges = tuple(
         range(i, j)
         for (i, j) in zip([i * 8 for i in range(0, 8)], [j * 8 for j in range(1, 9)])
@@ -318,7 +331,8 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
         self.is_game_over = False
         self._current_focused_object = None
         self.score_sheet_menu = SimpleList(
-            parent=self, name="Score sheet", close_gesture="kb:f4"
+            # Translators: Name of the list of moves played so far.
+            parent=self, name=_("Score sheet"), close_gesture="kb:f4"
         )
         # Connect to events
         game_started_signal.connect(
@@ -347,54 +361,62 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
             if index in rng:
                 return rng
 
-    def game_over(self, dialog_title="Game Over"):
+    def game_over(self, dialog_title=None):
         self.is_game_over = True
-        self.dialog.SetTitle(dialog_title)
+        # Translators: Window title when a game has ended.
+        self.dialog.SetTitle(dialog_title or _("Game Over"))
         eventHandler.queueEvent("stateChange", api.getFocusObject())
         game_over_signal.send(self, board_outcome=self.board.outcome())
 
     def game_resigned(self, resigning_color):
         self.game_over()
-        color_name = chess.COLOR_NAMES[resigning_color]
-        self.dialog.SetTitle(f"{color_name} resigned")
+        color_name = spoken_color_name(resigning_color)
+        # Translators: Window title after a resignation, e.g. "white resigned".
+        self.dialog.SetTitle(_("{color} resigned").format(color=color_name))
         speak_next(
             [
                 speech.commands.WaveFileCommand(GameSound.resigned.filename),
                 speech.commands.BreakCommand(200),
-                f"{color_name} resigned the game",
+                # Translators: Spoken after a resignation, e.g. "white resigned the game".
+                _("{color} resigned the game").format(color=color_name),
             ]
         )
 
     def game_drawn(self):
         self.game_over()
-        self.dialog.SetTitle("Game Drawn")
+        # Translators: Window title when the game ended in a draw.
+        self.dialog.SetTitle(_("Game Drawn"))
         speak_next(
             [
                 speech.commands.WaveFileCommand(GameSound.drawn.filename),
                 speech.commands.BreakCommand(200),
-                "Game is drawn",
+                # Translators: Spoken when the game ended in a draw.
+                _("Game is drawn"),
             ]
         )
 
     def game_time_forfeit(self, losing_color: chess.Color):
         self.game_over(
-            f"Game Over: Time Forfeit - {self.game_announcer.color_name(not losing_color)} is the winner"
+            # Translators: Window title when a game was lost on time, e.g. "Game Over: Time Forfeit - white is the winner".
+            _("Game Over: Time Forfeit - {color} is the winner").format(
+                color=self.game_announcer.color_name(not losing_color)
+            )
         )
         speak_next(
             [
                 speech.commands.WaveFileCommand(GameSound.time_forfeit.filename),
                 speech.commands.BreakCommand(300),
-                self.game_announcer.color_name(losing_color),
-                speech.commands.BreakCommand(100),
-                "time over",
+                # Translators: Spoken when a side ran out of time, e.g. "black, time over".
+                _("{color}, time over").format(color=self.game_announcer.color_name(losing_color)),
                 speech.commands.BreakCommand(150),
-                self.game_announcer.color_name(not losing_color),
-                speech.commands.BreakCommand(100),
-                "is the winner",
+                # Translators: Spoken to name the winner, e.g. "white is the winner".
+                _("{color} is the winner").format(color=self.game_announcer.color_name(not losing_color)),
             ]
         )
 
-    def game_error(self, error_message="Game terminated due to an error"):
+    def game_error(self, error_message=None):
+        # Translators: Window title and message when a game stopped because of an error.
+        error_message = error_message or _("Game terminated due to an error")
         self.game_over()
         self.dialog.SetTitle(error_message)
         speak_next(
@@ -417,7 +439,8 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
                 [
                     speech.commands.WaveFileCommand(GameSound.invalid.filename),
                     speech.commands.BreakCommand(100),
-                    "Illegal move",
+                    # Translators: Spoken when the requested move is not legal.
+                    _("Illegal move"),
                 ]
             )
             return
@@ -459,14 +482,12 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
             spoken_commands.append(self._get_game_over_messages())
             spoken_commands.append([speech.commands.CallbackCommand(self.game_over)])
         elif self.board.is_check():
-            color_in_check = chess.COLOR_NAMES[self.board.turn]
             spoken_commands.append(
                 [
                     speech.commands.WaveFileCommand(GameSound.check.filename),
                     speech.commands.BreakCommand(250),
-                    color_in_check,
-                    speech.commands.BreakCommand(200),
-                    f"is in Check",
+                    # Translators: Spoken when a king is in check, e.g. "white is in check".
+                    _("{color} is in check").format(color=spoken_color_name(self.board.turn)),
                 ]
             )
             if (move_maker != self.prospective) or (self.prospective is None):
@@ -580,7 +601,8 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
                 speech.commands.BreakCommand(200),
             )
             if is_en_passant:
-                spoken_commands.append("en passant")
+                # Translators: Spoken after an en passant capture.
+                spoken_commands.append(_("en passant"))
             yield from spoken_commands
         else:
             yield speech.commands.WaveFileCommand(GameSound.drop_piece.filename)
@@ -636,9 +658,7 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
         if game_winner:
             yield from [
                 speech.commands.BreakCommand(250),
-                f"{game_winner}",
-                speech.commands.BreakCommand(200),
-                "is the winner",
+                _("{color} is the winner").format(color=game_winner),
             ]
 
     def announce_attackers(self, cell_index, announce_piece_name=False):
@@ -650,7 +670,8 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
             attackers = list(self.board.attackers(not self.board.turn, cell_index))
         attackers.sort()
         if not attackers:
-            ui.message("This square is not under attack")
+            # Translators: Spoken when the focused square has no attackers.
+            ui.message(_("This square is not under attack"))
             return
         spoken_commands = []
         if announce_piece_name:
@@ -658,7 +679,8 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
             spoken_commands.append(f"{piece_name}")
             spoken_commands.append(speech.commands.BreakCommand(250))
         spoken_commands += [
-            "Attacked by",
+            # Translators: Spoken before the list of pieces attacking a square.
+            _("Attacked by"),
             speech.commands.BreakCommand(250),
         ]
         for attacking_square in attackers:
@@ -697,34 +719,45 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
             return len(self.board.pieces(piece_type, color))
 
         lines = [
-            ("queens", count(chess.QUEEN, me), count(chess.QUEEN, them)),
-            ("rooks", count(chess.ROOK, me), count(chess.ROOK, them)),
+            # Translators: Plural piece name in the material count.
+            (_("queens"), count(chess.QUEEN, me), count(chess.QUEEN, them)),
+            # Translators: Plural piece name in the material count.
+            (_("rooks"), count(chess.ROOK, me), count(chess.ROOK, them)),
             (
-                "minor pieces",
+                # Translators: Bishops and knights together, in the material count.
+                _("minor pieces"),
                 count(chess.BISHOP, me) + count(chess.KNIGHT, me),
                 count(chess.BISHOP, them) + count(chess.KNIGHT, them),
             ),
-            ("pawns", count(chess.PAWN, me), count(chess.PAWN, them)),
+            # Translators: Plural piece name in the material count.
+            (_("pawns"), count(chess.PAWN, me), count(chess.PAWN, them)),
         ]
         balance = sum(
             value * (count(piece_type, me) - count(piece_type, them))
             for piece_type, value in self.MATERIAL_VALUES.items()
         )
-        spoken_commands = ["Material."]
+        # Translators: Heading of the material count announcement.
+        spoken_commands = [_("Material.")]
         for label, mine, theirs in lines:
-            spoken_commands.append(f"{label}: {mine} to {theirs}.")
+            # Translators: One line of the material count, e.g. "rooks: 2 to 1.".
+            spoken_commands.append(_("{pieces}: {mine} to {theirs}.").format(pieces=label, mine=mine, theirs=theirs))
         if balance > 0:
-            spoken_commands.append(f"You are up {balance}.")
+            # Translators: Material balance in the player's favor, in pawn units.
+            spoken_commands.append(_("You are up {points}.").format(points=balance))
         elif balance < 0:
-            spoken_commands.append(f"You are down {abs(balance)}.")
+            # Translators: Material balance against the player, in pawn units.
+            spoken_commands.append(_("You are down {points}.").format(points=abs(balance)))
         else:
-            spoken_commands.append("Material is even.")
+            # Translators: Spoken when both sides have the same material.
+            spoken_commands.append(_("Material is even."))
         my_bishops = count(chess.BISHOP, me)
         their_bishops = count(chess.BISHOP, them)
         if my_bishops == 2 and their_bishops < 2:
-            spoken_commands.append("You have the bishop pair.")
+            # Translators: Spoken in the material count.
+            spoken_commands.append(_("You have the bishop pair."))
         elif their_bishops == 2 and my_bishops < 2:
-            spoken_commands.append("Opponent has the bishop pair.")
+            # Translators: Spoken in the material count.
+            spoken_commands.append(_("Opponent has the bishop pair."))
         speak_next(intersperse(spoken_commands, speech.commands.BreakCommand(150)))
 
     def announce_player_overview(self, color):
@@ -777,9 +810,11 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
     def save_game(self):
         saveFileDialog = wx.FileDialog(
             parent=None,
-            message="Save Game As",
+            # Translators: Title of the dialog that saves the game as a PGN file.
+            message=_("Save Game As"),
             defaultDir=wx.GetUserHome(),
-            wildcard="Chess Game *.pgn | *.pgn",
+            # Translators: File type filter of the PGN save dialog.
+            wildcard=_("Chess Game *.pgn | *.pgn"),
             style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
         )
         with saveFileDialog as save_dialog:
@@ -797,9 +832,11 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
     def save_board_image(self):
         saveFileDialog = wx.FileDialog(
             parent=None,
-            message="Save Board To Image",
+            # Translators: Title of the dialog that saves the board as an image.
+            message=_("Save Board To Image"),
             defaultDir=wx.GetUserHome(),
-            wildcard="Portable Network Graphics *.png | *.png",
+            # Translators: File type filter of the image save dialog.
+            wildcard=_("Portable Network Graphics *.png | *.png"),
             style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
         )
         with saveFileDialog as save_dialog:

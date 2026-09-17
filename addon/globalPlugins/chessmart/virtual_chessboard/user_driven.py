@@ -19,6 +19,8 @@ from .ui_components import (
     MenuItemObject,
 )
 from ..helpers import import_bundled, GameSound, Color, speak_next
+from ..i18n import _
+from ..spoken_messages import spoken_piece_name
 from .base import BaseChessboardCell, BaseVirtualChessboard
 from .ui_components import SimpleList
 
@@ -99,9 +101,11 @@ class UserDrivenCell(BaseChessboardCell):
             return
         if self.parent.draw_offered:
             self.parent.draw_offered = False
-            ui.message("Draw offer withdrawn")
+            # Translators: Spoken when the player takes back a draw offer.
+            ui.message(_("Draw offer withdrawn"))
         else:
-            ui.message("Draw offered.")
+            # Translators: Spoken when the player offers a draw.
+            ui.message(_("Draw offered."))
             self.parent.draw_offered = True
 
     @script(gesture="kb:f6")
@@ -196,7 +200,8 @@ class UserDrivenChessboard(BaseVirtualChessboard):
         if move not in self.board.legal_moves and self.is_promotion_move(move):
             p_menu = PromotionMenu(
                 user_choice_callback=functools.partial(self.make_promotion_move, move),
-                name="Promote Pawn. Select promotion piece type:",
+                # Translators: Name of the menu that asks which piece a pawn promotes to.
+                name=_("Promote Pawn. Select promotion piece type:"),
                 parent=self,
             )
             eventHandler.queueEvent("gainFocus", p_menu)
@@ -211,7 +216,8 @@ class UserDrivenChessboard(BaseVirtualChessboard):
         drop_menu = DropPieceMenu(
             available_piece_types=available_piece_types,
             user_choice_callback=functools.partial(self.make_drop_move, index),
-            name="Drop Piece. Select piece type:",
+            # Translators: Name of the menu that asks which piece to drop (Crazyhouse).
+            name=_("Drop Piece. Select piece type:"),
             parent=self,
         )
         eventHandler.queueEvent("gainFocus", drop_menu)
@@ -236,7 +242,8 @@ class UserDrivenChessboard(BaseVirtualChessboard):
         color_name = self.game_announcer.color_name(not self.prospective)
         self._current_focused_object = DrawChoiceMenu(
             choice_callback=self.draw_offer_callback,
-            name=f"{color_name} is offering to draw. Do you want to accept the draw offer?",
+            # Translators: Name of the menu shown when the opponent offers a draw.
+            name=_("{color} is offering to draw. Do you want to accept the draw offer?").format(color=color_name),
             parent=self,
         )
         GameSound.request_promotion.play()
@@ -286,7 +293,7 @@ class PieceSelectionMenu(MenuObject):
             [
                 PieceSelectionMenuItem(
                     piece_type=piece_type,
-                    name=chess.piece_name(piece_type),
+                    name=spoken_piece_name(piece_type),
                     parent=self,
                 )
                 for piece_type in self.available_piece_types
@@ -325,8 +332,10 @@ class DrawChoiceMenu(MenuObject):
         self.choice_callback = choice_callback
         self.init_container_state(
             [
-                MenuItemObject(name="No, decline offer and continue game", parent=self),
-                MenuItemObject(name="Yes, accept offer and end game", parent=self),
+                # Translators: Option in the draw offer menu.
+                MenuItemObject(name=_("No, decline offer and continue game"), parent=self),
+                # Translators: Option in the draw offer menu.
+                MenuItemObject(name=_("Yes, accept offer and end game"), parent=self),
             ]
         )
 

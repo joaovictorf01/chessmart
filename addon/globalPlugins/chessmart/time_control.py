@@ -4,6 +4,7 @@
 import abc
 import typing as t
 import math
+from .i18n import _
 import re
 import dataclasses
 from .helpers import import_bundled
@@ -32,12 +33,14 @@ class ChessTimeControl:
             chess.WHITE: ChessClock(
                 base_time=self.white_base_time,
                 increment=self.white_increment,
-                name="White Clock",
+                # Translators: Name of the clock of the white side.
+                name=_("White Clock"),
             ),
             chess.BLACK: ChessClock(
                 base_time=self.black_base_time,
                 increment=self.black_increment,
-                name="Black Clock",
+                # Translators: Name of the clock of the black side.
+                name=_("Black Clock"),
             ),
         }
 
