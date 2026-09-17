@@ -285,8 +285,8 @@ msgstr "Chessmart"
 msgid "Chessboard Tactics"
 msgstr "Táticas do Chessmart"
 
-#. Summary for this add-on
-#: buildVars.py:23
+#. Summary/title for this add-on
+#: buildVars.py:25
 msgid "Chessmart"
 msgstr "Chessmart"
 
@@ -1410,14 +1410,6 @@ msgstr "O arquivo contém as seguintes partidas"
 msgid "The game has been terminated because of: {reason}"
 msgstr "A partida foi encerrada por: {reason}"
 
-#. Long description to be shown for this add-on on add-on information from
-#. add-ons manager
-#: buildVars.py:26
-msgid "The most accessible chessboard in the planet earth."
-msgstr ""
-"O tabuleiro de xadrez mais acessível do planeta, com treinador de táticas do"
-" Lichess."
-
 #: addon/globalPlugins/chessmart/__init__.py:163
 msgid ""
 "The tactics database was not found. Choose a valid database in Chessboard "
@@ -1821,3 +1813,30 @@ msgstr "{size} MB"
 #: addon/globalPlugins/chessmart/virtual_chessboard/internet_chessboard.py:136
 msgid "{white} ({white_rating}) versus {black} ({black_rating})"
 msgstr "{white} ({white_rating}) contra {black} ({black_rating})"
+
+#. Long description to be shown for this add-on on add-on information from
+#. add-on store
+#: buildVars.py:28
+msgid ""
+"An accessible chessboard and tactics trainer for NVDA. Play against "
+"Stockfish or a friend, replay PGN files, and train tactics from the Lichess "
+"puzzle database with a rating that follows you."
+msgstr ""
+"Um tabuleiro de xadrez acessível e treinador de táticas para o NVDA. Jogue "
+"contra o Stockfish ou um amigo, reproduza arquivos PGN e treine táticas com "
+"a base de puzzles do Lichess, com um rating que acompanha você."
+
+#. what's new content for the add-on version to be shown in the add-on store
+#: buildVars.py:37
+msgid ""
+"First public release of the tactics trainer: Lichess puzzle database "
+"downloaded on demand (light or complete) and updated monthly, Glicko-2 "
+"tactics rating with adaptive difficulty, training plans by theme, "
+"configurable move notation (descriptive, SAN, UCI, literate, NATO, anna) and"
+" Brazilian Portuguese translation."
+msgstr ""
+"Primeira versão pública do treinador de táticas: base de puzzles do Lichess "
+"baixada sob demanda (leve ou completa) e atualizada mensalmente, rating de "
+"táticas Glicko-2 com dificuldade adaptativa, planos de treino por tema, "
+"notação dos lances configurável (descritiva, SAN, UCI, por extenso, OTAN, "
+"anna) e tradução para o português do Brasil."

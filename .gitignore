@@ -1,16 +1,19 @@
-# Bancos de puzzles: derivados, baixados sob demanda (nao versionar)
+addon/doc/*.css
+addon/doc/en/
+*_docHandler.py
+*.html
+manifest.ini
+*.mo
+*.pot
+*.py[co]
+*.nvda-addon
+.sconsign.dblite
+/[0-9]*.[0-9]*.[0-9]*.json
+*.egg-info
+
+# chessmart: bancos de puzzles (baixados sob demanda), download do Lichess, saida do gerador
 addon/globalPlugins/chessmart/data/
 *.csv.zst
-
-# Python
-__pycache__/
-*.pyc
-
-# Ferramentas locais
-.claude/settings.local.json
-
-# Saída do gerador de puzzles e cache do download
 build/
 dist/
-*.pot
-*.mo
+.claude/settings.local.json

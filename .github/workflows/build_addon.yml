@@ -1,0 +1,81 @@
+name: build addon
+
+on:
+  push:
+    # So tags de versao: a release fixa `puzzles-latest` (workflow puzzles.yml) tambem e uma tag.
+    tags: ["v*"]
+    # To build on main/master branch, uncomment the following line:
+    # branches: [ main , master ]
+
+  pull_request:
+    branches: [ main, master ]
+
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v7
+    - name: Install uv
+      uses: astral-sh/setup-uv@v10.0.1
+      with:
+        enable-cache: true
+    - name: Install dependencies
+      run: |
+        sudo apt-get update  -y
+        sudo apt-get install -y gettext
+        uv sync
+
+    - name: Code checks
+      run: export PREK_SKIP=no-commit-to-branch; uv run prek run --all-files
+
+    - name: building addon
+      run: uv run scons && uv run scons pot
+
+    - uses: actions/upload-artifact@v7
+      with:
+        name: packaged_addon
+        path: |
+          ./*.nvda-addon
+        archive: false
+
+    - uses: actions/upload-artifact@v7
+      with:
+        name: translation_template
+        path: |
+          ./*.pot
+        archive: false
+
+  upload_release:
+    runs-on: ubuntu-latest
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    needs: ["build"]
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v7
+    - name: download all artifacts
+      uses: actions/download-artifact@v8
+      with:
+        path: .
+        merge-multiple: true
+    - name: Display structure of downloaded files
+      run: ls -R
+    - name: Calculate sha256
+      run: |
+        echo -e "\nSHA256: " >> changelog.md
+        sha256sum *.nvda-addon >> changelog.md
+
+    - name: Release
+      uses: softprops/action-gh-release@v3
+      with:
+        files: |
+          *.nvda-addon
+          *.pot
+        body_path: changelog.md
+        fail_on_unmatched_files: true
+        prerelease: ${{ contains(github.ref, '-') }}
