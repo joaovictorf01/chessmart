@@ -1,10 +1,18 @@
 # coding: utf-8
 
+"""Planos de treino e níveis de desafio do treinador de táticas.
+
+Os textos que o usuário vê ficam nas constantes, marcados com `N_()`: isso os
+entrega ao extrator de traduções sem traduzir no momento da importação. A
+tradução acontece em `preset_label`, `challenge_label` e companhia, a cada
+chamada, para que trocar o idioma do NVDA não exija reiniciar o add-on.
+"""
+
 from __future__ import annotations
 
 import dataclasses
 
-from .i18n import _
+from .i18n import N_, _
 from .theme_catalog import format_theme_filter, parse_theme_filter
 
 
@@ -47,8 +55,12 @@ class ResolvedTrainingSelection:
 TRAINER_PRESETS = (
 	TrainerPreset(
 		preset_id="guidedBasics",
-		label="Guided basics",
-		description="Start with the most common tactical patterns. Pick an easier challenge level to keep the positions short.",
+		# Translators: Name of the beginner training plan, shown in a combo box.
+		label=N_("Fundamentals: mate, fork, pin and skewer"),
+		# Translators: Description of the beginner training plan.
+		description=N_(
+			"The most common tactical patterns: short mates, hanging pieces, forks, pins and skewers. Pick an easier challenge level to keep the positions short.",
+		),
 		# `short` e `oneMove` saíram. O filtro de temas é um OU, então incluir
 		# "posição curta" numa lista de motivos não restringia nada: liberava
 		# QUALQUER puzzle curto, sem motivo algum. Como `short` sozinho cobre
@@ -67,8 +79,12 @@ TRAINER_PRESETS = (
 	),
 	TrainerPreset(
 		preset_id="materialWins",
-		label="Win material",
-		description="Train forks, pins, skewers and defenders so you spot clean material gains.",
+		# Translators: Name of the training plan about winning material, shown in a combo box.
+		label=N_("Win material: forks, pins, skewers and defenders"),
+		# Translators: Description of the training plan about winning material.
+		description=N_(
+			"Train forks, pins, skewers, hanging pieces and removing defenders so you spot clean material gains.",
+		),
 		theme_slugs=(
 			"fork",
 			"pin",
@@ -81,8 +97,10 @@ TRAINER_PRESETS = (
 	),
 	TrainerPreset(
 		preset_id="kingAttack",
-		label="Attack the king",
-		description="Focus on mating nets and direct attacking play.",
+		# Translators: Name of the training plan about attacking the king, shown in a combo box.
+		label=N_("Attack the king: mating nets and king hunts"),
+		# Translators: Description of the training plan about attacking the king.
+		description=N_("Mates in one to three, back rank mates, exposed kings and attacks on either wing."),
 		# `mate` saiu: ele só diz que a posição termina em mate, aparece em
 		# 31,6% dos puzzles e, num filtro que é OU, engolia os motivos de
 		# ataque ao rei que dão nome ao plano. Sem ele o plano passa de 38,4%
@@ -101,8 +119,12 @@ TRAINER_PRESETS = (
 	),
 	TrainerPreset(
 		preset_id="mixedPractice",
-		label="Mixed practice",
-		description="A broad spread across the tactical motif families: material, mating, sacrifice, defence and conversion.",
+		# Translators: Name of the varied training plan, shown in a combo box.
+		label=N_("Mixed motifs: material, mate, sacrifice and defence"),
+		# Translators: Description of the varied training plan.
+		description=N_(
+			"A broad spread across the tactical motif families: winning material, mating, sacrifice and deflection, defence and quiet moves, converting an advantage.",
+		),
 		# Antes esta lista trazia `short`, `middlegame`, `advantage` e `mate`,
 		# que não são motivos táticos e sim comprimento da solução, fase do
 		# jogo, avaliação e desfecho. Como `short` sozinho aparece em metade
@@ -137,8 +159,10 @@ TRAINER_PRESETS = (
 	),
 	TrainerPreset(
 		preset_id="allThemes",
-		label="All themes",
-		description="No theme filter at all: the whole puzzle database is in play.",
+		# Translators: Name of the training plan that applies no theme filter, shown in a combo box.
+		label=N_("All themes: no filter"),
+		# Translators: Description of the training plan that applies no theme filter.
+		description=N_("No theme filter at all: the whole puzzle database is in play."),
 		# Nenhum slug, e sem ser tema personalizado: o filtro sai vazio e a
 		# consulta não acrescenta cláusula de tema. Existe como escolha
 		# explícita porque antes o único jeito de chegar aqui era escolher
@@ -146,8 +170,10 @@ TRAINER_PRESETS = (
 	),
 	TrainerPreset(
 		preset_id="customThemes",
-		label="Custom themes",
-		description="Choose the exact Lichess themes you want to include in the session.",
+		# Translators: Name of the training plan where the user picks the themes, shown in a combo box.
+		label=N_("Custom themes: your own selection"),
+		# Translators: Description of the training plan where the user picks the themes.
+		description=N_("Choose the exact Lichess themes you want to include in the session."),
 		uses_custom_themes=True,
 	),
 )
@@ -155,9 +181,11 @@ TRAINER_PRESETS = (
 
 CHALLENGE_LEVELS = (
 	ChallengeLevel(
-		challenge_id="veryAccessible",
-		label="Very accessible",
-		description="Favor shorter, cleaner and more popular examples.",
+		challenge_id="beginner",
+		# Translators: Name of the easiest challenge level. The rating range is appended automatically.
+		label=N_("Beginner"),
+		# Translators: Description of the easiest challenge level.
+		description=N_("Shorter, cleaner and well liked examples."),
 		# Sem piso: o banco desce até rating 399 hoje, e um número fixo aqui
 		# esconderia os puzzles mais fáceis de quem mais precisa deles.
 		min_rating=None,
@@ -165,25 +193,31 @@ CHALLENGE_LEVELS = (
 		min_popularity=70,
 	),
 	ChallengeLevel(
-		challenge_id="balanced",
-		label="Balanced",
-		description="A comfortable middle ground for daily training.",
+		challenge_id="intermediate",
+		# Translators: Name of the middle challenge level. The rating range is appended automatically.
+		label=N_("Intermediate"),
+		# Translators: Description of the middle challenge level.
+		description=N_("A comfortable middle ground for daily training."),
 		min_rating=900,
 		max_rating=1500,
 		min_popularity=50,
 	),
 	ChallengeLevel(
-		challenge_id="stretch",
-		label="Stretch",
-		description="Push a bit higher and allow trickier positions.",
+		challenge_id="advanced",
+		# Translators: Name of the harder challenge level. The rating range is appended automatically.
+		label=N_("Advanced"),
+		# Translators: Description of the harder challenge level.
+		description=N_("Harder positions with more to calculate."),
 		min_rating=1200,
 		max_rating=1900,
 		min_popularity=25,
 	),
 	ChallengeLevel(
-		challenge_id="challenge",
-		label="Challenge",
-		description="Use a harder range with fewer popularity restrictions.",
+		challenge_id="hard",
+		# Translators: Name of the hardest fixed challenge level. The rating range is appended automatically.
+		label=N_("Hard"),
+		# Translators: Description of the hardest fixed challenge level.
+		description=N_("The top of the database, with no popularity filter."),
 		# Sem teto: o banco sobe até 3329, e travar em 2400 tiraria do treino
 		# justamente os puzzles que ainda teriam algo a ensinar.
 		min_rating=1600,
@@ -192,8 +226,10 @@ CHALLENGE_LEVELS = (
 	),
 	ChallengeLevel(
 		challenge_id="adaptive",
-		label="Adaptive",
-		description="Follows your tactics rating: the difficulty tracks you as you improve.",
+		# Translators: Name of the challenge level that follows the user's rating. The explanation is appended automatically.
+		label=N_("Adaptive"),
+		# Translators: Description of the challenge level that follows the user's rating.
+		description=N_("The difficulty tracks your own tactics rating as you improve."),
 		min_rating=None,
 		max_rating=None,
 		min_popularity=25,
@@ -201,16 +237,17 @@ CHALLENGE_LEVELS = (
 	),
 )
 
+# Identificadores gravados na configuração por versões anteriores. O nome
+# mudou porque "stretch" e "challenge" não diziam nada a quem ouvia a lista.
+LEGACY_CHALLENGE_IDS = {
+	"veryAccessible": "beginner",
+	"balanced": "intermediate",
+	"stretch": "advanced",
+	"challenge": "hard",
+}
+
 DEFAULT_TRAINER_PRESET_ID = TRAINER_PRESETS[0].preset_id
 DEFAULT_CHALLENGE_ID = CHALLENGE_LEVELS[1].challenge_id
-
-
-def iter_trainer_presets() -> tuple[TrainerPreset, ...]:
-	return TRAINER_PRESETS
-
-
-def iter_challenge_levels() -> tuple[ChallengeLevel, ...]:
-	return CHALLENGE_LEVELS
 
 
 def get_trainer_preset(preset_id: str | None) -> TrainerPreset:
@@ -221,6 +258,7 @@ def get_trainer_preset(preset_id: str | None) -> TrainerPreset:
 
 
 def get_challenge_level(challenge_id: str | None) -> ChallengeLevel:
+	challenge_id = LEGACY_CHALLENGE_IDS.get(challenge_id or "", challenge_id)
 	for level in CHALLENGE_LEVELS:
 		if level.challenge_id == challenge_id:
 			return level
@@ -231,130 +269,31 @@ def uses_custom_themes(preset_id: str | None) -> bool:
 	return get_trainer_preset(preset_id).uses_custom_themes
 
 
-def _preset_texts() -> dict[str, tuple[str, str]]:
-	"""Rótulos e descrições dos planos, traduzidos no momento da chamada.
-
-	Por que uma função e não os campos da constante: `TRAINER_PRESETS` é
-	avaliada quando o módulo é importado. Se a tradução acontecesse ali, ela
-	ficaria congelada no idioma em que o NVDA estava naquele instante, e trocar
-	de idioma exigiria reiniciar. Aqui `_()` roda a cada chamada.
-
-	E por que os literais aparecem outra vez aqui: o xgettext extrai varrendo o
-	código atrás de literais dentro de `_()`. Uma chamada como `_(preset.label)`
-	não é extraível, porque o argumento não é literal -- a string nunca chegaria
-	ao arquivo do tradutor.
-
-	O inglês continua na constante e serve de reserva: se um plano novo entrar
-	sem linha aqui, ele aparece em inglês em vez de quebrar.
-	"""
-	return {
-		"guidedBasics": (
-			# Translators: Name of the beginner training plan.
-			_("Guided basics"),
-			# Translators: Description of the beginner training plan.
-			_(
-				"Start with the most common tactical patterns. Pick an easier challenge level to keep the positions short.",
-			),
-		),
-		"materialWins": (
-			# Translators: Name of the training plan about winning material.
-			_("Win material"),
-			# Translators: Description of the training plan about winning material.
-			_("Train forks, pins, skewers and defenders so you spot clean material gains."),
-		),
-		"kingAttack": (
-			# Translators: Name of the training plan about attacking the king.
-			_("Attack the king"),
-			# Translators: Description of the training plan about attacking the king.
-			_("Focus on mating nets and direct attacking play."),
-		),
-		"mixedPractice": (
-			# Translators: Name of the varied training plan.
-			_("Mixed practice"),
-			# Translators: Description of the varied training plan.
-			_(
-				"A broad spread across the tactical motif families: material, mating, sacrifice, defence and conversion.",
-			),
-		),
-		"allThemes": (
-			# Translators: Name of the training plan that applies no theme filter.
-			_("All themes"),
-			# Translators: Description of the training plan that applies no theme filter.
-			_("No theme filter at all: the whole puzzle database is in play."),
-		),
-		"customThemes": (
-			# Translators: Name of the training plan where the user picks the themes.
-			_("Custom themes"),
-			# Translators: Description of the training plan where the user picks the themes.
-			_("Choose the exact Lichess themes you want to include in the session."),
-		),
-	}
-
-
-def _challenge_texts() -> dict[str, tuple[str, str]]:
-	"""Rótulos e descrições dos níveis. Mesmo raciocínio de `_preset_texts`."""
-	return {
-		"veryAccessible": (
-			# Translators: Name of the easiest challenge level.
-			_("Very accessible"),
-			# Translators: Description of the easiest challenge level.
-			_("Favor shorter, cleaner and more popular examples."),
-		),
-		"balanced": (
-			# Translators: Name of the middle challenge level.
-			_("Balanced"),
-			# Translators: Description of the middle challenge level.
-			_("A comfortable middle ground for daily training."),
-		),
-		"stretch": (
-			# Translators: Name of the harder challenge level.
-			_("Stretch"),
-			# Translators: Description of the harder challenge level.
-			_("Push a bit higher and allow trickier positions."),
-		),
-		"challenge": (
-			# Translators: Name of the hardest fixed challenge level.
-			_("Challenge"),
-			# Translators: Description of the hardest fixed challenge level.
-			_("Use a harder range with fewer popularity restrictions."),
-		),
-		"adaptive": (
-			# Translators: Name of the challenge level that follows the user's rating.
-			_("Adaptive"),
-			# Translators: Description of the challenge level that follows the user's rating.
-			_("Follows your tactics rating: the difficulty tracks you as you improve."),
-		),
-	}
-
-
 def preset_label(preset: TrainerPreset) -> str:
-	return _preset_texts().get(preset.preset_id, (preset.label, ""))[0] or preset.label
+	return _(preset.label)
 
 
 def preset_description(preset: TrainerPreset) -> str:
-	texts = _preset_texts().get(preset.preset_id)
-	return texts[1] if texts else preset.description
+	return _(preset.description)
 
 
 def challenge_label(level: ChallengeLevel) -> str:
-	return _challenge_texts().get(level.challenge_id, (level.label, ""))[0] or level.label
+	"""Nome do nível com a faixa de rating: é tudo o que o leitor de tela fala na lista."""
+	# Translators: One challenge level in the combo box, e.g. "Intermediate: puzzles rated 900 to 1500".
+	return _("{name}: {rating_range}").format(name=_(level.label), rating_range=describe_rating_range(level))
 
 
 def challenge_description(level: ChallengeLevel) -> str:
-	texts = _challenge_texts().get(level.challenge_id)
-	return texts[1] if texts else level.description
+	return _(level.description)
 
 
-def describe_rating_range(selection: ResolvedTrainingSelection) -> str:
+def describe_rating_range(selection: ChallengeLevel | ResolvedTrainingSelection) -> str:
 	"""A faixa de rating em palavras, para ser lida em voz alta.
 
 	Vive aqui, e não em cada diálogo, porque são dois -- o de sessão e o painel
 	de configurações -- e eles já divergiram uma vez: um tratava a ponta aberta
 	e o outro anunciava a palavra "None" para o usuário. Regra de leitura de
 	tela em uma frase só, num lugar só.
-
-	A tradução acontece na chamada, não na importação, para que trocar o idioma
-	do NVDA não exija reiniciar o add-on.
 	"""
 	if selection.adaptive:
 		# Translators: Rating description when the trainer follows the user's own rating.

@@ -34,9 +34,9 @@ from ..theme_catalog import (
 	parse_theme_filter,
 )
 from ..trainer import (
+	CHALLENGE_LEVELS,
+	TRAINER_PRESETS,
 	challenge_label,
-	iter_challenge_levels,
-	iter_trainer_presets,
 	preset_label,
 	resolve_training_selection,
 	uses_custom_themes,
@@ -57,8 +57,8 @@ class TacticsSetupMixin:
 		exatamente esse detalhe que quebrou as duas telas.
 		"""
 		self._theme_filter_text = ""
-		self._trainer_presets = iter_trainer_presets()
-		self._challenge_levels = iter_challenge_levels()
+		self._trainer_presets = TRAINER_PRESETS
+		self._challenge_levels = CHALLENGE_LEVELS
 
 	# -- montagem dos controles ----------------------------------------------
 
@@ -214,13 +214,12 @@ class TacticsSetupMixin:
 			if not theme_slugs:
 				# Translators: Shown when no theme filter is applied.
 				return _("All themes")
-			labels = describe_theme_filter(self._theme_filter_text, db_path=self._resolved_db_path())
 			# Translators: {count} is a number of themes, {themes} their names.
 			return _("{count} selected: {themes}").format(
 				count=len(theme_slugs),
-				themes=labels or ", ".join(theme_slugs),
+				themes=describe_theme_filter(self._theme_filter_text),
 			)
-		labels = describe_theme_filter(resolved.theme_text, db_path=self._resolved_db_path())
+		labels = describe_theme_filter(resolved.theme_text)
 		# Translators: Shown when no theme filter is applied.
 		return labels or _("All themes")
 
@@ -336,12 +335,12 @@ class TacticsSetupMixin:
 			# Translators: Title of the theme picker dialog.
 			_("Select Themes"),
 			choices=[
-				# Translators: One theme in the picker. {label} is its name,
-				# {count} how many puzzles have it, {slug} its Lichess id.
-				_("{label} ({count} puzzles) [{slug}]").format(
+				# Translators: One theme in the picker. {label} is its name, {description} what it means,
+				# {count} how many puzzles have it.
+				_("{label}: {description} ({count:,} puzzles)").format(
 					label=entry.label,
+					description=entry.description,
 					count=entry.count,
-					slug=entry.slug,
 				)
 				for entry in entries
 			],

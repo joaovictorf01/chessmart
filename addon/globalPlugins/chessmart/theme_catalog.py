@@ -1,5 +1,13 @@
 # coding: utf-8
 
+"""Filtro de temas e catálogo de contagens do banco de puzzles.
+
+O que é tema (nome, descrição) mora em `theme_names`. Aqui ficam duas coisas:
+o texto do filtro ("fork, pin") e o catálogo, que é a lista dos temas que o
+banco instalado realmente tem, com quantos puzzles cada um -- isso exige varrer
+o banco inteiro, por isso é feito uma vez e guardado em cache.
+"""
+
 from __future__ import annotations
 
 import dataclasses
@@ -8,12 +16,12 @@ import re
 import threading
 from pathlib import Path
 
-from .tactic.db import ADDON_DATA_DIRECTORY, resolve_default_db_path, run_bridge
-from .i18n import _
+from .tactic.db import ADDON_DATA_DIRECTORY, resolve_default_db_path
+from .tactic.repository import PuzzleRepository
+from .theme_names import theme_description, theme_label
 
 
 THEME_FILTER_SPLIT_PATTERN = re.compile(r"[\s,;]+")
-CAMEL_CASE_PATTERN = re.compile(r"(?<!^)(?=[A-Z])")
 THEME_CATALOG_CACHE_PATH = ADDON_DATA_DIRECTORY / "theme_catalog_cache.json"
 
 
@@ -40,9 +48,9 @@ def format_theme_filter(theme_slugs) -> str:
 	return ", ".join(parse_theme_filter(" ".join(theme_slugs)))
 
 
-def humanize_theme_slug(slug: str) -> str:
-	humanized = CAMEL_CASE_PATTERN.sub(" ", slug).replace("_", " ").strip()
-	return humanized[:1].upper() + humanized[1:] if humanized else slug
+def describe_theme_filter(theme_text: str) -> str:
+	"""Os temas do filtro pelos nomes, em uma linha: "Fork, Pin, Back rank mate"."""
+	return ", ".join(theme_label(slug) for slug in parse_theme_filter(theme_text))
 
 
 def resolve_theme_db_path(db_path: str | Path | None = None) -> Path | None:
@@ -88,10 +96,10 @@ def rebuild_theme_catalog(db_path: str | Path | None = None) -> tuple[ThemeCatal
 	if resolved_db_path is None:
 		return ()
 	ADDON_DATA_DIRECTORY.mkdir(parents=True, exist_ok=True)
-	items = run_bridge(resolved_db_path, "themeCatalog") or []
+	counts = PuzzleRepository(resolved_db_path).theme_counts()
 	payload = {
 		**_build_signature(resolved_db_path),
-		"themes": items,
+		"themes": [{"slug": slug, "count": count} for slug, count in counts],
 	}
 	THEME_CATALOG_CACHE_PATH.write_text(
 		json.dumps(payload, ensure_ascii=False, indent=2),
@@ -107,18 +115,12 @@ def _payload_to_entries(payload: dict[str, object]) -> tuple[ThemeCatalogEntry, 
 		slug = str(item.get("slug", "")).strip()
 		if not slug:
 			continue
-		count = int(item.get("count", 0) or 0)
-		label = humanize_theme_slug(slug)
 		entries.append(
 			ThemeCatalogEntry(
 				slug=slug,
-				label=label,
-				# Translators: Description of a puzzle theme, e.g. "Lichess theme: Fork. 1,234 puzzles in this database.".
-				description=_("Lichess theme: {label}. {count:,} puzzles in this database.").format(
-					label=label,
-					count=count,
-				),
-				count=count,
+				label=theme_label(slug),
+				description=theme_description(slug),
+				count=int(item.get("count", 0) or 0),
 			),
 		)
 	return tuple(sorted(entries, key=lambda entry: entry.label.casefold()))
@@ -185,30 +187,13 @@ def ensure_theme_catalog_async(db_path: str | Path | None = None, on_done=None) 
 	return False
 
 
-def get_theme_entry(
-	slug: str,
-	db_path: str | Path | None = None,
-) -> ThemeCatalogEntry | None:
-	if not slug:
-		return None
-	# Chamado ao carregar cada puzzle: nunca pode varrer o banco aqui. Sem
-	# cache, o tema sai do slug (`humanize_theme_slug`) e o catálogo se
-	# constrói em segundo plano para as próximas vezes.
-	for entry in load_theme_catalog(db_path, allow_rebuild=False):
-		if entry.slug == slug:
-			return entry
-	return None
-
-
-def describe_theme_filter(
-	theme_text: str,
-	db_path: str | Path | None = None,
-) -> str:
-	slugs = parse_theme_filter(theme_text)
-	if not slugs:
-		return ""
-	labels = []
-	for slug in slugs:
-		entry = get_theme_entry(slug, db_path=db_path)
-		labels.append(entry.label if entry else humanize_theme_slug(slug))
-	return ", ".join(labels)
+__all__ = [
+	"ThemeCatalogEntry",
+	"describe_theme_filter",
+	"ensure_theme_catalog_async",
+	"format_theme_filter",
+	"load_theme_catalog",
+	"parse_theme_filter",
+	"rebuild_theme_catalog",
+	"resolve_theme_db_path",
+]

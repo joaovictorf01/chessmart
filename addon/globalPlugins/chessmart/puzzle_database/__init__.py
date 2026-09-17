@@ -9,13 +9,8 @@ from pathlib import Path
 
 from ..helpers import import_bundled
 from ..i18n import _
-from ..theme_catalog import (
-	describe_theme_filter,
-	get_theme_entry,
-	humanize_theme_slug,
-	load_theme_catalog,
-	parse_theme_filter,
-)
+from ..theme_catalog import describe_theme_filter, load_theme_catalog, parse_theme_filter
+from ..theme_names import theme_description, theme_label
 from ..tactic.db import resolve_default_db_path
 from ..tactic.repository import PuzzleRepository
 from ..trainer import challenge_label, get_challenge_level, get_trainer_preset, preset_label
@@ -116,24 +111,13 @@ def get_default_tactic_session_options() -> TacticSessionOptions:
 	)
 
 
-def _theme_info_from_slug(theme_slug: str, db_path: Path | None = None) -> ThemeInfo:
-	catalog_entry = get_theme_entry(theme_slug, db_path=db_path)
-	if catalog_entry is not None:
-		return ThemeInfo(
-			slug=catalog_entry.slug,
-			label=catalog_entry.label,
-			description=catalog_entry.description,
-		)
-	label = humanize_theme_slug(theme_slug)
+def _theme_info_from_slug(theme_slug: str) -> ThemeInfo:
 	return ThemeInfo(
-		slug=theme_slug,
-		label=label,
-		# Translators: Description of a puzzle theme that is not in the catalog yet.
-		description=_("Lichess theme: {label}.").format(label=label),
+		slug=theme_slug, label=theme_label(theme_slug), description=theme_description(theme_slug)
 	)
 
 
-def _puzzle_info_from_record(record, db_path: Path | None = None) -> PuzzleInfo:
+def _puzzle_info_from_record(record) -> PuzzleInfo:
 	auto_performed_move, *solution_moves = (chess.Move.from_uci(move) for move in record.moves)
 	return PuzzleInfo(
 		puzzle_id=record.id,
@@ -145,7 +129,7 @@ def _puzzle_info_from_record(record, db_path: Path | None = None) -> PuzzleInfo:
 		opening_tags=record.opening_tags,
 		auto_performed_move=auto_performed_move,
 		solution_moves=tuple(solution_moves),
-		themes=tuple(_theme_info_from_slug(theme, db_path=db_path) for theme in record.themes),
+		themes=tuple(_theme_info_from_slug(theme) for theme in record.themes),
 	)
 
 
@@ -178,7 +162,7 @@ class PuzzleSet:
 			record, info = future.result()
 		else:
 			record = self._get_next_record()
-			info = None if record is None else _puzzle_info_from_record(record, db_path=self.db_path)
+			info = None if record is None else _puzzle_info_from_record(record)
 		if record is None:
 			raise StopIteration
 		self.current_item_index += 1
@@ -208,7 +192,7 @@ class PuzzleSet:
 
 		def work():
 			record = self._get_next_record(seen_ids=seen_snapshot)
-			info = None if record is None else _puzzle_info_from_record(record, db_path=self.db_path)
+			info = None if record is None else _puzzle_info_from_record(record)
 			return record, info
 
 		try:
@@ -289,10 +273,7 @@ class PuzzleSet:
 		if self.options.theme.strip():
 			parts.append(
 				# Translators: Part of the session description, e.g. "Themes: Fork, Pin".
-				_("Themes: {themes}").format(
-					themes=describe_theme_filter(self.options.theme, db_path=self.db_path)
-					or self.options.theme.strip(),
-				),
+				_("Themes: {themes}").format(themes=describe_theme_filter(self.options.theme)),
 			)
 		if self.options.min_rating is not None or self.options.max_rating is not None:
 			# Translators: Used for an open end of the rating range, e.g. "Rating: any to 1600".

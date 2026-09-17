@@ -108,5 +108,6 @@ class PuzzleRepository:
 	def attempt_stats(self):
 		return run_bridge(self.db_path, "attemptStats")
 
-	def theme_catalog(self):
-		return run_bridge(self.db_path, "themeCatalog")
+	def theme_counts(self) -> list[tuple[str, int]]:
+		"""Cada tema do banco com quantos puzzles o têm. Varre a tabela inteira."""
+		return [(item["slug"], item["count"]) for item in run_bridge(self.db_path, "themeCatalog") or []]

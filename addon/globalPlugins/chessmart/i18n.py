@@ -11,6 +11,10 @@ devolvido pela função -- o `_` do `builtins`, que é a tradução do próprio 
 
 Fora de um add-on instalado (scratchpad, testes) a chamada falha, e `_`
 cai no `_` que já existir ou na identidade.
+
+`N_()` é o marcador para texto que vive numa constante e só será traduzido
+mais tarde, com `_()`, no momento de mostrar. Ele não traduz nada; existe para
+o extrator (`tools/i18n.py`) encontrar o literal e levá-lo ao catálogo.
 """
 
 import builtins
@@ -19,6 +23,11 @@ from logHandler import log
 
 
 def _identity(message):
+	return message
+
+
+def N_(message: str) -> str:
+	"""Marca `message` para tradução sem traduzir agora. Ver o docstring do módulo."""
 	return message
 
 
@@ -36,4 +45,4 @@ except Exception as error:  # noqa: BLE001 - fora do NVDA ou fora de um add-on i
 		lambda context, singular, plural, n: singular if n == 1 else plural,
 	)
 
-__all__ = ["_", "ngettext", "pgettext", "npgettext"]
+__all__ = ["_", "N_", "ngettext", "pgettext", "npgettext"]

@@ -6,8 +6,10 @@
     py -3 tools/i18n.py compile            # gera os .mo ao lado de cada .po
     py -3 tools/i18n.py check              # confere placeholders e strings sem tradução
 
-A extração é por AST: cada `_("...")`, `ngettext(...)` e `pgettext(...)` nos
-fontes do add-on, com o comentário `# Translators:` que estiver logo acima.
+A extração é por AST: cada `_("...")`, `N_("...")`, `ngettext(...)` e
+`pgettext(...)` nos fontes do add-on, com o comentário `# Translators:` que
+estiver logo acima. `N_` só marca o literal (constantes traduzidas depois com
+`_()`); para o catálogo, é uma mensagem como qualquer outra.
 Precisa do pacote `polib` (pip install polib).
 """
 
@@ -74,7 +76,7 @@ class Extractor(ast.NodeVisitor):
 	def visit_Call(self, node: ast.Call):
 		name = getattr(node.func, "id", None) or getattr(node.func, "attr", None)
 		if (
-			name in ("_", "gettext")
+			name in ("_", "N_", "gettext")
 			and node.args
 			and isinstance(node.args[0], ast.Constant)
 			and isinstance(node.args[0].value, str)

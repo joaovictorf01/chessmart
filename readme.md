@@ -18,8 +18,8 @@ The first time you open Tactics, the add-on offers to download the puzzle databa
 
 The **Tactics** dialog sets up a session:
 
-* **Training plan** — which themes are in play: guided basics, win material, attack the king, mixed practice, all themes, or your own selection of Lichess themes.
-* **Challenge level** — how hard the puzzles are: very accessible, balanced, stretch, challenge, or **adaptive**, which follows your own tactics rating.
+* **Training plan** — which themes are in play: fundamentals (mate, fork, pin and skewer), win material, attack the king, mixed motifs, all themes, or your own selection of Lichess themes.
+* **Challenge level** — how hard the puzzles are, with the rating range spoken in the list: beginner (up to 1100), intermediate (900 to 1500), advanced (1200 to 1900), hard (1600 and above), or **adaptive**, which follows your own tactics rating.
 * **Puzzle ID** — type the id of one Lichess puzzle to open exactly that one.
 * **Save training setup as default** — keeps this setup for next time.
 
