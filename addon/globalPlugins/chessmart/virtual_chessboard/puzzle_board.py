@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 import dataclasses
 import functools
@@ -9,6 +10,7 @@ import controlTypes
 import eventHandler
 import queueHandler
 import speech
+import speech.commands
 import ui
 import wx
 from logHandler import log
@@ -164,6 +166,8 @@ class TrainingActionsBar(MenuObject):
 
 
 class PuzzleCell(UserDrivenCell):
+	parent: "PuzzleChessboard"
+
 	@script(gesture="kb:tab")
 	def script_open_training_actions(self, gesture):
 		self.parent.focus_action_bar()
@@ -335,6 +339,8 @@ class PuzzleChessboard(UserDrivenChessboard):
 		self._load_current_puzzle(is_retry=True)
 
 	def _load_current_puzzle(self, is_retry=False):
+		puzzle = self.puzzle
+		assert puzzle is not None, "load is only called right after a puzzle was drawn"
 		self._callback_token += 1
 		self._attempt = AttemptState()
 		if is_retry:
@@ -346,7 +352,7 @@ class PuzzleChessboard(UserDrivenChessboard):
 			self._attempt.counted_in_session = True
 		self.is_game_over = False
 		self.board.reset()
-		self.board.set_fen(self.puzzle.fen)
+		self.board.set_fen(puzzle.fen)
 		self.prospective = not self.board.turn
 		self.score_sheet_menu.clear()
 		self._update_dialog_title()
@@ -712,11 +718,13 @@ class PuzzleChessboard(UserDrivenChessboard):
 			ui.message(_("There are no more hints for this puzzle."))
 			return
 
+		puzzle = self.puzzle
+		assert puzzle is not None, "there is an expected move, so there is a puzzle"
 		hint_messages = []
-		if self.puzzle.themes:
+		if puzzle.themes:
 			hint_messages.append(
 				_("Hint: themes include {themes}.").format(
-					themes=", ".join(theme.label for theme in self.puzzle.themes[:3]),
+					themes=", ".join(theme.label for theme in puzzle.themes[:3]),
 				),
 			)
 		hint_messages.extend(
@@ -743,6 +751,7 @@ class PuzzleChessboard(UserDrivenChessboard):
 		ímpar é a resposta do adversário. O lance que arma a posição não entra
 		na conta -- ele é o `auto_performed_move`, jogado antes de tudo.
 		"""
+		assert self.puzzle is not None
 		moves = self.puzzle.solution_moves
 		total = (len(moves) + 1) // 2
 		played = (self._attempt.solution_index + 1) // 2

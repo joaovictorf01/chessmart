@@ -1,7 +1,10 @@
 # coding: utf-8
+# pyright: basic
 
 import os
 import subprocess
+from typing import TYPE_CHECKING, Callable
+
 import wx
 import wx.adv
 import queueHandler
@@ -11,6 +14,9 @@ from .i18n import _
 from io import BytesIO
 from logHandler import log
 from .game_elements import GameInfo
+
+if TYPE_CHECKING:
+	from .virtual_chessboard.base import BaseVirtualChessboard
 from .paths import BIN_DIRECTORY, import_bundled
 from .sounds import GameSound
 from .signals import (
@@ -55,14 +61,14 @@ class ChessboardDialog(wx.Frame):
 		self.SetMinSize(size)
 		self.SetSize(size)
 		self.CenterOnScreen()
-		self.bitmap_buffer = wx.EmptyBitmap(*size)
+		self.bitmap_buffer = wx.Bitmap(*size)
 		self.Bind(wx.EVT_PAINT, self.onPaint, self)
 		self.Bind(wx.EVT_CLOSE, self.onClose, self)
-		# Setup the board
-		self.chessboard = None
+		# O tabuleiro virtual é criado na primeira vez que a janela recebe foco (set_focus_to_board).
+		self.chessboard: "BaseVirtualChessboard | None" = None
 		# Quem abriu a janela pode querer saber quando ela fecha (o plugin, para
 		# esquecê-la). Recebe este diálogo.
-		self.on_closed = None
+		self.on_closed: "Callable[[ChessboardDialog], None] | None" = None
 		# Time related stuff
 		self.timer = wx.Timer(self)
 		self.Bind(wx.EVT_TIMER, self.onChessTimer, id=self.timer.GetId())
@@ -88,9 +94,11 @@ class ChessboardDialog(wx.Frame):
 			chessboard_opened_signal.send(self.chessboard)
 			self.timer.Start(TIME_CHECK_INTERVAL, wx.TIMER_CONTINUOUS)
 			self.set_board_image()
+		assert self.chessboard is not None
 		eventHandler.executeEvent("gainFocus", self.chessboard)
 
 	def get_board_svg(self, board=None, **chess_svg_kwargs):
+		assert self.chessboard is not None, "the board is drawn only after it exists"
 		if "flipped" not in chess_svg_kwargs:
 			chess_svg_kwargs["flipped"] = self.chessboard.is_board_visually_flipped
 		return chess.svg.board(
@@ -115,6 +123,8 @@ class ChessboardDialog(wx.Frame):
 			self.on_closed(self)
 
 	def onChessTimer(self, event):
+		if self.chessboard is None:
+			return
 		time_control = self.chessboard.time_control
 		if self.chessboard.is_game_over:
 			time_control.stop()
@@ -126,7 +136,8 @@ class ChessboardDialog(wx.Frame):
 			self.chessboard.game_time_forfeit(losing_color)
 			return
 		current_player = self.chessboard.board.turn
-		remaining = time_control.percentage_remaining(current_player) / 10
+		# Décimos do tempo total que ainda restam (7 = 70%); as chaves do dicionário são inteiras.
+		remaining = time_control.percentage_remaining(current_player) // 10
 		if self.notification_records[current_player].get(remaining, True):
 			return
 		self.notification_records[current_player][remaining] = True

@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 """Base comum das duas telas que configuram o treino de táticas.
 
@@ -18,6 +19,7 @@ Os pontos de variação são explícitos, como métodos que a subclasse sobrescr
 """
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import wx
 import gui
@@ -45,7 +47,15 @@ from ..trainer import (
 )
 
 
-class TacticsSetupMixin:
+if TYPE_CHECKING:
+	# Só para o verificador de tipos: o mixin é sempre combinado com um
+	# SettingsDialog, e é dele que vêm Bind, GetSize e os outros métodos do wx.
+	_MixinBase = gui.SettingsDialog
+else:
+	_MixinBase = object
+
+
+class TacticsSetupMixin(_MixinBase):
 	"""Controles e regras compartilhados pelas telas de configuração de táticas."""
 
 	# -- estado ---------------------------------------------------------------

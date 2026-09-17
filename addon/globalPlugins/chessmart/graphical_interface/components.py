@@ -1,6 +1,8 @@
 # coding: utf-8
+# pyright: basic
 
 import typing as t
+from typing import TYPE_CHECKING
 import contextlib
 from concurrent.futures import Future
 import wx
@@ -70,7 +72,8 @@ class SnakDialog(SimpleDialog):
 
 	def addControls(self, parent):
 		ai = wx.ActivityIndicator(parent)
-		ai.SetSizerProp("halign", "center")
+		# SetSizerProp vem do wx.lib.sized_controls, acrescentado em tempo de execução.
+		ai.SetSizerProp("halign", "center")  # pyright: ignore[reportAttributeAccessIssue]
 		self.staticMessage = wx.StaticText(parent, -1, self.message)
 		self.staticMessage.SetCanFocus(True)
 		self.staticMessage.SetFocusFromKbd()
@@ -132,10 +135,16 @@ class AsyncSnakDialog:
 			wx.CallAfter(self.snak_dg.Destroy)
 
 
-class EnumItemContainerMixin:
+if TYPE_CHECKING:
+	_ItemContainerBase = wx.ItemContainerImmutable
+else:
+	_ItemContainerBase = object
+
+
+class EnumItemContainerMixin(_ItemContainerBase):
 	"""An item container that accepts a DisplayStringIntEnum as its choices argument."""
 
-	items_arg = None
+	items_arg: str = ""
 
 	def __init__(self, *args, choice_enum, **kwargs):
 		kwargs[self.items_arg] = [m.displayString for m in choice_enum]

@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 """Planos de treino e níveis de desafio do treinador de táticas.
 

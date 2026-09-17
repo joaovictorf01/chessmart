@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 
 import abc
@@ -44,7 +45,7 @@ class GameAnnouncer(abc.ABC):
 		return f"{self.color_name(piece.color)} {self.piece_name(piece.piece_type)}"
 
 	@abc.abstractmethod
-	def normal_move(self, move: chess.Move, moved_piece: chess.Piece, move_maker=chess.Color) -> list:
+	def normal_move(self, move: chess.Move, moved_piece: chess.Piece, move_maker: chess.Color) -> list:
 		"""Return a list of strings to describe the given move."""
 
 	@abc.abstractmethod
@@ -111,7 +112,7 @@ class StandardGameAnnouncer(GameAnnouncer):
 	def square_rank(self, square: chess.Square) -> str:
 		return chess.RANK_NAMES[chess.square_rank(square)]
 
-	def normal_move(self, move: chess.Move, moved_piece: chess.Piece, move_maker=chess.Color) -> list:
+	def normal_move(self, move: chess.Move, moved_piece: chess.Piece, move_maker: chess.Color) -> list:
 		move_desc = [
 			self.describe_piece(moved_piece),
 			# Translators: Destination of a move, spoken after the piece, e.g. "to f3".
@@ -148,7 +149,7 @@ class StandardGameAnnouncer(GameAnnouncer):
 		return (
 			self.color_name(move_maker),
 			# Translators: A piece dropped on the board (Crazyhouse), e.g. "dropped a knight".
-			_("dropped a {piece}").format(piece=self.piece_name(move.drop)),
+			_("dropped a {piece}").format(piece=self.piece_name(move.drop or chess.PAWN)),
 		)
 
 	def promotion_move(self, move, move_maker):
@@ -158,7 +159,7 @@ class StandardGameAnnouncer(GameAnnouncer):
 			_("promoted {pawn} at {origin} to a {piece} at {target}").format(
 				pawn=self.piece_name(chess.PAWN),
 				origin=self.square_name(move.from_square),
-				piece=self.piece_name(move.promotion),
+				piece=self.piece_name(move.promotion or chess.QUEEN),
 				target=self.square_name(move.to_square),
 			),
 		]
@@ -183,7 +184,7 @@ class IBCAGameAnnouncer(GameAnnouncer):
 	def square_rank(self, square: chess.Square) -> str:
 		return IBCA_RANK_MAP[chess.square_rank(square)]
 
-	def normal_move(self, move: chess.Move, moved_piece: chess.Piece, move_maker=chess.Color) -> list:
+	def normal_move(self, move: chess.Move, moved_piece: chess.Piece, move_maker: chess.Color) -> list:
 		return [self.describe_piece(moved_piece), self.square_name(move.to_square)]
 
 	def capture_move(self, move: chess.Move, moved_piece: chess.Piece, captured: chess.Piece) -> list:
@@ -203,7 +204,7 @@ class IBCAGameAnnouncer(GameAnnouncer):
 	def drop_move(self, move_maker, move):
 		return (
 			self.color_name(move_maker),
-			_("dropped a {piece}").format(piece=self.piece_name(move.drop)),
+			_("dropped a {piece}").format(piece=self.piece_name(move.drop or chess.PAWN)),
 			_("at {square}").format(square=self.square_name(move.to_square)),
 		)
 
@@ -213,7 +214,7 @@ class IBCAGameAnnouncer(GameAnnouncer):
 			_("promoted {pawn} at {origin} to a {piece} at {target}").format(
 				pawn=self.piece_name(chess.PAWN),
 				origin=self.square_name(move.from_square),
-				piece=self.piece_name(move.promotion),
+				piece=self.piece_name(move.promotion or chess.QUEEN),
 				target=self.square_name(move.to_square),
 			),
 		]

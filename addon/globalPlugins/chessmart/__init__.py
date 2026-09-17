@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 import sys
 import functools
@@ -70,6 +71,7 @@ class ChessboardMenu(wx.Menu):
 			_("Open Chessboard settings"),
 		)
 		# Attach this submenu under NVDA's Tools menu.
+		assert gui.mainFrame is not None
 		self.itemHandle = gui.mainFrame.sysTrayIcon.toolsMenu.AppendSubMenu(
 			self,
 			_("&Chessboard"),
@@ -255,7 +257,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def terminate(self):
 		chessboard_menu = getattr(self, "chessboard_menu", None)
-		if chessboard_menu is not None:
+		if chessboard_menu is not None and gui.mainFrame is not None:
 			gui.mainFrame.sysTrayIcon.toolsMenu.DestroyItem(chessboard_menu.itemHandle)
 		try:
 			concurrency.terminate()

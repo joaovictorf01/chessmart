@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 import os
 import threading
@@ -124,7 +125,7 @@ class UserEngineChessboard(UserDrivenChessboard):
 			)
 
 		t = threading.Timer(interval=2, function=first_move_task)
-		t.deamon = True
+		t.daemon = True
 		t.start()
 
 	def on_game_started(self, sender):

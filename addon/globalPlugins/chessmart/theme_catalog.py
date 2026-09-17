@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 """Filtro de temas e catálogo de contagens do banco de puzzles.
 
@@ -110,8 +111,12 @@ def rebuild_theme_catalog(db_path: str | Path | None = None) -> tuple[ThemeCatal
 
 def _payload_to_entries(payload: dict[str, object]) -> tuple[ThemeCatalogEntry, ...]:
 	raw_items = payload.get("themes") or []
+	if not isinstance(raw_items, list):
+		return ()
 	entries = []
 	for item in raw_items:
+		if not isinstance(item, dict):
+			continue
 		slug = str(item.get("slug", "")).strip()
 		if not slug:
 			continue

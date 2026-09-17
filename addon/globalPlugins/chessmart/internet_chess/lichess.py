@@ -1,8 +1,10 @@
 # coding: utf-8
+# pyright: basic
 
 import asyncio
 import functools
 import os
+from typing import Any
 import tones
 from logHandler import log
 from ..concurrency import ASYNCIO_EVENT_LOOP
@@ -68,11 +70,20 @@ class LichessAPIClient(InternetChessAPIClient):
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		self.lichess = None
+		# O cliente da biblioteca, criado em `connect`. Anotado como Any porque a
+		# biblioteca embarcada não tem tipos que ajudem.
+		self.lichess: Any = None
 		self.current_challenge_id = None
-		self._lichess_events_listener_task = None
+		self._lichess_events_listener_task: asyncio.Task | None = None
 		self.challenge_future = ASYNCIO_EVENT_LOOP.create_future()
 		self.seek_future = ASYNCIO_EVENT_LOOP.create_future()
+
+	def _requested_color(self) -> ColorType:
+		"""A cor pedida ao servidor; sem lado escolhido, deixa o Lichess sortear."""
+		prospective = self.game_info.prospective
+		if prospective is None:
+			return ColorType.RANDOM
+		return ColorType(chess.COLOR_NAMES[prospective])
 
 	async def connect(self):
 		if self.lichess is None:
@@ -82,7 +93,8 @@ class LichessAPIClient(InternetChessAPIClient):
 			)
 
 	def disconnect(self):
-		ASYNCIO_EVENT_LOOP.call_soon_threadsafe(self._lichess_events_listener_task.cancel)
+		if self._lichess_events_listener_task is not None:
+			ASYNCIO_EVENT_LOOP.call_soon_threadsafe(self._lichess_events_listener_task.cancel)
 
 	@asyncio_coroutine_to_concurrent_future
 	@cast_exception_to_connection_error_if_appropriate
@@ -101,7 +113,7 @@ class LichessAPIClient(InternetChessAPIClient):
 		user_response = await self.lichess.users.get_real_time_users_status(users_ids=[opponent_username])
 		if not user_response.entity.content:
 			raise ChallengedUserIsOffline(opponent_username)
-		user_info = user_response.entity.content[0]
+		user_info: Any = user_response.entity.content[0]
 		if not user_info.get("online", False):
 			raise ChallengedUserIsOffline(opponent_username)
 		base_time, increment = self._get_time_control_info(self.game_info.time_control)
@@ -110,11 +122,12 @@ class LichessAPIClient(InternetChessAPIClient):
 			time_limit=base_time,
 			time_increment=increment,
 			rated=rated,
-			color=chess.COLOR_NAMES[self.game_info.prospective],
+			color=self._requested_color(),
 		)
 		if response.entity.code != 200:
 			raise InternetChessConnectionError("Failed to connect to lichess.org")
-		data = response.entity.content["challenge"]
+		content: Any = response.entity.content
+		data = content["challenge"]
 		if data["status"] != "created":
 			raise ChallengeRejected(None)
 		game_id = data["id"]
@@ -142,7 +155,7 @@ class LichessAPIClient(InternetChessAPIClient):
 			time=base_time / 60,
 			increment=increment,
 			rated=rated,
-			color=ColorType(chess.COLOR_NAMES[self.game_info.prospective]),
+			color=self._requested_color(),
 		)
 		try:
 			return await asyncio.wait_for(self.seek_future, timeout)
@@ -158,7 +171,7 @@ class LichessAPIClient(InternetChessAPIClient):
 		async for response in self.lichess.boards.stream_incoming_events():
 			try:
 				self._process_raw_lichess_event(response.entity.content)
-				asyncio.sleep(0.2)
+				await asyncio.sleep(0.2)
 			except Exception as e:
 				log.info(f"Failed to listen: {e}")
 				raise e
@@ -168,7 +181,6 @@ class LichessAPIClient(InternetChessAPIClient):
 		event_info = ndjson.loads(data)[0]
 		evt_type = event_info["type"]
 		if evt_type == "gameStart":
-			asyncio.sleep(1)
 			game_id = event_info["game"]["id"]
 			board_client = functools.partial(LichessBoardClient, game_id=game_id, client=self)
 			if game_id == self.current_challenge_id:
@@ -205,7 +217,7 @@ class LichessBoardClient(InternetChessBoardClient):
 		self.username = None
 		self.ic_game_info = None
 		# Just for convenience
-		self.lichess = self.client.lichess
+		self.lichess: Any = self.client.lichess
 		self.listener_task = ASYNCIO_EVENT_LOOP.create_task(self.start_realtime_game_stream())
 		self.client.game_finished_signal.connect(self.on_game_finish, sender=self.game_id)
 
@@ -223,12 +235,12 @@ class LichessBoardClient(InternetChessBoardClient):
 			if response.entity.status is StatusTypes.ERROR:
 				tones.beep(500, 500)
 				await asyncio.sleep(5)
-				self.start_realtime_game_stream()
-				break
+				# Sem o await isto criava a corrotina e a jogava fora: o fluxo nunca reabria.
+				return await self.start_realtime_game_stream()
 			try:
 				tones.beep(100, 100)
 				self._handle_realtime_game_stream_status(response.entity.content)
-				asyncio.sleep(0.1)
+				await asyncio.sleep(0.1)
 			except Exception as e:
 				log.exception(f"Failed to stream game events: {e}", exc_info=True)
 				raise e

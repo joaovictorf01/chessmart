@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 # Copyright (c) 2021 Blind Pandas Team
 # This file is covered by the GNU General Public License.
@@ -8,7 +9,7 @@
 import speech
 
 
-def intersperse(lst, item):
+def intersperse(lst, item) -> speech.SpeechSequence:
 	"""Põe `item` entre cada dois elementos: [a, b, c] -> [a, item, b, item, c].
 
 	Serve para colocar uma pausa (BreakCommand) entre as partes de um anúncio.

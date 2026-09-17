@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 from .base import BaseVirtualChessboard
 from .user_engine import UserEngineChessboard

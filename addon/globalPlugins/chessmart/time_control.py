@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 
 import typing as t
@@ -21,22 +22,23 @@ SHORT_TIME_CONTROL_REGEX = re.compile(r"^(?P<base_time>[0-9]+)\+(?P<increment>[0
 
 @dataclasses.dataclass
 class ChessTimeControl:
-	white_base_time: Seconds
-	white_increment: Seconds
-	black_base_time: Seconds
-	black_increment: Seconds
+	# Em segundos. O Lichess manda milissegundos divididos por mil, por isso float.
+	white_base_time: float
+	white_increment: float
+	black_base_time: float
+	black_increment: float
 
 	def __post_init__(self):
 		self.chess_clocks = {
 			chess.WHITE: ChessClock(
-				base_time=self.white_base_time,
-				increment=self.white_increment,
+				base_time=Seconds(round(self.white_base_time)),
+				increment=Seconds(round(self.white_increment)),
 				# Translators: Name of the clock of the white side.
 				name=_("White Clock"),
 			),
 			chess.BLACK: ChessClock(
-				base_time=self.black_base_time,
-				increment=self.black_increment,
+				base_time=Seconds(round(self.black_base_time)),
+				increment=Seconds(round(self.black_increment)),
 				# Translators: Name of the clock of the black side.
 				name=_("Black Clock"),
 			),
@@ -70,11 +72,13 @@ class ChessTimeControl:
 		)
 
 	@staticmethod
-	def parse_time_control_notation(tc: str) -> t.Tuple[Seconds, Seconds]:
+	def parse_time_control_notation(tc: str) -> t.Optional[t.Tuple[int, int]]:
+		""" "10+5" -> (600, 5), em segundos; None quando o texto não é um controle de tempo."""
 		match = SHORT_TIME_CONTROL_REGEX.match(tc)
-		if match:
-			base_min, increment_sec = match.groupdict().values()
-			return int(base_min) * 60, int(increment_sec)
+		if not match:
+			return None
+		base_min, increment_sec = match.groupdict().values()
+		return int(base_min) * 60, int(increment_sec)
 
 	def astuple(self):
 		return (

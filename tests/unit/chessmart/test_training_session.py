@@ -97,7 +97,9 @@ class TestDrawing(TrainingSessionTestCase):
 	def test_filters_with_nothing_behind_them_fail_early(self):
 		with self.assertRaises(LookupError):
 			self.session(
-				trainer_preset="customThemes", custom_theme_text="zugzwang", challenge_level="beginner"
+				trainer_preset="customThemes",
+				custom_theme_text="zugzwang",
+				challenge_level="beginner",
 			).ensure_ready()
 
 	def test_missing_database_is_file_not_found(self):
@@ -110,7 +112,9 @@ class TestDrawing(TrainingSessionTestCase):
 
 	def test_prefetch_gives_the_same_result_as_drawing_now(self):
 		session = self.session(
-			trainer_preset="customThemes", custom_theme_text="fork", challenge_level="intermediate"
+			trainer_preset="customThemes",
+			custom_theme_text="fork",
+			challenge_level="intermediate",
 		)
 		first = session.next_puzzle()
 		session.prefetch_next()

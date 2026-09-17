@@ -1,10 +1,12 @@
 # coding: utf-8
+# pyright: basic
 
 import dataclasses
 import typing as t
 import queueHandler
 import ui
 import speech
+import speech.commands
 from scriptHandler import script
 from ..paths import import_bundled
 from ..i18n import _
@@ -81,7 +83,7 @@ class PGNGameInfo:
 @dataclasses.dataclass
 class PGNGame:
 	game_obj: chess.pgn.Game
-	moves: t.Tuple[chess.Move]
+	moves: t.Tuple[chess.Move, ...]
 	info: PGNGameInfo
 
 	@classmethod
@@ -89,6 +91,8 @@ class PGNGame:
 		with open(info.filename, "r", encoding="utf-8") as file:
 			file.seek(info.offset)
 			game = chess.pgn.read_game(file)
+			if game is None:
+				raise ValueError(f"no game at offset {info.offset} of {info.filename}")
 			return cls(game_obj=game, moves=tuple(g.move for g in game.mainline()), info=info)
 
 	def get_board(self):
@@ -96,6 +100,8 @@ class PGNGame:
 
 
 class PGNChessboardCell(BaseChessboardCell):
+	parent: "PGNPlayerChessboard"
+
 	@script(gesture="kb:backspace")
 	def script_backspace(self, gesture):
 		self.parent.rewind()

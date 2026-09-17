@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 import bisect
 import dataclasses
@@ -6,6 +7,8 @@ import enum
 import functools
 import itertools
 import math
+from typing import Iterable
+
 import wx
 import inputCore
 import globalVars
@@ -116,6 +119,9 @@ class PlayedMove:
 
 class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 	role = controlTypes.Role.TABLECELL
+	# O NVDA declara `parent` como Optional[NVDAObject], preenchido por `_get_parent`.
+	# Uma casa pertence sempre ao tabuleiro que a criou; o tipo aqui diz isso.
+	parent: "BaseVirtualChessboard"
 	PIECE_LETTERS = {
 		"r": chess.ROOK,
 		"n": chess.KNIGHT,
@@ -532,7 +538,7 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 		self.time_control.time_move(not self.board.turn, total_moves=len(self.board.move_stack))
 		desc_generator = tuple(self._describe_move(played))
 		self.score_sheet_menu.add_item(" ".join(i for i in desc_generator if type(i) is str))
-		spoken_commands = [desc_generator]
+		spoken_commands: list[Iterable] = [desc_generator]
 		spoken_commands.append(pre_speech)
 		if self.board.is_game_over():
 			spoken_commands.append(self._get_game_over_messages())
@@ -604,6 +610,7 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 			return
 		# Depois do push a peça movida está na casa de destino (já promovida, se for o caso).
 		moved_piece = self.board.piece_at(move.to_square)
+		assert moved_piece is not None, "a legal move always leaves a piece on its destination"
 		if move.drop:
 			yield speech.commands.WaveFileCommand(GameSound.drop_move.filename)
 			yield from intersperse(
@@ -611,7 +618,7 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 				speech.commands.BreakCommand(200),
 			)
 			yield speech.commands.BreakCommand(300)
-		if played.is_capture:
+		if played.captured_piece is not None:
 			yield speech.commands.WaveFileCommand(played.sound.filename)
 			yield from intersperse(
 				self.game_announcer.capture_move(move, moved_piece, played.captured_piece),
@@ -657,6 +664,7 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 
 	def _get_game_over_messages(self):
 		outcome = self.board.outcome()
+		assert outcome is not None, "called only when board.is_game_over()"
 		termination_reason = outcome.termination.name.replace("_", " ")
 		yield from [
 			speech.commands.WaveFileCommand(GameSound.game_over.filename),
@@ -870,10 +878,12 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 			wildcard=_("Chess Game *.pgn | *.pgn"),
 			style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
 		)
-		with saveFileDialog as save_dialog:
-			if save_dialog.ShowModal() != wx.ID_OK:
+		try:
+			if saveFileDialog.ShowModal() != wx.ID_OK:
 				return
-			save_as_filename = save_dialog.GetPath().strip()
+			save_as_filename = saveFileDialog.GetPath().strip()
+		finally:
+			saveFileDialog.Destroy()
 		if not save_as_filename:
 			return
 		game = chess.pgn.Game.from_board(self.board)
@@ -892,10 +902,12 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 			wildcard=_("Portable Network Graphics *.png | *.png"),
 			style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
 		)
-		with saveFileDialog as save_dialog:
-			if save_dialog.ShowModal() != wx.ID_OK:
+		try:
+			if saveFileDialog.ShowModal() != wx.ID_OK:
 				return
-			save_as_filename = save_dialog.GetPath().strip()
+			save_as_filename = saveFileDialog.GetPath().strip()
+		finally:
+			saveFileDialog.Destroy()
 		if not save_as_filename:
 			return
 		self.dialog.bitmap_buffer.SaveFile(save_as_filename, wx.BITMAP_TYPE_PNG)

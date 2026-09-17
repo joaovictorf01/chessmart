@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 """Uma sessão de treino de táticas: as opções escolhidas e a sequência de puzzles.
 

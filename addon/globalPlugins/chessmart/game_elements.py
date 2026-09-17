@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 import typing
 import dataclasses
@@ -17,22 +18,19 @@ with import_bundled():
 
 @dataclasses.dataclass
 class GameInfo:
-	pychess_board: chess.BaseBoard
-	variant: typing.ForwardRef("ChessVariant")
-	time_control: ChessTimeControl
-	prospective: chess.Color
-	custom_starting_fen: str = None
-	vboard_kwargs: dict = dataclasses.field(default_factory=dict)
+	"""O que se sabe de uma partida antes de o tabuleiro existir.
 
-	def asdict(self):
-		return dict(
-			chessboard_class=self.chessboard_class,
-			pychess_board=self.pychess_board,
-			time_control=self.time_control,
-			prospective=self.prospective,
-			use_visuals=self.use_visuals,
-			vboard_kwargs=self.vboard_kwargs,
-		)
+	`pychess_board`, `variant` e `prospective` são None quando o modo decide
+	sozinho: o replay de PGN traz a posição do arquivo, e o treino de táticas
+	não tem lado até o puzzle carregar.
+	"""
+
+	pychess_board: typing.Optional[chess.BaseBoard]
+	variant: typing.Optional["ChessVariant"]
+	time_control: ChessTimeControl
+	prospective: typing.Optional[chess.Color]
+	custom_starting_fen: typing.Optional[str] = None
+	vboard_kwargs: dict = dataclasses.field(default_factory=dict)
 
 
 class PlayMode(DisplayStringIntEnum):

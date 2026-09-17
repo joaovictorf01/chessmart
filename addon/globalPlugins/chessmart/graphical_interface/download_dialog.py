@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 """Diálogo de download e atualização do banco de puzzles.
 
 Abre, consulta o manifesto da release em segundo plano e mostra o que está

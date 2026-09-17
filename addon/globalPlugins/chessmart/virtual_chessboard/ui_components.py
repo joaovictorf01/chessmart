@@ -1,20 +1,31 @@
 # coding: utf-8
+# pyright: basic
 
 # Copyright (c) 2021 Blind Pandas Team
 # This file is covered by the GNU General Public License.
+
+from contextlib import suppress
+from typing import TYPE_CHECKING, Any
 
 import api
 import controlTypes
 import speech
 import queueHandler
 import eventHandler
-from contextlib import suppress
 from NVDAObjects import NVDAObject
 from scriptHandler import script
 from ..sounds import GameSound
 
 
-class KeyboardNavigableNVDAObjectMixin:
+if TYPE_CHECKING:
+	# O mixin é sempre combinado com NVDAObject; para o verificador de tipos
+	# ele herda daí, para `getScript` e `parent` terem o tipo certo.
+	_NVDAObjectBase = NVDAObject
+else:
+	_NVDAObjectBase = object
+
+
+class KeyboardNavigableNVDAObjectMixin(_NVDAObjectBase):
 	windowClassName = ""
 	windowControlID = 0
 	windowThreadID = -1
@@ -101,6 +112,9 @@ class ItemContainerMixin:
 
 class MenuItemObject(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 	role = controlTypes.Role.MENUITEM
+	# O NVDA define `parent` como propriedade automática (_get_parent) que pode
+	# ser None. Aqui ele é sempre o menu que contém o item, atribuído na construção.
+	parent: Any
 
 	def __init__(self, parent, name, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -149,6 +163,7 @@ class MenuItemObject(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 
 class MenuObject(KeyboardNavigableNVDAObjectMixin, ItemContainerMixin, NVDAObject):
 	role = controlTypes.Role.MENU
+	parent: Any
 	use_default_navigation_scripts = True
 
 	def __init__(self, name, *args, parent=None, **kwargs):

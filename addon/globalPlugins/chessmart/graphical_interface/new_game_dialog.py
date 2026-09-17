@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 import random
 import functools
@@ -13,31 +14,18 @@ from .components import EnumRadioBox, EnumChoice, AsyncSnakDialog
 from ..game_elements import PlayMode, TimeControl, ChessVariant, PlayerColor
 from ..time_control import ChessTimeControl
 
+# As exceções não dependem da biblioteca do Lichess; só o cliente depende.
+from ..internet_chess.abstract.exceptions import (
+	ChallengedUserIsOffline,
+	ChallengeRejected,
+	InternetChessConnectionError,
+	OperationTimeout,
+)
+
 try:
-	from ..internet_chess import (
-		LichessAPIClient,
-		OperationTimeout,
-		ChallengeRejected,
-		InternetChessConnectionError,
-		ChallengedUserIsOffline,
-	)
+	from ..internet_chess import LichessAPIClient
 except Exception as internet_chess_import_error:
 	LichessAPIClient = None
-
-	class OperationTimeout(Exception):
-		pass
-
-	class ChallengeRejected(Exception):
-		pass
-
-	class InternetChessConnectionError(Exception):
-		pass
-
-	class ChallengedUserIsOffline(Exception):
-		def __init__(self, username=""):
-			self.username = username
-			super().__init__(username)
-
 	log.warning(
 		"Internet chess support is unavailable in this environment: %s",
 		internet_chess_import_error,
@@ -374,7 +362,8 @@ class UCIEngineOptionsDialog(gui.SettingsDialog):
 		self.engineSkillLevel.SetFocus()
 
 	def onOk(self, event):
-		self.Parent.set_engine_options(self.get_options())
+		# O pai é sempre o NewGameOptionsDialog, que tem set_engine_options.
+		self.Parent.set_engine_options(self.get_options())  # pyright: ignore[reportAttributeAccessIssue]
 		super().onOk(event)
 
 	def get_options(self):

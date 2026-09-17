@@ -2,7 +2,7 @@
 
 - Escape asks before leaving a game in progress: "No, keep playing" or "Yes, leave". It used to close the board at once, and the closed board kept the engine running, the clock ticking and an online game open on Lichess. Leaving now shuts the engine down, resigns (or aborts, in the first two moves) the online game and frees the window.
 - A puzzle you have not touched (no move, no mistake, no hint) is no longer counted as a failure when you move on or leave.
-- Online games: the board no longer raises an error when the game starts (it called a method the window never had); the clock shown is the server's.
+- Online games: the board no longer raises an error when the game starts (it called a method the window never had); the clock shown is the server's. A draw offer from the opponent now opens the accept/decline menu and the answer reaches the server; a resignation names the right side; a move the server refuses is announced instead of crashing; the game stream reconnects after an error, as it was meant to.
 - Challenge levels renamed so the list says what they are: beginner, intermediate, advanced, hard and adaptive, each spoken with its rating range. Saved settings with the old names keep working.
 - Puzzle themes have real names and descriptions ("Mate in one", "Attack on f2 or f7", "Smothered mate") instead of the raw Lichess tags split on capitals ("Mate In1", "Attacking F2 F7", "Super G M"); the theme picker reads the description with each theme.
 - Training plans name the motifs they cover.

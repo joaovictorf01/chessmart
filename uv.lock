@@ -58,6 +58,7 @@ dev = [
     { name = "pyright", extra = ["nodejs"] },
     { name = "ruff" },
     { name = "scons" },
+    { name = "types-wxpython" },
     { name = "uv" },
 ]
 l10n = [
@@ -73,6 +74,7 @@ lint = [
     { name = "prek" },
     { name = "pyright", extra = ["nodejs"] },
     { name = "ruff" },
+    { name = "types-wxpython" },
     { name = "uv" },
 ]
 
@@ -96,6 +98,7 @@ dev = [
     { name = "pyright", extras = ["nodejs"], specifier = "==1.1.407" },
     { name = "ruff", specifier = "==0.14.5" },
     { name = "scons", specifier = "==4.10.1" },
+    { name = "types-wxpython", specifier = "==0.9.7" },
     { name = "uv", specifier = "==0.11.15" },
 ]
 l10n = [
@@ -111,6 +114,7 @@ lint = [
     { name = "prek", specifier = "==0.4.8" },
     { name = "pyright", extras = ["nodejs"], specifier = "==1.1.407" },
     { name = "ruff", specifier = "==0.14.5" },
+    { name = "types-wxpython", specifier = "==0.9.7" },
     { name = "uv", specifier = "==0.11.15" },
 ]
 
@@ -366,6 +370,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/7d/c9/2f430bb39e4eccba32ce8008df4a3206df651276422204e177a09e12b30b/scons-4.10.1.tar.gz", hash = "sha256:99c0e94a42a2c1182fa6859b0be697953db07ba936ecc9817ae0d218ced20b15", size = 3258403, upload-time = "2025-11-16T22:43:39.258Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ce/bf/931fb9fbb87234c32b8b1b1c15fba23472a10777c12043336675633809a7/scons-4.10.1-py3-none-any.whl", hash = "sha256:bd9d1c52f908d874eba92a8c0c0a8dcf2ed9f3b88ab956d0fce1da479c4e7126", size = 4136069, upload-time = "2025-11-16T22:43:35.933Z" },
+]
+
+[[package]]
+name = "types-wxpython"
+version = "0.9.7"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/33/33/1a2cf4cc8c76e41a59499cc7b6eda388c65ca8e85a551dd7e594812dd156/types_wxpython-0.9.7.tar.gz", hash = "sha256:d9c09ded60cbe98ee44e8cb4cf46638ce4929e75e527e390d0db19808d71f6bd", size = 494676, upload-time = "2024-07-10T14:43:49.249Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/dd/18/9b740abeaae63cbd430aaf73dd54cbc415a30a1a77993134e68d0548dd0f/types_wxpython-0.9.7-py3-none-any.whl", hash = "sha256:2669fe4e064e8eed5fb163e8d3f7bbec65a62a5ea3ad6d43f9624d035cb3deb7", size = 530840, upload-time = "2024-07-10T14:43:46.857Z" },
 ]
 
 [[package]]

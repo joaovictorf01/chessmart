@@ -1,10 +1,14 @@
 # coding: utf-8
+# pyright: basic
 
-import functools
 import dataclasses
+import functools
+import typing
+
 import controlTypes
 import ui
 import speech
+import speech.commands
 import queueHandler
 import eventHandler
 from scriptHandler import script
@@ -23,6 +27,7 @@ from .ui_components import SimpleList
 
 with import_bundled():
 	import chess
+	import chess.variant
 
 
 DROP_PIECE_TYPES = (
@@ -35,6 +40,8 @@ DROP_PIECE_TYPES = (
 
 
 class UserDrivenCell(BaseChessboardCell):
+	parent: "UserDrivenChessboard"
+
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.is_dragging = False
@@ -105,11 +112,13 @@ class UserDrivenCell(BaseChessboardCell):
 
 	@script(gesture="kb:f6")
 	def script_my_pocket(self, gesture):
-		self.parent.open_pocket(self.parent.prospective)
+		if self.parent.prospective is not None:
+			self.parent.open_pocket(self.parent.prospective)
 
 	@script(gesture="kb:shift+f6")
 	def script_opponent_pocket(self, gesture):
-		self.parent.open_pocket(not self.parent.prospective)
+		if self.parent.prospective is not None:
+			self.parent.open_pocket(not self.parent.prospective)
 
 
 class UserDrivenChessboard(BaseVirtualChessboard):
@@ -158,8 +167,10 @@ class UserDrivenChessboard(BaseVirtualChessboard):
 		elif self.is_dragable(cell.index):
 			cell.toggle_dragging()
 		elif self.is_drop_target(cell.index):
-			self.user_play(self._dragged_cell.index, cell.index)
-			self._dragged_cell.toggle_dragging()
+			dragged = self._dragged_cell
+			assert dragged is not None, "a drop target only exists while a piece is being dragged"
+			self.user_play(dragged.index, cell.index)
+			dragged.toggle_dragging()
 			eventHandler.queueEvent("stateChange", cell)
 		else:
 			GameSound.invalid.play()
@@ -189,8 +200,13 @@ class UserDrivenChessboard(BaseVirtualChessboard):
 			dataclasses.replace(move, promotion=chess.QUEEN) in self.board.legal_moves
 		)
 
+	def _crazyhouse_board(self) -> "chess.variant.CrazyhouseBoard":
+		# Só é chamado quando a variante aceita drop (ver is_drop_moves_supported),
+		# e a única que aceita é o Crazyhouse.
+		return typing.cast("chess.variant.CrazyhouseBoard", self.board)
+
 	def _is_drop_move_drop_target(self, index):
-		if index in self.board.legal_drop_squares():
+		if index in self._crazyhouse_board().legal_drop_squares():
 			return any(self.get_available_droppable_pieces(self.prospective))
 		return False
 
@@ -267,7 +283,7 @@ class UserDrivenChessboard(BaseVirtualChessboard):
 			return
 		pocket_list_name = _("{color}'s pocket").format(color=color_name)
 		pocket_list = SimpleList(parent=self, name=pocket_list_name, close_gesture="kb:f6")
-		pocket = self.board.pockets[color].pieces
+		pocket = self._crazyhouse_board().pockets[color].pieces
 		for ptype, pcount in zip(pieces, (pocket[p] for p in pieces)):
 			if pcount == 1:
 				pocket_list.add_item(
@@ -282,7 +298,7 @@ class UserDrivenChessboard(BaseVirtualChessboard):
 	def get_available_droppable_pieces(self, color):
 		return tuple(
 			piece_type
-			for (piece_type, piece_count) in self.board.pockets[color].pieces.items()
+			for (piece_type, piece_count) in self._crazyhouse_board().pockets[color].pieces.items()
 			if piece_count
 		)
 

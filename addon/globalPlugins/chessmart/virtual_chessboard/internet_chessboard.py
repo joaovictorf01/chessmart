@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 import functools
 import wx
@@ -15,7 +16,7 @@ from ..sounds import GameSound
 from ..speaking import speak_next
 from ..i18n import _
 from .ui_components import SimpleList
-from .user_driven import UserDrivenChessboard, UserDrivenCell
+from .user_driven import DrawChoiceMenu, UserDrivenChessboard, UserDrivenCell
 
 
 with import_bundled():
@@ -23,6 +24,8 @@ with import_bundled():
 
 
 class InternetChessboardCell(UserDrivenCell):
+	parent: "InternetChessboard"
+
 	@script(gesture="kb:control+shift+r")
 	def script_resign_game(self, gesture):
 		"""Resigns the game."""
@@ -155,10 +158,14 @@ class InternetChessboard(UserDrivenChessboard):
 			future.result()
 			super(InternetChessboard, self).user_play(from_index, to_index)
 		except Exception:
+			log.exception("chessmart: the server refused or lost the move")
 			speak_next(
-				speech.commands.WaveFileCommand(GameSound.error.filename),
-				speech.commands.BreakCommand(100),
-				_("Failed to send move"),
+				[
+					speech.commands.WaveFileCommand(GameSound.error.filename),
+					speech.commands.BreakCommand(100),
+					# Translators: Spoken when a move could not be sent to the online server.
+					_("Failed to send move"),
+				],
 			)
 
 	def restore_move_history(self, past_moves):
@@ -192,16 +199,16 @@ class InternetChessboard(UserDrivenChessboard):
 		self.time_control = info.time_control
 
 	def on_game_checkmate(self, event):
-		print(f"Checkmate: winner is {event.winner}")
+		log.info(f"chessmart: checkmate, winner is {event.winner}")
 
-	def on_game_draw(self):
+	def on_game_draw(self, event):
 		self.game_drawn()
 
 	def on_game_time_forfeit(self, event):
 		self.game_time_forfeit(event.loser)
 
 	def on_game_resign(self, event):
-		self.game_resigned(event)
+		self.game_resigned(event.loser)
 
 	def on_game_abort(self, event):
 		color_name = self.game_announcer.color_name(event.loser)
@@ -218,9 +225,13 @@ class InternetChessboard(UserDrivenChessboard):
 			self.move_piece_and_check_game_status(event.move)
 
 	def on_draw_offered(self, event):
-		self.handle_draw_offer()
+		self.make_opponent_draw_offer()
 
-	def respond_to_draw_offer(self, accepted: bool):
+	def draw_offer_callback(self, accepted: bool):
+		# A resposta vai ao servidor; o empate em si chega depois como evento
+		# (`on_game_draw`), então aqui não se encerra a partida localmente.
+		if isinstance(self._current_focused_object, DrawChoiceMenu):
+			self._current_focused_object = None
 		self.client.handle_draw_offer(accepted)
 
 	def on_chat_message_recieved(self, event):

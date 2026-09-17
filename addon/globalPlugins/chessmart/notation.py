@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 """Notação falada dos lances e das casas.
 
 O modelo é o modo cego do Lichess (`ui/nvui`), que deixa escolher como um

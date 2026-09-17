@@ -1,7 +1,9 @@
 # coding: utf-8
+# pyright: basic
 
-import types
 import dataclasses
+import types
+from typing import TYPE_CHECKING, Any
 
 
 class Variant:
@@ -10,26 +12,35 @@ class Variant:
 	def __init__(self, **kwargs):
 		self.kwargs = kwargs
 
-	def __call__(self, cls_type, name, bases=(), namespace=None):
-		namespace = namespace or {}
-		namespace["__member_name__"] = name
-		namespace["__member_type__"] = cls_type
-		return dataclasses.make_dataclass(
-			name.title(),
-			tuple(self.kwargs.items()),
-			bases=bases,
-			namespace=namespace,
-			repr=True,
-			frozen=True,
-		)
+	if TYPE_CHECKING:
+		# Depois de `__init_subclass__` o atributo da classe é o dataclass gerado,
+		# e chamá-lo constrói o evento. Para o verificador de tipos, é uma chamada
+		# qualquer; o construtor de verdade fica abaixo.
+		def __call__(self, *args: Any, **kwargs: Any) -> Any: ...
+
+	else:
+
+		def __call__(self, cls_type, name, bases=(), namespace=None):
+			namespace = namespace or {}
+			namespace["__member_name__"] = name
+			namespace["__member_type__"] = cls_type
+			return dataclasses.make_dataclass(
+				name.title(),
+				tuple(self.kwargs.items()),
+				bases=bases,
+				namespace=namespace,
+				repr=True,
+				frozen=True,
+			)
 
 
 class AlgebraicTypeMeta(type):
 	def __repr__(cls):
 		parent_cls = cls.__dict__.get("__member_type__")
 		if parent_cls is None:
-			return f"<AlgebraicType {cls.__name__}: members={tuple(m for m in cls.__members__.values())}>"
-		return f"<{parent_cls.__name__}.{cls.__member_name__}>"
+			members = getattr(cls, "__members__", {})
+			return f"<AlgebraicType {cls.__name__}: members={tuple(members.values())}>"
+		return f"<{parent_cls.__name__}.{getattr(cls, '__member_name__', '?')}>"
 
 
 class AlgebraicType(metaclass=AlgebraicTypeMeta):

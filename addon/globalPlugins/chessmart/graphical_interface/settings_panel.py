@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 """Painel de preferências: o plano de treino que vale por padrão.
 

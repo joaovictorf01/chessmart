@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 """Sinais entre o tabuleiro, o diálogo e os jogadores (engine, Lichess).
 

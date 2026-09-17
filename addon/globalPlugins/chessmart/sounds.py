@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 # Copyright (c) 2021 Blind Pandas Team
 # This file is covered by the GNU General Public License.

@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 """Nome e descrição de cada tema de puzzle do Lichess, traduzíveis.
 

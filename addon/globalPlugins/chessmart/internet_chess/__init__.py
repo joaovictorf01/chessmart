@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 from .abstract.exceptions import (
 	AuthenticationError,

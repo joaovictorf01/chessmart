@@ -126,7 +126,7 @@ Everything is under `addon/globalPlugins/chessmart/`. Read it in this order:
 * `graphical_interface/` — the wx dialogs: new game, tactics session, settings, download.
 * `chessboard.py` is the wx window that hosts a board; `__init__.py` is the NVDA plugin and menu; `addon_config.py`, `notation.py`, `spoken_messages.py`, `signals.py`, `concurrency.py`, `paths.py`, `sounds.py` and `speaking.py` are the small shared pieces their names say.
 
-Tests run with `uv run python -m unittest discover -s tests`; they stub the NVDA modules they need and never touch the user's history. User-visible text goes through `_()` (or `N_()` for constants translated later) with a `# Translators:` comment, and `py -3 tools/i18n.py update pt_BR` refreshes the catalog.
+Tests run with `uv run python -m unittest discover -s tests`; they stub the NVDA modules they need and never touch the user's history. `uv run pyright` type-checks the add-on (basic mode); it resolves NVDA's own modules from a checkout of [nvaccess/nvda](https://github.com/nvaccess/nvda) cloned next to this repository (`../nvda`), and the bundled libraries from `lib/`. User-visible text goes through `_()` (or `N_()` for constants translated later) with a `# Translators:` comment, and `py -3 tools/i18n.py update pt_BR` refreshes the catalog.
 
 ## Credits
 

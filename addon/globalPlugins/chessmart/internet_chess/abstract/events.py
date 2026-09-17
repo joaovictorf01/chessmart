@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 from ...algebraic_type import AlgebraicType, Variant
 from ...time_control import ChessTimeControl

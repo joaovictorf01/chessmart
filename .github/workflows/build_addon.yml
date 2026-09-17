@@ -30,6 +30,11 @@ jobs:
         sudo apt-get install -y gettext
         uv sync
 
+    # O pyright resolve os modulos do NVDA (speech, ui, NVDAObjects...) a partir do codigo
+    # do NVDA clonado ao lado do repositorio, como o `extraPaths` do pyproject espera.
+    - name: Checkout NVDA source for type checking
+      run: git clone --depth 1 https://github.com/nvaccess/nvda.git ../nvda
+
     - name: Code checks
       run: export PREK_SKIP=no-commit-to-branch; uv run prek run --all-files
 

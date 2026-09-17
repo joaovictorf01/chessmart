@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 
 """O que o add-on guarda na configuração do NVDA.
 
@@ -9,6 +10,7 @@ fontes para o mesmo dado, e elas já divergiram uma vez.
 """
 
 import dataclasses
+from typing import Any
 
 import config
 
@@ -43,20 +45,24 @@ def ensure_config_spec():
 		config.conf.spec[CONFIG_SECTION][key] = value
 
 
-def get_tactics_defaults() -> TacticsDefaults:
+def _section() -> Any:
+	"""A seção do add-on no config do NVDA. `Any` porque o ConfigObj não tem tipo útil por chave."""
 	ensure_config_spec()
-	addon_conf = config.conf[CONFIG_SECTION]
+	return config.conf[CONFIG_SECTION]
+
+
+def get_tactics_defaults() -> TacticsDefaults:
+	addon_conf = _section()
 	return TacticsDefaults(
-		db_path=addon_conf["tacticsDbPath"].strip(),
-		theme=addon_conf["tacticsTheme"].strip(),
-		trainer_preset=addon_conf["tacticsTrainerPreset"].strip() or DEFAULT_TRAINER_PRESET_ID,
-		challenge_level=addon_conf["tacticsChallengeLevel"].strip() or DEFAULT_CHALLENGE_ID,
+		db_path=str(addon_conf["tacticsDbPath"]).strip(),
+		theme=str(addon_conf["tacticsTheme"]).strip(),
+		trainer_preset=str(addon_conf["tacticsTrainerPreset"]).strip() or DEFAULT_TRAINER_PRESET_ID,
+		challenge_level=str(addon_conf["tacticsChallengeLevel"]).strip() or DEFAULT_CHALLENGE_ID,
 	)
 
 
 def save_tactics_defaults(defaults: TacticsDefaults) -> None:
-	ensure_config_spec()
-	addon_conf = config.conf[CONFIG_SECTION]
+	addon_conf = _section()
 	addon_conf["tacticsDbPath"] = defaults.db_path.strip()
 	addon_conf["tacticsTheme"] = defaults.theme.strip()
 	addon_conf["tacticsTrainerPreset"] = defaults.trainer_preset.strip() or DEFAULT_TRAINER_PRESET_ID
@@ -67,13 +73,11 @@ def get_move_notation() -> str:
 	"""O estilo de fala dos lances; volta ao padrão se o valor guardado for desconhecido."""
 	from .notation import DEFAULT_STYLE, STYLE_IDS
 
-	ensure_config_spec()
-	value = str(config.conf[CONFIG_SECTION]["moveNotation"]).strip()
+	value = str(_section()["moveNotation"]).strip()
 	return value if value in STYLE_IDS else DEFAULT_STYLE
 
 
 def save_move_notation(style: str) -> None:
 	from .notation import DEFAULT_STYLE, STYLE_IDS
 
-	ensure_config_spec()
-	config.conf[CONFIG_SECTION]["moveNotation"] = style if style in STYLE_IDS else DEFAULT_STYLE
+	_section()["moveNotation"] = style if style in STYLE_IDS else DEFAULT_STYLE

@@ -1,4 +1,5 @@
 # coding: utf-8
+# pyright: basic
 """Ponto único de tradução do add-on: `from .i18n import _`.
 
 `addonHandler.initTranslation()` descobre o módulo que o chamou pelo frame e
