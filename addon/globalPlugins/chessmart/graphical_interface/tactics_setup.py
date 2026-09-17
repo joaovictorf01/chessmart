@@ -21,11 +21,13 @@ from pathlib import Path
 
 import wx
 import gui
+import ui
 from gui import guiHelper
 
 from ..i18n import _
 from ..puzzle_database import get_default_tactic_db_path, usable_db_path
 from ..theme_catalog import (
+    ensure_theme_catalog_async,
     describe_theme_filter,
     format_theme_filter,
     load_theme_catalog,
@@ -306,8 +308,13 @@ class TacticsSetupMixin:
                 style=wx.ICON_WARNING,
             )
             return
+        if not ensure_theme_catalog_async(db_path, on_done=self._theme_catalog_ready):
+            # Translators: Shown the first time themes are requested for a database, while the catalog is built in the background.
+            message = _("Preparing the theme catalog for this database. This can take up to a minute; you will hear a message when it is ready.")
+            ui.message(message)
+            return
         try:
-            entries = load_theme_catalog(db_path)
+            entries = load_theme_catalog(db_path, allow_rebuild=False)
         except Exception as error:
             gui.messageBox(
                 str(error),
@@ -354,6 +361,15 @@ class TacticsSetupMixin:
             self._updateThemeSummary()
             self._refresh_theme_controls()
         dialog.Destroy()
+
+    def _theme_catalog_ready(self, entries):
+        # Chega da thread de varredura; falar só pode ser feito no fio principal.
+        if entries:
+            # Translators: Announced when the theme catalog finished building in the background.
+            wx.CallAfter(ui.message, _("Theme catalog ready. You can select themes now."))
+        else:
+            # Translators: Announced when the theme catalog could not be built.
+            wx.CallAfter(ui.message, _("The theme catalog could not be built."))
 
     def onClearThemes(self, event):
         self._theme_filter_text = ""

@@ -5,6 +5,7 @@ from __future__ import annotations
 import dataclasses
 import json
 import re
+import threading
 from pathlib import Path
 
 from .tactic.db import ADDON_DATA_DIRECTORY, resolve_default_db_path, run_bridge
@@ -120,14 +121,64 @@ def _payload_to_entries(payload: dict[str, object]) -> tuple[ThemeCatalogEntry, 
     return tuple(sorted(entries, key=lambda entry: entry.label.casefold()))
 
 
-def load_theme_catalog(db_path: str | Path | None = None) -> tuple[ThemeCatalogEntry, ...]:
+def load_theme_catalog(
+    db_path: str | Path | None = None, allow_rebuild: bool = True
+) -> tuple[ThemeCatalogEntry, ...]:
+    """O catálogo de temas do banco, do cache.
+
+    Sem cache, `allow_rebuild=True` varre o banco aqui mesmo -- e isso leva
+    dezenas de segundos na base completa, com quem chamou parado. Só o
+    download faz isso de propósito, na própria thread. Todo o resto passa
+    `allow_rebuild=False` e, se não houver cache, dispara a varredura em
+    segundo plano com `ensure_theme_catalog_async` e segue sem o catálogo.
+    """
     resolved_db_path = resolve_theme_db_path(db_path)
     if resolved_db_path is None:
         return ()
     payload = _load_cache_payload(resolved_db_path)
     if payload is None:
+        if not allow_rebuild:
+            ensure_theme_catalog_async(resolved_db_path)
+            return ()
         return rebuild_theme_catalog(resolved_db_path)
     return _payload_to_entries(payload)
+
+
+_REBUILD_LOCK = threading.Lock()
+_REBUILD_IN_PROGRESS: set[str] = set()
+
+
+def ensure_theme_catalog_async(db_path: str | Path | None = None, on_done=None) -> bool:
+    """Garante que o catálogo existe, sem parar quem chamou.
+
+    Devolve True se o cache já está pronto. Se não está, começa UMA varredura
+    em thread (chamadas repetidas enquanto ela corre não começam outra) e
+    devolve False; `on_done(entries)` é chamado na thread quando terminar.
+    """
+    resolved_db_path = resolve_theme_db_path(db_path)
+    if resolved_db_path is None:
+        return False
+    if _load_cache_payload(resolved_db_path) is not None:
+        return True
+    key = str(resolved_db_path.resolve())
+    with _REBUILD_LOCK:
+        if key in _REBUILD_IN_PROGRESS:
+            return False
+        _REBUILD_IN_PROGRESS.add(key)
+
+    def work():
+        try:
+            entries = rebuild_theme_catalog(resolved_db_path)
+        except Exception:
+            entries = ()
+        finally:
+            with _REBUILD_LOCK:
+                _REBUILD_IN_PROGRESS.discard(key)
+        if on_done is not None:
+            on_done(entries)
+
+    threading.Thread(target=work, name="chessmart.theme-catalog", daemon=True).start()
+    return False
 
 
 def get_theme_entry(
@@ -136,7 +187,10 @@ def get_theme_entry(
 ) -> ThemeCatalogEntry | None:
     if not slug:
         return None
-    for entry in load_theme_catalog(db_path):
+    # Chamado ao carregar cada puzzle: nunca pode varrer o banco aqui. Sem
+    # cache, o tema sai do slug (`humanize_theme_slug`) e o catálogo se
+    # constrói em segundo plano para as próximas vezes.
+    for entry in load_theme_catalog(db_path, allow_rebuild=False):
         if entry.slug == slug:
             return entry
     return None

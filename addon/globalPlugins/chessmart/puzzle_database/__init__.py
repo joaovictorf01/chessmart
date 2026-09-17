@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import dataclasses
 import typing as t
+from concurrent.futures import Future
 from pathlib import Path
 
 from ..helpers import import_bundled
@@ -153,6 +154,9 @@ class PuzzleSet:
     options: TacticSessionOptions
     current_item_index: int = 0
     _seen_puzzle_ids: list[str] = dataclasses.field(default_factory=list)
+    # O próximo puzzle, já sorteado e convertido numa thread enquanto o
+    # jogador ainda resolve o atual. Ver prefetch_next.
+    _prefetched: "Future | None" = dataclasses.field(default=None, repr=False)
 
     def __post_init__(self):
         default_options = get_default_tactic_session_options()
@@ -167,17 +171,60 @@ class PuzzleSet:
         return self
 
     def __next__(self):
-        record = self._get_next_record()
+        future, self._prefetched = self._prefetched, None
+        if future is not None:
+            # Se a thread já terminou, isto volta na hora; se não, espera só
+            # o que falta -- nunca mais do que o sorteio inteiro custaria aqui.
+            record, info = future.result()
+        else:
+            record = self._get_next_record()
+            info = None if record is None else _puzzle_info_from_record(record, db_path=self.db_path)
         if record is None:
             raise StopIteration
         self.current_item_index += 1
         if record.id not in self._seen_puzzle_ids:
             self._seen_puzzle_ids.append(record.id)
-        return _puzzle_info_from_record(record, db_path=self.db_path)
+        return info
 
-    def _get_next_record(self):
+    def prefetch_next(self) -> None:
+        """Sorteia o próximo puzzle numa thread, para o Control+N não esperar.
+
+        Chamado logo depois de um puzzle ser carregado. O sorteio usa os ids já
+        vistos até aqui (o atual incluído) e, no modo adaptativo, o rating de
+        agora -- a tentativa em andamento vai mexer nele um pouco, e o puzzle
+        pré-sorteado fica calibrado pelo rating de um puzzle atrás. É uma
+        diferença de poucos pontos dentro de uma janela de centenas, e o
+        preço de esperar o banco a cada Control+N era maior.
+        """
+        if self._prefetched is not None or self.repository is None:
+            return
+        if self.options.puzzle_id.strip():
+            return
+        seen_snapshot = list(self._seen_puzzle_ids)
+        try:
+            from ..concurrency import THREADED_EXECUTOR
+        except ImportError:
+            return
+
+        def work():
+            record = self._get_next_record(seen_ids=seen_snapshot)
+            info = None if record is None else _puzzle_info_from_record(record, db_path=self.db_path)
+            return record, info
+
+        try:
+            self._prefetched = THREADED_EXECUTOR.submit(work)
+        except RuntimeError:
+            self._prefetched = None
+
+    def discard_prefetch(self) -> None:
+        """Esquece o pré-sorteio (por exemplo quando a sessão termina)."""
+        self._prefetched = None
+
+    def _get_next_record(self, seen_ids: list[str] | None = None):
         if self.repository is None:
             raise FileNotFoundError("Tactics database not found.")
+        if seen_ids is None:
+            seen_ids = self._seen_puzzle_ids
 
         puzzle_id = self.options.puzzle_id.strip()
         if puzzle_id:
@@ -193,14 +240,14 @@ class PuzzleSet:
             return self.repository.adaptive_random_puzzle(
                 theme=theme_slugs or None,
                 min_popularity=self.options.min_popularity,
-                excluded_ids=self._seen_puzzle_ids,
+                excluded_ids=seen_ids,
             )
         return self.repository.random_puzzle(
             min_rating=self.options.min_rating,
             max_rating=self.options.max_rating,
             theme=theme_slugs or None,
             min_popularity=self.options.min_popularity,
-            excluded_ids=self._seen_puzzle_ids,
+            excluded_ids=seen_ids,
         )
 
     def ensure_ready(self):

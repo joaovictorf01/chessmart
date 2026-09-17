@@ -239,6 +239,10 @@ class PuzzleChessboard(UserDrivenChessboard):
 
         self.puzzle = next_puzzle
         self._load_current_puzzle(is_retry=False)
+        # Com este puzzle na mesa, o próximo já vai sendo sorteado.
+        prefetch = getattr(self.puzzles, "prefetch_next", None)
+        if prefetch is not None:
+            prefetch()
 
     def retry_current_puzzle(self):
         if self.puzzle is None:
