@@ -120,12 +120,18 @@ def _split_legacy_if_needed() -> None:
     existe `puzzles.db`. O histórico ganha um backup datado ao lado.
     """
     puzzles_path = ADDON_DATA_DIRECTORY / PUZZLES_DB_NAME
-    if puzzles_path.exists() or not HISTORY_DB_PATH.is_file():
+    if not HISTORY_DB_PATH.is_file():
         return
     _ensure_sqlite3_importable()
     from . import sqlite_bridge
 
     if not sqlite_bridge.has_puzzles_table(HISTORY_DB_PATH):
+        return
+    if puzzles_path.exists():
+        # Já existe um banco de puzzles (baixado antes de a divisão rodar):
+        # o histórico só precisa largar a tabela de puzzles que carrega.
+        backup = sqlite_bridge.slim_legacy_history(HISTORY_DB_PATH)
+        _log(f"chessmart: tabela de puzzles removida de {HISTORY_DB_PATH.name}; backup do histórico em {backup.name}")
         return
     backup = sqlite_bridge.split_legacy_database(HISTORY_DB_PATH, puzzles_path, HISTORY_DB_PATH)
     _repoint_theme_catalog_cache(HISTORY_DB_PATH, puzzles_path)

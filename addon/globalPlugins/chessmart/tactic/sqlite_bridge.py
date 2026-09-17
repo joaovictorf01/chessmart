@@ -178,6 +178,32 @@ def split_legacy_database(legacy_path: Path, puzzles_path: Path, history_path: P
     return backup_path
 
 
+def slim_legacy_history(history_path: Path) -> Path:
+    """Tira a tabela `puzzles` de um histórico que ainda a carrega.
+
+    Caso de quem baixou um banco de puzzles antes de a divisão rodar: o
+    `tactic.db` antigo ficou como histórico, com os milhões de puzzles
+    dentro. O histórico é copiado para um arquivo novo (e um backup datado),
+    e o novo toma o lugar do antigo -- mais rápido e mais seguro do que
+    apagar a tabela e compactar 1,4 GB no lugar.
+    """
+    fresh_path = history_path.with_name(history_path.name + ".new")
+    backup_path = history_path.with_name(
+        f"{history_path.stem}.backup-{_today_stamp()}{history_path.suffix}"
+    )
+    for target in (fresh_path, backup_path):
+        if target.exists():
+            target.unlink()
+        _copy_history_tables(history_path, target)
+    old_path = history_path.with_name(history_path.name + ".old")
+    if old_path.exists():
+        old_path.unlink()
+    history_path.replace(old_path)
+    fresh_path.replace(history_path)
+    old_path.unlink()
+    return backup_path
+
+
 def _today_stamp() -> str:
     import datetime
 
