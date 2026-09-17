@@ -653,10 +653,10 @@ class PuzzleChessboard(UserDrivenChessboard):
         hint_messages.extend(
             [
                 _("Hint: the move starts from {square}.").format(
-                    square=self.game_announcer.square_name(expected_move.from_square)
+                    square=self.spoken_square_name(expected_move.from_square)
                 ),
                 _("Hint: the move ends on {square}.").format(
-                    square=self.game_announcer.square_name(expected_move.to_square)
+                    square=self.spoken_square_name(expected_move.to_square)
                 ),
             ]
         )

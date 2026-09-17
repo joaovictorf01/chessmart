@@ -11,7 +11,8 @@ import wx
 import gui
 from gui import guiHelper
 
-from ..addon_config import get_tactics_defaults, save_tactics_defaults
+from ..addon_config import get_move_notation, get_tactics_defaults, save_move_notation, save_tactics_defaults
+from ..notation import NOTATION_STYLES
 from ..i18n import _
 from ..theme_catalog import parse_theme_filter
 from ..trainer import (
@@ -64,6 +65,17 @@ class ChessboardSettingsDialog(TacticsSetupMixin, gui.SettingsDialog):
         self._build_summary_row(helper)
         # Translators: Label for the default themes field.
         self._build_theme_rows(helper, _("Default themes"))
+
+        # Translators: Label of the combo box that chooses how moves are spoken.
+        notationLabel = wx.StaticText(self, -1, _("Move &notation"))
+        self.notationChoice = wx.Choice(self, -1, choices=[label for _style, label in NOTATION_STYLES])
+        current = get_move_notation()
+        self.notationChoice.SetSelection(
+            next((index for index, (style, _label) in enumerate(NOTATION_STYLES) if style == current), 0)
+        )
+        guiHelper.associateElements(notationLabel, self.notationChoice)
+        helper.addItem(notationLabel)
+        helper.addItem(self.notationChoice)
         self._bind_shared_events()
 
     def postInit(self):
@@ -112,4 +124,5 @@ class ChessboardSettingsDialog(TacticsSetupMixin, gui.SettingsDialog):
             max_rating=resolved.max_rating,
             min_popularity=resolved.min_popularity,
         )
+        save_move_notation(NOTATION_STYLES[self.notationChoice.GetSelection()][0])
         super().onOk(event)

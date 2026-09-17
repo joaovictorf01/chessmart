@@ -29,6 +29,8 @@ from .ui_components import (
 )
 from ..time_control import ChessTimeControl, NULL_TIME_CONTROL
 from ..spoken_messages import standard_game_announcer, ibca_game_announcer
+from ..notation import DESCRIPTIVE, render_san, render_square
+from ..addon_config import get_move_notation
 from ..helpers import import_bundled, intersperse, GameSound, speak_next, Color
 from ..concurrency import call_threaded
 from ..signals import (
@@ -93,7 +95,7 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 
     @property
     def description(self):
-        return self.game_announcer.square_name(self.index)
+        return self.parent.spoken_square_name(self.index)
 
     @property
     def name(self):
@@ -429,6 +431,9 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
         is_en_passant = self.board.is_en_passant(move)
         if is_en_passant:
             old_piece_at_target_square = self.board.piece_at(move.to_square - 8)
+        # O SAN só existe antes do lance: depende da posição e das peças que
+        # podiam ir à mesma casa (a desambiguação de "Ngf3").
+        san_text = self.board.san(move)
         self.board.push(move)
         self.time_control.time_move(
             not self.board.turn, total_moves=len(self.board.move_stack)
@@ -442,6 +447,7 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
                 is_castling,
                 is_king_side_castling,
                 is_en_passant,
+                san_text,
             )
         )
         self.score_sheet_menu.add_item(
@@ -503,7 +509,26 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
         is_castling,
         is_king_side_castling,
         is_en_passant,
+        san_text="",
     ):
+        style = get_move_notation()
+        if style != DESCRIPTIVE and san_text:
+            # Estilo curto (SAN, UCI, anna...): o som do tipo de lance continua,
+            # e o texto vem de uma só vez, como o Lichess fala.
+            if move.promotion is not None:
+                sound = GameSound.promotion
+            elif is_castling:
+                sound = GameSound.castling
+            elif move.drop:
+                sound = GameSound.drop_move
+            elif old_piece_at_target_square is not None:
+                sound = GameSound.en_passant if is_en_passant else GameSound.capture
+            else:
+                sound = GameSound.drop_piece
+            yield speech.commands.WaveFileCommand(sound.filename)
+            yield speech.commands.BreakCommand(150)
+            yield render_san(san_text, move.uci(), style)
+            return
         if move.promotion is not None:
             yield from [
                 speech.commands.WaveFileCommand(GameSound.promotion.filename),
@@ -584,6 +609,10 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
     def notify_invalid_navigation(self):
         GameSound.invalid.play()
         speech.speakObject(api.getFocusObject(), controlTypes.OutputReason.FOCUS)
+
+    def spoken_square_name(self, square):
+        """A casa como ela é falada: "f3", ou "felix 3" / "foxtrot 3" nesses estilos."""
+        return render_square(self.game_announcer.square_name(square), get_move_notation())
 
     def get_piece_name_at_square(self, index):
         piece = self.board.piece_at(index)
@@ -703,7 +732,7 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
             *[self.board.pieces(piece_type, color) for piece_type in sorted(chess.PIECE_TYPES, reverse=True)]
         )
         spoken_commands = [
-            f"{self.get_piece_name_at_square(square)}, {self.game_announcer.square_name(square)}"
+            f"{self.get_piece_name_at_square(square)}, {self.spoken_square_name(square)}"
             for square in square_set
         ]
         speak_next(intersperse(spoken_commands, speech.commands.BreakCommand(250)))

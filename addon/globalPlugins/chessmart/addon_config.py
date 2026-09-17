@@ -21,6 +21,9 @@ CONFIG_SPEC = {
     "tacticsMinRating": 'string(default="800")',
     "tacticsMaxRating": 'string(default="1600")',
     "tacticsMinPopularity": "integer(default=50, min=0, max=1000000)",
+    # Como os lances são falados; ver notation.py. Texto livre validado por nós,
+    # e não `option(...)`, para um valor de versão futura não estourar o config.
+    "moveNotation": 'string(default="descriptive")',
 }
 
 
@@ -121,3 +124,19 @@ def save_tactics_defaults(
     addon_conf["tacticsMinRating"] = encode_rating(min_rating)
     addon_conf["tacticsMaxRating"] = encode_rating(max_rating)
     addon_conf["tacticsMinPopularity"] = min_popularity
+
+
+def get_move_notation() -> str:
+    """O estilo de fala dos lances; volta ao padrão se o valor guardado for desconhecido."""
+    from .notation import DEFAULT_STYLE, STYLE_IDS
+
+    ensure_config_spec()
+    value = str(config.conf[CONFIG_SECTION]["moveNotation"]).strip()
+    return value if value in STYLE_IDS else DEFAULT_STYLE
+
+
+def save_move_notation(style: str) -> None:
+    from .notation import DEFAULT_STYLE, STYLE_IDS
+
+    ensure_config_spec()
+    config.conf[CONFIG_SECTION]["moveNotation"] = style if style in STYLE_IDS else DEFAULT_STYLE
