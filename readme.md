@@ -1,29 +1,124 @@
 # Chessmart
 
+**Chessmart** is an NVDA add-on that turns the screen reader into an accessible chess environment: a virtual board you play on with the keyboard, an engine to play against, PGN replay, and a tactics trainer built on the [Lichess puzzle database](https://database.lichess.org/#puzzles) with a rating that follows you.
 
-**Chessmart** is an add-on for NVDA that provides a completely accessible chess playing environment for blind and visually impaired chess players.
+It is a fork of [Chessmart by Musharraf Omer](https://github.com/blindpandas/chessmart), which provides the board, the engines and the variants. This fork adds the tactics trainer, the puzzle database download, the configurable move notation and the translations. Both are released under the GNU GPL v2.
 
-## How to use
+Requires NVDA 2026.1 or later (64-bit Python 3.13). Nothing else needs to be installed: the SQLite runtime the trainer needs ships inside the add-on.
 
-1. Install the add-on
-2. Start a new game from the add-on;s menu, which you can find in NVDA's main menu
-3. Set the game options as follows:
-    * Play mode: user versus computer, or user versus user (two players)
-    * Chess variant: the add-on supports standard chess and other 7 different chess variants including Chess 960, Anti chess, Atomic chess, Kings of the hill, Racing kings, Hords, and Three check.
-    * Time control: choose among classical, rapid play, blitz, bullit, or custom time controls
-    * FEN: use a custom chessboard Fen
-    * If the play mode is user versus computer; you can adjust the engine options, including engine strength and engine delay
-4. Enjoy!
+## Getting started
 
-## Useful Keyboard shortcuts in the Chessboard
+1. Install the add-on and restart NVDA.
+2. Open the NVDA menu and find the **Chessmart** submenu.
+3. Choose **Tactics...** to train, or **New Game...** to play.
 
-* F1: announce the position of your pieces.
-* Shift + F1: announce the position of your opponent's pieces.
-* F2: announce your remaining time
-* Shift + F2: announce your opponent's remaining time
-* F3: announce the currently focused piece and square using IBCA notation
-* F4: show the scoresheet which shows a list of the moves made by you and your opponents
+The first time you open Tactics, the add-on offers to download the puzzle database. Pick **Light** (about 76 MB, 745,000 puzzles that many players have solved and approved) or **Complete** (about 591 MB, the whole Lichess base of 5.8 million puzzles). The download runs in the background with spoken progress; you can cancel with Escape. The database is stored in your NVDA configuration folder, under `chessmart`, together with your training history.
 
-## What about online chess?
+## Tactics training
 
-The add-on supports online chess via [lichess.org](https://lichess.org), but it is not currently enabled due to technical considerations. If there is a demand for this feature, we will consider enabling it.
+The **Tactics** dialog sets up a session:
+
+* **Training plan** — which themes are in play: guided basics, win material, attack the king, mixed practice, all themes, or your own selection of Lichess themes.
+* **Challenge level** — how hard the puzzles are: very accessible, balanced, stretch, challenge, or **adaptive**, which follows your own tactics rating.
+* **Puzzle ID** — type the id of one Lichess puzzle to open exactly that one.
+* **Save training setup as default** — keeps this setup for next time.
+
+Each puzzle is presented on the board with the opponent's last move already played. Find the move, navigate to the piece, press Enter, navigate to the destination square and press Enter again. Multi-move puzzles continue until the end of the solution; the opponent's replies are announced.
+
+### Rating
+
+Every puzzle you attempt counts as a rated game against that puzzle, using the Glicko-2 system (the same family Lichess uses). Your rating starts at 1500 with a large uncertainty and settles as you play. As on Lichess, the first wrong move already counts as a failure: solving the puzzle afterwards teaches you the solution but does not change the rating, and retrying a puzzle is never rated.
+
+The rating, the attempts and their history live in `tactic.db` in your NVDA configuration folder. Database updates never touch that file.
+
+### Keyboard commands on the puzzle board
+
+| Key | Action |
+|---|---|
+| Control+N | Next puzzle (drawn in the background while you solve the current one) |
+| Control+R | Retry the current puzzle (not rated) |
+| Control+H | Hint: first the themes, then the origin square, then the destination |
+| Control+Enter (twice) | Play the expected move |
+| Control+F1 | Puzzle details: rating, popularity, themes, source game |
+| Control+F2 | Session status: solved, mistakes, hints |
+| Control+Shift+R | Your current tactics rating |
+| Tab / Shift+Tab | Training actions (next, retry, back to board) |
+| Escape | Close the board |
+
+All the board commands below work on the puzzle board too.
+
+### Keeping the database up to date
+
+Lichess publishes a new puzzle base every month. This project regenerates the databases from it and publishes them on the [`puzzles-latest` release](https://github.com/joaovictorf01/chessmart/releases/tag/puzzles-latest). In the Tactics dialog or in the settings, **Download or update...** shows what you have installed against what is published and lets you update. Updates are never installed automatically.
+
+## Playing a game
+
+**New Game...** opens the game setup:
+
+* **Play mode**: human versus computer, or human versus human on the same keyboard.
+* **Variant**: standard chess, Chess 960, Antichess, Atomic, King of the hill, Racing kings, Horde, Three check and Crazyhouse.
+* **Time control**: classical, rapid, blitz, bullet or custom (for example `10+5`).
+* **Starting FEN**: any position.
+* **Engine options**: strength (Elo) and thinking time, when playing the computer. Standard chess uses Stockfish 14; variants use Fairy-Stockfish.
+
+**Replay PGN File...** opens a PGN file: Enter plays the next move of the game and Backspace takes it back, while the arrow keys let you inspect the board at any point.
+
+### Keyboard commands on the board
+
+| Key | Action |
+|---|---|
+| Arrow keys | Move between squares; each square announces its piece and name |
+| Enter or Space | Select the piece to move, then the destination square |
+| R, N, B, Q, K, P | Jump to your next rook, knight, bishop, queen, king or pawn |
+| Shift + letter | Jump to the opponent's next piece of that type |
+| A | Which pieces attack the focused square |
+| M | Material count for both sides |
+| F1 / Shift+F1 | Overview of your pieces / of the opponent's pieces |
+| F2 / Shift+F2 | Remaining time on your clock / on the opponent's clock |
+| F3 | The focused square and piece in IBCA notation |
+| F4 | Score sheet: the moves played so far |
+| F6 / Shift+F6 | Your pocket / the opponent's pocket (Crazyhouse) |
+| Control+D | Offer a draw, or withdraw the offer |
+| Control+Shift+R | Resign (online games) |
+| Control+S | Save the game as a PGN file |
+| Control+Shift+S | Save the board as a PNG image |
+| Escape | Close the board |
+
+## Settings
+
+**Settings...** in the Chessmart menu:
+
+* Default training plan, challenge level and themes for new tactics sessions.
+* The puzzle database in use, with **Browse...** to point at a database elsewhere and **Download or update...**.
+* **Move notation**: how moves and squares are spoken.
+
+### Move notation
+
+The same styles as the blind mode of Lichess, plus the descriptive style Chessmart always had:
+
+| Style | Example |
+|---|---|
+| Descriptive | white knight from g1 to f3 |
+| SAN | Nf3 |
+| UCI | g1f3 |
+| Literate | knight f 3 |
+| NATO | knight foxtrot 3 |
+| Anna | knight felix 3 |
+
+Anna is the notation blind players use at the board (anna, bella, cesar, david, eva, felix, gustav, hector). In the NATO and Anna styles the squares are spoken the same way when you move around the board. Only the speech changes: moves are always entered on the board, never typed.
+
+## Translations
+
+The interface is in English and Brazilian Portuguese. Translations live in `addon/locale/<language>/LC_MESSAGES/nvda.po`, in the standard NVDA add-on layout, and are welcome: to start a new one, run `py -3 tools/i18n.py update <language>` and fill in the `msgstr` lines, or ask for the add-on to be added to the NVDA add-ons project on Crowdin. The NATO and Anna square names and the IBCA notation are international and are not translated.
+
+## For developers
+
+The repository follows the [NVDA add-on template](https://github.com/nvaccess/addonTemplate): `uv sync` then `uv run scons` builds `chessmart-<version>.nvda-addon`; pushing a `v*` tag builds and publishes a GitHub release. `tools/build_puzzles.py` regenerates the puzzle databases from the Lichess CSV, and `.github/workflows/puzzles.yml` does it monthly.
+
+## Credits
+
+* [Musharraf Omer](https://github.com/mush42) — the original Chessmart: board, engines, variants, PGN replay.
+* [Lichess](https://lichess.org) — the puzzle database (CC0) and the notation styles of its blind mode.
+* [Stockfish](https://stockfishchess.org) and [Fairy-Stockfish](https://fairy-stockfish.github.io) — the engines.
+* [python-chess](https://python-chess.readthedocs.io) — the chess library.
+* Tactics trainer, database tooling, move notation and Portuguese translation by João Victor.
