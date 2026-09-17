@@ -8,3 +8,7 @@ __pycache__/
 
 # Ferramentas locais
 .claude/settings.local.json
+
+# Saída do gerador de puzzles e cache do download
+build/
+dist/

@@ -1,0 +1,72 @@
+name: Base de puzzles
+
+# Regenera o puzzles.db a partir da base aberta do Lichess, que muda uma vez
+# por mês (perto do dia 10). Roda no dia 12 e também à mão. Publica na release
+# fixa `puzzles-latest`, trocando os arquivos: o add-on lê o manifest.json
+# dessa release para saber se há base nova.
+
+on:
+  schedule:
+    - cron: "17 6 12 * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Publicar mesmo que a base do Lichess não tenha mudado"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      RELEASE_TAG: puzzles-latest
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Última base publicada
+        id: published
+        run: |
+          if gh release download "$RELEASE_TAG" --pattern manifest.json --dir published 2>/dev/null; then
+            echo "lastModified=$(python3 -c 'import json;print(json.load(open("published/manifest.json"))["source"]["lastModified"])')" >> "$GITHUB_OUTPUT"
+          else
+            echo "lastModified=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Baixar a base do Lichess e gerar os bancos
+        run: python3 tools/build_puzzles.py --download --tier all --out dist/puzzles
+
+      - name: Há base nova?
+        id: fresh
+        run: |
+          new=$(python3 -c 'import json;print(json.load(open("dist/puzzles/manifest.json"))["source"]["lastModified"])')
+          echo "Lichess: $new | publicada: ${{ steps.published.outputs.lastModified }}"
+          if [ "$new" != "${{ steps.published.outputs.lastModified }}" ] || [ "${{ inputs.force }}" = "true" ]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publicar na release puzzles-latest
+        if: steps.fresh.outputs.publish == 'true'
+        run: |
+          month=$(python3 -c 'import json,email.utils;d=email.utils.parsedate_to_datetime(json.load(open("dist/puzzles/manifest.json"))["source"]["lastModified"]);print(d.strftime("%Y-%m"))')
+          notes="Base de puzzles do Lichess de $month. Gerada por tools/build_puzzles.py. Licença dos dados: CC0 (Lichess)."
+          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --title "Base de puzzles (atualizada mensalmente)" --notes "$notes" --latest=false
+          else
+            gh release edit "$RELEASE_TAG" --notes "$notes"
+          fi
+          gh release upload "$RELEASE_TAG" dist/puzzles/manifest.json dist/puzzles/*.db.gz --clobber
+
+      - name: Nada a publicar
+        if: steps.fresh.outputs.publish != 'true'
+        run: echo "A base do Lichess não mudou desde a última publicação."
