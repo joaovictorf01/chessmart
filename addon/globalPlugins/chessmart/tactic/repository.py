@@ -1,82 +1,53 @@
 # coding: utf-8
 
+"""A fachada que o resto do add-on usa para falar com o banco.
+
+Cada chamada abre a conexão, faz uma coisa e fecha. É simples e é o que cabe
+aqui: as chamadas são raras (um sorteio, uma gravação) e nunca concorrem.
+"""
+
 from __future__ import annotations
 
-import json
+import contextlib
 from pathlib import Path
 
-from .db import run_bridge
-from .models import Puzzle
-
-
-def puzzle_from_row(row) -> Puzzle:
-	return Puzzle(
-		id=row["id"],
-		fen=row["fen"],
-		moves=row["moves"],
-		rating=row["rating"],
-		rating_deviation=row["rating_deviation"],
-		popularity=row["popularity"],
-		nb_plays=row["nb_plays"],
-		themes=row["themes"],
-		game_url=row["game_url"],
-		opening_tags=row["opening_tags"],
-	)
+from .db import HISTORY_DB_PATH, load_store
+from .models import AttemptResult, AttemptStats, Puzzle, PuzzleFilters, RatingSummary
 
 
 class PuzzleRepository:
-	def __init__(self, db_path: Path):
-		self.db_path = db_path
+	def __init__(self, db_path: Path, history_path: Path | None = None):
+		"""`db_path` é o banco de puzzles; o histórico é sempre o do usuário, salvo em teste."""
+		self.db_path = Path(db_path)
+		self.history_path = Path(history_path) if history_path else HISTORY_DB_PATH
+
+	@contextlib.contextmanager
+	def _open(self):
+		store = load_store()
+		connection = store.connect(self.db_path, self.history_path)
+		try:
+			# O `with` da conexão cuida do commit/rollback; fechar é por nossa conta.
+			with connection:
+				yield store, connection
+		finally:
+			connection.close()
 
 	def count(self) -> int:
-		return int(run_bridge(self.db_path, "count"))
+		with self._open() as (store, connection):
+			return store.count(connection)
 
 	def get(self, puzzle_id: str) -> Puzzle | None:
-		row = run_bridge(self.db_path, "get", puzzle_id)
-		return puzzle_from_row(row) if row else None
+		with self._open() as (store, connection):
+			return store.get(connection, puzzle_id)
 
-	def random_puzzle(
-		self,
-		min_rating: int | None = None,
-		max_rating: int | None = None,
-		theme: str | list[str] | tuple[str, ...] | None = None,
-		min_popularity: int | None = 0,
-		excluded_ids: list[str] | tuple[str, ...] | None = None,
-	) -> Puzzle | None:
-		if isinstance(theme, (list, tuple)):
-			theme_filter = ",".join(theme)
-		else:
-			theme_filter = theme or ""
-		row = run_bridge(
-			self.db_path,
-			"random",
-			"" if min_rating is None else min_rating,
-			"" if max_rating is None else max_rating,
-			theme_filter,
-			"" if min_popularity is None else min_popularity,
-			json.dumps(list(excluded_ids or ()), ensure_ascii=False),
-		)
-		return puzzle_from_row(row) if row else None
+	def random_puzzle(self, filters: PuzzleFilters) -> Puzzle | None:
+		with self._open() as (store, connection):
+			return store.random_puzzle(connection, filters)
 
-	def adaptive_random_puzzle(
-		self,
-		theme: str | list[str] | tuple[str, ...] | None = None,
-		min_popularity: int | None = 0,
-		excluded_ids: list[str] | tuple[str, ...] | None = None,
-	) -> Puzzle | None:
-		"""Sorteia calibrado pelo rating atual, sem faixa vinda de fora."""
-		if isinstance(theme, (list, tuple)):
-			theme_filter = ",".join(theme)
-		else:
-			theme_filter = theme or ""
-		row = run_bridge(
-			self.db_path,
-			"adaptiveRandom",
-			theme_filter,
-			"" if min_popularity is None else min_popularity,
-			json.dumps(list(excluded_ids or ()), ensure_ascii=False),
-		)
-		return puzzle_from_row(row) if row else None
+	def adaptive_random_puzzle(self, filters: PuzzleFilters) -> Puzzle | None:
+		"""Sorteia calibrado pelo rating atual; a faixa de rating de `filters` é ignorada."""
+		with self._open() as (store, connection):
+			return store.adaptive_random_puzzle(connection, filters)
 
 	def record_attempt(
 		self,
@@ -85,29 +56,19 @@ class PuzzleRepository:
 		mistakes: int,
 		hints_used: int,
 		elapsed_ms: int,
-	):
-		"""Grava a tentativa e devolve o rating resultante.
+	) -> AttemptResult:
+		with self._open() as (store, connection):
+			return store.record_attempt(connection, puzzle_id, solved, mistakes, hints_used, elapsed_ms)
 
-		A ponte já calcula o Glicko-2 e responde com rating, ratingDelta e
-		deviation. Devolver isso aqui evita uma segunda ida ao banco só para
-		descobrir o que a tentativa mudou.
-		"""
-		return run_bridge(
-			self.db_path,
-			"recordAttempt",
-			puzzle_id,
-			int(solved),
-			mistakes,
-			hints_used,
-			elapsed_ms,
-		)
+	def rating(self) -> RatingSummary:
+		with self._open() as (store, connection):
+			return store.rating(connection)
 
-	def rating(self):
-		return run_bridge(self.db_path, "rating")
-
-	def attempt_stats(self):
-		return run_bridge(self.db_path, "attemptStats")
+	def attempt_stats(self) -> AttemptStats:
+		with self._open() as (store, connection):
+			return store.attempt_stats(connection)
 
 	def theme_counts(self) -> list[tuple[str, int]]:
 		"""Cada tema do banco com quantos puzzles o têm. Varre a tabela inteira."""
-		return [(item["slug"], item["count"]) for item in run_bridge(self.db_path, "themeCatalog") or []]
+		with self._open() as (store, connection):
+			return store.theme_counts(connection)

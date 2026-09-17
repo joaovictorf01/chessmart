@@ -54,7 +54,7 @@ TIERS = {
 	},
 }
 
-# O mesmo schema que o add-on sempre usou (tactic/sqlite_bridge.py consulta
+# O mesmo schema que o add-on sempre usou (tactic/store.py consulta
 # `lichess.puzzles` com estas colunas e estes índices).
 PUZZLES_SCHEMA = """
 CREATE TABLE puzzles (

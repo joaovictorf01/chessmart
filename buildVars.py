@@ -71,7 +71,6 @@ pythonSources: list[str] = [
 	"addon/globalPlugins/chessmart/*.py",
 	"addon/globalPlugins/chessmart/graphical_interface/*.py",
 	"addon/globalPlugins/chessmart/internet_chess/*.py",
-	"addon/globalPlugins/chessmart/puzzle_database/*.py",
 	"addon/globalPlugins/chessmart/tactic/*.py",
 	"addon/globalPlugins/chessmart/virtual_chessboard/*.py",
 ]

@@ -12,10 +12,10 @@ import wx
 import gui
 from gui import guiHelper
 
-from ..addon_config import get_tactics_defaults, save_tactics_defaults
+from ..addon_config import TacticsDefaults, get_tactics_defaults, save_tactics_defaults
 from ..i18n import _
-from ..puzzle_database import TacticSessionOptions
 from ..theme_catalog import parse_theme_filter
+from ..training_session import TrainingOptions
 from ..trainer import (
 	challenge_description,
 	challenge_label,
@@ -143,33 +143,26 @@ class TacticsOptionsDialog(TacticsSetupMixin, gui.SettingsDialog):
 		self.trainerSummaryTextCtrl.SetValue(summary)
 
 	def get_options(self):
-		puzzle_id = self.puzzleIdTextCtrl.GetValue().strip()
-		resolved = self._resolved_selection()
-		return TacticSessionOptions(
+		# Com um id digitado, plano e nível ficam guardados nas opções mas não
+		# filtram nada: pedir um puzzle pelo id é pedir aquele puzzle.
+		return TrainingOptions(
 			db_path=self.databasePathTextCtrl.GetValue().strip() or None,
-			puzzle_id=puzzle_id,
-			theme="" if puzzle_id else resolved.theme_text,
+			puzzle_id=self.puzzleIdTextCtrl.GetValue().strip(),
 			trainer_preset=self._trainer_preset_id(),
 			challenge_level=self._challenge_id(),
-			min_rating=None if puzzle_id else resolved.min_rating,
-			max_rating=None if puzzle_id else resolved.max_rating,
-			min_popularity=0 if puzzle_id else resolved.min_popularity,
-			# Pedir um puzzle pelo ID é pedir aquele puzzle: a calibração
-			# automática não tem o que fazer aí.
-			adaptive=False if puzzle_id else resolved.adaptive,
+			custom_theme_text=self._theme_filter_text,
 		)
 
 	def onOk(self, event):
 		options = self.get_options()
 		if self.saveDefaultsCheckbox.IsChecked():
 			save_tactics_defaults(
-				db_path=options.db_path or "",
-				theme=self._theme_filter_text,
-				trainer_preset=self._trainer_preset_id(),
-				challenge_level=self._challenge_id(),
-				min_rating=options.min_rating,
-				max_rating=options.max_rating,
-				min_popularity=options.min_popularity,
+				TacticsDefaults(
+					db_path=options.db_path or "",
+					theme=options.custom_theme_text,
+					trainer_preset=options.trainer_preset,
+					challenge_level=options.challenge_level,
+				),
 			)
 		self.callback(options)
 		super().onOk(event)

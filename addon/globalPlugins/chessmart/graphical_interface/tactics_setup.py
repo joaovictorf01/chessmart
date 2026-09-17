@@ -25,7 +25,7 @@ import ui
 from gui import guiHelper
 
 from ..i18n import _
-from ..puzzle_database import get_default_tactic_db_path, usable_db_path
+from ..training_session import default_db_path, usable_db_path
 from ..theme_catalog import (
 	ensure_theme_catalog_async,
 	describe_theme_filter,
@@ -178,7 +178,7 @@ class TacticsSetupMixin:
 		banco quando o problema é o caminho.
 		"""
 		typed = self.databasePathTextCtrl.GetValue().strip()
-		return usable_db_path(typed) or get_default_tactic_db_path() or ""
+		return usable_db_path(typed) or default_db_path() or ""
 
 	def _default_database_value(self, saved_path):
 		"""O que mostrar no campo do banco ao abrir a tela.
@@ -186,7 +186,7 @@ class TacticsSetupMixin:
 		Um caminho salvo que não existe mais não deve ser oferecido como se
 		valesse: é preferível mostrar o banco que o add-on realmente encontrou.
 		"""
-		return usable_db_path(saved_path) or get_default_tactic_db_path() or ""
+		return usable_db_path(saved_path) or default_db_path() or ""
 
 	def _resolved_selection(self):
 		return resolve_training_selection(

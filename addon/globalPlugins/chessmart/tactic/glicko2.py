@@ -44,6 +44,10 @@ DEFAULT_TAU = 0.5
 CONVERGENCE = 1e-6
 MAX_ITERATIONS = 100
 
+# Acima deste desvio o rating ainda é palpite: 1500 com desvio 200 quer dizer
+# "algo entre 1100 e 1900". Quem anuncia o número deve dizer que é provisório.
+PROVISIONAL_DEVIATION = 110.0
+
 
 @dataclasses.dataclass(frozen=True)
 class Rating:

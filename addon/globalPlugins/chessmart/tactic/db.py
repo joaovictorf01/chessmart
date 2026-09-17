@@ -125,20 +125,18 @@ def _split_legacy_if_needed() -> None:
 	puzzles_path = ADDON_DATA_DIRECTORY / PUZZLES_DB_NAME
 	if not HISTORY_DB_PATH.is_file():
 		return
-	_ensure_sqlite3_importable()
-	from . import sqlite_bridge
-
-	if not sqlite_bridge.has_puzzles_table(HISTORY_DB_PATH):
+	store = load_store()
+	if not store.has_puzzles_table(HISTORY_DB_PATH):
 		return
 	if puzzles_path.exists():
 		# Já existe um banco de puzzles (baixado antes de a divisão rodar):
 		# o histórico só precisa largar a tabela de puzzles que carrega.
-		backup = sqlite_bridge.slim_legacy_history(HISTORY_DB_PATH)
+		backup = store.slim_legacy_history(HISTORY_DB_PATH)
 		_log(
 			f"chessmart: tabela de puzzles removida de {HISTORY_DB_PATH.name}; backup do histórico em {backup.name}",
 		)
 		return
-	backup = sqlite_bridge.split_legacy_database(HISTORY_DB_PATH, puzzles_path, HISTORY_DB_PATH)
+	backup = store.split_legacy_database(HISTORY_DB_PATH, puzzles_path, HISTORY_DB_PATH)
 	_repoint_theme_catalog_cache(HISTORY_DB_PATH, puzzles_path)
 	_log(
 		f"chessmart: tactic.db dividido em {puzzles_path.name} e {HISTORY_DB_PATH.name}; "
@@ -169,12 +167,23 @@ def _repoint_theme_catalog_cache(old_path: Path, new_path: Path) -> None:
 		return
 
 
+def load_store():
+	"""O módulo `store`, com o `sqlite3` garantido antes.
+
+	`store.py` importa `sqlite3` no topo, e dentro do NVDA isso só funciona
+	depois que a pasta do runtime entrou no caminho. Por isso ele não é
+	importado por ninguém diretamente: passa sempre por aqui, na hora de usar,
+	e o resto do add-on carrega mesmo numa máquina onde o SQLite falte.
+	"""
+	_ensure_sqlite3_importable()
+	from . import store
+
+	return store
+
+
 def is_puzzles_database(db_path: Path) -> bool:
 	"""Diz se o arquivo é um banco de puzzles (tem a tabela `puzzles`)."""
-	_ensure_sqlite3_importable()
-	from . import sqlite_bridge
-
-	return sqlite_bridge.has_puzzles_table(db_path)
+	return load_store().has_puzzles_table(db_path)
 
 
 def resolve_default_db_path() -> Path | None:
@@ -186,37 +195,3 @@ def resolve_default_db_path() -> Path | None:
 		if db_path.is_file():
 			return db_path
 	return None
-
-
-def run_bridge(db_path: Path, command: str, *args: object, history_path: Path | None = None):
-	"""Executa um comando do `sqlite_bridge` no próprio processo.
-
-	`db_path` é o banco de puzzles; o histórico vai sempre em `tactic.db` na
-	pasta de dados, salvo quando um teste passa outro em `history_path`.
-
-	O nome ficou da época em que isto abria um `py -3` por chamada, o que exigia
-	Python instalado na máquina de quem usa o add-on. O contrato é o mesmo de
-	então: os argumentos chegam como texto (como chegavam pelo `argv`) e o
-	resultado passa por JSON, para que a forma seja idêntica à que a camada de
-	cima sempre recebeu (tuplas viram listas, chaves viram texto).
-	"""
-	_ensure_sqlite3_importable()
-	from . import sqlite_bridge
-
-	handler = sqlite_bridge.COMMANDS.get(command)
-	if handler is None:
-		raise RuntimeError(f"SQLite bridge failed for {command}: unknown command")
-	try:
-		connection = sqlite_bridge.connect(Path(db_path), history_path or HISTORY_DB_PATH)
-		try:
-			# O `with` só cuida do commit/rollback; fechar é por nossa conta --
-			# antes o processo filho morria e levava a conexão junto.
-			with connection:
-				result = handler(connection, *(str(arg) for arg in args))
-		finally:
-			connection.close()
-	except Exception as error:
-		raise RuntimeError(f"SQLite bridge failed for {command}: {error}") from error
-	if result is None:
-		return None
-	return json.loads(json.dumps(result, ensure_ascii=False))

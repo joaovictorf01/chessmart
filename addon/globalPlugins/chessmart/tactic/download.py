@@ -168,13 +168,13 @@ def installed_info(db_path: Path | None) -> InstalledInfo | None:
 	"""Lê a tabela `meta` do banco instalado; None se não houver banco ou meta."""
 	if db_path is None or not Path(db_path).is_file():
 		return None
-	from .db import _ensure_sqlite3_importable
+	from .db import load_store
 
-	_ensure_sqlite3_importable()
+	store = load_store()
 	import sqlite3
 
 	try:
-		connection = sqlite3.connect(f"file:{Path(db_path).resolve().as_posix()}?mode=ro", uri=True)
+		connection = sqlite3.connect(store.read_only_uri(Path(db_path)), uri=True)
 	except sqlite3.Error:
 		return None
 	try:

@@ -11,7 +11,13 @@ import wx
 import gui
 from gui import guiHelper
 
-from ..addon_config import get_move_notation, get_tactics_defaults, save_move_notation, save_tactics_defaults
+from ..addon_config import (
+	TacticsDefaults,
+	get_move_notation,
+	get_tactics_defaults,
+	save_move_notation,
+	save_tactics_defaults,
+)
 from ..notation import NOTATION_STYLES
 from ..i18n import _
 from ..theme_catalog import parse_theme_filter
@@ -108,15 +114,13 @@ class ChessboardSettingsDialog(TacticsSetupMixin, gui.SettingsDialog):
 		self.trainerSummaryTextCtrl.SetValue(summary)
 
 	def onOk(self, event):
-		resolved = self._resolved_selection()
 		save_tactics_defaults(
-			db_path=self.databasePathTextCtrl.GetValue().strip(),
-			theme=self._theme_filter_text,
-			trainer_preset=self._trainer_preset_id(),
-			challenge_level=self._challenge_id(),
-			min_rating=resolved.min_rating,
-			max_rating=resolved.max_rating,
-			min_popularity=resolved.min_popularity,
+			TacticsDefaults(
+				db_path=self.databasePathTextCtrl.GetValue().strip(),
+				theme=self._theme_filter_text,
+				trainer_preset=self._trainer_preset_id(),
+				challenge_level=self._challenge_id(),
+			),
 		)
 		save_move_notation(NOTATION_STYLES[self.notationChoice.GetSelection()][0])
 		super().onOk(event)

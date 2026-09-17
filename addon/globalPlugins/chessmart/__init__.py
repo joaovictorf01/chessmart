@@ -41,7 +41,7 @@ from .virtual_chessboard import (
 	PGNPlayerChessboard,
 	PuzzleChessboard,
 )
-from .puzzle_database import PuzzleSet, RandomPuzzleSet
+from .training_session import TrainingSession, default_training_options
 
 
 class ChessboardMenu(wx.Menu):
@@ -102,10 +102,10 @@ class ChessboardMenu(wx.Menu):
 		)
 		gui.runScriptModalDialog(dialog)
 
-	def open_tactics_session(self, session_options):
-		puzzles = PuzzleSet(options=session_options)
+	def open_tactics_session(self, options):
+		session = TrainingSession(options)
 		try:
-			puzzles.ensure_ready()
+			session.ensure_ready()
 		except FileNotFoundError:
 			gui.messageBox(
 				_(
@@ -122,14 +122,11 @@ class ChessboardMenu(wx.Menu):
 				style=wx.ICON_WARNING,
 			)
 			return
-		self.open_puzzle_set(puzzles)
+		self.open_training_session(session)
 
 	def _ensure_puzzle_database(self) -> bool:
 		"""Sem banco de puzzles, oferece o download antes de seguir."""
-		from .puzzle_database import get_default_tactic_db_path, usable_db_path
-		from .addon_config import get_tactics_defaults
-
-		if usable_db_path(get_tactics_defaults().db_path) or get_default_tactic_db_path():
+		if default_training_options().db_path:
 			return True
 		answer = gui.messageBox(
 			# Translators: Asked when tactics are opened and no puzzle database is installed yet.
@@ -149,11 +146,12 @@ class ChessboardMenu(wx.Menu):
 		return result == wx.ID_OK
 
 	def onRandomPuzzle(self, event):
+		"""Uma sessão com as opções guardadas na configuração, sem passar pelo diálogo."""
 		if not self._ensure_puzzle_database():
 			return
-		puzzles = RandomPuzzleSet()
+		session = TrainingSession(default_training_options())
 		try:
-			puzzles.ensure_ready()
+			session.ensure_ready()
 		except FileNotFoundError:
 			gui.messageBox(
 				_(
@@ -163,19 +161,22 @@ class ChessboardMenu(wx.Menu):
 				style=wx.ICON_ERROR,
 			)
 			return
-		self.open_puzzle_set(puzzles)
+		except LookupError as error:
+			gui.messageBox(str(error), _("No Tactics Found"), style=wx.ICON_WARNING)
+			return
+		self.open_training_session(session)
 
 	def onSettings(self, event):
 		dialog = ChessboardSettingsDialog(gui.mainFrame)
 		gui.runScriptModalDialog(dialog)
 
-	def open_puzzle_set(self, puzzles):
+	def open_training_session(self, session):
 		game_info = GameInfo(
 			pychess_board=chess.Board(),
 			variant=ChessVariant.STANDARD,
 			time_control=NULL_TIME_CONTROL,
 			prospective=None,
-			vboard_kwargs=dict(puzzles=puzzles),
+			vboard_kwargs=dict(session=session),
 		)
 		self.global_plugin_object.initialize_and_show_chessboard_dialog(
 			PuzzleChessboard,
