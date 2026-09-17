@@ -36,7 +36,9 @@ from ..theme_catalog import (
 from ..trainer import (
 	CHALLENGE_LEVELS,
 	TRAINER_PRESETS,
+	challenge_description,
 	challenge_label,
+	preset_description,
 	preset_label,
 	resolve_training_selection,
 	uses_custom_themes,
@@ -223,7 +225,7 @@ class TacticsSetupMixin:
 		# Translators: Shown when no theme filter is applied.
 		return labels or _("All themes")
 
-	def _updateThemeSummary(self):
+	def _update_theme_summary(self):
 		self.themeSummaryTextCtrl.SetValue(self._theme_summary_text())
 
 	def _theme_count_sentence(self, resolved):
@@ -241,6 +243,24 @@ class TacticsSetupMixin:
 			count=count,
 		)
 
+	def _trainer_summary_text(self):
+		"""Plano, nível e temas em três linhas. O nível já traz a faixa de rating no nome."""
+		resolved = self._resolved_selection()
+		# Translators: Summary of the training setup: plan, level and themes, one per line.
+		return _(
+			"{plan}. {plan_desc}\n{challenge}. {challenge_desc}\n{theme_text} Minimum popularity {min_popularity}.",
+		).format(
+			plan=preset_label(resolved.preset),
+			plan_desc=preset_description(resolved.preset),
+			challenge=challenge_label(resolved.challenge),
+			challenge_desc=challenge_description(resolved.challenge),
+			theme_text=self._theme_count_sentence(resolved),
+			min_popularity=resolved.min_popularity,
+		)
+
+	def _update_trainer_summary(self):
+		self.trainerSummaryTextCtrl.SetValue(self._trainer_summary_text())
+
 	# -- eventos compartilhados -----------------------------------------------
 
 	def onBrowseDatabase(self, event):
@@ -254,8 +274,8 @@ class TacticsSetupMixin:
 		)
 		if dialog.ShowModal() == wx.ID_OK:
 			self.databasePathTextCtrl.SetValue(dialog.GetPath())
-			self._updateTrainerSummary()
-			self._updateThemeSummary()
+			self._update_trainer_summary()
+			self._update_theme_summary()
 		dialog.Destroy()
 
 	def onDownloadDatabase(self, event):
@@ -274,22 +294,22 @@ class TacticsSetupMixin:
 		# O download vai sempre para a pasta padrão; o campo passa a apontar
 		# para lá, mesmo que antes apontasse para um arquivo em outro lugar.
 		self.databasePathTextCtrl.SetValue(str(path))
-		self._updateTrainerSummary()
-		self._updateThemeSummary()
+		self._update_trainer_summary()
+		self._update_theme_summary()
 
 	def onDatabasePathChanged(self, event):
-		self._updateTrainerSummary()
-		self._updateThemeSummary()
+		self._update_trainer_summary()
+		self._update_theme_summary()
 		event.Skip()
 
 	def onTrainerPresetChanged(self, event):
-		self._updateTrainerSummary()
-		self._updateThemeSummary()
+		self._update_trainer_summary()
+		self._update_theme_summary()
 		self._refresh_theme_controls()
 		event.Skip()
 
 	def onChallengeChanged(self, event):
-		self._updateTrainerSummary()
+		self._update_trainer_summary()
 		event.Skip()
 
 	def onSelectThemes(self, event):
@@ -353,7 +373,7 @@ class TacticsSetupMixin:
 			self._theme_filter_text = format_theme_filter(
 				[entries[index].slug for index in dialog.GetSelections()],
 			)
-			self._updateThemeSummary()
+			self._update_theme_summary()
 			self._refresh_theme_controls()
 		dialog.Destroy()
 
@@ -368,5 +388,5 @@ class TacticsSetupMixin:
 
 	def onClearThemes(self, event):
 		self._theme_filter_text = ""
-		self._updateThemeSummary()
+		self._update_theme_summary()
 		self._refresh_theme_controls()

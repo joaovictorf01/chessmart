@@ -229,8 +229,8 @@ class ChessboardMenu(wx.Menu):
 		selected_game_info = games[dialog.GetSelection()]
 		self.open_pgn_game(selected_game_info)
 
-	def open_pgn_game(self, game_Info):
-		pgn_game = PGNGame.from_game_info(game_Info)
+	def open_pgn_game(self, game_info):
+		pgn_game = PGNGame.from_game_info(game_info)
 		chess_new_game_info = GameInfo(
 			variant=None,
 			time_control=NULL_TIME_CONTROL,

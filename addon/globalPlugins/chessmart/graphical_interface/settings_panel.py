@@ -21,14 +21,7 @@ from ..addon_config import (
 from ..notation import NOTATION_STYLES
 from ..i18n import _
 from ..theme_catalog import parse_theme_filter
-from ..trainer import (
-	challenge_description,
-	challenge_label,
-	describe_rating_range,
-	preset_description,
-	preset_label,
-	uses_custom_themes,
-)
+from ..trainer import uses_custom_themes
 from .tactics_setup import TacticsSetupMixin
 
 
@@ -83,8 +76,8 @@ class ChessboardSettingsDialog(TacticsSetupMixin, gui.SettingsDialog):
 		self._bind_shared_events()
 
 	def postInit(self):
-		self._updateTrainerSummary()
-		self._updateThemeSummary()
+		self._update_trainer_summary()
+		self._update_theme_summary()
 		self._refresh_theme_controls()
 		self.databasePathTextCtrl.SetFocus()
 
@@ -96,22 +89,6 @@ class ChessboardSettingsDialog(TacticsSetupMixin, gui.SettingsDialog):
 		is_custom = uses_custom_themes(self._trainer_preset_id())
 		self.selectThemesButton.Enable(is_custom)
 		self.clearThemesButton.Enable(is_custom and bool(parse_theme_filter(self._theme_filter_text)))
-
-	def _updateTrainerSummary(self):
-		resolved = self._resolved_selection()
-		# Translators: Summary of the saved default training selection.
-		summary = _(
-			"{plan}. {plan_desc}\n{challenge}. {challenge_desc}\n{theme_text}\nDefault: {rating_text}; minimum popularity {min_popularity}.",
-		).format(
-			plan=preset_label(resolved.preset),
-			plan_desc=preset_description(resolved.preset),
-			challenge=challenge_label(resolved.challenge),
-			challenge_desc=challenge_description(resolved.challenge),
-			theme_text=self._theme_count_sentence(resolved),
-			rating_text=describe_rating_range(resolved),
-			min_popularity=resolved.min_popularity,
-		)
-		self.trainerSummaryTextCtrl.SetValue(summary)
 
 	def onOk(self, event):
 		save_tactics_defaults(

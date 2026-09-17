@@ -317,8 +317,8 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 			close_gesture="kb:f4",
 		)
 		# Connect to events
-		game_started_signal.connect(lambda s: self.time_control.start_game(), sender=self, weak=False)
-		chessboard_closed_signal.connect(lambda s: self.game_over(), sender=self, weak=False)
+		game_started_signal.connect(lambda s: self.time_control.start_game(), sender=self)
+		chessboard_closed_signal.connect(lambda s: self.game_over(), sender=self)
 
 	def get_initial_focus_cell(self):
 		return 4 if not self.is_board_flipped else 60
@@ -584,7 +584,8 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 		if not target_squares:
 			piece = chess.Piece(piece_type, piece_color)
 			piece_name = self.game_announcer.describe_piece(piece)
-			ui.message(f"No {piece_name}")
+			# Translators: Spoken when jumping to a piece that is no longer on the board, e.g. "No white knight".
+			ui.message(_("No {piece}").format(piece=piece_name))
 			return
 		target_pos = bisect.bisect_right(target_squares, self._focused_cell)
 		if target_pos == len(target_squares):
@@ -649,7 +650,8 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 			spoken_commands += [
 				piece_name,
 				speech.commands.BreakCommand(250),
-				"at",
+				# Translators: Spoken between an attacking piece and its square, e.g. "knight, at, f3".
+				_("at"),
 				speech.commands.BreakCommand(250),
 				square_name,
 			]
@@ -739,14 +741,14 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 			self.set_focus_to_cell(self._focused_cell)
 
 	def navigate_left(self, anchor):
-		row_range = self.get_containing_row(anchor.index) or range(0, 63)
+		row_range = self.get_containing_row(anchor.index) or range(0, 64)
 		prev_index = anchor.index - 1
 		if prev_index not in row_range:
 			return self.notify_invalid_navigation()
 		self.set_focus_to_cell(prev_index)
 
 	def navigate_right(self, anchor):
-		row_range = self.get_containing_row(anchor.index) or range(0, 63)
+		row_range = self.get_containing_row(anchor.index) or range(0, 64)
 		next_index = anchor.index + 1
 		if next_index not in row_range:
 			return self.notify_invalid_navigation()

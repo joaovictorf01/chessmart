@@ -1,6 +1,13 @@
 # coding: utf-8
 
-"""Small local signal implementation compatible with the add-on's usage."""
+"""Sinais entre o tabuleiro, o diálogo e os jogadores (engine, Lichess).
+
+Implementação mínima no estilo do blinker: um `Signal` guarda receptores, cada
+um opcionalmente preso a um `sender`, e `send` chama os que casam. As
+referências aos receptores são fortes: um tabuleiro conecta lambdas e métodos
+próprios e vive enquanto a janela dele viver, e é `disconnect` (ou o fim do
+processo) que os solta.
+"""
 
 _ANY_SENDER = object()
 
@@ -11,7 +18,7 @@ class Signal:
 		self.doc = doc
 		self._receivers = []
 
-	def connect(self, receiver, sender=_ANY_SENDER, weak=True):
+	def connect(self, receiver, sender=_ANY_SENDER):
 		self._receivers.append((receiver, sender))
 		return receiver
 
@@ -43,9 +50,9 @@ class Namespace:
 		return self._signals[name]
 
 
-Chessboard_signals = Namespace()
-chessboard_opened_signal = Chessboard_signals.signal("chessboard-opened")
-chessboard_closed_signal = Chessboard_signals.signal("chessboard-closed")
-game_started_signal = Chessboard_signals.signal("game-started")
-game_over_signal = Chessboard_signals.signal("game_over", "args: outcome")
-move_completed_signal = Chessboard_signals.signal("move-completed", doc="args: move_maker")
+chessboard_signals = Namespace()
+chessboard_opened_signal = chessboard_signals.signal("chessboard-opened")
+chessboard_closed_signal = chessboard_signals.signal("chessboard-closed")
+game_started_signal = chessboard_signals.signal("game-started")
+game_over_signal = chessboard_signals.signal("game_over", "args: outcome")
+move_completed_signal = chessboard_signals.signal("move-completed", doc="args: move_maker")

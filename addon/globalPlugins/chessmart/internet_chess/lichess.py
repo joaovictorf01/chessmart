@@ -7,7 +7,7 @@ import tones
 from logHandler import log
 from ..concurrency import ASYNCIO_EVENT_LOOP
 from ..helpers import import_bundled, LIB_DIRECTORY
-from ..signals import Chessboard_signals
+from ..signals import chessboard_signals
 from ..time_control import ChessTimeControl
 from ..concurrency import asyncio_coroutine_to_concurrent_future
 from .abstract.client import (
@@ -63,7 +63,7 @@ def cast_exception_to_connection_error_if_appropriate(coro):
 class LichessAPIClient(InternetChessAPIClient):
 	"""Client for lichess.org."""
 
-	game_finished_signal = Chessboard_signals.signal("lichess.org.game.finished")
+	game_finished_signal = chessboard_signals.signal("lichess.org.game.finished")
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)

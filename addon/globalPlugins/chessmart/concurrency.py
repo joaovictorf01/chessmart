@@ -51,17 +51,22 @@ def asyncio_coroutine_to_concurrent_future(func):
 	return wrapper
 
 
-def call_threaded(func: t.Callable[..., None]) -> t.Callable[..., Future]:
-	"""Call `func` in a separate thread. It wraps the function
-	in another function that returns a `concurrent.futures.Future`
-	object when called.
+def call_threaded(func: t.Callable[..., t.Any]) -> t.Callable[..., Future]:
+	"""Roda `func` no pool de threads; a chamada devolve o `Future` do resultado.
+
+	Depois de `terminate()` o pool recusa trabalho novo. Em vez de devolver None
+	-- e estourar em quem faz `.add_done_callback` no retorno --, sai um Future
+	já falho com a exceção, que segue o caminho normal de erro.
 	"""
 
 	@wraps(func)
 	def wrapper(*args, **kwargs):
 		try:
 			return THREADED_EXECUTOR.submit(func, *args, **kwargs)
-		except RuntimeError:
-			log.debug(f"Failed to submit function {func}.")
+		except RuntimeError as error:
+			log.debug(f"Failed to submit function {func}: {error}")
+			failed: Future = Future()
+			failed.set_exception(error)
+			return failed
 
 	return wrapper

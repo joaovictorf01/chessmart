@@ -16,14 +16,7 @@ from ..addon_config import TacticsDefaults, get_tactics_defaults, save_tactics_d
 from ..i18n import _
 from ..theme_catalog import parse_theme_filter
 from ..training_session import TrainingOptions
-from ..trainer import (
-	challenge_description,
-	challenge_label,
-	describe_rating_range,
-	preset_description,
-	preset_label,
-	uses_custom_themes,
-)
+from ..trainer import uses_custom_themes
 from .tactics_setup import TacticsSetupMixin
 
 
@@ -86,14 +79,14 @@ class TacticsOptionsDialog(TacticsSetupMixin, gui.SettingsDialog):
 		self.Bind(wx.EVT_TEXT, self.onPuzzleIdChanged, self.puzzleIdTextCtrl)
 
 	def postInit(self):
-		self._updateTrainerSummary()
-		self._updateThemeSummary()
+		self._update_trainer_summary()
+		self._update_theme_summary()
 		self.databasePathTextCtrl.SetFocus()
 		self._refresh_theme_controls()
 
 	def onPuzzleIdChanged(self, event):
-		self._updateTrainerSummary()
-		self._updateThemeSummary()
+		self._update_trainer_summary()
+		self._update_theme_summary()
 		self._refresh_theme_controls()
 		event.Skip()
 
@@ -120,27 +113,11 @@ class TacticsOptionsDialog(TacticsSetupMixin, gui.SettingsDialog):
 			return _("Puzzle ID mode")
 		return super()._theme_summary_text()
 
-	def _updateTrainerSummary(self):
+	def _trainer_summary_text(self):
 		if self._in_puzzle_id_mode():
-			self.trainerSummaryTextCtrl.SetValue(
-				# Translators: Summary shown when a specific puzzle id was typed.
-				_("Specific puzzle mode. Training plan filters are ignored."),
-			)
-			return
-		resolved = self._resolved_selection()
-		# Translators: Summary of the training session about to start.
-		summary = _(
-			"{plan}. {plan_desc}\n{challenge}. {challenge_desc}\n{theme_text}\nUses {rating_text} and minimum popularity {min_popularity}.",
-		).format(
-			plan=preset_label(resolved.preset),
-			plan_desc=preset_description(resolved.preset),
-			challenge=challenge_label(resolved.challenge),
-			challenge_desc=challenge_description(resolved.challenge),
-			theme_text=self._theme_count_sentence(resolved),
-			rating_text=describe_rating_range(resolved),
-			min_popularity=resolved.min_popularity,
-		)
-		self.trainerSummaryTextCtrl.SetValue(summary)
+			# Translators: Summary shown when a specific puzzle id was typed.
+			return _("Specific puzzle mode. Training plan filters are ignored.")
+		return super()._trainer_summary_text()
 
 	def get_options(self):
 		# Com um id digitado, plano e nível ficam guardados nas opções mas não
