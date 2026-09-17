@@ -36,7 +36,10 @@ from pathlib import Path
 
 LICHESS_URL = "https://database.lichess.org/lichess_db_puzzle.csv.zst"
 USER_AGENT = "chessmart-build-puzzles/1.0 (+https://github.com/joaovictorf01/chessmart)"
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+# Assets de release acima de uns 500 MB falham no GitHub ("Error saving asset");
+# o .gz sai em partes deste tamanho e o add-on as baixa em sequencia.
+DEFAULT_PART_SIZE = 300 * 1024 * 1024
 
 # Cada nível é um filtro sobre a base inteira. O leve fica com o que muita
 # gente jogou e aprovou: é o que faz sentido baixar na primeira vez.
@@ -186,7 +189,13 @@ def iter_rows(csv_path: Path):
 # ---------------------------------------------------------------- escrita
 
 
-def build_tier(csv_path: Path, tier: str, out_dir: Path, source_info: dict) -> dict:
+def build_tier(
+	csv_path: Path,
+	tier: str,
+	out_dir: Path,
+	source_info: dict,
+	part_size: int = DEFAULT_PART_SIZE,
+) -> dict:
 	keep = TIERS[tier]["keep"]
 	db_path = out_dir / f"puzzles-{tier}.db"
 	if db_path.exists():
@@ -235,6 +244,7 @@ def build_tier(csv_path: Path, tier: str, out_dir: Path, source_info: dict) -> d
 	log(f"  comprimindo {gz_path.name}")
 	with db_path.open("rb") as src, gzip.open(gz_path, "wb", compresslevel=6) as dst:
 		shutil.copyfileobj(src, dst, 1 << 20)
+	parts = split_into_parts(gz_path, part_size)
 	entry = {
 		"tier": tier,
 		"description": TIERS[tier]["description"],
@@ -243,15 +253,56 @@ def build_tier(csv_path: Path, tier: str, out_dir: Path, source_info: dict) -> d
 		"bytes": db_path.stat().st_size,
 		"sha256": sha256(db_path),
 		"download": {
+			# O todo: nome logico, tamanho e SHA-256 do .gz inteiro, que o add-on
+			# confere depois de juntar as partes.
 			"file": gz_path.name,
 			"bytes": gz_path.stat().st_size,
 			"sha256": sha256(gz_path),
+			# As partes, na ordem: cada uma com o proprio SHA-256, conferido assim
+			# que ela termina de chegar.
+			"parts": parts,
 		},
 	}
 	log(
-		f"  pronto: {entry['bytes'] / 1e6:.0f} MB no disco, {entry['download']['bytes'] / 1e6:.0f} MB para baixar",
+		f"  pronto: {entry['bytes'] / 1e6:.0f} MB no disco, "
+		f"{entry['download']['bytes'] / 1e6:.0f} MB para baixar em {len(parts)} parte(s)",
 	)
 	return entry
+
+
+def split_into_parts(gz_path: Path, part_size: int) -> list[dict]:
+	"""Divide o .gz em `nome.partN` de ate `part_size` bytes; um arquivo pequeno vira uma parte so.
+
+	A concatenacao das partes e o .gz original, byte a byte: o add-on nao
+	precisa saber onde uma termina e a outra comeca, so alimentar o mesmo
+	descompressor com todas, em ordem.
+	"""
+	for stale in gz_path.parent.glob(gz_path.name + ".part*"):
+		stale.unlink()
+	total = gz_path.stat().st_size
+	if total <= part_size:
+		return [{"file": gz_path.name, "bytes": total, "sha256": sha256(gz_path)}]
+	parts = []
+	with gz_path.open("rb") as src:
+		index = 1
+		while True:
+			chunk_path = gz_path.with_name(f"{gz_path.name}.part{index}")
+			written = 0
+			digest = hashlib.sha256()
+			with chunk_path.open("wb") as dst:
+				while written < part_size:
+					piece = src.read(min(1 << 20, part_size - written))
+					if not piece:
+						break
+					dst.write(piece)
+					digest.update(piece)
+					written += len(piece)
+			if written == 0:
+				chunk_path.unlink()
+				break
+			parts.append({"file": chunk_path.name, "bytes": written, "sha256": digest.hexdigest()})
+			index += 1
+	return parts
 
 
 def sha256(path: Path) -> str:
@@ -282,6 +333,12 @@ def main(argv: list[str] | None = None) -> int:
 	parser.add_argument("--tier", choices=[*TIERS, "all"], default="all")
 	parser.add_argument("--out", type=Path, default=Path("dist/puzzles"))
 	parser.add_argument("--limit", type=int, default=0, help="lê só as N primeiras linhas (para testar)")
+	parser.add_argument(
+		"--part-size",
+		type=int,
+		default=DEFAULT_PART_SIZE,
+		help="tamanho máximo de cada parte do .gz, em bytes (padrão: 300 MiB)",
+	)
 	args = parser.parse_args(argv)
 
 	if args.download:
@@ -309,7 +366,7 @@ def main(argv: list[str] | None = None) -> int:
 		"sourceLastModified": last_modified,
 	}
 	tiers = list(TIERS) if args.tier == "all" else [args.tier]
-	entries = [build_tier(csv_path, tier, args.out, source_info) for tier in tiers]
+	entries = [build_tier(csv_path, tier, args.out, source_info, args.part_size) for tier in tiers]
 	manifest = {
 		"schemaVersion": SCHEMA_VERSION,
 		"generatedAt": source_info["generatedAt"],

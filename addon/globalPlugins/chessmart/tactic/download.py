@@ -15,6 +15,7 @@ import hashlib
 import json
 import os
 import threading
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -58,6 +59,16 @@ class DownloadError(Exception):
 
 
 @dataclasses.dataclass(frozen=True)
+class DownloadPart:
+	"""Um arquivo a baixar: uma fatia do .gz, ou ele inteiro quando é pequeno."""
+
+	file: str
+	bytes: int
+	sha256: str
+	url: str
+
+
+@dataclasses.dataclass(frozen=True)
 class TierInfo:
 	tier: str
 	description: str
@@ -67,6 +78,9 @@ class TierInfo:
 	download_file: str
 	download_sha256: str
 	download_url: str
+	# As partes, na ordem; concatenadas são o .gz inteiro. Um manifesto antigo,
+	# sem `parts`, vira uma parte só: o próprio arquivo.
+	parts: tuple[DownloadPart, ...] = ()
 
 
 @dataclasses.dataclass(frozen=True)
@@ -117,6 +131,17 @@ def parse_manifest(payload: dict, base_url: str) -> Manifest:
 	tiers = {}
 	for name, entry in (payload.get("tiers") or {}).items():
 		download = entry.get("download") or {}
+		raw_parts = download.get("parts") or [download]
+		parts = tuple(
+			DownloadPart(
+				file=str(part.get("file", "")),
+				bytes=int(part.get("bytes", 0)),
+				sha256=str(part.get("sha256", "")),
+				url=urllib.parse.urljoin(base_url, str(part.get("file", ""))),
+			)
+			for part in raw_parts
+			if part.get("file")
+		)
 		tiers[name] = TierInfo(
 			tier=name,
 			description=str(entry.get("description", "")),
@@ -126,6 +151,7 @@ def parse_manifest(payload: dict, base_url: str) -> Manifest:
 			download_file=str(download.get("file", "")),
 			download_sha256=str(download.get("sha256", "")),
 			download_url=urllib.parse.urljoin(base_url, str(download.get("file", ""))),
+			parts=parts,
 		)
 	source = payload.get("source") or {}
 	return Manifest(
@@ -178,54 +204,92 @@ def update_available(manifest: Manifest, installed: InstalledInfo | None) -> boo
 # ---------------------------------------------------------------- download
 
 
+class _PartFailed(Exception):
+	"""Uma parte não chegou inteira ou não conferiu; vale tentar essa parte de novo."""
+
+
 def download_tier(
 	tier: TierInfo,
 	target_path: Path,
 	progress: ProgressCallback | None = None,
 	cancel: threading.Event | None = None,
 	timeout: float = 60.0,
+	attempts_per_part: int = 3,
+	retry_delay: float = 5.0,
 ) -> Path:
 	"""Baixa o `.db.gz` do nível, descomprime em fluxo e instala em `target_path`.
 
-	O arquivo comprimido nunca toca o disco: cada pedaço passa pelo zlib e o
-	resultado vai para `target.part`. O SHA-256 é conferido sobre os bytes
-	comprimidos, que é o que o manifesto assina. Só depois de tudo conferido o
+	O .gz pode vir em partes (assets grandes falham no GitHub); elas passam, em
+	ordem, pelo mesmo descompressor, como se fossem um arquivo só. O arquivo
+	comprimido nunca toca o disco: cada pedaço vai para o zlib e o resultado
+	para `target.part`.
+
+	Conferência em dois níveis: o SHA-256 de cada parte assim que ela termina
+	(um erro aparece cedo, não depois de 600 MB) e o do .gz inteiro no fim, que
+	é o que o manifesto assina. Uma parte que falha é tentada de novo sozinha:
+	antes de cada parte guardam-se cópias do descompressor e do hash do todo, e
+	a saída volta ao ponto em que a parte começou. Só com tudo conferido o
 	`.part` toma o lugar do banco atual -- quem estiver no meio de uma sessão
 	continua com o antigo até a próxima abertura.
 	"""
 	target_path = Path(target_path)
 	target_path.parent.mkdir(parents=True, exist_ok=True)
 	partial = target_path.with_name(target_path.name + ".part")
-	request = urllib.request.Request(tier.download_url, headers={"User-Agent": USER_AGENT})
-	digest = hashlib.sha256()
+	parts = tier.parts or (
+		DownloadPart(tier.download_file, tier.download_bytes, tier.download_sha256, tier.download_url),
+	)
+	total = tier.download_bytes or sum(part.bytes for part in parts)
+	whole_digest = hashlib.sha256()
 	inflater = zlib.decompressobj(16 + zlib.MAX_WBITS)
 	done = 0
-	total = tier.download_bytes
 	try:
-		with urllib.request.urlopen(request, timeout=timeout) as response, partial.open("wb") as out:
-			total = int(response.headers.get("Content-Length") or total or 0)
+		with partial.open("wb") as out:
 			if progress:
 				progress(0, total)
-			while True:
-				if cancel is not None and cancel.is_set():
-					raise DownloadCancelled()
-				chunk = response.read(CHUNK)
-				if not chunk:
-					break
-				digest.update(chunk)
-				out.write(inflater.decompress(chunk))
-				done += len(chunk)
-				if progress:
-					progress(done, total)
+			for part in parts:
+				out_offset = out.tell()
+				done_before = done
+				digest_before = whole_digest.copy()
+				inflater_before = inflater.copy()
+				for attempt in range(1, attempts_per_part + 1):
+					try:
+						done = _download_part(
+							part,
+							out,
+							inflater,
+							whole_digest,
+							done,
+							total,
+							progress,
+							cancel,
+							timeout,
+						)
+						break
+					except (_PartFailed, urllib.error.URLError, OSError, zlib.error) as error:
+						if attempt == attempts_per_part:
+							raise DownloadError(f"download: {part.file}: {error}") from error
+						# Volta ao estado de antes desta parte e tenta só ela de novo.
+						out.seek(out_offset)
+						out.truncate()
+						done = done_before
+						whole_digest = digest_before.copy()
+						inflater = inflater_before.copy()
+						if cancel is not None and cancel.wait(retry_delay):
+							raise DownloadCancelled()
+						elif cancel is None:
+							time.sleep(retry_delay)
 			out.write(inflater.flush())
 	except DownloadCancelled:
 		partial.unlink(missing_ok=True)
 		raise
-	except (urllib.error.URLError, OSError, zlib.error) as error:
+	except DownloadError:
+		partial.unlink(missing_ok=True)
+		raise
+	except (OSError, zlib.error) as error:
 		partial.unlink(missing_ok=True)
 		raise DownloadError(f"download: {error}") from error
 
-	if tier.download_sha256 and digest.hexdigest() != tier.download_sha256:
+	if tier.download_sha256 and whole_digest.hexdigest() != tier.download_sha256:
 		partial.unlink(missing_ok=True)
 		raise DownloadError("download: checksum mismatch, the file is corrupt or was changed in transit")
 
@@ -241,3 +305,44 @@ def download_tier(
 		partial.unlink(missing_ok=True)
 		raise DownloadError(f"install: {error}") from error
 	return target_path
+
+
+def _download_part(
+	part: DownloadPart,
+	out,
+	inflater,
+	whole_digest,
+	done: int,
+	total: int,
+	progress: ProgressCallback | None,
+	cancel: threading.Event | None,
+	timeout: float,
+) -> int:
+	"""Baixa uma parte para dentro do fluxo em andamento; devolve o total de bytes recebidos.
+
+	Levanta `_PartFailed` se a parte veio com tamanho ou SHA-256 diferentes do
+	manifesto, `DownloadCancelled` se o usuário desistiu, e deixa passar os
+	erros de rede e de zlib para quem chamou decidir a repetição.
+	"""
+	request = urllib.request.Request(part.url, headers={"User-Agent": USER_AGENT})
+	part_digest = hashlib.sha256()
+	received = 0
+	with urllib.request.urlopen(request, timeout=timeout) as response:
+		while True:
+			if cancel is not None and cancel.is_set():
+				raise DownloadCancelled()
+			chunk = response.read(CHUNK)
+			if not chunk:
+				break
+			part_digest.update(chunk)
+			whole_digest.update(chunk)
+			out.write(inflater.decompress(chunk))
+			received += len(chunk)
+			done += len(chunk)
+			if progress:
+				progress(done, total)
+	if part.bytes and received != part.bytes:
+		raise _PartFailed(f"expected {part.bytes} bytes, received {received}")
+	if part.sha256 and part_digest.hexdigest() != part.sha256:
+		raise _PartFailed("checksum mismatch")
+	return done

@@ -1,3 +1,8 @@
+# Chessmart 1.0.1
+
+- The complete puzzle database (about 620 MB) is now published and downloaded in parts of 300 MB: GitHub refuses to store a single asset that large. Each part is verified as it arrives, a part that fails is retried on its own, and the whole file is verified at the end. Older manifests without parts keep working.
+- Unit tests for the download and the move notation now run in CI.
+
 # Chessmart 1.0.0
 
 First public release of the tactics trainer built on Musharraf Omer's Chessmart.

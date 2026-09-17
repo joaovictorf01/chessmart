@@ -65,10 +65,11 @@ jobs:
           else
             gh release edit "$RELEASE_TAG" --notes "$notes"
           fi
-          # Um arquivo por vez, com tentativas: o upload de asset grande no GitHub falha
-          # com HTTP 500 de vez em quando. O manifesto vai por ultimo, quando os
-          # bancos que ele descreve ja estao no ar.
-          for asset in dist/puzzles/*.db.gz dist/puzzles/manifest.json; do
+          # Um arquivo por vez, com tentativas. Assets acima de uns 500 MB falham no
+          # GitHub ("Error saving asset"), por isso o .gz grande vai em partes de 300 MB
+          # (e o inteiro so quando cabe numa parte). O manifesto vai por ultimo, quando
+          # tudo que ele descreve ja esta no ar.
+          for asset in dist/puzzles/*.db.gz.part* dist/puzzles/*.db.gz dist/puzzles/manifest.json; do
             for attempt in 1 2 3 4 5; do
               if gh release upload "$RELEASE_TAG" "$asset" --clobber; then break; fi
               echo "upload de $asset falhou (tentativa $attempt); esperando..."
