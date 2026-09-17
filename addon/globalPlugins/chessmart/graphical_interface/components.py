@@ -6,6 +6,7 @@ import contextlib
 import wx
 import gui
 from ..helpers import import_bundled
+from ..i18n import _
 
 
 with import_bundled():

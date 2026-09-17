@@ -4,6 +4,7 @@ import typing
 import dataclasses
 import random
 from utils.displayString import DisplayStringIntEnum
+from .i18n import _
 from .virtual_chessboard import BaseVirtualChessboard
 from .helpers import import_bundled
 from .time_control import NULL_TIME_CONTROL, ChessTimeControl
