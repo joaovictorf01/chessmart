@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Extrai, atualiza e compila as traduções do add-on, sem GNU gettext.
 
-    py -3 tools/i18n.py extract            # gera addon/locale/chessmart.pot
+    py -3 tools/i18n.py extract            # gera chessmart.pot na raiz
     py -3 tools/i18n.py update [pt_BR]     # cria/atualiza addon/locale/<lang>/LC_MESSAGES/nvda.po
     py -3 tools/i18n.py compile            # gera os .mo ao lado de cada .po
     py -3 tools/i18n.py check              # confere placeholders e strings sem tradução
@@ -32,7 +32,8 @@ REPO = Path(__file__).resolve().parents[1]
 ADDON = REPO / "addon"
 PLUGIN = ADDON / "globalPlugins" / "chessmart"
 LOCALE = ADDON / "locale"
-POT = LOCALE / "chessmart.pot"
+# Na raiz, como o `scons pot` do template; dentro de addon/ ele entraria no pacote.
+POT = REPO / "chessmart.pot"
 SKIP_DIRS = {"lib", "__pycache__", "bin", "sounds"}
 PLACEHOLDER = re.compile(r"\{[^{}]*\}|%\([^)]+\)[sd]|%[sd]")
 
