@@ -59,6 +59,9 @@ class ChessboardDialog(wx.Frame):
 		self.Bind(wx.EVT_CLOSE, self.onClose, self)
 		# Setup the board
 		self.chessboard = None
+		# Quem abriu a janela pode querer saber quando ela fecha (o plugin, para
+		# esquecê-la). Recebe este diálogo.
+		self.on_closed = None
 		# Time related stuff
 		self.timer = wx.Timer(self)
 		self.Bind(wx.EVT_TIMER, self.onChessTimer, id=self.timer.GetId())
@@ -105,7 +108,10 @@ class ChessboardDialog(wx.Frame):
 	def onClose(self, event):
 		event.Skip()
 		self.timer.Stop()
-		chessboard_closed_signal.send(self.chessboard)
+		if self.chessboard is not None:
+			chessboard_closed_signal.send(self.chessboard)
+		if self.on_closed is not None:
+			self.on_closed(self)
 
 	def onChessTimer(self, event):
 		time_control = self.chessboard.time_control
@@ -161,6 +167,9 @@ class ChessboardDialog(wx.Frame):
 		wx.CallAfter(self._set_bitmap_data, board_image.GetData())
 
 	def _set_bitmap_data(self, data):
+		if not self:
+			# A conversão do SVG corre em thread; a janela pode ter fechado no meio.
+			return
 		self.bitmap_buffer.CopyFromBuffer(data)
 		self.Refresh(eraseBackground=False)
 		self.Update()

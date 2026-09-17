@@ -43,7 +43,7 @@ The rating, the attempts and their history live in `tactic.db` in your NVDA conf
 | Control+F2 | Session status: solved, mistakes, hints |
 | Control+Shift+R | Your current tactics rating |
 | Tab / Shift+Tab | Training actions (next, retry, back to board) |
-| Escape | Close the board |
+| Escape | Leave training. It asks first; a puzzle you have not touched is not counted |
 
 All the board commands below work on the puzzle board too.
 
@@ -82,7 +82,7 @@ Lichess publishes a new puzzle base every month. This project regenerates the da
 | Control+Shift+R | Resign (online games) |
 | Control+S | Save the game as a PGN file |
 | Control+Shift+S | Save the board as a PNG image |
-| Escape | Close the board |
+| Escape | Close the board. During a game it asks first: leaving abandons the game against the engine and resigns (or aborts, in the first moves) an online game |
 
 ## Settings
 

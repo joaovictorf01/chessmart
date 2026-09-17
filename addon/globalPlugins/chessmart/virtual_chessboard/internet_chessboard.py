@@ -97,6 +97,52 @@ class InternetChessboard(UserDrivenChessboard):
 			return True
 		return super().is_busy(index)
 
+	# -- sair -----------------------------------------------------------------
+
+	def _can_abort(self):
+		# Regra do Lichess: até o segundo lance a partida pode ser abortada
+		# sem contar; depois disso, sair é desistir.
+		return len(self.board.move_stack) < 2
+
+	def leave_prompt(self):
+		if not self._is_game_started:
+			# Translators: Asked when Escape is pressed while an online game is still being set up.
+			return _("Leave? The online game has not started yet and will be dropped.")
+		if self._can_abort():
+			# Translators: Asked when Escape is pressed in the first moves of an online game.
+			return _("Leave the online game? It will be aborted.")
+		# Translators: Asked when Escape is pressed during an online game.
+		return _("Leave the online game? You will resign it.")
+
+	def leave_game(self):
+		"""Avisa o Lichess antes de fechar: abort nos primeiros lances, resign depois.
+
+		Fechar sem avisar deixava a partida correndo no servidor com o relógio
+		andando, e a derrota vinha por tempo, sem janela para ver.
+		"""
+		if not self._is_game_started:
+			self._disconnect_quietly()
+			super().leave_game()
+			return
+		# Translators: Spoken while the resignation or abort is sent to the online server.
+		ui.message(_("Leaving the game..."))
+		request = self.client.abort_game() if self._can_abort() else self.client.resign_game()
+		request.add_done_callback(lambda future: wx.CallAfter(self._leave_after_request, future))
+
+	def _leave_after_request(self, future):
+		try:
+			future.result()
+		except Exception:
+			log.exception("chessmart: could not resign or abort the online game before leaving")
+		self._disconnect_quietly()
+		super().leave_game()
+
+	def _disconnect_quietly(self):
+		try:
+			self.client.disconnect()
+		except Exception:
+			log.exception("chessmart: failed to disconnect the online client")
+
 	def user_play(self, from_index, to_index):
 		self.client.send_move(chess.Move(from_index, to_index)).add_done_callback(
 			lambda future: self._execute_user_move(from_index, to_index, future),

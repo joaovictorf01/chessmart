@@ -17,6 +17,8 @@ from NVDAObjects import NVDAObject
 from scriptHandler import script
 from .ui_components import (
 	KeyboardNavigableNVDAObjectMixin,
+	MenuItemObject,
+	MenuObject,
 	SimpleList,
 )
 from ..time_control import NULL_TIME_CONTROL
@@ -233,7 +235,7 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 
 	@script(gesture="kb:escape")
 	def script_escape(self, gesture):
-		self.parent.hide_board_gui()
+		self.parent.request_leave()
 
 	@script(gesture="kb:rightarrow")
 	def script_rightarrow(self, gesture):
@@ -268,6 +270,32 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 		"kb:numpadenter": "activate_cell",
 		"kb:space": "activate_cell",
 	}
+
+
+class LeaveGameMenu(MenuObject):
+	"""A pergunta que o Escape faz antes de fechar um jogo em andamento.
+
+	Duas opções, e a primeira é ficar: um Escape a mais (dentro do menu) volta
+	ao tabuleiro em vez de sair. Sair exige escolher "Yes" de propósito.
+	"""
+
+	def __init__(self, choice_callback, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.choice_callback = choice_callback
+		self.init_container_state(
+			[
+				# Translators: Option in the menu shown when Escape is pressed during a game.
+				MenuItemObject(name=_("No, keep playing"), parent=self),
+				# Translators: Option in the menu shown when Escape is pressed during a game.
+				MenuItemObject(name=_("Yes, leave"), parent=self),
+			],
+		)
+
+	def on_item_activated(self, item):
+		self.choice_callback(bool(self.index_of(item)))
+
+	def close_menu(self):
+		self.choice_callback(False)
 
 
 class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
@@ -340,11 +368,15 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 				return rng
 
 	def game_over(self, dialog_title=None):
+		was_over = self.is_game_over
 		self.is_game_over = True
 		# Translators: Window title when a game has ended.
 		self.dialog.SetTitle(dialog_title or _("Game Over"))
 		eventHandler.queueEvent("stateChange", api.getFocusObject())
-		game_over_signal.send(self, board_outcome=self.board.outcome())
+		# Uma vez só: fechar a janela de um jogo já terminado chama isto de
+		# novo, e quem escuta o sinal (a engine, por exemplo) já se despediu.
+		if not was_over:
+			game_over_signal.send(self, board_outcome=self.board.outcome())
 
 	def game_resigned(self, resigning_color):
 		self.game_over()
@@ -766,9 +798,50 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 			return self.notify_invalid_navigation()
 		self.set_focus_to_cell(prev_index)
 
+	# -- sair do tabuleiro ----------------------------------------------------
+
+	def leave_prompt(self):
+		"""A pergunta a fazer antes de sair, ou None para sair sem perguntar.
+
+		Cada modo diz o que se perde: a partida contra a engine, a partida
+		online, o puzzle em andamento. O replay de PGN não perde nada e não
+		pergunta. Com o jogo terminado ninguém pergunta.
+		"""
+		return None
+
+	def request_leave(self):
+		"""Escape no tabuleiro: pergunta se houver o que perder, senão sai."""
+		prompt = None if self.is_game_over else self.leave_prompt()
+		if prompt is None:
+			self.leave_game()
+			return
+		menu = LeaveGameMenu(choice_callback=self._on_leave_choice, name=prompt, parent=self)
+		self._current_focused_object = menu
+		GameSound.menu_open.play()
+		eventHandler.queueEvent("gainFocus", menu)
+
+	def _on_leave_choice(self, leave):
+		self._current_focused_object = None
+		if leave:
+			self.leave_game()
+		else:
+			eventHandler.queueEvent("gainFocus", self)
+
+	def leave_game(self):
+		"""Sai de vez. Modos com adversário do outro lado avisam antes (ver subclasses)."""
+		self.hide_board_gui()
+
 	def hide_board_gui(self):
+		"""Fecha a janela do tabuleiro de verdade.
+
+		Era `Hide()`: a janela sumia, mas o `onClose` do diálogo nunca rodava,
+		então o timer seguia batendo, a engine continuava viva e o diálogo ficava
+		para sempre na lista de janelas ativas do plugin. `Close()` passa pelo
+		`onClose`, que para o timer, dispara o sinal de fechamento (e com ele o
+		fim do jogo) e destrói a janela.
+		"""
 		eventHandler.queueEvent("gainFocus", self.parent)
-		self.dialog.Hide()
+		self.dialog.Close()
 
 	@call_threaded
 	def save_game(self):

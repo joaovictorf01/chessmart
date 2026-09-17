@@ -259,16 +259,21 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			gui.mainFrame.sysTrayIcon.toolsMenu.DestroyItem(chessboard_menu.itemHandle)
 		try:
 			concurrency.terminate()
-			for cdlg in self._active_board_dialogs.values():
+			for cdlg in list(self._active_board_dialogs.values()):
 				cdlg.Destroy()
 		except Exception:
 			log.exception("Failed to terminate concurrency primitives")
 
 	def initialize_and_show_chessboard_dialog(self, vboard_cls, game_info):
 		chessboard_dialog = ChessboardDialog.from_game_info(vboard_cls, game_info)
+		chessboard_dialog.on_closed = self._forget_board_dialog
 		self._active_board_dialogs[chessboard_dialog.GetHandle()] = chessboard_dialog
 		chessboard_dialog.Show()
 		winUser.setForegroundWindow(chessboard_dialog.GetHandle())
+
+	def _forget_board_dialog(self, dialog):
+		"""Chamado quando a janela fecha: sem isto cada partida ficava na lista para sempre."""
+		self._active_board_dialogs.pop(dialog.GetHandle(), None)
 
 	def event_gainFocus(self, obj, nextHandler):
 		nextHandler()

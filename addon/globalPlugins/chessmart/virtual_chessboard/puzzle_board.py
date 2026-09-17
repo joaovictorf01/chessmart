@@ -59,6 +59,17 @@ class AttemptState:
 	def started(self) -> bool:
 		return self.started_at is not None
 
+	@property
+	def touched(self) -> bool:
+		"""O jogador fez algo neste puzzle: um lance, um erro ou uma dica.
+
+		É o que separa "desisti" de "nem olhei": um puzzle carregado e deixado
+		de lado (Control+N na hora, Escape sem querer) não é derrota, e não vai
+		para o banco nem para os números da sessão. A dica conta como toque
+		para não dar um jeito de espiar a solução de graça.
+		"""
+		return self.solution_index > 0 or self.mistakes > 0 or self.hints_used > 0
+
 	def elapsed_ms(self) -> int:
 		if self.started_at is None:
 			return 0
@@ -244,7 +255,19 @@ class PuzzleChessboard(UserDrivenChessboard):
 			return None
 		return self.puzzle.solution_moves[self._attempt.solution_index]
 
+	def leave_prompt(self):
+		# Sempre pergunta: além do puzzle, sai o placar da sessão. O texto diz
+		# se o puzzle atual vai contar como não resolvido.
+		if self._attempt.touched and not self._attempt.recorded:
+			# Translators: Asked when Escape is pressed during a puzzle the player has already started solving.
+			return _("Leave training? The current puzzle will count as unsolved.")
+		# Translators: Asked when Escape is pressed during tactics training.
+		return _("Leave training? The session status will be lost.")
+
 	def hide_board_gui(self):
+		# Invalida o primeiro lance ou a resposta do adversário que ainda
+		# estivessem agendados: não podem cair numa janela fechada.
+		self._callback_token += 1
 		self._finish_attempt(solved=False)
 		super().hide_board_gui()
 
@@ -771,8 +794,12 @@ class PuzzleChessboard(UserDrivenChessboard):
 	# -- fechar a tentativa ---------------------------------------------------
 
 	def _finish_attempt(self, solved: bool):
-		"""Fecha a tentativa atual: banco (se ainda não fechou) e sessão."""
-		if self.puzzle is None or not self._attempt.started:
+		"""Fecha a tentativa atual: banco (se ainda não fechou) e sessão.
+
+		Um puzzle em que o jogador não fez nada não fecha como nada: nem
+		derrota no banco, nem número na sessão. Ver `AttemptState.touched`.
+		"""
+		if self.puzzle is None or not self._attempt.started or not self._attempt.touched:
 			return
 		self._write_attempt(solved=solved)
 		if not self._attempt.counted_in_session:

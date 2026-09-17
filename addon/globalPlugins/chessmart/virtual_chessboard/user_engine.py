@@ -5,7 +5,9 @@ import threading
 import subprocess
 import wx
 import queueHandler
+from logHandler import log
 from ..helpers import import_bundled, BIN_DIRECTORY
+from ..i18n import _
 from ..signals import move_completed_signal, game_started_signal, game_over_signal
 from ..concurrency import call_threaded
 from .user_driven import DrawChoiceMenu, UserDrivenChessboard
@@ -56,7 +58,17 @@ class UserEngineChessboard(UserDrivenChessboard):
 		return uci_engine
 
 	def on_game_over(self, sender, board_outcome):
-		self.uci_engine.quit()
+		try:
+			self.uci_engine.quit()
+		except chess.engine.EngineError:
+			# Já tinha morrido (erro de engine encerrou a partida): nada a desligar.
+			log.debug("chessmart: engine already gone at game over")
+
+	def leave_prompt(self):
+		if not self.board.move_stack:
+			return None
+		# Translators: Asked when Escape is pressed during a game against the engine.
+		return _("Leave the game? The game against the engine will be abandoned.")
 
 	def on_move_completed(self, sender, move, move_maker):
 		if self.is_game_over:

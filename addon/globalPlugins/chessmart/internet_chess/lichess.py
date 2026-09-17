@@ -241,7 +241,7 @@ class LichessBoardClient(InternetChessBoardClient):
 
 	@asyncio_coroutine_to_concurrent_future
 	async def abort_game(self):
-		return await self.lichess.boards.abort_game(game_id=self.current_game.game_id)
+		return await self.lichess.boards.abort_game(game_id=self.game_id)
 
 	@asyncio_coroutine_to_concurrent_future
 	async def offer_draw(self):

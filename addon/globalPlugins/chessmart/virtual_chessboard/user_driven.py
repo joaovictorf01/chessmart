@@ -123,6 +123,13 @@ class UserDrivenChessboard(BaseVirtualChessboard):
 		if self._dragged_cell is not None:
 			yield self._dragged_cell.index
 
+	def leave_prompt(self):
+		# Sem lance jogado não há o que perder; a partir do primeiro, pergunta.
+		if not self.board.move_stack:
+			return None
+		# Translators: Asked when Escape is pressed during a game between two people at the keyboard.
+		return _("Leave the game? The moves played so far will be lost.")
+
 	def set_dragged_cell(self, cell):
 		if self._dragged_cell:
 			self._dragged_cell.toggle_dragging()
