@@ -1,4 +1,4 @@
-# Chessmart 1.0.2 (unreleased)
+# Chessmart 1.0.2
 
 - Escape asks before leaving a game in progress: "No, keep playing" or "Yes, leave". It used to close the board at once, and the closed board kept the engine running, the clock ticking and an online game open on Lichess. Leaving now shuts the engine down, resigns (or aborts, in the first two moves) the online game and frees the window.
 - A puzzle you have not touched (no move, no mistake, no hint) is no longer counted as a failure when you move on or leave.
