@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS endgame_attempts (
   elapsed_ms INTEGER NOT NULL,
   outcome TEXT NOT NULL,
   line TEXT NOT NULL DEFAULT '',
+  fen TEXT NOT NULL DEFAULT '',
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -59,6 +60,8 @@ def _migrate(connection) -> None:
 	existing = {row[1] for row in connection.execute("PRAGMA table_info(endgame_attempts)")}
 	if "line" not in existing:
 		connection.execute("ALTER TABLE endgame_attempts ADD COLUMN line TEXT NOT NULL DEFAULT ''")
+	if "fen" not in existing:
+		connection.execute("ALTER TABLE endgame_attempts ADD COLUMN fen TEXT NOT NULL DEFAULT ''")
 
 
 def record(
@@ -72,11 +75,12 @@ def record(
 	elapsed_ms: int,
 	outcome: str,
 	line: str = "",
+	fen: str = "",
 ) -> int:
-	"""`line` são os lances jogados, em UCI separados por espaço: é o que permite rever a tentativa."""
+	"""`fen` é a posição de partida e `line` os lances em UCI: juntos permitem rever a tentativa."""
 	cursor = connection.execute(
 		"INSERT INTO endgame_attempts (lesson_id, position_id, answer_correct, kept_result, moves, elapsed_ms,"
-		" outcome, line) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+		" outcome, line, fen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		(
 			lesson_id,
 			position_id,
@@ -86,6 +90,7 @@ def record(
 			int(elapsed_ms),
 			outcome,
 			line,
+			fen,
 		),
 	)
 	connection.commit()

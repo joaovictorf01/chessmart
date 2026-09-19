@@ -243,6 +243,7 @@ class EndgameDrillChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		self.new_position_callback = new_position_callback
 		self._started_at = time.monotonic()
 		self._recorded = False
+		self._start_fen = self.board.fen()
 		self.open_judge()
 		self.build_action_bar(
 			[
@@ -353,6 +354,7 @@ class EndgameDrillChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 			elapsed_ms=int((time.monotonic() - self._started_at) * 1000),
 			outcome=outcome.termination.name.lower() if outcome else "abandoned",
 			line=" ".join(move.uci() for move in self.board.move_stack),
+			fen=self._start_fen,
 		)
 
 
@@ -440,6 +442,7 @@ class EndgameLessonChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		self.take_backs = 0
 		self._started_at = time.monotonic()
 		self._recorded = False
+		self._start_fen = self.board.fen()
 		self.open_judge()
 		self.build_action_bar(
 			[
@@ -640,6 +643,7 @@ class EndgameLessonChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 			elapsed_ms=int((time.monotonic() - self._started_at) * 1000),
 			outcome=outcome,
 			line=" ".join(move.uci() for move in self.board.move_stack),
+			fen=self._start_fen,
 		)
 
 	# -- navegar ------------------------------------------------------------------
