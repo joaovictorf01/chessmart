@@ -122,3 +122,10 @@ class TestLog(unittest.TestCase):
 		self.assertEqual(log.position_stats(self.connection, "squareInside").streak, 0)
 		self.assertEqual(set(log.lesson_stats(self.connection, "kingAndPawn")), {"squareInside"})
 		self.assertEqual(log.position_stats(self.connection, "never").attempts, 0)
+
+	def test_hinted_attempts_count_as_practice_but_break_the_streak(self):
+		kwargs = dict(answer_correct=True, kept_result=True, moves=6, elapsed_ms=1, outcome="checkmate")
+		log.record(self.connection, "mateQueen", "queenVsKing", **kwargs)
+		log.record(self.connection, "mateQueen", "queenVsKing", hints=2, **kwargs)
+		stats = log.position_stats(self.connection, "queenVsKing")
+		self.assertEqual((stats.attempts, stats.streak), (2, 0))

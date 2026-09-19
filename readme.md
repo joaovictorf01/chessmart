@@ -62,7 +62,7 @@ Lichess publishes a new puzzle base every month. This project regenerates the da
 
 **Download tablebases...** in the Endgames dialog fetches the Syzygy tables (3 to 5 pieces, WDL and DTZ, 984 MB; or up to 4 pieces, 4 MB) file by file from the Lichess mirror, checking each one by SHA-256; a cancelled download resumes where it stopped. With the tables installed, in any drill or lesson the board judges every move you make: a move that turns a win into a draw, or a draw into a loss, is announced at once, and **Backspace** takes it back in a lesson. **Control+T** says the theoretical result of the position and how many moves to the next irreversible move (pawn move, capture or mate); **Control+Shift+T** names the moves that keep the result.
 
-Every attempt is recorded in your history (`tactic.db`): the answer, whether the result was held without a slip, moves and time. The dialog shows how many times in a row each position was held.
+Every attempt is recorded in your history (`tactic.db`): the starting position and the moves, the answer, whether the result was held without a slip, how many hints were asked, moves and time. The dialog shows how many times in a row each position was held; an attempt with hints counts as practice, not as held.
 
 ### My study
 

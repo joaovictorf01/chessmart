@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS endgame_attempts (
   outcome TEXT NOT NULL,
   line TEXT NOT NULL DEFAULT '',
   fen TEXT NOT NULL DEFAULT '',
+  hints INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -62,6 +63,8 @@ def _migrate(connection) -> None:
 		connection.execute("ALTER TABLE endgame_attempts ADD COLUMN line TEXT NOT NULL DEFAULT ''")
 	if "fen" not in existing:
 		connection.execute("ALTER TABLE endgame_attempts ADD COLUMN fen TEXT NOT NULL DEFAULT ''")
+	if "hints" not in existing:
+		connection.execute("ALTER TABLE endgame_attempts ADD COLUMN hints INTEGER NOT NULL DEFAULT 0")
 
 
 def record(
@@ -76,11 +79,16 @@ def record(
 	outcome: str,
 	line: str = "",
 	fen: str = "",
+	hints: int = 0,
 ) -> int:
-	"""`fen` é a posição de partida e `line` os lances em UCI: juntos permitem rever a tentativa."""
+	"""`fen` é a posição de partida e `line` os lances em UCI: juntos permitem rever a tentativa.
+
+	`hints` conta as vezes que a tablebase foi consultada pelo melhor lance:
+	a tentativa vale como treino, mas com ajuda não entra na sequência.
+	"""
 	cursor = connection.execute(
 		"INSERT INTO endgame_attempts (lesson_id, position_id, answer_correct, kept_result, moves, elapsed_ms,"
-		" outcome, line, fen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		" outcome, line, fen, hints) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		(
 			lesson_id,
 			position_id,
@@ -91,6 +99,7 @@ def record(
 			outcome,
 			line,
 			fen,
+			int(hints),
 		),
 	)
 	connection.commit()
@@ -99,12 +108,13 @@ def record(
 
 def position_stats(connection, position_id: str) -> PositionStats:
 	rows = connection.execute(
-		"SELECT answer_correct, kept_result, moves FROM endgame_attempts WHERE position_id = ? ORDER BY id DESC",
+		"SELECT answer_correct, kept_result, moves, hints FROM endgame_attempts WHERE position_id = ?"
+		" ORDER BY id DESC",
 		(position_id,),
 	).fetchall()
 	streak = 0
 	for row in rows:
-		success = bool(row["kept_result"]) and row["answer_correct"] != 0
+		success = bool(row["kept_result"]) and row["answer_correct"] != 0 and int(row["hints"]) == 0
 		if not success:
 			break
 		streak += 1

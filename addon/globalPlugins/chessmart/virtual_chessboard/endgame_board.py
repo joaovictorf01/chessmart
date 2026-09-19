@@ -81,6 +81,7 @@ class TablebaseJudgeMixin:
 	game_announcer: typing.Any
 	tablebase: typing.Any = None
 	spoiled_moves: int = 0
+	hints_used: int = 0
 
 	_actions_bar: typing.Any = None
 	_current_focused_object: typing.Any
@@ -122,6 +123,7 @@ class TablebaseJudgeMixin:
 			nvda_log.warning("chessmart: could not open the tablebases: %s", error)
 			self.tablebase = None
 		self.spoiled_moves = 0
+		self.hints_used = 0
 		# A tabela fecha com a janela, não com o fim do jogo: depois do mate o
 		# veredito e os melhores lances continuam à mão para rever a posição.
 		chessboard_closed_signal.connect(lambda sender: self.close_judge(), sender=self)
@@ -170,6 +172,7 @@ class TablebaseJudgeMixin:
 		if not best:
 			speak_next([self._no_judge_speech()])
 			return
+		self.hints_used += 1
 		moves = ", ".join(spoken_move(self.board, move) for move in best[:3])
 		if len(best) == 1:
 			# Translators: Spoken with the only move that keeps the tablebase result, e.g. "Only move: Kd6".
@@ -316,6 +319,12 @@ class EndgameDrillChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		for message in drill_result_messages(self.drill, self.board, seconds):
 			yield speech.commands.BreakCommand(250)
 			yield message
+		if self.hints_used:
+			yield speech.commands.BreakCommand(250)
+			# Translators: Spoken at the end of a drill or lesson that used tablebase hints; {hints} is a number.
+			yield _("With {hints} hints from the tablebase: it counts as practice, not as held.").format(
+				hints=self.hints_used
+			)
 		yield speech.commands.BreakCommand(250)
 		# Translators: Spoken when an endgame drill ends.
 		yield _("Control+N opens another position.")
@@ -355,6 +364,7 @@ class EndgameDrillChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 			outcome=outcome.termination.name.lower() if outcome else "abandoned",
 			line=" ".join(move.uci() for move in self.board.move_stack),
 			fen=self._start_fen,
+			hints=self.hints_used,
 		)
 
 
@@ -603,6 +613,11 @@ class EndgameLessonChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		else:
 			# Translators: Spoken when the lesson position was not held.
 			yield _("The result slipped. Control+R plays the same position again.")
+		if self.hints_used:
+			yield speech.commands.BreakCommand(250)
+			yield _("With {hints} hints from the tablebase: it counts as practice, not as held.").format(
+				hints=self.hints_used
+			)
 		yield speech.commands.BreakCommand(250)
 		# Translators: Spoken at the end of a lesson position.
 		yield _("Control+N goes to the next position.")
@@ -644,6 +659,7 @@ class EndgameLessonChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 			outcome=outcome,
 			line=" ".join(move.uci() for move in self.board.move_stack),
 			fen=self._start_fen,
+			hints=self.hints_used,
 		)
 
 	# -- navegar ------------------------------------------------------------------
