@@ -1,3 +1,11 @@
+# Chessmart 1.1.0 (unreleased)
+
+- **Endgames...** in the menu. Two mate drills (queen and rook against a bare king) against the engine at full strength, with Capablanca's positions first and random ones with Control+N, an optional clock, and the board counting the moves against the target and naming a stalemate.
+- Eight endgame lessons that follow the order of the endgame courses (Silman's *Complete Endgame Course*, Parts 1 to 4; De la Villa's *100 Endgames You Must Know*): the king and the opposition, king and pawn against king, a piece against a pawn, pawns on both sides, rook and pawn against rook (Philidor, Lucena), queen against a pawn on the seventh, bishop and rook pawn. Every position asks win, draw or loss, tells the rule, and is then played out against the engine; Backspace takes a move back, Control+N goes to the next position.
+- Syzygy tablebases (3 to 5 pieces, WDL and DTZ) downloaded file by file from the Lichess mirror, checked by SHA-256, resumable. With them installed the board judges every move of the player in a drill or lesson ("that move let the win slip"), Control+T says the theoretical result and how many moves to the next irreversible move, Control+Shift+T the moves that keep the result.
+- Every drill and lesson attempt is recorded in the player's history (`tactic.db`): answer, whether the result was held, moves, time. The Endgames dialog shows how many times in a row each position was held.
+- **My Study...** in the menu: how much and how you studied, by day (tactics: puzzles, solved, minutes; endgames: positions, held, minutes; totals for today, 7 or 30 days), and how far the endgame lessons go: which positions are firm (held three times in a row), which are pending, and where you are. One text, copyable to the clipboard.
+
 # Chessmart 1.0.2
 
 - Escape asks before leaving a game in progress: "No, keep playing" or "Yes, leave". It used to close the board at once, and the closed board kept the engine running, the clock ticking and an online game open on Lichess. Leaving now shuts the engine down, resigns (or aborts, in the first two moves) the online game and frees the window.

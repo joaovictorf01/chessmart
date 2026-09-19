@@ -448,8 +448,11 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 	def game_over(self, dialog_title=None):
 		was_over = self.is_game_over
 		self.is_game_over = True
-		# Translators: Window title when a game has ended.
-		self.dialog.SetTitle(dialog_title or _("Game Over"))
+		# Fechar a janela de um jogo já terminado passa por aqui de novo, e a
+		# janela pode já ter sido destruída pelo wx: um objeto wx apagado é falso.
+		if self.dialog:
+			# Translators: Window title when a game has ended.
+			self.dialog.SetTitle(dialog_title or _("Game Over"))
 		eventHandler.queueEvent("stateChange", api.getFocusObject())
 		# Uma vez só: fechar a janela de um jogo já terminado chama isto de
 		# novo, e quem escuta o sinal (a engine, por exemplo) já se despediu.

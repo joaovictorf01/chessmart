@@ -1,0 +1,592 @@
+# coding: utf-8
+# pyright: basic
+
+"""A trilha de finais: lições com posições-chave, a pergunta e a regra.
+
+A ordem e o recorte seguem o currículo que os livros de final usam para
+quem está começando: *Silman's Complete Endgame Course* (Partes 1 a 4,
+até 1599) e *100 Endgames You Must Know* (De la Villa), com o número do
+final correspondente anotado em cada lição. Cada posição é uma posição
+teórica -- resultado conhecido e método com nome --, conferida na tablebase
+Syzygy; a regra é a frase que o jogador deve levar para a partida.
+
+O método é o dos livros: antes de mexer, responder "ganha ou empata?" e por
+quê; depois jogar a posição contra a defesa perfeita, com a tablebase de juiz,
+até manter o resultado. Lances não têm dono; a explicação é nossa.
+
+Sem NVDA aqui: o tabuleiro e o diálogo ficam fora deste pacote.
+"""
+
+from __future__ import annotations
+
+import dataclasses
+
+from ..i18n import N_, _
+from ..paths import import_bundled
+from . import judge
+from .drills import ENDGAME_DRILLS, EndgameDrill
+
+with import_bundled():
+	import chess
+
+
+@dataclasses.dataclass(frozen=True)
+class LessonPosition:
+	position_id: str
+	fen: str
+	# De que lado o jogador está; o outro lado é a engine.
+	player: chess.Color
+	# O resultado teórico para o jogador: judge.WIN, judge.DRAW ou judge.LOSS.
+	expected: str
+	title: str
+	rule: str
+	# Onde o tema está nos livros; texto de referência, não traduzido.
+	source: str
+
+	@property
+	def playable(self) -> bool:
+		"""Perdida para o jogador não se joga: a lição é só a pergunta e a regra."""
+		return self.expected != judge.LOSS
+
+
+@dataclasses.dataclass(frozen=True)
+class EndgameLesson:
+	lesson_id: str
+	label: str
+	description: str
+	source: str
+	positions: tuple[LessonPosition, ...] = ()
+	# A lição 1 são os mates elementares: treinos contra a engine, sem pergunta.
+	drill: EndgameDrill | None = None
+
+
+def _pos(position_id, fen, expected, title, rule, source, player=chess.WHITE):
+	return LessonPosition(position_id, fen, player, expected, title, rule, source)
+
+
+SILMAN = "Silman, Complete Endgame Course"
+VILLA = "De la Villa, 100 Endgames You Must Know"
+CAPABLANCA = "Capablanca, Chess Fundamentals, ch. 1"
+
+ENDGAME_LESSONS: tuple[EndgameLesson, ...] = (
+	EndgameLesson(
+		lesson_id="mateQueen",
+		# Translators: Name of the first endgame lesson (a drill).
+		label=N_("1a. Mate with queen and king"),
+		# Translators: Description of the queen mate lesson.
+		description=N_(
+			"The queen alone cannot mate: drive the king to the edge, bring your own king up, mind the stalemate. Under 10 moves."
+		),
+		source=f"{SILMAN}, Part 1 (King and Queen vs. Lone King); {CAPABLANCA}, example 4",
+		drill=ENDGAME_DRILLS[0],
+	),
+	EndgameLesson(
+		lesson_id="mateRook",
+		# Translators: Name of the second endgame lesson (a drill).
+		label=N_("1b. Mate with rook and king"),
+		# Translators: Description of the rook mate lesson.
+		description=N_(
+			"Keep your king on the same rank or file as the other king, next to the rook, and push the king to the edge. Under 20 moves."
+		),
+		source=f"{SILMAN}, Part 1 (King and Rook vs. Lone King); {CAPABLANCA}, examples 1 and 2",
+		drill=ENDGAME_DRILLS[1],
+	),
+	EndgameLesson(
+		lesson_id="kingAndOpposition",
+		# Translators: Name of the endgame lesson on the king and the opposition.
+		label=N_("2. The king and the opposition"),
+		# Translators: Description of the lesson on the king and the opposition.
+		description=N_(
+			"With king and pawn against king the king leads, the pawn goes last. The opposition decides who passes, and the rook pawn is the exception that draws."
+		),
+		source=f"{SILMAN}, Part 2 (Use Your King!, Opposition, Rook-Pawns); {VILLA}, endings 1, 4 and 5",
+		positions=(
+			_pos(
+				"kingFirst",
+				"8/4k3/8/8/8/8/4PK2/8 w - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("The king leads"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"King and pawn against king: the king goes in front of the pawn, and the pawn moves last. Run the king up before touching the pawn."
+				),
+				f"{SILMAN}, Part 2, Use Your King!",
+			),
+			_pos(
+				"oppositionWhiteToMove",
+				"8/8/8/4k3/8/4K3/4P3/8 w - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("Opposition: the side to move loses it"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Kings face to face with one square between them: that is the opposition, and whoever has to move loses it. White to move here cannot get past: draw."
+				),
+				f"{SILMAN}, Part 2, Opposition",
+			),
+			_pos(
+				"oppositionBlackToMove",
+				"8/8/8/4k3/8/4K3/4P3/8 b - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("The same position, Black to move"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Same pieces, other side to move: now Black must step aside and White has the opposition. The king walks through, and only then the pawn advances."
+				),
+				f"{SILMAN}, Part 2, Opposition",
+			),
+			_pos(
+				"rookPawnCorner",
+				"7k/8/7K/7P/8/8/8/8 w - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("Rook pawn: the corner draws"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"A rook pawn is the exception: if the defending king reaches the corner, or the square in front of the pawn, it is a draw. There is no side to go around."
+				),
+				f"{SILMAN}, Part 2, Rook-Pawns; {VILLA}, ending 4",
+			),
+			_pos(
+				"rookPawnPrison",
+				"7K/5k2/8/8/8/8/7P/8 w - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("Rook pawn: the attacking king is imprisoned"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"The attacking king stuck in the corner in front of its own rook pawn cannot get out: the defender only needs to guard f7 and f8. Draw."
+				),
+				f"{SILMAN}, Part 2, Rook-Pawns; {VILLA}, ending 5",
+			),
+			_pos(
+				"rookPawnFarKing",
+				"8/8/8/8/8/8/P7/K5k1 w - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("Rook pawn: the defender arrives too late"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"The rook pawn wins when the defending king reaches neither the corner nor the square of the pawn. Push it: count the squares first."
+				),
+				f"{SILMAN}, Part 2, Rook-Pawns",
+			),
+		),
+	),
+	EndgameLesson(
+		lesson_id="kingAndPawn",
+		# Translators: Name of the endgame lesson on king and pawn against king.
+		label=N_("3. King and pawn against king"),
+		# Translators: Description of the lesson on king and pawn against king.
+		description=N_(
+			"The rule of the square, the king in front of the pawn, and the pawn on the sixth: what wins, what draws, and why."
+		),
+		source=f"{SILMAN}, Part 3 (King and Pawn vs. Lone King); {VILLA}, endings 1 to 3",
+		positions=(
+			_pos(
+				"squareOutside",
+				"8/8/8/1P6/6k1/8/8/K7 b - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("The rule of the square: outside"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Draw a square from the pawn to its promotion rank. If the defending king, on its move, cannot step into that square, the pawn promotes on its own. The kings do not matter: just count."
+				),
+				f"{VILLA}, ending 1; {SILMAN}, Part 4, Entering the Square of the Pawn",
+			),
+			_pos(
+				"squareInside",
+				"8/8/8/1P6/5k2/8/8/K7 b - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("The rule of the square: inside"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"One file closer and the king steps into the square: it catches the pawn. Draw. Diagonal steps cost nothing, so the king moves on the diagonal."
+				),
+				f"{VILLA}, ending 1",
+			),
+			_pos(
+				"kingTwoSquaresInFront",
+				"8/8/4k3/8/4K3/8/4P3/8 w - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("King two squares in front of the pawn"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"The king two squares in front of its pawn wins whoever is to move: it takes the opposition, or the pawn's spare move gives it back."
+				),
+				f"{SILMAN}, Part 3, Non Rook-Pawn (Two Squares in Front)",
+			),
+			_pos(
+				"kingBehindPawn",
+				"8/8/8/8/4k3/8/4P3/4K3 w - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("King behind the pawn"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"With the king behind its pawn and the defending king in front, the attacking king never gets past. Draw. This is why the king must lead."
+				),
+				f"{SILMAN}, Part 3, King and Pawn vs. Lone King",
+			),
+			_pos(
+				"kingOnSixthInFront",
+				"4k3/8/4K3/4P3/8/8/8/8 w - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("King on the sixth in front of the pawn"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"The king on the sixth rank in front of its pawn wins whoever is to move. Step to the side, the pawn follows, and the defending king cannot cover both squares."
+				),
+				f"{VILLA}, ending 3 (key squares); {SILMAN}, Part 3",
+			),
+			_pos(
+				"pawnOnSixthWhiteToMove",
+				"3k4/8/3PK3/8/8/8/8/8 w - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("Pawn on the sixth, king beside it, White to move"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Pawn on the sixth with the king beside it and the move: push the pawn. The defending king cannot hold the promotion square. Win."
+				),
+				f"{VILLA}, ending 2",
+			),
+			_pos(
+				"pawnOnSixthBlackToMove",
+				"3k4/8/3PK3/8/8/8/8/8 b - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("Pawn on the sixth, king beside it, Black to move"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Without the move it is a draw: Black plays the king in front of the pawn, and after the pawn checks on the seventh the attacking king cannot support it without stalemate. A pawn that checks on the seventh is the sign of a draw."
+				),
+				f"{VILLA}, ending 2",
+			),
+		),
+	),
+	EndgameLesson(
+		lesson_id="pieceVsPawn",
+		# Translators: Name of the endgame lesson on a piece against a pawn.
+		label=N_("4. A piece against a pawn"),
+		# Translators: Description of the lesson on a piece against a pawn.
+		description=N_(
+			"Rook against pawn is counting; the knight holds a seventh-rank pawn except the rook pawn; the bishop holds from a distance."
+		),
+		source=f"{SILMAN}, Part 3 (Minor Piece vs. a Lone Pawn, Rook vs. Lone Pawn); {VILLA}, endings 10, 13 and 21",
+		positions=(
+			_pos(
+				"rookVsPawnCounting",
+				"R7/8/8/8/1kp5/8/8/7K w - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("Rook against pawn: just counting"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Count: how many moves the pawn needs to promote, how many the king needs to arrive. The rook stops the pawn from behind and the king comes: here it arrives in time. Win."
+				),
+				f"{VILLA}, ending 21",
+			),
+			_pos(
+				"rookVsPawnTooFar",
+				"R7/8/8/8/8/1kp5/8/7K w - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("Rook against pawn: one step too late"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"One more step for the pawn and the count turns: the king does not arrive, and the rook alone must give itself up for the pawn. Draw."
+				),
+				f"{VILLA}, ending 21",
+			),
+			_pos(
+				"knightHoldsSeventhPawn",
+				"8/8/8/8/8/8/2kp1N2/6K1 w - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("Knight against a pawn on the seventh"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"A knight that controls the promotion square holds a seventh-rank pawn on its own: it moves away and comes back, and the pawn cannot pass. Draw."
+				),
+				f"{VILLA}, ending 10",
+			),
+			_pos(
+				"knightVsRookPawnSeventh",
+				"8/8/8/8/8/8/p1k5/N5K1 b - - 0 1",
+				judge.LOSS,
+				# Translators: Title of a lesson position.
+				N_("Knight against a rook pawn on the seventh"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"The exception: against a rook pawn the knight in the corner has no square to come back to, and it falls. Lost for the knight."
+				),
+				f"{VILLA}, ending 13",
+			),
+			_pos(
+				"bishopHoldsFromDistance",
+				"8/8/8/8/8/2k5/3p4/6KB w - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("Bishop against a pawn"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"A bishop that reaches the diagonal of the promotion square holds the pawn from any distance. Draw."
+				),
+				f"{SILMAN}, Part 3, Bishop vs. Lone Pawn",
+			),
+		),
+	),
+	EndgameLesson(
+		lesson_id="pawnsBothSides",
+		# Translators: Name of the endgame lesson on pawns on both sides.
+		label=N_("5. Pawns on both sides"),
+		# Translators: Description of the lesson on pawns on both sides.
+		description=N_(
+			"The spare tempo of doubled pawns, the outside passed pawn that decoys, and pawn against pawn where each king holds one."
+		),
+		source=f"{SILMAN}, Part 4 (King and Two Doubled Pawns, Outside Passed Pawns); {VILLA}, endings 77, 90",
+		positions=(
+			_pos(
+				"doubledPawnsWin",
+				"8/8/8/4k3/8/4P3/4P3/4K3 w - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("Doubled pawns win"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Two doubled pawns win where one draws: the rear pawn is a spare tempo. When the opposition is against you, move the rear pawn and it is against them."
+				),
+				f"{SILMAN}, Part 4, King and Two Doubled Pawns vs. Lone King; {VILLA}, ending 77",
+			),
+			_pos(
+				"outsidePassedPawn",
+				"8/8/4k3/5p2/5P2/8/P3K3/8 w - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("The outside passed pawn"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"The outside passed pawn does not promote: it decoys. The defending king must go and fetch it, and your king eats on the other side."
+				),
+				f"{SILMAN}, Part 4, Outside Passed Pawns; {VILLA}, ending 90",
+			),
+			_pos(
+				"pawnAgainstPawn",
+				"8/8/8/8/4k3/8/P4K1p/8 w - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("Pawn against pawn, each king holds one"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Each side has a passed pawn and each king can stop the other's: count the squares and nobody promotes. Draw. Do not run the pawn before counting."
+				),
+				f"{SILMAN}, Part 4, Entering the Square of the Pawn",
+			),
+		),
+	),
+	EndgameLesson(
+		lesson_id="rookAndPawnVsRook",
+		# Translators: Name of the endgame lesson on rook and pawn against rook.
+		label=N_("6. Rook and pawn against rook"),
+		# Translators: Description of the lesson on rook and pawn against rook.
+		description=N_(
+			"The most common endgame in practice. Philidor draws, a passive rook loses, Lucena wins with the bridge."
+		),
+		source=f"{SILMAN}, Part 4 (The Lucena Position, The Philidor Position, Passive Rook); {VILLA}, endings 52 and 53",
+		positions=(
+			_pos(
+				"philidor",
+				"4k3/8/r7/8/4PK2/8/8/4R3 b - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("Philidor: the rook on the third rank"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"You defend. Keep the rook on your third rank (the sixth from the other side) so the attacking king cannot cross. When the pawn reaches that rank, the rook goes to the last rank and checks from behind. Draw."
+				),
+				f"{VILLA}, ending 52; {SILMAN}, Part 4, The Philidor Position",
+				player=chess.BLACK,
+			),
+			_pos(
+				"philidorChecksFromBehind",
+				"4k3/8/4P3/4K3/8/8/r7/4R3 b - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("Philidor: the checks from behind"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"The pawn is on the sixth and the attacking king wants the sixth too: now the rook checks from behind, without stopping. The king has nowhere to hide from the checks. Draw."
+				),
+				f"{VILLA}, ending 52",
+				player=chess.BLACK,
+			),
+			_pos(
+				"passiveRookLoses",
+				"3k4/r7/8/3PK3/8/8/8/4R3 b - - 0 1",
+				judge.LOSS,
+				# Translators: Title of a lesson position.
+				N_("The passive rook loses"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"The rook on the seventh instead of the third rank, and the king in front of the pawn: the attacking king reaches the sixth and it is lost. Without the third rank there is no Philidor."
+				),
+				f"{SILMAN}, Part 4, Passive Rook",
+				player=chess.BLACK,
+			),
+			_pos(
+				"lucena",
+				"1K1k4/1P6/8/8/8/8/r7/2R5 w - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("Lucena: the bridge"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Pawn on the seventh, your king in front of it, the defending king cut off by your rook. The bridge: rook to the fourth rank, the king steps out, and when the checks come the rook blocks them. Win."
+				),
+				f"{VILLA}, ending 53; {SILMAN}, Part 4, The Lucena Position",
+			),
+		),
+	),
+	EndgameLesson(
+		lesson_id="queenVsPawn",
+		# Translators: Name of the endgame lesson on queen against pawn.
+		label=N_("7. Queen against a pawn on the seventh"),
+		# Translators: Description of the lesson on queen against pawn.
+		description=N_(
+			"Central and knight pawns lose to the queen; bishop and rook pawns draw by stalemate when the attacking king is far."
+		),
+		source=f"{SILMAN}, Part 4 (Queen vs. King and Pawn); {VILLA}, endings 16 to 18",
+		positions=(
+			_pos(
+				"queenVsCentralPawn",
+				"7Q/8/8/8/8/8/3pk3/7K w - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("Queen against a central pawn"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Checks force the defending king in front of its pawn; each time it stands there, your king gains a step. Repeat until your king arrives, then take the pawn. Win."
+				),
+				f"{VILLA}, ending 16",
+			),
+			_pos(
+				"queenVsKnightPawn",
+				"6Q1/8/8/8/8/8/1pk5/7K w - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("Queen against a knight pawn"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"The knight pawn loses the same way: the king in front of the pawn gives your king a step each time. Win."
+				),
+				f"{VILLA}, ending 16",
+			),
+			_pos(
+				"queenVsBishopPawn",
+				"7Q/8/8/8/8/8/2pk4/7K w - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("Queen against a bishop pawn"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"The bishop pawn draws: when the queen forces the king in front, it goes to the corner instead, and taking the pawn is stalemate. Draw while your king is far."
+				),
+				f"{VILLA}, ending 18",
+			),
+			_pos(
+				"queenVsRookPawn",
+				"6Q1/8/8/8/8/8/pk6/7K w - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("Queen against a rook pawn"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"The rook pawn draws: the king hides in the corner in front of it and there is no check that does not stalemate. Draw while your king is far."
+				),
+				f"{VILLA}, ending 17",
+			),
+		),
+	),
+	EndgameLesson(
+		lesson_id="bishopAndRookPawn",
+		# Translators: Name of the endgame lesson on bishop and rook pawn.
+		label=N_("8. Bishop and rook pawn"),
+		# Translators: Description of the lesson on bishop and rook pawn.
+		description=N_(
+			"The wrong bishop cannot win: it does not control the promotion square, and the king in the corner never leaves."
+		),
+		source=f"{SILMAN}, Part 4 (Bishop and Wrong Colored Rook-Pawn vs. Lone King)",
+		positions=(
+			_pos(
+				"wrongBishop",
+				"7k/8/8/8/8/8/7P/3B3K w - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("The wrong bishop"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"The bishop does not control the promotion square and the defending king sits in the corner: nothing can push it out. Draw. Check the color of the corner before trading down."
+				),
+				f"{SILMAN}, Part 4, Bishop and Wrong Colored Rook-Pawn vs. Lone King",
+			),
+			_pos(
+				"rightBishop",
+				"7k/8/8/8/8/8/7P/2B4K w - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("The right bishop"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"The bishop controls the promotion square: it takes the corner from the king, and the pawn promotes. Win."
+				),
+				f"{SILMAN}, Part 4",
+			),
+		),
+	),
+)
+
+
+def get_lesson(lesson_id: str | None) -> EndgameLesson:
+	for lesson in ENDGAME_LESSONS:
+		if lesson.lesson_id == lesson_id:
+			return lesson
+	return ENDGAME_LESSONS[0]
+
+
+def lesson_label(lesson: EndgameLesson) -> str:
+	return _(lesson.label)
+
+
+def lesson_description(lesson: EndgameLesson) -> str:
+	return _(lesson.description)
+
+
+def position_title(position: LessonPosition) -> str:
+	return _(position.title)
+
+
+def position_rule(position: LessonPosition) -> str:
+	return _(position.rule)
+
+
+def all_positions() -> tuple[tuple[EndgameLesson, LessonPosition], ...]:
+	return tuple((lesson, position) for lesson in ENDGAME_LESSONS for position in lesson.positions)
+
+
+def play_goal(position: LessonPosition) -> str:
+	"""O que fazer depois da pergunta: ganhar, ou segurar o empate."""
+	if position.expected == judge.WIN:
+		# Translators: Instruction after the question in a lesson: the position is won.
+		return _("Now win it: play the position out against the engine.")
+	if position.expected == judge.DRAW:
+		# Translators: Instruction after the question in a lesson: the position is a draw.
+		return _("Now hold the draw: play the position out against the engine.")
+	# Translators: Instruction after the question in a lesson: the position is lost, nothing to play.
+	return _("This one is lost with best play; there is nothing to play out. Control+N goes on.")

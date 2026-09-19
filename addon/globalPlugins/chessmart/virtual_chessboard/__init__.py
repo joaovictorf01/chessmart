@@ -11,6 +11,7 @@ from .pgn_player import (
 )
 from .internet_chessboard import InternetChessboard
 from .puzzle_board import PuzzleChessboard
+from .endgame_board import EndgameDrillChessboard, EndgameLessonChessboard
 
 __all__ = [
 	"BaseVirtualChessboard",
@@ -21,4 +22,6 @@ __all__ = [
 	"PGNGameInfo",
 	"InternetChessboard",
 	"PuzzleChessboard",
+	"EndgameDrillChessboard",
+	"EndgameLessonChessboard",
 ]

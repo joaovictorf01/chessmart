@@ -10,7 +10,7 @@ Requires NVDA 2026.1 or later (64-bit Python 3.13). Nothing else needs to be ins
 
 1. Install the add-on and restart NVDA.
 2. Open the NVDA menu and find the **Chessmart** submenu.
-3. Choose **Tactics...** to train, or **New Game...** to play.
+3. Choose **Tactics...** to train, **Endgames...** for the endgame lessons, **My Study...** to see how far you have come, or **New Game...** to play.
 
 The first time you open Tactics, the add-on offers to download the puzzle database. Pick **Light** (about 76 MB, 745,000 puzzles that many players have solved and approved) or **Complete** (about 591 MB, the whole Lichess base of 5.8 million puzzles). The download runs in the background with spoken progress; you can cancel with Escape. The database is stored in your NVDA configuration folder, under `chessmart`, together with your training history.
 
@@ -50,6 +50,38 @@ All the board commands below work on the puzzle board too.
 ### Keeping the database up to date
 
 Lichess publishes a new puzzle base every month. This project regenerates the databases from it and publishes them on the [`puzzles-latest` release](https://github.com/joaovictorf01/chessmart/releases/tag/puzzles-latest). In the Tactics dialog or in the settings, **Download or update...** shows what you have installed against what is published and lets you update. Updates are never installed automatically.
+
+## Endgames
+
+**Endgames...** is the endgame trainer. It follows the order of the endgame courses (Silman's *Complete Endgame Course*, Parts 1 to 4, and De la Villa's *100 Endgames You Must Know*), and every position is a theoretical one: known result, known method, checked against the Syzygy tablebases.
+
+* **Lessons 1a and 1b** are the mate drills: queen and king, then rook and king, against a bare king, played against the engine at full strength. The first position is Capablanca's example; **Control+N** opens a random one. An optional clock can be set for records; by default there is none. At the end the board says how many moves the mate took and whether it fit the target (under 10 with the queen, under 20 with the rook), and names a stalemate for what it is.
+* **Lessons 2 to 8** are the ideas: the king and the opposition; king and pawn against king (rule of the square, king in front, pawn on the sixth); a piece against a pawn; pawns on both sides; rook and pawn against rook (Philidor, the passive rook, Lucena); queen against a pawn on the seventh; bishop and rook pawn. Each position is set up on the board and asks **win, draw or loss** for your side. Answer, and the board says whether you were right and speaks the rule. Then you play the position out against the engine: win it, or hold the draw. Lost positions are only the question and the rule.
+
+### The tablebase judge
+
+**Download tablebases...** in the Endgames dialog fetches the Syzygy tables (3 to 5 pieces, WDL and DTZ, 984 MB; or up to 4 pieces, 4 MB) file by file from the Lichess mirror, checking each one by SHA-256; a cancelled download resumes where it stopped. With the tables installed, in any drill or lesson the board judges every move you make: a move that turns a win into a draw, or a draw into a loss, is announced at once, and **Backspace** takes it back in a lesson. **Control+T** says the theoretical result of the position and how many moves to the next irreversible move (pawn move, capture or mate); **Control+Shift+T** names the moves that keep the result.
+
+Every attempt is recorded in your history (`tactic.db`): the answer, whether the result was held without a slip, moves and time. The dialog shows how many times in a row each position was held.
+
+### My study
+
+**My Study...** reads the same history and tells you how much and how you studied: by day, the tactics (puzzles, solved, minutes) and the endgames (positions, held, minutes) with the day's total, for today, the last 7 or the last 30 days; and how far the endgame lessons go, lesson by lesson: which positions are firm (held three times in a row, question right and result kept without a slip), which are pending, and where you are. **Copy to clipboard** puts the whole text in the clipboard. Games are not counted here on purpose: real games are played elsewhere.
+
+### Keyboard commands on the endgame board
+
+| Key | Action |
+|---|---|
+| Tab / Shift+Tab | The actions bar: goal or rule, verdict, best moves, take back, next position |
+| Control+F1 | Repeat the goal (drill) or the rule (lesson) |
+| Control+N | Another position of the drill, or the next position of the lesson |
+| Control+R | The same lesson position again |
+| Backspace | Take back your last move (lessons) |
+| Control+T | The tablebase verdict for the position |
+| Control+Shift+T | The moves that keep the result |
+| Escape | Leave. During a game it asks first |
+
+All the board commands below work here too.
 
 ## Playing a game
 

@@ -32,17 +32,21 @@ with import_bundled():
 
 from . import concurrency
 from .addon_config import ensure_config_spec
-from .time_control import NULL_TIME_CONTROL
+from .time_control import NULL_TIME_CONTROL, ChessTimeControl, NullChessTimeControl
 from .chessboard import ChessboardDialog
 from .game_elements import GameInfo, ChessVariant
 from .graphical_interface.settings_panel import ChessboardSettingsDialog
 from .virtual_chessboard import (
+	EndgameDrillChessboard,
+	EndgameLessonChessboard,
 	PGNGame,
 	PGNGameInfo,
 	PGNPlayerChessboard,
 	PuzzleChessboard,
 )
 from .training_session import TrainingSession, default_training_options
+from .endgame.drills import opening_fen, random_fen
+from .endgame.lessons import EndgameLesson
 
 
 class ChessboardMenu(wx.Menu):
@@ -59,6 +63,18 @@ class ChessboardMenu(wx.Menu):
 			_("Open tactics from the Lichess tactics database"),
 		)
 		random_puzzle_item = self.Append(wx.ID_ANY, _("&Random Puzzle"), _("Play a random puzzle"))
+		endgames_item = self.Append(
+			wx.ID_ANY,
+			# Translators: Menu item that opens the endgame drills.
+			_("&Endgames..."),
+			_("Practice elementary endgames against the engine"),
+		)
+		study_item = self.Append(
+			wx.ID_ANY,
+			# Translators: Menu item that opens the study log.
+			_("&My Study..."),
+			_("How much and how you studied, by day, and how far the endgame lessons go"),
+		)
 		replay_pgn_file_item = self.Append(
 			wx.ID_ANY,
 			_("&Replay PGN File..."),
@@ -81,6 +97,8 @@ class ChessboardMenu(wx.Menu):
 		self.Bind(wx.EVT_MENU, self.onNewGame, new_game_item)
 		self.Bind(wx.EVT_MENU, self.onTactics, tactics_item)
 		self.Bind(wx.EVT_MENU, self.onRandomPuzzle, random_puzzle_item)
+		self.Bind(wx.EVT_MENU, self.onEndgames, endgames_item)
+		self.Bind(wx.EVT_MENU, self.onStudyLog, study_item)
 		self.Bind(wx.EVT_MENU, self.onReplayPGN, replay_pgn_file_item)
 		self.Bind(wx.EVT_MENU, self.onSettings, settings_item)
 
@@ -167,6 +185,84 @@ class ChessboardMenu(wx.Menu):
 			gui.messageBox(str(error), _("No Tactics Found"), style=wx.ICON_WARNING)
 			return
 		self.open_training_session(session)
+
+	def onEndgames(self, event):
+		from .graphical_interface.endgame_dialog import EndgameDialog
+
+		dialog = EndgameDialog(gui.mainFrame, callback=self.open_endgame)
+		gui.runScriptModalDialog(dialog)
+
+	def open_endgame(self, lesson: EndgameLesson, index: int, time_control: ChessTimeControl):
+		"""Abre o que o diálogo escolheu: um treino de mate ou uma posição da lição."""
+		if lesson.drill is not None:
+			fen = opening_fen(lesson.drill) if index == 0 else random_fen(lesson.drill)
+			self.open_endgame_drill(lesson, time_control, fen)
+		else:
+			self.open_endgame_lesson(lesson, index)
+
+	def open_endgame_drill(self, lesson: EndgameLesson, time_control: ChessTimeControl, fen: str):
+		"""O treino de mate contra a engine, na força máxima.
+
+		O tabuleiro recebe como `new_position_callback` esta mesma função com
+		uma posição sorteada e um relógio novo: Control+N fecha o tabuleiro e
+		volta aqui. O relógio é recriado porque o `ChessTimeControl` guarda
+		os relógios já usados; sem relógio, o nulo serve de novo.
+		"""
+		drill = lesson.drill
+		assert drill is not None
+		if isinstance(time_control, NullChessTimeControl):
+			next_clock = time_control
+		else:
+			next_clock = ChessTimeControl(*time_control.astuple())
+		game_info = GameInfo(
+			pychess_board=chess.Board(fen),
+			variant=ChessVariant.STANDARD,
+			time_control=time_control,
+			prospective=chess.WHITE,
+			vboard_kwargs=dict(
+				drill=drill,
+				lesson_id=lesson.lesson_id,
+				# Força máxima: a defesa perfeita é o que faz a técnica valer.
+				uci_options={},
+				uci_time_limit=0.5,
+				new_position_callback=functools.partial(
+					self.open_endgame_drill,
+					lesson,
+					next_clock,
+					random_fen(drill),
+				),
+			),
+		)
+		self.global_plugin_object.initialize_and_show_chessboard_dialog(EndgameDrillChessboard, game_info)
+
+	def open_endgame_lesson(self, lesson: EndgameLesson, index: int):
+		"""Uma posição da lição, sem relógio; Control+N abre a seguinte, Control+R a mesma."""
+		position = lesson.positions[index]
+		next_callback = None
+		if index + 1 < len(lesson.positions):
+			next_callback = functools.partial(self.open_endgame_lesson, lesson, index + 1)
+		game_info = GameInfo(
+			pychess_board=chess.Board(position.fen),
+			variant=ChessVariant.STANDARD,
+			time_control=NULL_TIME_CONTROL,
+			prospective=position.player,
+			vboard_kwargs=dict(
+				lesson=lesson,
+				position=position,
+				uci_options={},
+				uci_time_limit=0.5,
+				next_callback=next_callback,
+				restart_callback=functools.partial(self.open_endgame_lesson, lesson, index),
+			),
+		)
+		self.global_plugin_object.initialize_and_show_chessboard_dialog(EndgameLessonChessboard, game_info)
+
+	def onStudyLog(self, event):
+		from .graphical_interface.study_dialog import StudyLogDialog
+
+		assert gui.mainFrame is not None
+		dialog = StudyLogDialog(gui.mainFrame)
+		gui.runScriptModalDialog(dialog)
 
 	def onSettings(self, event):
 		dialog = ChessboardSettingsDialog(gui.mainFrame)
