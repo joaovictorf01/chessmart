@@ -2,6 +2,7 @@
 
 - **NVDA+Alt+X** abre a Tática de qualquer lugar. Os comandos de puzzle aleatório, Finais, Meu estudo e Nova partida estão no diálogo Definir gestos, na categoria Chessmart, sem tecla de fábrica.
 - README: o submenu fica em menu do NVDA > Ferramentas.
+- Diálogo de download de puzzles: a primeira mensagem pede pra aguardar a lista; se a lista não vier, o botão vira **Tentar de novo** em vez de deixar tudo desabilitado.
 
 # Chessmart 1.1.0
 

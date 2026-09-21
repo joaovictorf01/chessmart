@@ -67,7 +67,14 @@ class PuzzleDownloadDialog(wx.Dialog):
 		sizer = wx.BoxSizer(wx.VERTICAL)
 		helper = guiHelper.BoxSizerHelper(self, sizer=sizer)
 
-		self.statusText = wx.StaticText(self, -1, _("Checking for the latest puzzle database..."))
+		self.statusText = wx.StaticText(
+			self,
+			-1,
+			# Translators: First status of the download dialog, while the list of databases is fetched.
+			_(
+				"Checking for the latest puzzle database. Please wait: the choices and the Download button come alive when the list arrives."
+			),
+		)
 		helper.addItem(self.statusText)
 
 		self.installedText = wx.StaticText(self, -1, self._installed_sentence())
@@ -148,12 +155,20 @@ class PuzzleDownloadDialog(wx.Dialog):
 			# Translators: Shown when the list of available puzzle databases could not be downloaded.
 			_("Could not reach the download server. Check your internet connection and try again."),
 		)
+		# O botão vira "Tentar de novo": sem isso o usuário fica num diálogo
+		# em que nada está habilitado e conclui que não há o que baixar.
+		# Translators: Label of the download button after the list of databases could not be fetched.
+		self.downloadButton.SetLabel(_("&Try again"))
+		self.downloadButton.Enable()
+		self.Fit()
 		ui.message(self.statusText.GetLabel())
 
 	def _manifest_ready(self, manifest):
 		if not self:
 			return
 		self.manifest = manifest
+		# Translators: Button that starts the download of the puzzle database.
+		self.downloadButton.SetLabel(_("&Download"))
 		date = manifest.source_date
 		when = date.strftime("%Y-%m") if date else manifest.generated_at[:10]
 		if puzzle_download.update_available(manifest, self.installed):
@@ -207,6 +222,18 @@ class PuzzleDownloadDialog(wx.Dialog):
 	# -- download -------------------------------------------------------------
 
 	def onDownload(self, event):
+		if self.manifest is None:
+			# "Tentar de novo" depois de uma falha na lista.
+			self.downloadButton.Disable()
+			self.statusText.SetLabel(
+				# Translators: Status while the list of databases is fetched again.
+				_(
+					"Checking for the latest puzzle database. Please wait: the choices and the Download button come alive when the list arrives."
+				),
+			)
+			ui.message(self.statusText.GetLabel())
+			self._start_manifest_fetch()
+			return
 		info = self._selected_tier()
 		if info is None or self._worker is not None:
 			return

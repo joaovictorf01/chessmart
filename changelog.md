@@ -2,6 +2,7 @@
 
 - **NVDA+Alt+X** opens Tactics from anywhere. Scripts for a random puzzle, Endgames, My Study and New Game are in the Input Gestures dialog, under Chessmart, with no default key.
 - README: the submenu is under NVDA menu > Tools.
+- Puzzle download dialog: the first status says to wait for the list; if the list cannot be fetched, the button becomes **Try again** instead of leaving everything disabled.
 
 # Chessmart 1.1.0
 
