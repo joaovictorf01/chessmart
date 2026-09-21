@@ -190,6 +190,22 @@ class PuzzleCell(UserDrivenCell):
 
 	@script(gesture="kb:control+n")
 	def script_next_puzzle(self, gesture):
+		# Puzzle terminado: Control+N vai direto. Puzzle no meio: pede a
+		# segunda pressão, porque um Control+N sem querer joga fora o puzzle
+		# que estava na mesa e o id dele com ele (não vai para o banco).
+		puzzle = self.parent.puzzle
+		if puzzle is not None and self.parent.current_expected_move is not None:
+			if getLastScriptRepeatCount() == 0:
+				speak_next(
+					[
+						_("Press Control+N twice to skip tactic {puzzle_id}.").format(
+							puzzle_id=puzzle.puzzle_id,
+						),
+					],
+				)
+				return
+			log.info(f"chessmart: tática {puzzle.puzzle_id} pulada com Control+N")
+			speak_next([_("Skipping tactic {puzzle_id}.").format(puzzle_id=puzzle.puzzle_id)])
 		self.parent.next_puzzle()
 
 	@script(gesture="kb:control+r")
