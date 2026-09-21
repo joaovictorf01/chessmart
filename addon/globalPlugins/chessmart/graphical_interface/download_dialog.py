@@ -142,18 +142,24 @@ class PuzzleDownloadDialog(wx.Dialog):
 				manifest = puzzle_download.fetch_manifest()
 			except puzzle_download.DownloadError as error:
 				log.warning("chessmart: could not fetch the puzzle manifest: %s", error)
-				wx.CallAfter(self._manifest_failed)
+				wx.CallAfter(self._manifest_failed, str(error))
 				return
 			wx.CallAfter(self._manifest_ready, manifest)
 
 		threading.Thread(target=work, name="chessmart.manifest", daemon=True).start()
 
-	def _manifest_failed(self):
+	def _manifest_failed(self, reason: str = ""):
 		if not self:
 			return
+		# O motivo vai na própria mensagem: quem reporta "não deu" raramente
+		# abre o log, e é o motivo que diz se foi rede, proxy ou certificado.
 		self.statusText.SetLabel(
-			# Translators: Shown when the list of available puzzle databases could not be downloaded.
-			_("Could not reach the download server. Check your internet connection and try again."),
+			# Translators: Shown when the list of available puzzle databases could not be downloaded; {reason} is the technical error.
+			_(
+				"Could not reach the download server. Check your internet connection and try again. Details: {reason}"
+			).format(
+				reason=reason or _("unknown"),
+			),
 		)
 		# O botão vira "Tentar de novo": sem isso o usuário fica num diálogo
 		# em que nada está habilitado e conclui que não há o que baixar.

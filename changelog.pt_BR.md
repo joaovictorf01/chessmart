@@ -12,7 +12,7 @@ O versionamento segue o [Semantic Versioning](https://semver.org/lang/pt-BR/): v
 
 ## Corrigido
 
-- Diálogo de download de puzzles: a primeira mensagem pede pra aguardar a lista; se a lista não vier, o botão vira **Tentar de novo** em vez de deixar tudo desabilitado.
+- Diálogo de download de puzzles: quando a lista não vem, a mensagem traz o erro exato ("Detalhe: ..."), então um relato de "não foi possível alcançar o servidor" já diz se foi rede, proxy ou certificado. A primeira mensagem pede pra aguardar a lista; se a lista não vier, o botão vira **Tentar de novo** em vez de deixar tudo desabilitado.
 - README: o submenu fica em menu do NVDA > Ferramentas.
 
 # Chessmart 1.1.0

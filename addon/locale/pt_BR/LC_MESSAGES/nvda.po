@@ -19,7 +19,7 @@ msgid "&Browse..."
 msgstr "&Procurar..."
 
 #. Button that cancels the download or closes the dialog.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:106
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:108
 #: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:120
 msgid "&Cancel"
 msgstr "&Cancelar"
@@ -30,8 +30,8 @@ msgstr "&Chessmart"
 
 #. Button that starts the download of the puzzle database. Button that starts
 #. the tablebase download.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:103
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:169
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:105
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:175
 #: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:118
 msgid "&Download"
 msgstr "&Baixar"
@@ -71,7 +71,7 @@ msgid "A comfortable middle ground for daily training."
 msgstr "Um meio-termo confortável para o treino diário."
 
 #. Shown when a newer puzzle database than the installed one is available.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:178
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:184
 msgid "A newer Lichess base of {when} is available."
 msgstr "Há uma base do Lichess mais nova, de {when}."
 
@@ -121,7 +121,7 @@ msgid "Attacked by"
 msgstr "Atacada por"
 
 #. Shown when a puzzle database is available and none is installed.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:175
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:181
 msgid "Available: Lichess base of {when}."
 msgstr "Disponível: base do Lichess de {when}."
 
@@ -351,15 +351,6 @@ msgstr "Control+R para reiniciar este puzzle."
 msgid "Could Not Load Themes"
 msgstr "Não foi possível carregar os temas"
 
-#. Shown when the list of available puzzle databases could not be downloaded.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:154
-msgid ""
-"Could not reach the download server. Check your internet connection and try "
-"again."
-msgstr ""
-"Não foi possível alcançar o servidor de download. Verifique sua conexão com "
-"a internet e tente de novo."
-
 #. Spoken when saving is refused because NVDA runs in secure mode.
 #: addon/globalPlugins/chessmart/virtual_chessboard/base.py:305
 #: addon/globalPlugins/chessmart/virtual_chessboard/base.py:311
@@ -394,7 +385,7 @@ msgid "Database history: {solved} solved out of {total} attempts."
 msgstr "Histórico da base: {solved} resolvidos em {total} tentativas."
 
 #. Label of the list where the user picks which database to download.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:85
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:87
 msgid "Database to download"
 msgstr "Base para baixar"
 
@@ -424,19 +415,19 @@ msgid "Do&wnload or update..."
 msgstr "Bai&xar ou atualizar..."
 
 #. Shown after the user cancels the puzzle database download.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:329
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:337
 msgid "Download cancelled."
 msgstr "Download cancelado."
 
 #. Announced after the download, while the list of puzzle themes is being
 #. prepared.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:295
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:303
 msgid "Download complete. Preparing the theme catalog, this takes a moment..."
 msgstr ""
 "Download concluído. Preparando o catálogo de temas, isso leva um momento..."
 
 #. Announced when the puzzle database download starts.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:242
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:250
 msgid "Downloading {name}, {size}."
 msgstr "Baixando {name}, {size}."
 
@@ -607,18 +598,18 @@ msgid "Illegal move"
 msgstr "Lance ilegal"
 
 #. Shown when a puzzle database exists but carries no version information.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:122
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:124
 msgid "Installed: a puzzle database of unknown version."
 msgstr "Instalada: uma base de puzzles de versão desconhecida."
 
 #. Shown when no puzzle database is installed yet.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:124
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:126
 msgid "Installed: none. Tactics need a puzzle database to work."
 msgstr "Instalada: nenhuma. As táticas precisam de uma base de puzzles."
 
 #. Describes the installed puzzle database, e.g. "Installed: Light, 745,164
 #. puzzles, Lichess base of 2026-09."
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:129
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:131
 msgid "Installed: {tier}, {count:,} puzzles, Lichess base of {when}."
 msgstr "Instalada: {tier}, {count:,} puzzles, base do Lichess de {when}."
 
@@ -974,8 +965,8 @@ msgstr ""
 #. Title of the puzzle database download dialog.
 #: addon/globalPlugins/chessmart/__init__.py:157
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:52
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:319
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:342
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:327
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:350
 msgid "Puzzle Database"
 msgstr "Base de puzzles"
 
@@ -1310,7 +1301,7 @@ msgstr "Esse lance não resolve a tática."
 
 #. Message shown when the puzzle database download failed. Message shown when
 #. the tablebase download failed.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:341
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:349
 #: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:216
 msgid "The download failed: {reason}"
 msgstr "O download falhou: {reason}"
@@ -1354,7 +1345,7 @@ msgid "The theme catalog could not be built."
 msgstr "Não foi possível montar o catálogo de temas."
 
 #. Message shown when the puzzle database was installed successfully.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:315
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:323
 msgid "The {name} puzzle database is installed: {count:,} puzzles."
 msgstr "A base de puzzles {name} está instalada: {count:,} puzzles."
 
@@ -1462,6 +1453,9 @@ msgstr "Plano de treino: {plan}"
 msgid "UCI: g1f3"
 msgstr "UCI: g1f3"
 
+#. Shown when the list of available puzzle databases could not be downloaded;
+#. {reason} is the technical error.
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:159
 #: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:401
 #: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:703
 #: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:706
@@ -1557,7 +1551,7 @@ msgid "Your challenge has been rejected. Please try again."
 msgstr "Seu desafio foi recusado. Tente de novo."
 
 #. Shown when the installed puzzle database is already the latest.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:181
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:187
 msgid "Your puzzle database is up to date (Lichess base of {when})."
 msgstr "Sua base de puzzles está atualizada (base do Lichess de {when})."
 
@@ -1636,7 +1630,7 @@ msgid "{count} {piece}s"
 msgstr "{count} {piece}s"
 
 #. Download progress text, e.g. "30 MB of 76 MB (40%)".
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:284
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:292
 #: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:180
 msgid "{done} of {total} ({percent}%)"
 msgstr "{done} de {total} ({percent}%)"
@@ -1653,12 +1647,12 @@ msgstr "{minutes} minutos restantes para as {color}"
 
 #. One choice of puzzle database: name, puzzle count, download size and disk
 #. size.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:195
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:201
 msgid "{name}: {count:,} puzzles, {download} to download, {disk} on disk"
 msgstr "{name}: {count:,} puzzles, {download} para baixar, {disk} no disco"
 
 #. Download progress announced by speech, e.g. "40 percent".
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:276
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:284
 #: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:172
 msgid "{percent} percent"
 msgstr "{percent} por cento"
@@ -4255,20 +4249,37 @@ msgstr ""
 
 #. Label of the download button after the list of databases could not be
 #. fetched.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:159
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:165
 msgid "&Try again"
 msgstr "&Tentar de novo"
 
 #. First status of the download dialog, while the list of databases is
 #. fetched. Status while the list of databases is fetched again.
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:74
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:228
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:234
 msgid ""
 "Checking for the latest puzzle database. Please wait: the choices and the "
 "Download button come alive when the list arrives."
 msgstr ""
 "Buscando a base de puzzles mais recente. Aguarde: as opções e o botão Baixar"
 " ficam disponíveis quando a lista chegar."
+
+#. Shown when the list of available puzzle databases could not be downloaded;
+#. {reason} is the technical error.
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:158
+msgid ""
+"Could not reach the download server. Check your internet connection and try "
+"again. Details: {reason}"
+msgstr ""
+"Não foi possível alcançar o servidor de download. Verifique sua conexão com "
+"a internet e tente de novo. Detalhe: {reason}"
+
+#~ msgid ""
+#~ "Could not reach the download server. Check your internet connection and try "
+#~ "again."
+#~ msgstr ""
+#~ "Não foi possível alcançar o servidor de download. Verifique sua conexão com "
+#~ "a internet e tente de novo."
 
 #~ msgid "Checking for the latest puzzle database..."
 #~ msgstr "Verificando a base de puzzles mais recente..."

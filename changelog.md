@@ -12,7 +12,7 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 
 ## Fixed
 
-- Puzzle download dialog: the first status says to wait for the list; if the list cannot be fetched, the button becomes **Try again** instead of leaving everything disabled.
+- Puzzle download dialog: when the list cannot be fetched, the message now carries the exact error ("Details: ..."), so a report of "could not reach the download server" already says whether it was the network, a proxy or a certificate. The first status says to wait for the list; if the list cannot be fetched, the button becomes **Try again** instead of leaving everything disabled.
 - README: the submenu is under NVDA menu > Tools.
 
 # Chessmart 1.1.0
