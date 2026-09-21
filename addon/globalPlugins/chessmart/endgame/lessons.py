@@ -24,7 +24,7 @@ import dataclasses
 from ..i18n import N_, _
 from ..paths import import_bundled
 from . import judge
-from .drills import ENDGAME_DRILLS, EndgameDrill
+from .drills import ENDGAME_DRILLS, EndgameDrill, get_endgame_drill
 
 with import_bundled():
 	import chess
@@ -90,6 +90,39 @@ ENDGAME_LESSONS: tuple[EndgameLesson, ...] = (
 		),
 		source=f"{SILMAN}, Part 1 (King and Rook vs. Lone King); {CAPABLANCA}, examples 1 and 2",
 		drill=ENDGAME_DRILLS[1],
+	),
+	EndgameLesson(
+		lesson_id="mateTwoRooks",
+		# Translators: Name of the endgame lesson (a drill) with two rooks.
+		label=N_("1c. Mate with two rooks"),
+		# Translators: Description of the two rooks mate lesson.
+		description=N_(
+			"The ladder mate: the rooks take turns cutting off a rank and checking on the next, until the king runs out of board. Under 10 moves."
+		),
+		source=f"{SILMAN}, Part 1 (Two Rooks vs. Lone King)",
+		drill=get_endgame_drill("twoRooksVsKing"),
+	),
+	EndgameLesson(
+		lesson_id="mateTwoBishops",
+		# Translators: Name of the endgame lesson (a drill) with two bishops.
+		label=N_("1d. Mate with two bishops"),
+		# Translators: Description of the two bishops mate lesson.
+		description=N_(
+			"The bishops side by side make a wall the king cannot cross. Push it to the edge, then into a corner, and mate with the king close behind. Under 20 moves."
+		),
+		source=f"{SILMAN}, Part 5 (Two Bishops vs. Lone King); {VILLA}, ending 2",
+		drill=get_endgame_drill("twoBishopsVsKing"),
+	),
+	EndgameLesson(
+		lesson_id="mateBishopKnight",
+		# Translators: Name of the endgame lesson (a drill) with bishop and knight.
+		label=N_("1e. Mate with bishop and knight"),
+		# Translators: Description of the bishop and knight mate lesson.
+		description=N_(
+			"The hardest elementary mate: it only exists in the corner of the bishop's colour. Drive the king to the edge, then along the edge to the right corner, knight and bishop taking turns. Under 35 moves."
+		),
+		source=f"{SILMAN}, Part 8 (Bishop and Knight vs. Lone King); {VILLA}, ending 3",
+		drill=get_endgame_drill("bishopKnightVsKing"),
 	),
 	EndgameLesson(
 		lesson_id="kingAndOpposition",

@@ -130,3 +130,36 @@ class _LongerBoard:
 
 	def outcome(self):
 		return self._board.outcome()
+
+
+class TestMinorPieceDrills(unittest.TestCase):
+	def test_random_two_bishop_positions_have_bishops_on_both_colours(self):
+		drill = endgame_drill.get_endgame_drill("twoBishopsVsKing")
+		rng = random.Random(7)
+		for _ in range(30):
+			board = chess.Board(endgame_drill.random_fen(drill, rng))
+			self.assertTrue(endgame_drill.is_playable_drill_position(board), board.fen())
+			bishops = board.pieces(chess.BISHOP, chess.WHITE)
+			self.assertEqual(len(bishops), 2)
+			self.assertEqual(len({(chess.square_file(s) + chess.square_rank(s)) % 2 for s in bishops}), 2, board.fen())
+
+	def test_same_colour_bishops_are_rejected(self):
+		board = chess.Board("8/8/8/4k3/8/8/8/B1B1K3 w - - 0 1")
+		self.assertFalse(endgame_drill.is_playable_drill_position(board))
+
+	def test_random_bishop_knight_positions_are_playable(self):
+		drill = endgame_drill.get_endgame_drill("bishopKnightVsKing")
+		rng = random.Random(11)
+		for _ in range(30):
+			board = chess.Board(endgame_drill.random_fen(drill, rng))
+			self.assertTrue(endgame_drill.is_playable_drill_position(board), board.fen())
+			self.assertEqual(len(board.pieces(chess.BISHOP, chess.WHITE)), 1)
+			self.assertEqual(len(board.pieces(chess.KNIGHT, chess.WHITE)), 1)
+
+	def test_random_two_rook_positions_are_playable(self):
+		drill = endgame_drill.get_endgame_drill("twoRooksVsKing")
+		rng = random.Random(3)
+		for _ in range(30):
+			board = chess.Board(endgame_drill.random_fen(drill, rng))
+			self.assertTrue(endgame_drill.is_playable_drill_position(board), board.fen())
+			self.assertEqual(len(board.pieces(chess.ROOK, chess.WHITE)), 2)

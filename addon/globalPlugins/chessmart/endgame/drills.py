@@ -1,7 +1,7 @@
 # coding: utf-8
 # pyright: basic
 
-"""Finais elementares contra a engine: dama, torre e peão contra rei nu.
+"""Finais elementares contra a engine: dama, torre, dois bispos, bispo e cavalo, e peão contra rei nu.
 
 O que se treina aqui não é ver, é técnica: levar o rei adversário à borda,
 subir o próprio rei e dar o mate sem afogar, num relógio curto. Cada final
@@ -69,6 +69,42 @@ ENDGAME_DRILLS = (
 			"8/8/8/4k3/8/8/8/4K2R w - - 0 1",
 		),
 		random_pieces=(chess.ROOK,),
+	),
+	EndgameDrill(
+		drill_id="twoRooksVsKing",
+		# Translators: Name of the endgame drill with two rooks and king against king.
+		label=N_("Two rooks and king against king"),
+		# Translators: What to do in the two rooks against king drill.
+		description=N_(
+			"Checkmate in under 10 moves. The ladder: one rook cuts the king off along a rank, the other checks on the next rank, and they take turns. When the king comes close to a rook, move that rook far away along its rank. Your king stays out of it.",
+		),
+		target_moves=10,
+		example_fens=("8/8/8/4k3/8/8/8/R3K2R w - - 0 1",),
+		random_pieces=(chess.ROOK, chess.ROOK),
+	),
+	EndgameDrill(
+		drill_id="twoBishopsVsKing",
+		# Translators: Name of the endgame drill with two bishops and king against king.
+		label=N_("Two bishops and king against king"),
+		# Translators: What to do in the two bishops against king drill.
+		description=N_(
+			"Checkmate in under 20 moves. The two bishops side by side make a wall: push the king to the edge, then into a corner, with your own king close behind. Mind the stalemate.",
+		),
+		target_moves=20,
+		example_fens=("8/8/8/4k3/8/8/8/2B1KB2 w - - 0 1",),
+		random_pieces=(chess.BISHOP, chess.BISHOP),
+	),
+	EndgameDrill(
+		drill_id="bishopKnightVsKing",
+		# Translators: Name of the endgame drill with bishop, knight and king against king.
+		label=N_("Bishop, knight and king against king"),
+		# Translators: What to do in the bishop and knight against king drill.
+		description=N_(
+			"Checkmate in under 35 moves. The mate only exists in a corner of the bishop's colour: drive the king to the edge, then along it to the right corner. Give yourself a longer clock.",
+		),
+		target_moves=35,
+		example_fens=("8/8/8/4k3/8/8/8/2B1K1N1 w - - 0 1",),
+		random_pieces=(chess.BISHOP, chess.KNIGHT),
 	),
 	EndgameDrill(
 		drill_id="pawnVsKing",
@@ -147,6 +183,11 @@ def _random_board(pieces: tuple[chess.PieceType, ...], rng: random.Random) -> ch
 def is_playable_drill_position(board: chess.Board) -> bool:
 	"""Legal, Brancas a jogar, nenhuma peça branca de graça, jogo em aberto."""
 	if board.turn is not chess.WHITE or not board.is_valid() or board.is_game_over():
+		return False
+	# Dois bispos da mesma cor não dão mate: a posição sorteada tem que ter
+	# um em casa clara e outro em casa escura.
+	bishops = board.pieces(chess.BISHOP, chess.WHITE)
+	if len(bishops) >= 2 and len({(chess.square_file(square) + chess.square_rank(square)) % 2 for square in bishops}) < 2:
 		return False
 	for square, piece in board.piece_map().items():
 		if piece.color is chess.WHITE and piece.piece_type is not chess.KING:
