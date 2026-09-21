@@ -163,3 +163,21 @@ class TestMinorPieceDrills(unittest.TestCase):
 			board = chess.Board(endgame_drill.random_fen(drill, rng))
 			self.assertTrue(endgame_drill.is_playable_drill_position(board), board.fen())
 			self.assertEqual(len(board.pieces(chess.ROOK, chess.WHITE)), 2)
+
+	def test_pawn_drill_without_judge_stays_on_the_examples(self):
+		drill = endgame_drill.get_endgame_drill("pawnVsKing")
+		rng = random.Random(1)
+		for _ in range(10):
+			self.assertIn(endgame_drill.random_fen(drill, rng), drill.example_fens)
+
+	def test_pawn_drill_with_judge_draws_random_won_positions(self):
+		drill = endgame_drill.get_endgame_drill("pawnVsKing")
+		rng = random.Random(5)
+		seen = set()
+		for _ in range(20):
+			fen = endgame_drill.random_fen(drill, rng, accept=lambda board: True)
+			board = chess.Board(fen)
+			self.assertTrue(endgame_drill.is_playable_drill_position(board), fen)
+			self.assertEqual(len(board.pieces(chess.PAWN, chess.WHITE)), 1)
+			seen.add(fen)
+		self.assertGreater(len(seen), 5)

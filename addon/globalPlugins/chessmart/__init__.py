@@ -195,10 +195,21 @@ class ChessboardMenu(wx.Menu):
 	def open_endgame(self, lesson: EndgameLesson, index: int, time_control: ChessTimeControl):
 		"""Abre o que o diálogo escolheu: um treino de mate ou uma posição da lição."""
 		if lesson.drill is not None:
-			fen = opening_fen(lesson.drill) if index == 0 else random_fen(lesson.drill)
+			fen = opening_fen(lesson.drill) if index == 0 else random_fen(lesson.drill, accept=self._drill_position_is_won)
 			self.open_endgame_drill(lesson, time_control, fen)
 		else:
 			self.open_endgame_lesson(lesson, index)
+
+	def _drill_position_is_won(self, board) -> bool:
+		"""A tablebase diz que as Brancas ganham? Sem tablebase, ninguém diz, e o sorteio fica nos exemplos."""
+		from .endgame import judge, tablebase
+
+		try:
+			tables = tablebase.open_tablebase()
+		except Exception:
+			return False
+		verdict = judge.probe(tables, board)
+		return verdict is not None and verdict.wdl > 0
 
 	def open_endgame_drill(self, lesson: EndgameLesson, time_control: ChessTimeControl, fen: str):
 		"""O treino de mate contra a engine, na força máxima.
@@ -229,7 +240,7 @@ class ChessboardMenu(wx.Menu):
 					self.open_endgame_drill,
 					lesson,
 					next_clock,
-					random_fen(drill),
+					random_fen(drill, accept=self._drill_position_is_won),
 				),
 			),
 		)

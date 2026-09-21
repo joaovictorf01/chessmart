@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import dataclasses
 import random
+import typing
 
 from ..i18n import N_, _
 from ..paths import import_bundled
@@ -39,6 +40,10 @@ class EndgameDrill:
 	example_fens: tuple[str, ...]
 	# Peças brancas além do rei, para sortear posições; vazio = só os exemplos.
 	random_pieces: tuple[chess.PieceType, ...] = ()
+	# Sorteio só com juiz: nem toda posição deste final é ganha (rei e peão),
+	# então a sorteada precisa ser confirmada por quem chama (`accept`), e sem
+	# juiz o treino fica nos exemplos.
+	needs_judge: bool = False
 
 
 # Os FENs dos exemplos batem com `livros/capablanca/capitulo-01-secao-1.md`.
@@ -123,6 +128,10 @@ ENDGAME_DRILLS = (
 			"8/4k3/8/8/8/8/4PK2/8 w - - 0 1",
 			"8/8/4k3/8/8/4K3/4P3/8 w - - 0 1",
 		),
+		# Com a tablebase instalada, sorteia peão de qualquer coluna, inclusive
+		# de torre, e só aceita posição ganha: o treino é reconhecer e converter.
+		random_pieces=(chess.PAWN,),
+		needs_judge=True,
 	),
 )
 
@@ -152,21 +161,27 @@ def opening_fen(drill: EndgameDrill) -> str:
 	return drill.example_fens[0]
 
 
-def random_fen(drill: EndgameDrill, rng: random.Random | None = None) -> str:
+def random_fen(
+	drill: EndgameDrill,
+	rng: random.Random | None = None,
+	accept: "typing.Callable[[chess.Board], bool] | None" = None,
+) -> str:
 	"""Uma posição nova do mesmo final.
 
 	Com peças para sortear, monta rei branco, rei preto e a peça em casas
 	distintas e aceita a posição quando é legal com as Brancas a jogar, a
-	peça não está de graça e o jogo não acabou antes de começar. Sem peças
-	para sortear (rei e peão), escolhe um dos exemplos.
+	peça não está de graça e o jogo não acabou antes de começar. Um final
+	que `needs_judge` só sorteia com `accept` (a tablebase dizendo que a
+	posição é ganha); sem isso, e sem peças para sortear, escolhe um exemplo.
 	"""
 	rng = rng or random.Random()
-	if not drill.random_pieces:
+	if not drill.random_pieces or (drill.needs_judge and accept is None):
 		return rng.choice(drill.example_fens)
-	while True:
+	for _ in range(2000):
 		board = _random_board(drill.random_pieces, rng)
-		if is_playable_drill_position(board):
+		if is_playable_drill_position(board) and (accept is None or accept(board)):
 			return board.fen()
+	return rng.choice(drill.example_fens)
 
 
 def _random_board(pieces: tuple[chess.PieceType, ...], rng: random.Random) -> chess.Board:
