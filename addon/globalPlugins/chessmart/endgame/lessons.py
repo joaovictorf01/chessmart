@@ -583,6 +583,132 @@ ENDGAME_LESSONS: tuple[EndgameLesson, ...] = (
 			),
 		),
 	),
+	EndgameLesson(
+		lesson_id="rookEndingsPractical",
+		# Translators: Name of the endgame lesson on practical rook endings.
+		label=N_("9. Rook endings: the ones that decide games"),
+		# Translators: Description of the lesson on practical rook endings.
+		description=N_(
+			"Beyond Philidor and Lucena: the short side, Vancura against the rook pawn, the back-rank defence, the rule of five, and the rook behind the passed pawn. Four of them come in pairs, the right way and the wrong way."
+		),
+		source=f"{SILMAN}, Parts 5 to 7 (Rook Endgames); {VILLA}, endings 53 to 66",
+		positions=(
+			_pos(
+				"shortSideRight",
+				"4K3/4P1k1/8/8/8/8/r7/5R2 b - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("The short side: king on the short side, rook on the long side"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"You defend, and the pawn is already on the seventh. Your king stays on the short side of the pawn, so the rook has the long side to check from: three files of distance or more, and the checks never run out. Draw."
+				),
+				f"{VILLA}, ending 61; {SILMAN}, Part 6, The Short Side Defense",
+				player=chess.BLACK,
+			),
+			_pos(
+				"shortSideWrong",
+				"4K3/2k1P3/8/8/8/8/7r/3R4 b - - 0 1",
+				judge.LOSS,
+				# Translators: Title of a lesson position.
+				N_("The short side: king on the long side"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Same ending, king on the wrong side. Now the rook checks from the short side, two files away, and the king walks up to it: the checks run out and the pawn promotes. Lost."
+				),
+				f"{VILLA}, ending 61; {SILMAN}, Part 6, The Short Side Defense",
+				player=chess.BLACK,
+			),
+			_pos(
+				"vancura",
+				"R7/6k1/P4r2/8/2K5/8/8/8 b - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("Vancura: the rook attacks the rook pawn from the side"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"You defend against a rook pawn on the sixth with the attacking rook in front of it. Keep your rook on the third rank, hitting the pawn from the side, and check whenever the king comes to protect it: it never finds shelter. Draw."
+				),
+				f"{VILLA}, ending 66; {SILMAN}, Part 7, The Vancura Position",
+				player=chess.BLACK,
+			),
+			_pos(
+				"vancuraPassive",
+				"R7/6k1/P7/8/2K5/8/8/r7 b - - 0 1",
+				judge.LOSS,
+				# Translators: Title of a lesson position.
+				N_("Vancura: the passive rook behind the pawn"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Same ending with your rook behind the pawn. The attacking king walks to b7, the rook leaves a8 with check, and the pawn promotes. Lost: against the rook pawn, behind is the wrong place."
+				),
+				f"{VILLA}, ending 66; {SILMAN}, Part 7, The Vancura Position",
+				player=chess.BLACK,
+			),
+			_pos(
+				"backRankDefence",
+				"1r4k1/R7/5KP1/8/8/8/8/8 b - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("The back-rank defence against a knight pawn"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"You defend with the king in front of a knight pawn on the sixth and the rook on the back rank. Just wait: the rook shuffles along the back rank, the king cannot be driven out, and there is no mate. Draw. It only works against a rook pawn or a knight pawn."
+				),
+				f"{VILLA}, ending 58; {SILMAN}, Part 5, Rook and Knight Pawn",
+				player=chess.BLACK,
+			),
+			_pos(
+				"ruleOfFiveWin",
+				"3r4/8/8/6k1/3P4/3K4/8/5R2 w - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("The rule of five: pawn on the fourth, king cut off by two files"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Add the pawn's rank to the number of files between the defending king and the pawn. Four plus two is six, more than five: the king cannot get back in time. Advance the king ahead of the pawn and win."
+				),
+				f"{SILMAN}, Part 6, The Rule of Five",
+			),
+			_pos(
+				"ruleOfFiveDraw",
+				"3r4/8/8/6k1/8/3P4/3K4/5R2 w - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("The rule of five: pawn on the third"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Same cut, pawn one rank back. Three plus two is five, not more: the defending king gets back to the pawn's file in time. Draw. Do not force it; keep the pieces active."
+				),
+				f"{SILMAN}, Part 6, The Rule of Five",
+			),
+			_pos(
+				"rookBehindPassedPawn",
+				"r7/5k2/8/P7/4K3/8/8/R7 w - - 0 1",
+				judge.WIN,
+				# Translators: Title of a lesson position.
+				N_("Tarrasch: the rook behind the passed pawn"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"Your rook stands behind your passed pawn, theirs stands in front of it and is tied to it. Every pawn step gains your rook a rank and costs theirs one. Bring the king to the pawn and win."
+				),
+				f"{VILLA}, ending 64; {SILMAN}, Part 6, Rooks Belong Behind Passed Pawns",
+			),
+			_pos(
+				"rookInFrontOfPawn",
+				"R7/6k1/P7/8/8/8/6K1/r7 b - - 0 1",
+				judge.DRAW,
+				# Translators: Title of a lesson position.
+				N_("Tarrasch: the rook in front of its own pawn"),
+				# Translators: Rule taught by a lesson position.
+				N_(
+					"You defend, and their rook is in front of its own rook pawn: it cannot leave a8 without losing the pawn. Keep your rook behind the pawn and your king on g7 and h7, and check the king whenever it comes near. Draw as long as the king stays away."
+				),
+				f"{VILLA}, ending 64; {SILMAN}, Part 6, Rooks Belong Behind Passed Pawns",
+				player=chess.BLACK,
+			),
+		),
+	),
 )
 
 

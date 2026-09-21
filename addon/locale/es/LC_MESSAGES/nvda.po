@@ -2027,12 +2027,12 @@ msgid "Nothing recorded in the last {days} days."
 msgstr "Nada registrado en los últimos {days} días."
 
 #. Instruction after the question in a lesson: the position is a draw.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:623
+#: addon/globalPlugins/chessmart/endgame/lessons.py:749
 msgid "Now hold the draw: play the position out against the engine."
 msgstr "Ahora mantén las tablas: juega la posición contra el motor."
 
 #. Instruction after the question in a lesson: the position is won.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:620
+#: addon/globalPlugins/chessmart/endgame/lessons.py:746
 msgid "Now win it: play the position out against the engine."
 msgstr "Ahora gánala: juega la posición contra el motor."
 
@@ -3361,7 +3361,7 @@ msgstr "Esta función no está disponible por ahora. ¡Atento! "
 
 #. Instruction after the question in a lesson: the position is lost, nothing
 #. to play.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:625
+#: addon/globalPlugins/chessmart/endgame/lessons.py:751
 msgid ""
 "This one is lost with best play; there is nothing to play out. Control+N "
 "goes on."
@@ -4097,6 +4097,173 @@ msgstr ""
 #: addon/globalPlugins/chessmart/endgame/drills.py:76
 msgid "Two rooks and king against king"
 msgstr "Dos torres y rey contra rey"
+
+#. Name of the endgame lesson on practical rook endings.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:589
+msgid "9. Rook endings: the ones that decide games"
+msgstr "9. Finales de torre: los que deciden partidas"
+
+#. Rule taught by a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:668
+msgid ""
+"Add the pawn's rank to the number of files between the defending king and "
+"the pawn. Four plus two is six, more than five: the king cannot get back in "
+"time. Advance the king ahead of the pawn and win."
+msgstr ""
+"Suma la fila del peón al número de columnas entre el rey defensor y el peón."
+" Cuatro más dos son seis, más que cinco: el rey no vuelve a tiempo. Avanza "
+"el rey por delante del peón y gana."
+
+#. Description of the lesson on practical rook endings.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:591
+msgid ""
+"Beyond Philidor and Lucena: the short side, Vancura against the rook pawn, "
+"the back-rank defence, the rule of five, and the rook behind the passed "
+"pawn. Four of them come in pairs, the right way and the wrong way."
+msgstr ""
+"Más allá de Philidor y Lucena: el lado corto, Vancura contra el peón de "
+"torre, la defensa de la última fila, la regla de los cinco y la torre detrás"
+" del peón pasado. Cuatro de ellos vienen en pares, de la forma correcta y de"
+" la incorrecta."
+
+#. Rule taught by a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:680
+msgid ""
+"Same cut, pawn one rank back. Three plus two is five, not more: the "
+"defending king gets back to the pawn's file in time. Draw. Do not force it; "
+"keep the pieces active."
+msgstr ""
+"Mismo corte, peón una fila atrás. Tres más dos son cinco, no más: el rey "
+"defensor vuelve a tiempo a la columna del peón. Tablas. No lo fuerces; "
+"mantén las piezas activas."
+
+#. Rule taught by a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:642
+msgid ""
+"Same ending with your rook behind the pawn. The attacking king walks to b7, "
+"the rook leaves a8 with check, and the pawn promotes. Lost: against the rook"
+" pawn, behind is the wrong place."
+msgstr ""
+"Mismo final con tu torre detrás del peón. El rey atacante camina hasta b7, "
+"la torre sale de a8 con jaque y el peón corona. Perdido: contra el peón de "
+"torre, detrás es el lugar equivocado."
+
+#. Rule taught by a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:616
+msgid ""
+"Same ending, king on the wrong side. Now the rook checks from the short "
+"side, two files away, and the king walks up to it: the checks run out and "
+"the pawn promotes. Lost."
+msgstr ""
+"Mismo final, rey en el lado equivocado. Ahora la torre da jaque desde el "
+"lado corto, a dos columnas, y el rey se le acerca: los jaques se acaban y el"
+" peón corona. Perdido."
+
+#. Title of a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:690
+msgid "Tarrasch: the rook behind the passed pawn"
+msgstr "Tarrasch: la torre detrás del peón pasado"
+
+#. Title of a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:702
+msgid "Tarrasch: the rook in front of its own pawn"
+msgstr "Tarrasch: la torre delante de su propio peón"
+
+#. Title of a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:653
+msgid "The back-rank defence against a knight pawn"
+msgstr "La defensa de la última fila contra el peón de caballo"
+
+#. Title of a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:666
+msgid "The rule of five: pawn on the fourth, king cut off by two files"
+msgstr "La regla de los cinco: peón en cuarta, rey cortado por dos columnas"
+
+#. Title of a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:678
+msgid "The rule of five: pawn on the third"
+msgstr "La regla de los cinco: peón en tercera"
+
+#. Title of a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:614
+msgid "The short side: king on the long side"
+msgstr "El lado corto: rey en el lado largo"
+
+#. Title of a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:601
+msgid "The short side: king on the short side, rook on the long side"
+msgstr "El lado corto: rey en el lado corto, torre en el lado largo"
+
+#. Title of a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:640
+msgid "Vancura: the passive rook behind the pawn"
+msgstr "Vancura: la torre pasiva detrás del peón"
+
+#. Title of a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:627
+msgid "Vancura: the rook attacks the rook pawn from the side"
+msgstr "Vancura: la torre ataca al peón de torre desde el lado"
+
+#. Rule taught by a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:629
+msgid ""
+"You defend against a rook pawn on the sixth with the attacking rook in front"
+" of it. Keep your rook on the third rank, hitting the pawn from the side, "
+"and check whenever the king comes to protect it: it never finds shelter. "
+"Draw."
+msgstr ""
+"Defiendes contra un peón de torre en sexta con la torre atacante delante de "
+"él. Mantén tu torre en la tercera fila, atacando al peón desde el lado, y da"
+" jaque cada vez que el rey venga a protegerlo: nunca encuentra refugio. "
+"Tablas."
+
+#. Rule taught by a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:655
+msgid ""
+"You defend with the king in front of a knight pawn on the sixth and the rook"
+" on the back rank. Just wait: the rook shuffles along the back rank, the "
+"king cannot be driven out, and there is no mate. Draw. It only works against"
+" a rook pawn or a knight pawn."
+msgstr ""
+"Defiendes con el rey delante de un peón de caballo en sexta y la torre en la"
+" última fila. Solo espera: la torre se pasea por la última fila, al rey no "
+"se le puede expulsar y no hay mate. Tablas. Solo funciona contra peón de "
+"torre o de caballo."
+
+#. Rule taught by a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:603
+msgid ""
+"You defend, and the pawn is already on the seventh. Your king stays on the "
+"short side of the pawn, so the rook has the long side to check from: three "
+"files of distance or more, and the checks never run out. Draw."
+msgstr ""
+"Defiendes, y el peón ya está en séptima. Tu rey se queda en el lado corto "
+"del peón, para que la torre tenga el lado largo desde donde dar jaque: tres "
+"columnas de distancia o más, y los jaques nunca se acaban. Tablas."
+
+#. Rule taught by a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:704
+msgid ""
+"You defend, and their rook is in front of its own rook pawn: it cannot leave"
+" a8 without losing the pawn. Keep your rook behind the pawn and your king on"
+" g7 and h7, and check the king whenever it comes near. Draw as long as the "
+"king stays away."
+msgstr ""
+"Defiendes, y su torre está delante de su propio peón de torre: no puede "
+"salir de a8 sin perder el peón. Mantén tu torre detrás del peón y tu rey en "
+"g7 y h7, y da jaque al rey cada vez que se acerque. Tablas mientras el rey "
+"se mantenga lejos."
+
+#. Rule taught by a lesson position.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:692
+msgid ""
+"Your rook stands behind your passed pawn, theirs stands in front of it and "
+"is tied to it. Every pawn step gains your rook a rank and costs theirs one. "
+"Bring the king to the pawn and win."
+msgstr ""
+"Tu torre está detrás de tu peón pasado; la suya está delante y atada a él. "
+"Cada paso del peón le da una fila a tu torre y le quita una a la suya. Lleva"
+" el rey hasta el peón y gana."
 
 #~ msgid ""
 #~ "1.1.0: Endgames: mate drills (queen, rook, two bishops, and bishop and "
