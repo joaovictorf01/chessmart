@@ -6,6 +6,10 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 
 - **NVDA+Alt+X** opens Tactics from anywhere. Scripts for a random puzzle, Endgames, My Study and New Game are in the Input Gestures dialog, under Chessmart, with no default key.
 
+## To do
+
+- Puzzle download: accept a `.db.gz` downloaded by hand in the browser (for machines that cannot reach GitHub from the add-on); log the exact error when the manifest cannot be fetched. First report: 21-09-2026, "could not reach the download server".
+
 ## Fixed
 
 - Puzzle download dialog: the first status says to wait for the list; if the list cannot be fetched, the button becomes **Try again** instead of leaving everything disabled.
