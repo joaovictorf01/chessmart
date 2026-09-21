@@ -145,7 +145,9 @@ class TestMinorPieceDrills(unittest.TestCase):
 			bishops = board.pieces(chess.BISHOP, chess.WHITE)
 			self.assertEqual(len(bishops), 2)
 			self.assertEqual(
-				len({(chess.square_file(s) + chess.square_rank(s)) % 2 for s in bishops}), 2, board.fen()
+				len({(chess.square_file(s) + chess.square_rank(s)) % 2 for s in bishops}),
+				2,
+				board.fen(),
 			)
 
 	def test_same_colour_bishops_are_rejected(self):

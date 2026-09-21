@@ -81,7 +81,8 @@ class TablebaseDownloadDialog(wx.Dialog):
 				# Translators: One set of tablebases that is fully installed.
 				choices.append(
 					_("{name}: {total}, installed").format(
-						name=name, total=_megabytes(table_set.total_bytes)
+						name=name,
+						total=_megabytes(table_set.total_bytes),
 					),
 				)
 		# Translators: Label of the list where the user picks which tablebases to download.

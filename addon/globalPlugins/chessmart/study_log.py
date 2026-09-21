@@ -211,7 +211,9 @@ def render_progress(progress: list[LessonProgress]) -> list[str]:
 			# Translators: A lesson whose positions are all firm, e.g. "2. The king and the opposition: firm, 6 of 6."
 			lines.append(
 				_("{lesson}: firm, {firm} of {total}.").format(
-					lesson=label, firm=len(item.firm), total=total
+					lesson=label,
+					firm=len(item.firm),
+					total=total,
 				),
 			)
 		elif item.attempted == 0:
