@@ -1,8 +1,15 @@
-# Chessmart 1.1.1 (unreleased)
+# Unreleased
+
+Versioning follows [Semantic Versioning](https://semver.org/): a patch release (1.1.x) only fixes; a minor release (1.x.0) adds features; a major release changes what existing users rely on. The version is decided when the release is cut, from what this section holds.
+
+## Added
 
 - **NVDA+Alt+X** opens Tactics from anywhere. Scripts for a random puzzle, Endgames, My Study and New Game are in the Input Gestures dialog, under Chessmart, with no default key.
-- README: the submenu is under NVDA menu > Tools.
+
+## Fixed
+
 - Puzzle download dialog: the first status says to wait for the list; if the list cannot be fetched, the button becomes **Try again** instead of leaving everything disabled.
+- README: the submenu is under NVDA menu > Tools.
 
 # Chessmart 1.1.0
 
