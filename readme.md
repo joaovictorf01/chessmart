@@ -9,7 +9,7 @@ Requires NVDA 2026.1 or later (64-bit Python 3.13). Nothing else needs to be ins
 ## Getting started
 
 1. Install the add-on and restart NVDA.
-2. Open the NVDA menu and find the **Chessmart** submenu.
+2. Open the NVDA menu (NVDA+N), go to **Tools** and find the **Chessmart** submenu.
 3. Choose **Tactics...** to train, **Endgames...** for the endgame lessons, **My Study...** to see how far you have come, or **New Game...** to play.
 
 The first time you open Tactics, the add-on offers to download the puzzle database. Pick **Light** (about 76 MB, 745,000 puzzles that many players have solved and approved) or **Complete** (about 591 MB, the whole Lichess base of 5.8 million puzzles). The download runs in the background with spoken progress; you can cancel with Escape. The database is stored in your NVDA configuration folder, under `chessmart`, together with your training history.
