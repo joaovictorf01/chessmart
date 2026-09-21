@@ -51,7 +51,8 @@ class TestStudyLog(unittest.TestCase):
 		self.assertEqual(len(summaries), 1)
 		day = summaries[0]
 		self.assertEqual(
-			(day.tactics_attempts, day.tactics_solved, day.endgame_attempts, day.endgame_held), (2, 1, 1, 1)
+			(day.tactics_attempts, day.tactics_solved, day.endgame_attempts, day.endgame_held),
+			(2, 1, 1, 1),
 		)
 		self.assertEqual(day.total_minutes, 20)
 		lines = study_log.render_days(summaries, 7)
@@ -80,6 +81,6 @@ class TestStudyLog(unittest.TestCase):
 		lines = study_log.render_progress(progress)
 		self.assertIn("1a. Mate with queen and king: not started.", lines)
 		self.assertTrue(
-			any(line.startswith("2. The king and the opposition: 1 of 6 firm. Pending: ") for line in lines)
+			any(line.startswith("2. The king and the opposition: 1 of 6 firm. Pending: ") for line in lines),
 		)
 		self.assertIn("You are at: 1a. Mate with queen and king.", lines)

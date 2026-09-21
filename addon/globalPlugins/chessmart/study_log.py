@@ -58,7 +58,8 @@ class LessonProgress:
 
 def _has_table(connection, name: str) -> bool:
 	row = connection.execute(
-		"SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?", (name,)
+		"SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
+		(name,),
 	).fetchone()
 	return row is not None
 
@@ -209,7 +210,9 @@ def render_progress(progress: list[LessonProgress]) -> list[str]:
 		if item.complete:
 			# Translators: A lesson whose positions are all firm, e.g. "2. The king and the opposition: firm, 6 of 6."
 			lines.append(
-				_("{lesson}: firm, {firm} of {total}.").format(lesson=label, firm=len(item.firm), total=total)
+				_("{lesson}: firm, {firm} of {total}.").format(
+					lesson=label, firm=len(item.firm), total=total
+				),
 			)
 		elif item.attempted == 0:
 			# Translators: A lesson not started yet.
@@ -235,7 +238,7 @@ def render_progress(progress: list[LessonProgress]) -> list[str]:
 	# Translators: Explains what "firm" means in the study log.
 	lines.append(
 		_(
-			"Firm means held {streak} times in a row, question answered right and result kept without a slip."
-		).format(streak=FIRM_STREAK)
+			"Firm means held {streak} times in a row, question answered right and result kept without a slip.",
+		).format(streak=FIRM_STREAK),
 	)
 	return lines

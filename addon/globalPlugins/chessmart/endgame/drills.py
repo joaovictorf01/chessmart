@@ -177,7 +177,7 @@ def random_fen(
 	rng = rng or random.Random()
 	if not drill.random_pieces or (drill.needs_judge and accept is None):
 		return rng.choice(drill.example_fens)
-	for _ in range(2000):
+	for _attempt in range(2000):
 		board = _random_board(drill.random_pieces, rng)
 		if is_playable_drill_position(board) and (accept is None or accept(board)):
 			return board.fen()
@@ -202,7 +202,10 @@ def is_playable_drill_position(board: chess.Board) -> bool:
 	# Dois bispos da mesma cor não dão mate: a posição sorteada tem que ter
 	# um em casa clara e outro em casa escura.
 	bishops = board.pieces(chess.BISHOP, chess.WHITE)
-	if len(bishops) >= 2 and len({(chess.square_file(square) + chess.square_rank(square)) % 2 for square in bishops}) < 2:
+	if (
+		len(bishops) >= 2
+		and len({(chess.square_file(square) + chess.square_rank(square)) % 2 for square in bishops}) < 2
+	):
 		return False
 	for square, piece in board.piece_map().items():
 		if piece.color is chess.WHITE and piece.piece_type is not chess.KING:
@@ -239,7 +242,7 @@ def drill_result_messages(drill: EndgameDrill, board: chess.Board, seconds_left:
 			if moves < drill.target_moves:
 				# Translators: Spoken when the mate came within the drill's target.
 				messages.append(
-					_("Within the target of under {target} moves.").format(target=drill.target_moves)
+					_("Within the target of under {target} moves.").format(target=drill.target_moves),
 				)
 			else:
 				# Translators: Spoken when the mate took longer than the drill's target.

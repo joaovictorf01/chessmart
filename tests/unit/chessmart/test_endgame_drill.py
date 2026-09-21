@@ -30,10 +30,12 @@ class TestDrillCatalog(unittest.TestCase):
 
 	def test_unknown_id_falls_back_to_the_first_drill(self):
 		self.assertEqual(
-			endgame_drill.get_endgame_drill("nope").drill_id, endgame_drill.DEFAULT_ENDGAME_DRILL_ID
+			endgame_drill.get_endgame_drill("nope").drill_id,
+			endgame_drill.DEFAULT_ENDGAME_DRILL_ID,
 		)
 		self.assertEqual(
-			endgame_drill.get_endgame_drill(None).drill_id, endgame_drill.DEFAULT_ENDGAME_DRILL_ID
+			endgame_drill.get_endgame_drill(None).drill_id,
+			endgame_drill.DEFAULT_ENDGAME_DRILL_ID,
 		)
 
 
@@ -108,7 +110,8 @@ class TestResultMessages(unittest.TestCase):
 		self.assertTrue(board.is_stalemate())
 		messages = endgame_drill.drill_result_messages(drill, board, None)
 		self.assertEqual(
-			messages, ["Stalemate: the black king had no legal move and was not in check. Draw."]
+			messages,
+			["Stalemate: the black king had no legal move and was not in check. Draw."],
 		)
 
 	def test_pawn_drill_has_no_target(self):
@@ -141,7 +144,9 @@ class TestMinorPieceDrills(unittest.TestCase):
 			self.assertTrue(endgame_drill.is_playable_drill_position(board), board.fen())
 			bishops = board.pieces(chess.BISHOP, chess.WHITE)
 			self.assertEqual(len(bishops), 2)
-			self.assertEqual(len({(chess.square_file(s) + chess.square_rank(s)) % 2 for s in bishops}), 2, board.fen())
+			self.assertEqual(
+				len({(chess.square_file(s) + chess.square_rank(s)) % 2 for s in bishops}), 2, board.fen()
+			)
 
 	def test_same_colour_bishops_are_rejected(self):
 		board = chess.Board("8/8/8/4k3/8/8/8/B1B1K3 w - - 0 1")

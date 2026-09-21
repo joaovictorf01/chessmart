@@ -195,7 +195,11 @@ class ChessboardMenu(wx.Menu):
 	def open_endgame(self, lesson: EndgameLesson, index: int, time_control: ChessTimeControl):
 		"""Abre o que o diálogo escolheu: um treino de mate ou uma posição da lição."""
 		if lesson.drill is not None:
-			fen = opening_fen(lesson.drill) if index == 0 else random_fen(lesson.drill, accept=self._drill_position_is_won)
+			fen = (
+				opening_fen(lesson.drill)
+				if index == 0
+				else random_fen(lesson.drill, accept=self._drill_position_is_won)
+			)
 			self.open_endgame_drill(lesson, time_control, fen)
 		else:
 			self.open_endgame_lesson(lesson, index)

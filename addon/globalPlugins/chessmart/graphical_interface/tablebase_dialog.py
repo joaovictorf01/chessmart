@@ -66,7 +66,7 @@ class TablebaseDownloadDialog(wx.Dialog):
 			else:
 				# Translators: The full set of tablebases.
 				name = _(
-					"Up to 5 pieces: rook and pawn against rook, queen against pawn, everything in the lessons"
+					"Up to 5 pieces: rook and pawn against rook, queen against pawn, everything in the lessons",
 				)
 			if missing:
 				# Translators: One set of tablebases with its download size, e.g. "Up to 5 pieces (...): 984 MB, 120 MB still to download".
@@ -80,11 +80,18 @@ class TablebaseDownloadDialog(wx.Dialog):
 			else:
 				# Translators: One set of tablebases that is fully installed.
 				choices.append(
-					_("{name}: {total}, installed").format(name=name, total=_megabytes(table_set.total_bytes))
+					_("{name}: {total}, installed").format(
+						name=name, total=_megabytes(table_set.total_bytes)
+					),
 				)
 		# Translators: Label of the list where the user picks which tablebases to download.
 		self.setRadio = wx.RadioBox(
-			self, -1, _("Tables to download"), choices=choices, majorDimension=1, style=wx.RA_SPECIFY_COLS
+			self,
+			-1,
+			_("Tables to download"),
+			choices=choices,
+			majorDimension=1,
+			style=wx.RA_SPECIFY_COLS,
 		)
 		self.setRadio.SetSelection(len(self.sets) - 1)
 		helper.addItem(self.setRadio)
@@ -94,7 +101,7 @@ class TablebaseDownloadDialog(wx.Dialog):
 			-1,
 			# Translators: Note in the tablebase download dialog.
 			_(
-				"Source: the Syzygy tables mirrored by Lichess (tablebase.lichess.ovh). Each file is checked before it is kept; a cancelled download resumes where it stopped."
+				"Source: the Syzygy tables mirrored by Lichess (tablebase.lichess.ovh). Each file is checked before it is kept; a cancelled download resumes where it stopped.",
 			),
 		)
 		note.Wrap(520)
@@ -135,8 +142,9 @@ class TablebaseDownloadDialog(wx.Dialog):
 		# Translators: Announced when the tablebase download starts.
 		ui.message(
 			_("Downloading {count} files, {size}.").format(
-				count=len(missing), size=_megabytes(sum(f.bytes for f in missing))
-			)
+				count=len(missing),
+				size=_megabytes(sum(f.bytes for f in missing)),
+			),
 		)
 
 		def work():
@@ -169,8 +177,10 @@ class TablebaseDownloadDialog(wx.Dialog):
 		# Translators: Download progress text, e.g. "30 MB of 76 MB (40%)".
 		self.progressText.SetLabel(
 			_("{done} of {total} ({percent}%)").format(
-				done=_megabytes(done), total=_megabytes(total), percent=percent
-			)
+				done=_megabytes(done),
+				total=_megabytes(total),
+				percent=percent,
+			),
 		)
 
 	def _finished_ok(self, table_set):
@@ -180,7 +190,7 @@ class TablebaseDownloadDialog(wx.Dialog):
 		self.gauge.SetValue(100)
 		# Translators: Message shown when the tablebases were installed.
 		message = _("Tablebases up to {pieces} pieces installed. The judge is on.").format(
-			pieces=table_set.max_pieces
+			pieces=table_set.max_pieces,
 		)
 		gui.messageBox(message, _("Endgame Tablebases"), style=wx.ICON_INFORMATION, parent=self)
 		self.EndModal(wx.ID_OK)

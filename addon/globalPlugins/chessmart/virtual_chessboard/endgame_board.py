@@ -323,7 +323,7 @@ class EndgameDrillChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 			yield speech.commands.BreakCommand(250)
 			# Translators: Spoken at the end of a drill or lesson that used tablebase hints; {hints} is a number.
 			yield _("With {hints} hints from the tablebase: it counts as practice, not as held.").format(
-				hints=self.hints_used
+				hints=self.hints_used,
 			)
 		yield speech.commands.BreakCommand(250)
 		# Translators: Spoken when an endgame drill ends.
@@ -541,7 +541,7 @@ class EndgameLessonChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 			self._ask()
 			return
 		speak_next(
-			[position_title(self.position), speech.commands.BreakCommand(150), position_rule(self.position)]
+			[position_title(self.position), speech.commands.BreakCommand(150), position_rule(self.position)],
 		)
 
 	# -- jogar ------------------------------------------------------------------
@@ -605,7 +605,7 @@ class EndgameLessonChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		elif kept:
 			# Translators: Spoken when the result was kept but with slips or take-backs along the way.
 			yield _(
-				"Result held, with {slips} slips and {takebacks} take-backs. Once more without them."
+				"Result held, with {slips} slips and {takebacks} take-backs. Once more without them.",
 			).format(
 				slips=self.spoiled_moves,
 				takebacks=self.take_backs,
@@ -616,7 +616,7 @@ class EndgameLessonChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		if self.hints_used:
 			yield speech.commands.BreakCommand(250)
 			yield _("With {hints} hints from the tablebase: it counts as practice, not as held.").format(
-				hints=self.hints_used
+				hints=self.hints_used,
 			)
 		yield speech.commands.BreakCommand(250)
 		# Translators: Spoken at the end of a lesson position.

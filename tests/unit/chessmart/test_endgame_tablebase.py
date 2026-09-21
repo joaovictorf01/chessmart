@@ -25,7 +25,7 @@ class TestManifest(unittest.TestCase):
 		self.assertEqual({f.kind for f in files}, {"wdl", "dtz"})
 		self.assertEqual({f.pieces for f in files}, {3, 4, 5})
 		self.assertTrue(
-			all(len(f.sha256) == 64 and f.bytes > 0 and f.url.startswith("https://") for f in files)
+			all(len(f.sha256) == 64 and f.bytes > 0 and f.url.startswith("https://") for f in files),
 		)
 
 	def test_table_sets_are_nested(self):
@@ -107,10 +107,12 @@ class TestJudge(unittest.TestCase):
 
 	def test_stalemate_and_mate_are_probed_as_draw_and_loss(self):
 		self.assertEqual(
-			judge.probe(self.tb, chess.Board("k7/2K5/1Q6/8/8/8/8/8 b - - 0 1")).result, judge.DRAW
+			judge.probe(self.tb, chess.Board("k7/2K5/1Q6/8/8/8/8/8 b - - 0 1")).result,
+			judge.DRAW,
 		)
 		self.assertEqual(
-			judge.probe(self.tb, chess.Board("k7/1Q6/2K5/8/8/8/8/8 b - - 0 1")).result, judge.LOSS
+			judge.probe(self.tb, chess.Board("k7/1Q6/2K5/8/8/8/8/8 b - - 0 1")).result,
+			judge.LOSS,
 		)
 
 	def test_describe_verdict_texts(self):

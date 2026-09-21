@@ -109,7 +109,8 @@ def missing_files(files: Iterable[TableFile], directory: Path = SYZYGY_DIRECTORY
 
 
 def installed_piece_limit(
-	files: Iterable[TableFile] | None = None, directory: Path = SYZYGY_DIRECTORY
+	files: Iterable[TableFile] | None = None,
+	directory: Path = SYZYGY_DIRECTORY,
 ) -> int:
 	"""Até quantas peças as tabelas instaladas cobrem por inteiro: 0, 3, 4 ou 5."""
 	files = tuple(files if files is not None else load_manifest())
