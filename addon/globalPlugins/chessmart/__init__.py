@@ -11,6 +11,7 @@ import ui
 import queueHandler
 import winUser
 from logHandler import log
+from scriptHandler import script
 from .paths import import_bundled
 from .i18n import _
 
@@ -358,6 +359,9 @@ class ChessboardMenu(wx.Menu):
 
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
+	# Translators: Category of the add-on's scripts in the Input Gestures dialog.
+	scriptCategory = _("Chessmart")
+
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self._active_board_dialogs = {}
@@ -365,6 +369,55 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if not globalVars.appArgs.secure:
 			ensure_config_spec()
 			self.chessboard_menu = ChessboardMenu(self)
+
+	# -- atalhos ----------------------------------------------------------------
+	# O menu fica em NVDA > Ferramentas > Chessmart; quem treina todo dia não
+	# quer três níveis de menu. Só Táticas tem tecla de fábrica; as outras o
+	# usuário liga em Definir gestos, na categoria Chessmart.
+
+	def _menu_action(self, handler_name: str):
+		menu = getattr(self, "chessboard_menu", None)
+		if menu is None:
+			# Translators: Spoken when a shortcut is used while NVDA runs in secure mode.
+			ui.message(_("Chessmart is not available in secure mode."))
+			return
+		wx.CallAfter(getattr(menu, handler_name), None)
+
+	@script(
+		# Translators: Description of the shortcut that opens the tactics trainer.
+		description=_("Opens Chessmart tactics"),
+		gesture="kb:NVDA+alt+x",
+	)
+	def script_open_tactics(self, gesture):
+		self._menu_action("onTactics")
+
+	@script(
+		# Translators: Description of the shortcut that starts a random puzzle.
+		description=_("Starts a random Chessmart puzzle with the saved training setup"),
+	)
+	def script_random_puzzle(self, gesture):
+		self._menu_action("onRandomPuzzle")
+
+	@script(
+		# Translators: Description of the shortcut that opens the endgame lessons.
+		description=_("Opens Chessmart endgames"),
+	)
+	def script_open_endgames(self, gesture):
+		self._menu_action("onEndgames")
+
+	@script(
+		# Translators: Description of the shortcut that opens the study log.
+		description=_("Opens Chessmart My Study"),
+	)
+	def script_open_study(self, gesture):
+		self._menu_action("onStudyLog")
+
+	@script(
+		# Translators: Description of the shortcut that starts a new game.
+		description=_("Starts a new Chessmart game"),
+	)
+	def script_new_game(self, gesture):
+		self._menu_action("onNewGame")
 
 	def terminate(self):
 		chessboard_menu = getattr(self, "chessboard_menu", None)

@@ -24,11 +24,11 @@ msgstr "&Examinar..."
 
 #. Button that cancels the download or closes the dialog.
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:101
-#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:112
+#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:120
 msgid "&Cancel"
 msgstr "&Cancelar"
 
-#: addon/globalPlugins/chessmart/__init__.py:93
+#: addon/globalPlugins/chessmart/__init__.py:94
 msgid "&Chessboard"
 msgstr "&Tablero de ajedrez"
 
@@ -40,29 +40,29 @@ msgstr "&Copiar al portapapeles"
 #. Button that starts the download of the puzzle database. Button that starts
 #. the tablebase download.
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:98
-#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:110
+#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:118
 msgid "&Download"
 msgstr "&Descargar"
 
 #. Menu item that opens the endgame drills.
-#: addon/globalPlugins/chessmart/__init__.py:69
+#: addon/globalPlugins/chessmart/__init__.py:70
 msgid "&Endgames..."
 msgstr "&Finales..."
 
 #. Menu item that opens the study log.
-#: addon/globalPlugins/chessmart/__init__.py:75
+#: addon/globalPlugins/chessmart/__init__.py:76
 msgid "&My Study..."
 msgstr "&Mi estudio..."
 
-#: addon/globalPlugins/chessmart/__init__.py:59
+#: addon/globalPlugins/chessmart/__init__.py:60
 msgid "&New Game..."
 msgstr "&Nueva partida..."
 
-#: addon/globalPlugins/chessmart/__init__.py:65
+#: addon/globalPlugins/chessmart/__init__.py:66
 msgid "&Random Puzzle"
 msgstr "&Problema al azar"
 
-#: addon/globalPlugins/chessmart/__init__.py:80
+#: addon/globalPlugins/chessmart/__init__.py:81
 msgid "&Replay PGN File..."
 msgstr "&Reproducir archivo PGN..."
 
@@ -75,11 +75,11 @@ msgstr "&Guardar la configuración de entrenamiento como predeterminada"
 msgid "&Seek Game"
 msgstr "&Buscar partida"
 
-#: addon/globalPlugins/chessmart/__init__.py:86
+#: addon/globalPlugins/chessmart/__init__.py:87
 msgid "&Settings..."
 msgstr "&Opciones..."
 
-#: addon/globalPlugins/chessmart/__init__.py:62
+#: addon/globalPlugins/chessmart/__init__.py:63
 msgid "&Tactics..."
 msgstr "&Táctica..."
 
@@ -727,7 +727,7 @@ msgid "Checkmate"
 msgstr "Jaque mate"
 
 #. What to do in the queen against king drill.
-#: addon/globalPlugins/chessmart/endgame/drills.py:51
+#: addon/globalPlugins/chessmart/endgame/drills.py:56
 msgid ""
 "Checkmate in under 10 moves. The queen alone cannot mate: drive the king to "
 "the edge, bring your own king up, and mind the stalemate."
@@ -736,7 +736,7 @@ msgstr ""
 "rey al borde, acerca tu propio rey y cuidado con el ahogado."
 
 #. What to do in the rook against king drill.
-#: addon/globalPlugins/chessmart/endgame/drills.py:63
+#: addon/globalPlugins/chessmart/endgame/drills.py:68
 msgid ""
 "Checkmate in under 20 moves. Keep your king on the same rank or file as the "
 "other king, next to the rook, and push the king to the edge."
@@ -745,7 +745,7 @@ msgstr ""
 "que el otro rey, junto a la torre, y empuja al rey hacia el borde."
 
 #. Spoken when the drill ends in checkmate; {moves} is a number.
-#: addon/globalPlugins/chessmart/endgame/drills.py:222
+#: addon/globalPlugins/chessmart/endgame/drills.py:240
 msgid "Checkmate in {moves} moves."
 msgstr "Jaque mate en {moves} jugadas."
 
@@ -790,8 +790,9 @@ msgstr "Tablero de ajedrez"
 msgid "Chessboard Tactics"
 msgstr "Táctica en el tablero"
 
-#. Summary/title for this add-on
-#: buildVars.py:25
+#. Summary/title for this add-on Category of the add-on's scripts in the Input
+#. Gestures dialog.
+#: buildVars.py:25 addon/globalPlugins/chessmart/__init__.py:363
 msgid "Chessmart"
 msgstr "Chessmart"
 
@@ -1127,7 +1128,7 @@ msgid "Download cancelled."
 msgstr "Descarga cancelada."
 
 #. Shown after the user cancels the tablebase download.
-#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:193
+#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:204
 msgid ""
 "Download cancelled. What arrived is kept; the next download resumes from "
 "there."
@@ -1143,7 +1144,7 @@ msgstr ""
 "Descarga completa. Preparando el catálogo de temas, tarda un momento..."
 
 #. Announced when the tablebase download starts.
-#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:137
+#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:145
 msgid "Downloading {count} files, {size}."
 msgstr "Descargando {count} archivos, {size}."
 
@@ -1200,7 +1201,7 @@ msgid "Draw."
 msgstr "Tablas."
 
 #. Spoken when the drill ends in a draw that is not stalemate.
-#: addon/globalPlugins/chessmart/endgame/drills.py:239
+#: addon/globalPlugins/chessmart/endgame/drills.py:257
 msgid "Draw. The position was won."
 msgstr "Tablas. La posición estaba ganada."
 
@@ -1251,8 +1252,8 @@ msgstr "Lecciones de finales: hasta dónde llegas"
 
 #. Title of the tablebase download dialog.
 #: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:45
-#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:185
-#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:206
+#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:196
+#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:217
 msgid "Endgame Tablebases"
 msgstr "Tablebases de finales"
 
@@ -1263,7 +1264,7 @@ msgstr "Finales"
 
 #. One day's endgame work in the study log, e.g. "endgames: 4 positions, 3
 #. held, 18 min".
-#: addon/globalPlugins/chessmart/study_log.py:173
+#: addon/globalPlugins/chessmart/study_log.py:174
 msgid "endgames: {n} positions, {held} held, {minutes} min"
 msgstr "finales: {n} posiciones, {held} mantenidas, {minutes} min"
 
@@ -1306,7 +1307,7 @@ msgid "Error"
 msgstr "Error"
 
 #. Shown when every lesson is firm.
-#: addon/globalPlugins/chessmart/study_log.py:231
+#: addon/globalPlugins/chessmart/study_log.py:236
 msgid "Every lesson is firm. Time for the next book."
 msgstr "Todas las lecciones están firmes. Hora del siguiente libro."
 
@@ -1339,7 +1340,7 @@ msgid "Filters: {filters}."
 msgstr "Filtros: {filters}."
 
 #. Explains what "firm" means in the study log.
-#: addon/globalPlugins/chessmart/study_log.py:237
+#: addon/globalPlugins/chessmart/study_log.py:242
 msgid ""
 "Firm means held {streak} times in a row, question answered right and result "
 "kept without a slip."
@@ -1486,7 +1487,7 @@ msgid "Horde"
 msgstr "Horda"
 
 #. Menu item that opens the study log.
-#: addon/globalPlugins/chessmart/__init__.py:76
+#: addon/globalPlugins/chessmart/__init__.py:77
 msgid ""
 "How much and how you studied, by day, and how far the endgame lessons go"
 msgstr ""
@@ -1579,7 +1580,7 @@ msgid "king"
 msgstr "rey"
 
 #. Name of the endgame drill with king and pawn against king.
-#: addon/globalPlugins/chessmart/endgame/drills.py:112
+#: addon/globalPlugins/chessmart/endgame/drills.py:117
 msgid "King and pawn against king"
 msgstr "Rey y peón contra rey"
 
@@ -1748,7 +1749,7 @@ msgstr "Ligera"
 msgid "Literate: knight f 3"
 msgstr "Literal: caballo f 3"
 
-#: addon/globalPlugins/chessmart/__init__.py:81
+#: addon/globalPlugins/chessmart/__init__.py:82
 msgid "Load an replay a portable game notation (.pgn) file"
 msgstr "Cargar y reproducir un archivo de notación de partida portátil (.pgn)"
 
@@ -1961,8 +1962,8 @@ msgstr ""
 msgid "No tactics available"
 msgstr "No hay táctica disponible"
 
-#: addon/globalPlugins/chessmart/__init__.py:141
-#: addon/globalPlugins/chessmart/__init__.py:185
+#: addon/globalPlugins/chessmart/__init__.py:142
+#: addon/globalPlugins/chessmart/__init__.py:186
 msgid "No Tactics Found"
 msgstr "No se encontró táctica"
 
@@ -2022,7 +2023,7 @@ msgid "none"
 msgstr "ninguno"
 
 #. Shown in the study log when nothing was recorded in the period.
-#: addon/globalPlugins/chessmart/study_log.py:156
+#: addon/globalPlugins/chessmart/study_log.py:157
 msgid "Nothing recorded in the last {days} days."
 msgstr "Nada registrado en los últimos {days} días."
 
@@ -2080,22 +2081,22 @@ msgstr "En línea: lichess.org (próximamente)"
 msgid "Only move: {moves}"
 msgstr "Única jugada: {moves}"
 
-#: addon/globalPlugins/chessmart/__init__.py:94
+#: addon/globalPlugins/chessmart/__init__.py:95
 msgid "Open a chess game, tactics session, replay, or settings"
 msgstr ""
 "Abrir una partida de ajedrez, una sesión de táctica, una reproducción o las "
 "opciones"
 
-#: addon/globalPlugins/chessmart/__init__.py:87
+#: addon/globalPlugins/chessmart/__init__.py:88
 msgid "Open Chessboard settings"
 msgstr "Abrir las opciones del tablero de ajedrez"
 
 #. Title of the dialog that opens a PGN file.
-#: addon/globalPlugins/chessmart/__init__.py:288
+#: addon/globalPlugins/chessmart/__init__.py:304
 msgid "Open PGN File"
 msgstr "Abrir archivo PGN"
 
-#: addon/globalPlugins/chessmart/__init__.py:63
+#: addon/globalPlugins/chessmart/__init__.py:64
 msgid "Open tactics from the Lichess tactics database"
 msgstr "Abrir táctica de la base de táctica de Lichess"
 
@@ -2216,7 +2217,7 @@ msgstr ""
 msgid "Play &Rated Game"
 msgstr "Jugar partida &puntuada"
 
-#: addon/globalPlugins/chessmart/__init__.py:65
+#: addon/globalPlugins/chessmart/__init__.py:66
 msgid "Play a random puzzle"
 msgstr "Jugar un problema al azar"
 
@@ -2258,7 +2259,7 @@ msgid "Popularity: {popularity}."
 msgstr "Popularidad: {popularity}."
 
 #. File type filter of the PGN open dialog.
-#: addon/globalPlugins/chessmart/__init__.py:291
+#: addon/globalPlugins/chessmart/__init__.py:307
 msgid "Portable Game Notation *.pgn | *.pgn"
 msgstr "Notación de partida portátil *.pgn | *.pgn"
 
@@ -2273,7 +2274,7 @@ msgid "Position"
 msgstr "Posición"
 
 #. Menu item that opens the endgame drills.
-#: addon/globalPlugins/chessmart/__init__.py:70
+#: addon/globalPlugins/chessmart/__init__.py:71
 msgid "Practice elementary endgames against the engine"
 msgstr "Practicar finales elementales contra el motor"
 
@@ -2315,7 +2316,7 @@ msgid "Promote Pawn. Select promotion piece type:"
 msgstr "Coronar peón. Elige la pieza de coronación:"
 
 #. What to do in the king and pawn drill.
-#: addon/globalPlugins/chessmart/endgame/drills.py:114
+#: addon/globalPlugins/chessmart/endgame/drills.py:119
 msgid ""
 "Promote the pawn and checkmate. The king goes in front of the pawn and takes"
 " the opposition; the pawn moves last."
@@ -2357,7 +2358,7 @@ msgstr ""
 
 #. Asked when tactics are opened and no puzzle database is installed yet.
 #. Title of the puzzle database download dialog.
-#: addon/globalPlugins/chessmart/__init__.py:156
+#: addon/globalPlugins/chessmart/__init__.py:157
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:52
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:296
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:319
@@ -2467,7 +2468,7 @@ msgid "Queen against a rook pawn"
 msgstr "Dama contra peón de torre"
 
 #. Name of the endgame drill with queen and king against king.
-#: addon/globalPlugins/chessmart/endgame/drills.py:49
+#: addon/globalPlugins/chessmart/endgame/drills.py:54
 msgid "Queen and king against king"
 msgstr "Dama y rey contra rey"
 
@@ -2634,7 +2635,7 @@ msgid "Rook against pawn: one step too late"
 msgstr "Torre contra peón: un paso tarde"
 
 #. Name of the endgame drill with rook and king against king.
-#: addon/globalPlugins/chessmart/endgame/drills.py:61
+#: addon/globalPlugins/chessmart/endgame/drills.py:66
 msgid "Rook and king against king"
 msgstr "Torre y rey contra rey"
 
@@ -2713,7 +2714,7 @@ msgstr "Buscando partida..."
 msgid "Select &themes..."
 msgstr "Seleccionar &temas..."
 
-#: addon/globalPlugins/chessmart/__init__.py:316
+#: addon/globalPlugins/chessmart/__init__.py:332
 msgid "Select Game"
 msgstr "Seleccionar partida"
 
@@ -2790,7 +2791,7 @@ msgid "Source game available on Lichess."
 msgstr "Partida de origen disponible en Lichess."
 
 #. Note in the tablebase download dialog.
-#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:96
+#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:104
 msgid ""
 "Source: the Syzygy tables mirrored by Lichess (tablebase.lichess.ovh). Each "
 "file is checked before it is kept; a cancelled download resumes where it "
@@ -2831,7 +2832,7 @@ msgid "square color: {color},"
 msgstr "color de la casilla: {color},"
 
 #. Spoken when the drill ends in stalemate.
-#: addon/globalPlugins/chessmart/endgame/drills.py:235
+#: addon/globalPlugins/chessmart/endgame/drills.py:253
 msgid ""
 "Stalemate: the black king had no legal move and was not in check. Draw."
 msgstr ""
@@ -2851,7 +2852,7 @@ msgstr ""
 "Inicia una sesión de entrenamiento guiada, o escribe el ID de un problema "
 "para abrir un ejercicio exacto de Lichess."
 
-#: addon/globalPlugins/chessmart/__init__.py:59
+#: addon/globalPlugins/chessmart/__init__.py:60
 msgid "Start a new chess game"
 msgstr "Empezar una nueva partida de ajedrez"
 
@@ -2881,7 +2882,7 @@ msgid "Tablebase verdict"
 msgstr "Veredicto de la tablebase"
 
 #. Message shown when the tablebases were installed.
-#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:182
+#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:193
 msgid "Tablebases up to {pieces} pieces installed. The judge is on."
 msgstr "Tablebases de hasta {pieces} piezas instaladas. El juez está activo."
 
@@ -2897,7 +2898,7 @@ msgid "Tablebases: up to {pieces} pieces installed."
 msgstr "Tablebases: hasta {pieces} piezas instaladas."
 
 #. Label of the list where the user picks which tablebases to download.
-#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:87
+#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:92
 msgid "Tables to download"
 msgstr "Tablas a descargar"
 
@@ -2919,13 +2920,13 @@ msgstr "Táctica"
 msgid "Tactics database"
 msgstr "Base de táctica"
 
-#: addon/globalPlugins/chessmart/__init__.py:134
-#: addon/globalPlugins/chessmart/__init__.py:180
+#: addon/globalPlugins/chessmart/__init__.py:135
+#: addon/globalPlugins/chessmart/__init__.py:181
 msgid "Tactics Database Not Found"
 msgstr "Base de táctica no encontrada"
 
 #. Asked when tactics are opened and no puzzle database is installed yet.
-#: addon/globalPlugins/chessmart/__init__.py:153
+#: addon/globalPlugins/chessmart/__init__.py:154
 msgid ""
 "Tactics need a puzzle database, which is downloaded once (about 76 MB for "
 "the light version). Download it now?"
@@ -2935,7 +2936,7 @@ msgstr ""
 
 #. One day's tactics in the study log, e.g. "tactics: 3 puzzles, 2 solved, 25
 #. min".
-#: addon/globalPlugins/chessmart/study_log.py:164
+#: addon/globalPlugins/chessmart/study_log.py:165
 msgid "tactics: {n} puzzles, {solved} solved, {minutes} min"
 msgstr "táctica: {n} problemas, {solved} resueltos, {minutes} min"
 
@@ -3016,7 +3017,7 @@ msgstr "La dificultad sigue tu propio rating de táctica a medida que mejoras."
 #. Message shown when the puzzle database download failed. Message shown when
 #. the tablebase download failed.
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:318
-#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:205
+#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:216
 msgid "The download failed: {reason}"
 msgstr "La descarga falló: {reason}"
 
@@ -3030,11 +3031,11 @@ msgstr ""
 "casilla a la que volver, y cae. Perdido para el caballo."
 
 #. Spoken when the chosen PGN file has no games.
-#: addon/globalPlugins/chessmart/__init__.py:308
+#: addon/globalPlugins/chessmart/__init__.py:324
 msgid "The file contains no games"
 msgstr "El archivo no contiene partidas"
 
-#: addon/globalPlugins/chessmart/__init__.py:315
+#: addon/globalPlugins/chessmart/__init__.py:331
 msgid "The file contains the following games"
 msgstr "El archivo contiene las siguientes partidas"
 
@@ -3248,7 +3249,7 @@ msgstr ""
 msgid "The tactic involves capturing a pawn en passant."
 msgstr "La táctica incluye una captura al paso."
 
-#: addon/globalPlugins/chessmart/__init__.py:177
+#: addon/globalPlugins/chessmart/__init__.py:178
 msgid ""
 "The tactics database was not found. Choose a valid database in Chessboard "
 "settings first."
@@ -3256,7 +3257,7 @@ msgstr ""
 "No se encontró la base de táctica. Primero elige una base válida en las "
 "opciones del tablero de ajedrez."
 
-#: addon/globalPlugins/chessmart/__init__.py:131
+#: addon/globalPlugins/chessmart/__init__.py:132
 msgid ""
 "The tactics database was not found. Use Browse in the tactics dialog to "
 "point at your puzzle database, or place it in the add-on's data folder as "
@@ -3267,7 +3268,7 @@ msgstr ""
 "complemento como puzzles.db."
 
 #. Spoken when the mate took longer than the drill's target.
-#: addon/globalPlugins/chessmart/endgame/drills.py:231
+#: addon/globalPlugins/chessmart/endgame/drills.py:249
 msgid "The target was under {target} moves."
 msgstr "El objetivo era menos de {target} jugadas."
 
@@ -3350,7 +3351,7 @@ msgid "There are no more hints for this puzzle."
 msgstr "No hay más pistas para este problema."
 
 #. Announced when the chosen tablebases are already installed.
-#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:129
+#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:137
 msgid "These tables are already installed."
 msgstr "Estas tablas ya están instaladas."
 
@@ -3651,7 +3652,7 @@ msgstr ""
 "Con {hints} pistas de la tablebase: cuenta como práctica, no como mantenida."
 
 #. Spoken when the mate came within the drill's target.
-#: addon/globalPlugins/chessmart/endgame/drills.py:227
+#: addon/globalPlugins/chessmart/endgame/drills.py:245
 msgid "Within the target of under {target} moves."
 msgstr "Dentro del objetivo de menos de {target} jugadas."
 
@@ -3684,7 +3685,7 @@ msgstr "Sí, salir"
 
 #. Where the player is in the endgame lessons, e.g. "You are at: 3. King and
 #. pawn against king."
-#: addon/globalPlugins/chessmart/study_log.py:234
+#: addon/globalPlugins/chessmart/study_log.py:239
 msgid "You are at: {lesson}."
 msgstr "Estás en: {lesson}."
 
@@ -3735,7 +3736,7 @@ msgstr "Zugzwang"
 
 #. Closing line of the study log, e.g. "6 days with study in the last 7, 210
 #. min in all."
-#: addon/globalPlugins/chessmart/study_log.py:190
+#: addon/globalPlugins/chessmart/study_log.py:191
 msgid "{active} days with study in the last {days}, {minutes} min in all."
 msgstr ""
 "{active} días con estudio en los últimos {days}, {minutes} min en total."
@@ -3830,13 +3831,13 @@ msgstr "{piece}: {count}"
 
 #. One day in the study log, e.g. "2026-09-19: tactics: ...; endgames: ...
 #. Total 43 min."
-#: addon/globalPlugins/chessmart/study_log.py:182
+#: addon/globalPlugins/chessmart/study_log.py:183
 msgid "{day}: {parts}. Total {minutes} min."
 msgstr "{day}: {parts}. Total {minutes} min."
 
 #. Download progress text, e.g. "30 MB of 76 MB (40%)".
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:261
-#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:171
+#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:180
 msgid "{done} of {total} ({percent}%)"
 msgstr "{done} de {total} ({percent}%)"
 
@@ -3847,17 +3848,17 @@ msgstr "{label}: {description} ({count:,} problemas)"
 
 #. A lesson whose positions are all firm, e.g. "2. The king and the
 #. opposition: firm, 6 of 6."
-#: addon/globalPlugins/chessmart/study_log.py:212
+#: addon/globalPlugins/chessmart/study_log.py:213
 msgid "{lesson}: firm, {firm} of {total}."
 msgstr "{lesson}: firme, {firm} de {total}."
 
 #. A lesson not started yet.
-#: addon/globalPlugins/chessmart/study_log.py:216
+#: addon/globalPlugins/chessmart/study_log.py:221
 msgid "{lesson}: not started."
 msgstr "{lesson}: sin empezar."
 
 #. A lesson in progress, e.g. "3. King and pawn: 4 of 7 firm. Pending: ...".
-#: addon/globalPlugins/chessmart/study_log.py:221
+#: addon/globalPlugins/chessmart/study_log.py:226
 msgid "{lesson}: {firm} of {total} firm. Pending: {pending}."
 msgstr "{lesson}: {firm} de {total} firmes. Pendientes: {pending}."
 
@@ -3897,7 +3898,7 @@ msgstr "{name}: {total}, {remaining} aún por descargar"
 
 #. Download progress announced by speech, e.g. "40 percent".
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:253
-#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:163
+#: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:172
 msgid "{percent} percent"
 msgstr "{percent} por ciento"
 
@@ -3918,7 +3919,7 @@ msgstr ""
 "{theme_text} Popularidad mínima {min_popularity}."
 
 #. Spoken at the end of a drill; {seconds} is a number.
-#: addon/globalPlugins/chessmart/endgame/drills.py:242
+#: addon/globalPlugins/chessmart/endgame/drills.py:260
 msgid "{seconds} seconds left on the clock."
 msgstr "Quedan {seconds} segundos en el reloj."
 
@@ -3958,12 +3959,12 @@ msgid "{white} ({white_rating}) versus {black} ({black_rating})"
 msgstr "{white} ({white_rating}) contra {black} ({black_rating})"
 
 #. Name of the endgame drill with bishop, knight and king against king.
-#: addon/globalPlugins/chessmart/endgame/drills.py:100
+#: addon/globalPlugins/chessmart/endgame/drills.py:105
 msgid "Bishop, knight and king against king"
 msgstr "Alfil, caballo y rey contra rey"
 
 #. What to do in the two bishops against king drill.
-#: addon/globalPlugins/chessmart/endgame/drills.py:90
+#: addon/globalPlugins/chessmart/endgame/drills.py:95
 msgid ""
 "Checkmate in under 20 moves. The two bishops side by side make a wall: push "
 "the king to the edge, then into a corner, with your own king close behind. "
@@ -3974,7 +3975,7 @@ msgstr ""
 "justo detrás. Cuidado con el ahogado."
 
 #. What to do in the bishop and knight against king drill.
-#: addon/globalPlugins/chessmart/endgame/drills.py:102
+#: addon/globalPlugins/chessmart/endgame/drills.py:107
 msgid ""
 "Checkmate in under 35 moves. The mate only exists in a corner of the "
 "bishop's colour: drive the king to the edge, then along it to the right "
@@ -4007,53 +4008,9 @@ msgstr ""
 "correcta, turnando caballo y alfil. Menos de 35 jugadas."
 
 #. Name of the endgame drill with two bishops and king against king.
-#: addon/globalPlugins/chessmart/endgame/drills.py:88
+#: addon/globalPlugins/chessmart/endgame/drills.py:93
 msgid "Two bishops and king against king"
 msgstr "Dos alfiles y rey contra rey"
-
-#. what's new content for the add-on version to be shown in the add-on store
-#: buildVars.py:35
-msgid ""
-"1.1.0: Endgames: mate drills (queen, rook, two rooks, two bishops, and "
-"bishop and knight) against the engine at full strength, and eight lessons "
-"that follow the endgame course order (opposition, king and pawn, piece "
-"against pawn, pawns on both sides, rook and pawn against rook, queen against"
-" pawn, bishop and rook pawn): each position asks win, draw or loss, tells "
-"the rule and is played out with the Syzygy tablebase as judge; tablebases up"
-" to 5 pieces downloaded from the Lichess mirror; a log of every attempt. "
-"1.0.2: Escape asks before leaving a game in progress and really closes the "
-"board (engine, clock and online game included); an untouched puzzle no "
-"longer counts as a failure; online board fixes (start, server clock, draw "
-"offers, resignation, refused moves, reconnect); challenge levels and puzzle "
-"themes with real names and descriptions. 1.0.1: the complete puzzle database"
-" is downloaded in parts, with each part verified as it arrives and retried "
-"on its own if the connection drops. 1.0.0: first public release of the "
-"tactics trainer: Lichess puzzle database downloaded on demand (light or "
-"complete) and updated monthly, Glicko-2 tactics rating with adaptive "
-"difficulty, training plans by theme, configurable move notation "
-"(descriptive, SAN, UCI, literate, NATO, anna) and Brazilian Portuguese "
-"translation."
-msgstr ""
-"1.1.0: Finales: ejercicios de mate (dama, torre, dos torres, dos alfiles, y "
-"alfil y caballo) contra el motor a plena fuerza, y ocho lecciones que siguen"
-" el orden de los cursos de finales (oposición, rey y peón, pieza contra "
-"peón, peones en ambos flancos, torre y peón contra torre, dama contra peón, "
-"alfil y peón de torre): cada posición pregunta si se gana, se entabla o se "
-"pierde, enuncia la regla y se juega hasta el final con la tablebase Syzygy "
-"como juez; tablebases de hasta 5 piezas descargadas desde el espejo de "
-"Lichess; un registro de cada intento. 1.0.2: Escape pregunta antes de "
-"abandonar una partida en curso y cierra de verdad el tablero (motor, reloj y"
-" partida en línea incluidos); un problema sin tocar ya no cuenta como fallo;"
-" correcciones del tablero en línea (inicio, reloj del servidor, ofertas de "
-"tablas, abandono, jugadas rechazadas, reconexión); niveles de desafío y "
-"temas de problemas con nombres y descripciones reales. 1.0.1: la base "
-"completa de problemas se descarga por partes, cada parte se verifica al "
-"llegar y se reintenta sola si se corta la conexión. 1.0.0: primera versión "
-"pública del entrenador de táctica: base de problemas de Lichess descargada a"
-" demanda (ligera o completa) y actualizada cada mes, rating de táctica "
-"Glicko-2 con dificultad adaptativa, planes de entrenamiento por tema, "
-"notación de jugadas configurable (descriptiva, SAN, UCI, literal, OTAN, "
-"anna) y traducción al portugués de Brasil."
 
 #. Name of the endgame lesson (a drill) with two rooks.
 #: addon/globalPlugins/chessmart/endgame/lessons.py:97
@@ -4071,7 +4028,7 @@ msgid "1e. Mate with bishop and knight"
 msgstr "1e. Mate con alfil y caballo"
 
 #. What to do in the two rooks against king drill.
-#: addon/globalPlugins/chessmart/endgame/drills.py:78
+#: addon/globalPlugins/chessmart/endgame/drills.py:83
 msgid ""
 "Checkmate in under 10 moves. The ladder: one rook cuts the king off along a "
 "rank, the other checks on the next rank, and they take turns. When the king "
@@ -4094,7 +4051,7 @@ msgstr ""
 "jugadas."
 
 #. Name of the endgame drill with two rooks and king against king.
-#: addon/globalPlugins/chessmart/endgame/drills.py:76
+#: addon/globalPlugins/chessmart/endgame/drills.py:81
 msgid "Two rooks and king against king"
 msgstr "Dos torres y rey contra rey"
 
@@ -4265,6 +4222,84 @@ msgstr ""
 "Cada paso del peón le da una fila a tu torre y le quita una a la suya. Lleva"
 " el rey hasta el peón y gana."
 
+#. what's new content for the add-on version to be shown in the add-on store
+#: buildVars.py:35
+msgid ""
+"1.1.0: Endgames: mate drills (queen, rook, two rooks, two bishops, and "
+"bishop and knight) against the engine at full strength, and nine lessons "
+"that follow the endgame course order (opposition, king and pawn, piece "
+"against pawn, pawns on both sides, rook and pawn against rook, queen against"
+" pawn, bishop and rook pawn, and the practical rook endings: short side, "
+"Vancura, back rank, rule of five, rook behind the passed pawn): each "
+"position asks win, draw or loss, tells the rule and is played out with the "
+"Syzygy tablebase as judge; tablebases up to 5 pieces downloaded from the "
+"Lichess mirror; a log of every attempt. 1.0.2: Escape asks before leaving a "
+"game in progress and really closes the board (engine, clock and online game "
+"included); an untouched puzzle no longer counts as a failure; online board "
+"fixes (start, server clock, draw offers, resignation, refused moves, "
+"reconnect); challenge levels and puzzle themes with real names and "
+"descriptions. 1.0.1: the complete puzzle database is downloaded in parts, "
+"with each part verified as it arrives and retried on its own if the "
+"connection drops. 1.0.0: first public release of the tactics trainer: "
+"Lichess puzzle database downloaded on demand (light or complete) and updated"
+" monthly, Glicko-2 tactics rating with adaptive difficulty, training plans "
+"by theme, configurable move notation (descriptive, SAN, UCI, literate, NATO,"
+" anna) and Brazilian Portuguese translation."
+msgstr ""
+"1.1.0: Finales: ejercicios de mate (dama y torre) contra el motor a plena "
+"fuerza, y nueve lecciones que siguen el orden de los cursos de finales "
+"(oposición, rey y peón, pieza contra peón, peones en ambos flancos, torre y "
+"peón contra torre, dama contra peón, alfil y peón de torre, y los finales de"
+" torre prácticos: lado corto, Vancura, última fila, regla de los cinco, "
+"torre detrás del peón pasado): cada posición pregunta si se gana, se entabla"
+" o se pierde, enuncia la regla y se juega hasta el final con la tablebase "
+"Syzygy como juez; tablebases de hasta 5 piezas descargadas desde el espejo "
+"de Lichess; un registro de cada intento. 1.0.2: Escape pregunta antes de "
+"abandonar una partida en curso y cierra de verdad el tablero (motor, reloj y"
+" partida en línea incluidos); un problema sin tocar ya no cuenta como fallo;"
+" correcciones del tablero en línea (inicio, reloj del servidor, ofertas de "
+"tablas, abandono, jugadas rechazadas, reconexión); niveles de desafío y "
+"temas de problemas con nombres y descripciones reales. 1.0.1: la base "
+"completa de problemas se descarga por partes, cada parte se verifica al "
+"llegar y se reintenta sola si se corta la conexión. 1.0.0: primera versión "
+"pública del entrenador de táctica: base de problemas de Lichess descargada a"
+" demanda (ligera o completa) y actualizada cada mes, rating de táctica "
+"Glicko-2 con dificultad adaptativa, planes de entrenamiento por tema, "
+"notación de jugadas configurable (descriptiva, SAN, UCI, literal, OTAN, "
+"anna) y traducción al portugués de Brasil."
+
+#. Spoken when a shortcut is used while NVDA runs in secure mode.
+#: addon/globalPlugins/chessmart/__init__.py:382
+msgid "Chessmart is not available in secure mode."
+msgstr "Chessmart no está disponible en modo seguro."
+
+#. Description of the shortcut that opens the endgame lessons.
+#: addon/globalPlugins/chessmart/__init__.py:403
+msgid "Opens Chessmart endgames"
+msgstr "Abre los Finales de Chessmart"
+
+#. Description of the shortcut that opens the study log.
+#: addon/globalPlugins/chessmart/__init__.py:410
+msgid "Opens Chessmart My Study"
+msgstr "Abre Mi estudio de Chessmart"
+
+#. Description of the shortcut that opens the tactics trainer.
+#: addon/globalPlugins/chessmart/__init__.py:388
+msgid "Opens Chessmart tactics"
+msgstr "Abre la Táctica de Chessmart"
+
+#. Description of the shortcut that starts a new game.
+#: addon/globalPlugins/chessmart/__init__.py:417
+msgid "Starts a new Chessmart game"
+msgstr "Inicia una nueva partida de Chessmart"
+
+#. Description of the shortcut that starts a random puzzle.
+#: addon/globalPlugins/chessmart/__init__.py:396
+msgid "Starts a random Chessmart puzzle with the saved training setup"
+msgstr ""
+"Inicia un problema al azar de Chessmart con la configuración de "
+"entrenamiento guardada"
+
 #~ msgid ""
 #~ "1.1.0: Endgames: mate drills (queen, rook, two bishops, and bishop and "
 #~ "knight) against the engine at full strength, and eight lessons that follow "
@@ -4291,44 +4326,3 @@ msgstr ""
 
 #~ msgid "1d. Mate with bishop and knight"
 #~ msgstr ""
-
-#~ msgid ""
-#~ "1.1.0: Endgames: mate drills (queen and rook) against the engine at full "
-#~ "strength, and eight lessons that follow the endgame course order "
-#~ "(opposition, king and pawn, piece against pawn, pawns on both sides, rook "
-#~ "and pawn against rook, queen against pawn, bishop and rook pawn): each "
-#~ "position asks win, draw or loss, tells the rule and is played out with the "
-#~ "Syzygy tablebase as judge; tablebases up to 5 pieces downloaded from the "
-#~ "Lichess mirror; a log of every attempt. 1.0.2: Escape asks before leaving a "
-#~ "game in progress and really closes the board (engine, clock and online game "
-#~ "included); an untouched puzzle no longer counts as a failure; online board "
-#~ "fixes (start, server clock, draw offers, resignation, refused moves, "
-#~ "reconnect); challenge levels and puzzle themes with real names and "
-#~ "descriptions. 1.0.1: the complete puzzle database is downloaded in parts, "
-#~ "with each part verified as it arrives and retried on its own if the "
-#~ "connection drops. 1.0.0: first public release of the tactics trainer: "
-#~ "Lichess puzzle database downloaded on demand (light or complete) and updated"
-#~ " monthly, Glicko-2 tactics rating with adaptive difficulty, training plans "
-#~ "by theme, configurable move notation (descriptive, SAN, UCI, literate, NATO,"
-#~ " anna) and Brazilian Portuguese translation."
-#~ msgstr ""
-#~ "1.1.0: Finales: ejercicios de mate (dama y torre) contra el motor a plena "
-#~ "fuerza, y ocho lecciones que siguen el orden de los cursos de finales "
-#~ "(oposición, rey y peón, pieza contra peón, peones en ambos flancos, torre y "
-#~ "peón contra torre, dama contra peón, alfil y peón de torre): cada posición "
-#~ "pregunta si se gana, se entabla o se pierde, enuncia la regla y se juega "
-#~ "hasta el final con la tablebase Syzygy como juez; tablebases de hasta 5 "
-#~ "piezas descargadas desde el espejo de Lichess; un registro de cada intento. "
-#~ "1.0.2: Escape pregunta antes de abandonar una partida en curso y cierra de "
-#~ "verdad el tablero (motor, reloj y partida en línea incluidos); un problema "
-#~ "sin tocar ya no cuenta como fallo; correcciones del tablero en línea "
-#~ "(inicio, reloj del servidor, ofertas de tablas, abandono, jugadas "
-#~ "rechazadas, reconexión); niveles de desafío y temas de problemas con nombres"
-#~ " y descripciones reales. 1.0.1: la base completa de problemas se descarga "
-#~ "por partes, cada parte se verifica al llegar y se reintenta sola si se corta"
-#~ " la conexión. 1.0.0: primera versión pública del entrenador de táctica: base"
-#~ " de problemas de Lichess descargada a demanda (ligera o completa) y "
-#~ "actualizada cada mes, rating de táctica Glicko-2 con dificultad adaptativa, "
-#~ "planes de entrenamiento por tema, notación de jugadas configurable "
-#~ "(descriptiva, SAN, UCI, literal, OTAN, anna) y traducción al portugués de "
-#~ "Brasil."

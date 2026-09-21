@@ -1,3 +1,8 @@
+# Chessmart 1.1.1 (não lançada)
+
+- **NVDA+Alt+X** abre a Tática de qualquer lugar. Os comandos de puzzle aleatório, Finais, Meu estudo e Nova partida estão no diálogo Definir gestos, na categoria Chessmart, sem tecla de fábrica.
+- README: o submenu fica em menu do NVDA > Ferramentas.
+
 # Chessmart 1.1.0
 
 - **Finais...** no menu. Cinco treinos de mate contra a engine em força total: dama, torre, duas torres (a escada), dois bispos, e bispo e cavalo contra rei nu. A posição do livro abre cada treino; Control+N sorteia outra (dois bispos sempre em cores opostas). Relógio opcional; no fim o tabuleiro conta os lances contra a meta (menos de 10, 20 ou 35) e chama o afogamento pelo nome.

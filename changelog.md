@@ -1,3 +1,8 @@
+# Chessmart 1.1.1 (unreleased)
+
+- **NVDA+Alt+X** opens Tactics from anywhere. Scripts for a random puzzle, Endgames, My Study and New Game are in the Input Gestures dialog, under Chessmart, with no default key.
+- README: the submenu is under NVDA menu > Tools.
+
 # Chessmart 1.1.0
 
 - **Endgames...** in the menu. Five mate drills against the engine at full strength: queen, rook, two rooks (the ladder), two bishops, and bishop and knight against a bare king. The book position opens each drill; Control+N draws a random one (two bishops always on opposite colours). Optional clock; at the end the board counts the moves against the target (under 10, 20 or 35) and names a stalemate for what it is.
