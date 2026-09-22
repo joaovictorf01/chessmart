@@ -193,25 +193,38 @@ class ChessboardMenu(wx.Menu):
 	def open_endgame(self, lesson: EndgameLesson, index: int, time_control: ChessTimeControl):
 		"""Opens what the dialog chose: a mate drill or a lesson position."""
 		if lesson.drill is not None:
-			fen = (
-				opening_fen(lesson.drill)
-				if index == 0
-				else random_fen(lesson.drill, accept=self._drill_position_is_won)
-			)
+			fen = opening_fen(lesson.drill) if index == 0 else self._random_drill_fen(lesson.drill)
 			self.open_endgame_drill(lesson, time_control, fen)
 		else:
 			self.open_endgame_lesson(lesson, index)
 
-	def _drill_position_is_won(self, board) -> bool:
-		"""Does the tablebase say White wins? Without a tablebase, nobody can say, and the draw falls back to the examples."""
+	def _random_drill_fen(self, drill) -> str:
+		"""A random position of the drill, accepted only when the tablebase says White wins.
+
+		The tablebase is opened once for the whole draw: `random_fen` may try
+		up to 2000 candidates, and opening scans the syzygy folder every time.
+		Without a tablebase nobody can say, and the draw falls back to the examples.
+		"""
 		from .endgame import judge, tablebase
 
 		try:
 			tables = tablebase.open_tablebase()
-		except Exception:
-			return False
-		verdict = judge.probe(tables, board)
-		return verdict is not None and verdict.wdl > 0
+		except Exception as error:
+			log.warning("chessmart: could not open the tablebase for the drill draw: %s", error)
+			tables = None
+		if tables is None:
+			# As before this helper existed: with no tablebase every candidate
+			# is refused and the draw falls back to one of the examples.
+			return random_fen(drill, accept=lambda _board: False)
+
+		def is_won(board) -> bool:
+			verdict = judge.probe(tables, board)
+			return verdict is not None and verdict.wdl > 0
+
+		try:
+			return random_fen(drill, accept=is_won)
+		finally:
+			tables.close()
 
 	def open_endgame_drill(self, lesson: EndgameLesson, time_control: ChessTimeControl, fen: str):
 		"""The mate drill against the engine, at maximum strength.
@@ -243,7 +256,7 @@ class ChessboardMenu(wx.Menu):
 					self.open_endgame_drill,
 					lesson,
 					next_clock,
-					random_fen(drill, accept=self._drill_position_is_won),
+					self._random_drill_fen(drill),
 				),
 			),
 		)
