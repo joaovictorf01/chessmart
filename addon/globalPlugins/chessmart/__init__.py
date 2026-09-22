@@ -1,7 +1,6 @@
 # coding: utf-8
 # pyright: basic
 
-import sys
 import functools
 import wx
 import globalPluginHandler
@@ -17,18 +16,6 @@ from .i18n import _
 
 
 with import_bundled():
-	# Import some packages  replacing NVDA builtin packages
-	# with original packages obtained from a Python 3.7 installation
-	# to fix some missing sub packages and modules
-	if "http" in sys.modules:
-		sys.modules.pop("http")
-	import http  # noqa: F401 - replaces NVDA's package with the complete one
-
-	if "xml" in sys.modules:
-		sys.modules.pop("xml")
-	import xml  # noqa: F401 - same
-
-	# Normal imports
 	import chess
 
 from . import concurrency

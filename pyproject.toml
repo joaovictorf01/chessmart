@@ -141,9 +141,8 @@ extraPaths = [
 	"./addon",
 	# Codigo do NVDA (speech, ui, NVDAObjects...): clone nvaccess/nvda ao lado deste repositorio.
 	"../nvda/source",
-	# Bibliotecas embarcadas: python-chess, chess_clock e o cliente do Lichess com as dependencias dele.
+	# Bundled libraries: python-chess, chess_clock, wx_svg.
 	"./addon/globalPlugins/chessmart/lib",
-	"./addon/globalPlugins/chessmart/lib/lichess",
 ]
 
 # General config

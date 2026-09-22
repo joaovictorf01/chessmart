@@ -3,6 +3,7 @@
 
 import typing
 import dataclasses
+from functools import cached_property
 import random
 from utils.displayString import DisplayStringIntEnum
 from .i18n import _
@@ -13,7 +14,6 @@ from .time_control import NULL_TIME_CONTROL, ChessTimeControl
 with import_bundled():
 	import chess
 	import chess.variant
-	from cached_property import cached_property
 
 
 @dataclasses.dataclass

@@ -88,7 +88,6 @@ excludedFiles: list[str] = [
 	"*.pyc",
 	"__pycache__/*",
 	"globalPlugins/chessmart/data/*",
-	"globalPlugins/chessmart/lib/asyncio_disabled/*",
 ]
 
 # Base language for the NVDA add-on

@@ -12,6 +12,7 @@ O versionamento segue o [Semantic Versioning](https://semver.org/lang/pt-BR/): v
 
 ## Removido
 
+- As cópias do Python 3.7 dos pacotes `http`, `xml`, `concurrent` e `asyncio` da biblioteca padrão, três módulos de extensão `.pyd` da mesma época e um backport de `cached_property`, embarcados desde 2021 para o cliente do jogo online. Ao carregar, o add-on trocava os pacotes `http` e `xml` do próprio NVDA por essas cópias, no processo inteiro: todo add-on e componente do NVDA que os importasse depois recebia código de 2018, e os downloads de puzzles e tablebases passavam por esse cliente HTTP. O NVDA 2026 traz o Python 3.13 com a biblioteca padrão completa; o add-on agora usa essa e não toca em mais nada do NVDA. O pacote encolhe cerca de 1,3 MB.
 - Restos da remoção do jogo online e outro código que nada usava: uma base de diálogo sem uso e o módulo de terceiros `sized_controls` embarcado só para ela, o parser de controle de tempo com `;` do Lichess, um sinal sem uso, um som sem uso e alguns métodos e flags que nenhum código lia. Nada muda no comportamento.
 - Jogo online no lichess.org. Estava "em breve" desde 2022: um cliente pela metade, uma opção desabilitada no menu e 6 MB de bibliotecas de rede embarcadas. Jogar online com leitor de tela é o que o próprio lichess.org faz bem; este add-on é o lado local — jogar contra a engine, tática, finais, PGN. O pacote encolhe na mesma medida.
 
