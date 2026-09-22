@@ -135,7 +135,7 @@ class ChessboardMenu(wx.Menu):
 		answer = ask_yes_no(
 			# Translators: Asked when tactics are opened and no puzzle database is installed yet.
 			_(
-				"Tactics need a puzzle database, which is downloaded once (about 76 MB for the light version). Download it now?",
+				"Tactics need a puzzle database, which is downloaded once. The next dialog gives the size of each. Download it now?",
 			),
 			_("Puzzle Database"),
 		)

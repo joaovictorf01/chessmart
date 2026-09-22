@@ -18,7 +18,7 @@ msgstr ""
 "X-Generator: chessmart tools/i18n.py\n"
 
 #. Button that opens a file picker for the tactics database.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:78
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:79
 msgid "&Browse..."
 msgstr "&Examinar..."
 
@@ -28,7 +28,7 @@ msgstr "&Examinar..."
 msgid "&Cancel"
 msgstr "&Cancelar"
 
-#: addon/globalPlugins/chessmart/__init__.py:91
+#: addon/globalPlugins/chessmart/__init__.py:79
 msgid "&Chessboard"
 msgstr "&Tablero de ajedrez"
 
@@ -46,24 +46,24 @@ msgid "&Download"
 msgstr "&Descargar"
 
 #. Menu item that opens the endgame drills.
-#: addon/globalPlugins/chessmart/__init__.py:67
+#: addon/globalPlugins/chessmart/__init__.py:55
 msgid "&Endgames..."
 msgstr "&Finales..."
 
 #. Menu item that opens the study log.
-#: addon/globalPlugins/chessmart/__init__.py:73
+#: addon/globalPlugins/chessmart/__init__.py:61
 msgid "&My Study..."
 msgstr "&Mi estudio..."
 
-#: addon/globalPlugins/chessmart/__init__.py:57
+#: addon/globalPlugins/chessmart/__init__.py:45
 msgid "&New Game..."
 msgstr "&Nueva partida..."
 
-#: addon/globalPlugins/chessmart/__init__.py:63
+#: addon/globalPlugins/chessmart/__init__.py:51
 msgid "&Random Puzzle"
 msgstr "&Problema al azar"
 
-#: addon/globalPlugins/chessmart/__init__.py:78
+#: addon/globalPlugins/chessmart/__init__.py:66
 msgid "&Replay PGN File..."
 msgstr "&Reproducir archivo PGN..."
 
@@ -72,11 +72,11 @@ msgstr "&Reproducir archivo PGN..."
 msgid "&Save training setup as default"
 msgstr "&Guardar la configuración de entrenamiento como predeterminada"
 
-#: addon/globalPlugins/chessmart/__init__.py:84
+#: addon/globalPlugins/chessmart/__init__.py:72
 msgid "&Settings..."
 msgstr "&Opciones..."
 
-#: addon/globalPlugins/chessmart/__init__.py:60
+#: addon/globalPlugins/chessmart/__init__.py:48
 msgid "&Tactics..."
 msgstr "&Táctica..."
 
@@ -362,7 +362,7 @@ msgstr ""
 "estaba detrás."
 
 #. Label for the read-only field describing the chosen lesson.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:66
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:67
 msgid "About this lesson"
 msgstr "Sobre esta lección"
 
@@ -384,8 +384,8 @@ msgid "Advanced pawn"
 msgstr "Peón avanzado"
 
 #. Shown when no theme filter is applied.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:225
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:233
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:226
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:234
 msgid "All themes"
 msgstr "Todos los temas"
 
@@ -640,12 +640,12 @@ msgid "By day"
 msgstr "Por día"
 
 #. Button that clears the selected themes.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:148
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:149
 msgid "C&lear themes"
 msgstr "&Limpiar temas"
 
 #. First choice of position for a mate drill.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:104
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:105
 msgid "Capablanca's example"
 msgstr "Ejemplo de Capablanca"
 
@@ -750,7 +750,7 @@ msgid "Chess 960"
 msgstr "Ajedrez 960"
 
 #. Title of the chessboard window.
-#: addon/globalPlugins/chessmart/chessboard.py:49
+#: addon/globalPlugins/chessmart/chessboard.py:48
 msgid "Chess Board"
 msgstr "Tablero de ajedrez"
 
@@ -761,7 +761,7 @@ msgstr "Partida de ajedrez *.pgn | *.pgn"
 
 #. Accessible name of the chessboard window. Title of the Chessboard settings
 #. dialog.
-#: addon/globalPlugins/chessmart/chessboard.py:53
+#: addon/globalPlugins/chessmart/chessboard.py:52
 #: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:31
 msgid "Chessboard"
 msgstr "Tablero de ajedrez"
@@ -772,12 +772,12 @@ msgstr "Táctica en el tablero"
 
 #. Summary/title for this add-on Category of the add-on's scripts in the Input
 #. Gestures dialog.
-#: buildVars.py:25 addon/globalPlugins/chessmart/__init__.py:394
+#: buildVars.py:25 addon/globalPlugins/chessmart/__init__.py:380
 msgid "Chessmart"
 msgstr "Chessmart"
 
 #. Error shown when no database is set yet.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:327
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:328
 msgid "Choose a tactics database before selecting themes."
 msgstr "Elige una base de táctica antes de seleccionar temas."
 
@@ -790,7 +790,7 @@ msgstr ""
 "del entrenador."
 
 #. Prompt in the theme picker dialog.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:214
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:215
 msgid "Choose one or more Lichess themes to use in the custom training plan."
 msgstr ""
 "Elige uno o más temas de Lichess para el plan de entrenamiento "
@@ -802,7 +802,7 @@ msgid "Choose the exact Lichess themes you want to include in the session."
 msgstr ""
 "Elige exactamente los temas de Lichess que quieres incluir en la sesión."
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:35
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:36
 msgid "Choose the play mode, starting position, and time control."
 msgstr "Elige el modo de juego, la posición inicial y el control de tiempo."
 
@@ -816,7 +816,7 @@ msgid "Clearance"
 msgstr "Despeje"
 
 #. Label for the optional clock of the mate drills.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:73
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:74
 msgid "Clock for the mate drills (minutes+seconds, empty for none)"
 msgstr ""
 "Reloj para los ejercicios de mate (minutos+segundos, vacío para ninguno)"
@@ -961,7 +961,7 @@ msgid "Custom themes: your own selection"
 msgstr "Temas personalizados: tu propia selección"
 
 #: addon/globalPlugins/chessmart/game_elements.py:79
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:86
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:87
 msgid "Custom Time Control"
 msgstr "Control de tiempo personalizado"
 
@@ -1045,7 +1045,7 @@ msgid "Discovered check"
 msgstr "Jaque a la descubierta"
 
 #. Button that opens the dialog to download or update the puzzle database.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:80
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:81
 msgid "Do&wnload or update..."
 msgstr "Desc&argar o actualizar..."
 
@@ -1070,12 +1070,12 @@ msgid "Dovetail mate"
 msgstr "Mate de Cozio"
 
 #. Button that opens the tablebase download dialog.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:82
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:83
 msgid "Download &tablebases..."
 msgstr "Descargar &tablebases..."
 
 #. Shown after the user cancels the puzzle database download.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:342
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:370
 msgid "Download cancelled."
 msgstr "Descarga cancelada."
 
@@ -1090,7 +1090,7 @@ msgstr ""
 
 #. Announced after the download, while the list of puzzle themes is being
 #. prepared.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:308
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:336
 msgid "Download complete. Preparing the theme catalog, this takes a moment..."
 msgstr ""
 "Descarga completa. Preparando el catálogo de temas, tarda un momento..."
@@ -1210,7 +1210,7 @@ msgid "Endgame Tablebases"
 msgstr "Tablebases de finales"
 
 #. Title of the endgames dialog.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:29
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:30
 msgid "Endgames"
 msgstr "Finales"
 
@@ -1220,19 +1220,19 @@ msgstr "Finales"
 msgid "endgames: {n} positions, {held} held, {minutes} min"
 msgstr "finales: {n} posiciones, {held} mantenidas, {minutes} min"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:92
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:93
 msgid "Engine &Options..."
 msgstr "&Opciones del motor..."
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:205
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:204
 msgid "Engine Options"
 msgstr "Opciones del motor"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:214
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:213
 msgid "Engine Strength (ELO Rating)"
 msgstr "Fuerza del motor (rating ELO)"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:220
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:219
 msgid "Engine Thinking Time (in seconds)"
 msgstr "Tiempo de reflexión del motor (en segundos)"
 
@@ -1408,7 +1408,7 @@ msgid "Horde"
 msgstr "Horda"
 
 #. Menu item that opens the study log.
-#: addon/globalPlugins/chessmart/__init__.py:74
+#: addon/globalPlugins/chessmart/__init__.py:62
 msgid ""
 "How much and how you studied, by day, and how far the endgame lessons go"
 msgstr ""
@@ -1475,8 +1475,8 @@ msgstr "Jugada intermedia"
 msgid "Invalid FEN String"
 msgstr "Cadena FEN no válida"
 
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:154
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:119
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:155
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:120
 msgid "Invalid Time Control String"
 msgstr "Cadena de control de tiempo no válida"
 
@@ -1618,12 +1618,12 @@ msgid "Leave training? The session status will be lost."
 msgstr "¿Salir del entrenamiento? El estado de la sesión se perderá."
 
 #. Label for the list of endgame lessons.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:51
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:52
 msgid "Lesson"
 msgstr "Lección"
 
 #. Intro text of the endgames dialog.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:42
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:43
 msgid ""
 "Lessons follow the endgame course order: first the mates, then what draws "
 "and what does not. Each position asks win, draw or loss, tells the rule, and"
@@ -1650,7 +1650,7 @@ msgstr "Ligera"
 msgid "Literate: knight f 3"
 msgstr "Literal: caballo f 3"
 
-#: addon/globalPlugins/chessmart/__init__.py:79
+#: addon/globalPlugins/chessmart/__init__.py:67
 msgid "Load an replay a portable game notation (.pgn) file"
 msgstr "Cargar y reproducir un archivo de notación de partida portátil (.pgn)"
 
@@ -1792,7 +1792,7 @@ msgstr "Mi estudio"
 msgid "NATO: knight foxtrot 3"
 msgstr "OTAN: caballo foxtrot 3"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:20
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:21
 msgid "New Game"
 msgstr "Nueva partida"
 
@@ -1811,7 +1811,7 @@ msgid "Next puzzle"
 msgstr "Siguiente problema"
 
 #. Title of the no-database error.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:329
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:330
 msgid "No Database Selected"
 msgstr "Ninguna base seleccionada"
 
@@ -1859,8 +1859,8 @@ msgstr ""
 msgid "No tactics available"
 msgstr "No hay táctica disponible"
 
-#: addon/globalPlugins/chessmart/__init__.py:139
-#: addon/globalPlugins/chessmart/__init__.py:183
+#: addon/globalPlugins/chessmart/__init__.py:126
+#: addon/globalPlugins/chessmart/__init__.py:167
 msgid "No Tactics Found"
 msgstr "No se encontró táctica"
 
@@ -1882,7 +1882,7 @@ msgid "No themes"
 msgstr "Sin temas"
 
 #. Shown when the database has no themes at all.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:353
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:352
 msgid "No themes were found in the selected database."
 msgstr "No se encontraron temas en la base seleccionada."
 
@@ -1969,22 +1969,22 @@ msgstr "Ejercicio de un solo movimiento"
 msgid "Only move: {moves}"
 msgstr "Única jugada: {moves}"
 
-#: addon/globalPlugins/chessmart/__init__.py:92
+#: addon/globalPlugins/chessmart/__init__.py:80
 msgid "Open a chess game, tactics session, replay, or settings"
 msgstr ""
 "Abrir una partida de ajedrez, una sesión de táctica, una reproducción o las "
 "opciones"
 
-#: addon/globalPlugins/chessmart/__init__.py:85
+#: addon/globalPlugins/chessmart/__init__.py:73
 msgid "Open Chessboard settings"
 msgstr "Abrir las opciones del tablero de ajedrez"
 
 #. Title of the dialog that opens a PGN file.
-#: addon/globalPlugins/chessmart/__init__.py:315
+#: addon/globalPlugins/chessmart/__init__.py:301
 msgid "Open PGN File"
 msgstr "Abrir archivo PGN"
 
-#: addon/globalPlugins/chessmart/__init__.py:61
+#: addon/globalPlugins/chessmart/__init__.py:49
 msgid "Open tactics from the Lichess tactics database"
 msgstr "Abrir táctica de la base de táctica de Lichess"
 
@@ -2097,15 +2097,15 @@ msgstr ""
 "Coloca una pieza entre dos piezas enemigas conectadas, dejando una o ambas "
 "sin defensa."
 
-#: addon/globalPlugins/chessmart/__init__.py:63
+#: addon/globalPlugins/chessmart/__init__.py:51
 msgid "Play a random puzzle"
 msgstr "Jugar un problema al azar"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:73
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:74
 msgid "Play As"
 msgstr "Jugar con"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:44
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:45
 msgid "Play Mode"
 msgstr "Modo de juego"
 
@@ -2125,8 +2125,8 @@ msgstr ""
 "{fen}\n"
 "para un FEN de posición inicial estándar."
 
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:151
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:116
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:152
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:117
 msgid ""
 "Please enter a valid time control string.\n"
 "Example: 10+5 for a 10 minutes base time with 5 seconds increment after each move."
@@ -2139,7 +2139,7 @@ msgid "Popularity: {popularity}."
 msgstr "Popularidad: {popularity}."
 
 #. File type filter of the PGN open dialog.
-#: addon/globalPlugins/chessmart/__init__.py:318
+#: addon/globalPlugins/chessmart/__init__.py:304
 msgid "Portable Game Notation *.pgn | *.pgn"
 msgstr "Notación de partida portátil *.pgn | *.pgn"
 
@@ -2149,12 +2149,12 @@ msgid "Portable Network Graphics *.png | *.png"
 msgstr "Gráficos de red portátiles *.png | *.png"
 
 #. Label for the list of positions of the chosen lesson.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:59
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:60
 msgid "Position"
 msgstr "Posición"
 
 #. Menu item that opens the endgame drills.
-#: addon/globalPlugins/chessmart/__init__.py:68
+#: addon/globalPlugins/chessmart/__init__.py:56
 msgid "Practice elementary endgames against the engine"
 msgstr "Practicar finales elementales contra el motor"
 
@@ -2238,10 +2238,10 @@ msgstr ""
 
 #. Asked when tactics are opened and no puzzle database is installed yet.
 #. Title of the puzzle database download dialog.
-#: addon/globalPlugins/chessmart/__init__.py:154
+#: addon/globalPlugins/chessmart/__init__.py:140
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:53
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:332
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:355
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:360
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:383
 msgid "Puzzle Database"
 msgstr "Base de problemas"
 
@@ -2391,7 +2391,7 @@ msgid "Random"
 msgstr "Al azar"
 
 #. Second choice of position for a mate drill.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:106
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:107
 msgid "Random position"
 msgstr "Posición al azar"
 
@@ -2576,21 +2576,21 @@ msgid "Score sheet is empty"
 msgstr "La planilla está vacía"
 
 #. Button that opens the theme picker.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:146
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:147
 msgid "Select &themes..."
 msgstr "Seleccionar &temas..."
 
-#: addon/globalPlugins/chessmart/__init__.py:350
+#: addon/globalPlugins/chessmart/__init__.py:336
 msgid "Select Game"
 msgstr "Seleccionar partida"
 
 #. Title of the file picker for the tactics database.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:277
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:278
 msgid "Select tactics database"
 msgstr "Seleccionar base de táctica"
 
 #. Title of the theme picker dialog.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:363
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:361
 msgid "Select Themes"
 msgstr "Seleccionar temas"
 
@@ -2683,7 +2683,7 @@ msgstr ""
 "peones o más."
 
 #. File type filter in the tactics database picker.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:279
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:280
 msgid "SQLite databases (*.db;*.sqlite)|*.db;*.sqlite|All files|*.*"
 msgstr "Bases SQLite (*.db;*.sqlite)|*.db;*.sqlite|Todos los archivos|*.*"
 
@@ -2718,11 +2718,11 @@ msgstr ""
 "Inicia una sesión de entrenamiento guiada, o escribe el ID de un problema "
 "para abrir un ejercicio exacto de Lichess."
 
-#: addon/globalPlugins/chessmart/__init__.py:57
+#: addon/globalPlugins/chessmart/__init__.py:45
 msgid "Start a new chess game"
 msgstr "Empezar una nueva partida de ajedrez"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:80
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:81
 msgid "Starting FEN"
 msgstr "FEN inicial"
 
@@ -2777,23 +2777,14 @@ msgid "Tactics"
 msgstr "Táctica"
 
 #. Label for the tactics database path field.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:74
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:75
 msgid "Tactics database"
 msgstr "Base de táctica"
 
-#: addon/globalPlugins/chessmart/__init__.py:132
-#: addon/globalPlugins/chessmart/__init__.py:178
+#: addon/globalPlugins/chessmart/__init__.py:120
+#: addon/globalPlugins/chessmart/__init__.py:163
 msgid "Tactics Database Not Found"
 msgstr "Base de táctica no encontrada"
-
-#. Asked when tactics are opened and no puzzle database is installed yet.
-#: addon/globalPlugins/chessmart/__init__.py:151
-msgid ""
-"Tactics need a puzzle database, which is downloaded once (about 76 MB for "
-"the light version). Download it now?"
-msgstr ""
-"La táctica necesita una base de problemas, que se descarga una sola vez "
-"(unos 76 MB en la versión ligera). ¿Descargarla ahora?"
 
 #. One day's tactics in the study log, e.g. "tactics: 3 puzzles, 2 solved, 25
 #. min".
@@ -2877,7 +2868,7 @@ msgstr "La dificultad sigue tu propio rating de táctica a medida que mejoras."
 
 #. Message shown when the puzzle database download failed. Message shown when
 #. the tablebase download failed.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:354
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:382
 #: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:217
 msgid "The download failed: {reason}"
 msgstr "La descarga falló: {reason}"
@@ -2892,11 +2883,11 @@ msgstr ""
 "casilla a la que volver, y cae. Perdido para el caballo."
 
 #. Spoken when the chosen PGN file has no games.
-#: addon/globalPlugins/chessmart/__init__.py:342
+#: addon/globalPlugins/chessmart/__init__.py:328
 msgid "The file contains no games"
 msgstr "El archivo no contiene partidas"
 
-#: addon/globalPlugins/chessmart/__init__.py:349
+#: addon/globalPlugins/chessmart/__init__.py:335
 msgid "The file contains the following games"
 msgstr "El archivo contiene las siguientes partidas"
 
@@ -3110,7 +3101,7 @@ msgstr ""
 msgid "The tactic involves capturing a pawn en passant."
 msgstr "La táctica incluye una captura al paso."
 
-#: addon/globalPlugins/chessmart/__init__.py:175
+#: addon/globalPlugins/chessmart/__init__.py:160
 msgid ""
 "The tactics database was not found. Choose a valid database in Chessboard "
 "settings first."
@@ -3118,7 +3109,7 @@ msgstr ""
 "No se encontró la base de táctica. Primero elige una base válida en las "
 "opciones del tablero de ajedrez."
 
-#: addon/globalPlugins/chessmart/__init__.py:129
+#: addon/globalPlugins/chessmart/__init__.py:117
 msgid ""
 "The tactics database was not found. Use Browse in the tactics dialog to "
 "point at your puzzle database, or place it in the add-on's data folder as "
@@ -3134,7 +3125,7 @@ msgid "The target was under {target} moves."
 msgstr "El objetivo era menos de {target} jugadas."
 
 #. Announced when the theme catalog could not be built.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:395
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:393
 msgid "The theme catalog could not be built."
 msgstr "No se pudo construir el catálogo de temas."
 
@@ -3166,12 +3157,12 @@ msgstr ""
 " en la esquina no sale nunca."
 
 #. Message shown when the puzzle database was installed successfully.
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:328
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:356
 msgid "The {name} puzzle database is installed: {count:,} puzzles."
 msgstr "La base de problemas {name} está instalada: {count:,} problemas."
 
 #. Announced when the theme catalog finished building in the background.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:392
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:390
 msgid "Theme catalog ready. You can select themes now."
 msgstr "Catálogo de temas listo. Ya puedes seleccionar temas."
 
@@ -3181,17 +3172,17 @@ msgid "Themes"
 msgstr "Temas"
 
 #. Title of the no-themes warning.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:355
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:354
 msgid "Themes Not Found"
 msgstr "Temas no encontrados"
 
 #. Part of the training summary when every theme is in play.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:247
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:248
 msgid "Themes: all of them."
 msgstr "Temas: todos."
 
 #. Part of the training summary. {count} is a number of themes.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:249
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:250
 msgid ""
 "Themes: {count} in play, chosen by the training plan and not by the level."
 msgstr ""
@@ -3262,7 +3253,7 @@ msgstr "Tres jaques"
 msgid "Three moves to win."
 msgstr "Tres jugadas para ganar."
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:60
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:61
 msgid "Time Control"
 msgstr "Control de tiempo"
 
@@ -3300,7 +3291,7 @@ msgstr ""
 " defensor para detectar ganancias limpias de material."
 
 #. Label for the read-only field summarising the training setup.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:127
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:128
 msgid "Trainer summary"
 msgstr "Resumen del entrenador"
 
@@ -3379,6 +3370,8 @@ msgstr "UCI: g1f3"
 msgid "Underpromotion"
 msgstr "Subpromoción"
 
+#. Shown when the list of available puzzle databases could not be downloaded;
+#. {reason} is the technical error.
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:163
 #: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:402
 #: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:703
@@ -3417,7 +3410,7 @@ msgstr "Usa Tab para las acciones de entrenamiento."
 msgid "Use the arrow keys to inspect the board."
 msgstr "Usa las flechas para examinar el tablero."
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:51
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:52
 msgid "Variant"
 msgstr "Variante"
 
@@ -3426,7 +3419,7 @@ msgstr "Variante"
 msgid "Very long puzzle"
 msgstr "Ejercicio muy largo"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:95
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:96
 msgid "Visually highlight board interactions"
 msgstr "Resaltar visualmente las interacciones con el tablero"
 
@@ -3648,7 +3641,7 @@ msgid "{count} of them revealed with Control+Enter."
 msgstr "{count} de ellos revelados con Control+Intro."
 
 #. {count} is a number of themes, {themes} their names.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:227
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:228
 msgid "{count} selected: {themes}"
 msgstr "{count} seleccionados: {themes}"
 
@@ -3666,13 +3659,13 @@ msgid "{day}: {parts}. Total {minutes} min."
 msgstr "{day}: {parts}. Total {minutes} min."
 
 #. Download progress text, e.g. "30 MB of 76 MB (40%)".
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:297
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:325
 #: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:181
 msgid "{done} of {total} ({percent}%)"
 msgstr "{done} de {total} ({percent}%)"
 
 #. One theme in the picker. {label} is its name, {description} what it means,
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:367
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:365
 msgid "{label}: {description} ({count:,} puzzles)"
 msgstr "{label}: {description} ({count:,} problemas)"
 
@@ -3727,7 +3720,7 @@ msgid "{name}: {total}, {remaining} still to download"
 msgstr "{name}: {total}, {remaining} aún por descargar"
 
 #. Download progress announced by speech, e.g. "40 percent".
-#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:289
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:317
 #: addon/globalPlugins/chessmart/graphical_interface/tablebase_dialog.py:173
 msgid "{percent} percent"
 msgstr "{percent} por ciento"
@@ -3738,7 +3731,7 @@ msgid "{pieces}: {mine} to {theirs}."
 msgstr "{pieces}: {mine} a {theirs}."
 
 #. Summary of the training setup: plan, level and themes, one per line.
-#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:257
+#: addon/globalPlugins/chessmart/graphical_interface/tactics_setup.py:258
 msgid ""
 "{plan}. {plan_desc}\n"
 "{challenge}. {challenge_desc}\n"
@@ -3765,13 +3758,13 @@ msgid "{size} MB"
 msgstr "{size} MB"
 
 #. Suffix of a lesson position attempted but not yet held.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:123
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:124
 msgid "{title} (not held yet)"
 msgstr "{title} (aún no mantenida)"
 
 #. Suffix of a lesson position with its streak, e.g. "The king leads (3 in a
 #. row)".
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:121
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:122
 msgid "{title} ({streak} in a row)"
 msgstr "{title} ({streak} seguidas)"
 
@@ -4095,32 +4088,32 @@ msgstr ""
 "anna) y traducción al portugués de Brasil."
 
 #. Spoken when a shortcut is used while NVDA runs in secure mode.
-#: addon/globalPlugins/chessmart/__init__.py:413
+#: addon/globalPlugins/chessmart/__init__.py:399
 msgid "Chessmart is not available in secure mode."
 msgstr "Chessmart no está disponible en modo seguro."
 
 #. Description of the shortcut that opens the endgame lessons.
-#: addon/globalPlugins/chessmart/__init__.py:434
+#: addon/globalPlugins/chessmart/__init__.py:420
 msgid "Opens Chessmart endgames"
 msgstr "Abre los Finales de Chessmart"
 
 #. Description of the shortcut that opens the study log.
-#: addon/globalPlugins/chessmart/__init__.py:441
+#: addon/globalPlugins/chessmart/__init__.py:427
 msgid "Opens Chessmart My Study"
 msgstr "Abre Mi estudio de Chessmart"
 
 #. Description of the shortcut that opens the tactics trainer.
-#: addon/globalPlugins/chessmart/__init__.py:419
+#: addon/globalPlugins/chessmart/__init__.py:405
 msgid "Opens Chessmart tactics"
 msgstr "Abre la Táctica de Chessmart"
 
 #. Description of the shortcut that starts a new game.
-#: addon/globalPlugins/chessmart/__init__.py:448
+#: addon/globalPlugins/chessmart/__init__.py:434
 msgid "Starts a new Chessmart game"
 msgstr "Inicia una nueva partida de Chessmart"
 
 #. Description of the shortcut that starts a random puzzle.
-#: addon/globalPlugins/chessmart/__init__.py:427
+#: addon/globalPlugins/chessmart/__init__.py:413
 msgid "Starts a random Chessmart puzzle with the saved training setup"
 msgstr ""
 "Inicia un problema al azar de Chessmart con la configuración de "
@@ -4154,7 +4147,7 @@ msgstr ""
 "internet e inténtalo de nuevo. Detalle: {reason}"
 
 #. Spoken when the chosen PGN file cannot be read, followed by the error.
-#: addon/globalPlugins/chessmart/__init__.py:369
+#: addon/globalPlugins/chessmart/__init__.py:355
 msgid "Could not read the PGN file. Details: {error}"
 msgstr "No se pudo leer el archivo PGN. Detalle: {error}"
 
@@ -4222,6 +4215,32 @@ msgstr "victoria por las reglas de la variante"
 #: addon/globalPlugins/chessmart/pgn.py:72
 msgid "{white} versus {black}"
 msgstr "{white} contra {black}"
+
+#. Asked when tactics are opened and no puzzle database is installed yet.
+#: addon/globalPlugins/chessmart/__init__.py:137
+msgid ""
+"Tactics need a puzzle database, which is downloaded once. The next dialog "
+"gives the size of each. Download it now?"
+msgstr ""
+"Las tácticas necesitan una base de problemas, que se descarga una sola vez. "
+"El siguiente diálogo indica el tamaño de cada una. ¿Descargarla ahora?"
+
+#. Announced when a piece of the download has to be fetched again; {reason} is
+#. the technical error.
+#: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:295
+msgid ""
+"{file} did not arrive whole (attempt {attempt} of {attempts}: {reason}). "
+"Downloading it again."
+msgstr ""
+"{file} no llegó completo (intento {attempt} de {attempts}: {reason}). "
+"Descargándolo de nuevo."
+
+#~ msgid ""
+#~ "Tactics need a puzzle database, which is downloaded once (about 76 MB for "
+#~ "the light version). Download it now?"
+#~ msgstr ""
+#~ "La táctica necesita una base de problemas, que se descarga una sola vez "
+#~ "(unos 76 MB en la versión ligera). ¿Descargarla ahora?"
 
 #~ msgid "Cancel"
 #~ msgstr "Cancelar"
