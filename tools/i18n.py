@@ -25,7 +25,7 @@ from pathlib import Path
 try:
 	import polib
 except ImportError:  # pragma: no cover
-	raise SystemExit("Precisa do pacote polib: py -3 -m pip install polib")
+	raise SystemExit("Requires the polib package: py -3 -m pip install polib")
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import buildVars  # noqa: E402
@@ -138,7 +138,7 @@ def extract() -> polib.POFile:
 		pot.append(entry)
 	LOCALE.mkdir(parents=True, exist_ok=True)
 	pot.save(str(POT))
-	print(f"{POT.relative_to(REPO)}: {len(pot)} mensagens")
+	print(f"{POT.relative_to(REPO)}: {len(pot)} messages")
 	return pot
 
 
@@ -156,7 +156,7 @@ def update(languages: list[str]) -> None:
 		po.save(str(po_path))
 		untranslated = len(po.untranslated_entries())
 		fuzzy = len(po.fuzzy_entries())
-		print(f"{po_path.relative_to(REPO)}: {len(po)} mensagens, {untranslated} sem tradução, {fuzzy} fuzzy")
+		print(f"{po_path.relative_to(REPO)}: {len(po)} messages, {untranslated} untranslated, {fuzzy} fuzzy")
 
 
 def compile_all() -> int:
@@ -165,7 +165,7 @@ def compile_all() -> int:
 		po = polib.pofile(str(po_path))
 		mo_path = po_path.with_suffix(".mo")
 		po.save_as_mofile(str(mo_path))
-		print(f"{mo_path.relative_to(REPO)}: {len(po.translated_entries())} traduzidas")
+		print(f"{mo_path.relative_to(REPO)}: {len(po.translated_entries())} translated")
 		count += 1
 	return count
 
@@ -178,7 +178,7 @@ def check() -> int:
 			if entry.obsolete:
 				continue
 			if not entry.translated():
-				print(f"{po_path.parent.parent.name}: sem tradução: {entry.msgid!r}")
+				print(f"{po_path.parent.parent.name}: untranslated: {entry.msgid!r}")
 				problems += 1
 				continue
 			targets = [entry.msgstr] if entry.msgstr else list(entry.msgstr_plural.values())
@@ -187,13 +187,13 @@ def check() -> int:
 				got = set(PLACEHOLDER.findall(target))
 				if got != expected:
 					print(
-						f"{po_path.parent.parent.name}: placeholders diferentes em {entry.msgid!r}: {sorted(expected)} -> {sorted(got)}",
+						f"{po_path.parent.parent.name}: different placeholders in {entry.msgid!r}: {sorted(expected)} -> {sorted(got)}",
 					)
 					problems += 1
 			if "&" in entry.msgid and "&" not in entry.msgstr:
-				print(f"{po_path.parent.parent.name}: atalho (&) perdido em {entry.msgid!r}")
+				print(f"{po_path.parent.parent.name}: lost shortcut (&) in {entry.msgid!r}")
 				problems += 1
-	print("sem problemas" if not problems else f"{problems} problema(s)")
+	print("no problems" if not problems else f"{problems} problem(s)")
 	return problems
 
 

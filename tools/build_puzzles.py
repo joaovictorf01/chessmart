@@ -45,11 +45,11 @@ DEFAULT_PART_SIZE = 300 * 1024 * 1024
 # a lot of people have played and approved of: the sensible first download.
 TIERS = {
 	"light": {
-		"description": "Puzzles com popularidade >= 95 e pelo menos 500 jogadas",
+		"description": "Puzzles with popularity >= 95 and at least 500 plays",
 		"keep": lambda row: row["popularity"] >= 95 and row["nb_plays"] >= 500,
 	},
 	"full": {
-		"description": "A base inteira do Lichess",
+		"description": "The entire Lichess database",
 		"keep": lambda row: True,
 	},
 }
@@ -112,14 +112,14 @@ def download(target: Path) -> tuple[Path, str | None]:
 		response = urllib.request.urlopen(request, timeout=60)
 	except urllib.error.HTTPError as error:
 		if error.code == 304:
-			log(f"Lichess: sem mudança desde o último download ({target.name})")
+			log(f"Lichess: no change since the last download ({target.name})")
 			return target, _read_sidecar(target, "last-modified")
 		raise
 	with response:
 		total = int(response.headers.get("Content-Length") or 0)
 		last_modified = response.headers.get("Last-Modified")
 		etag = response.headers.get("ETag")
-		log(f"Lichess: baixando {total / 1e6:.0f} MB (Last-Modified: {last_modified})")
+		log(f"Lichess: downloading {total / 1e6:.0f} MB (Last-Modified: {last_modified})")
 		target.parent.mkdir(parents=True, exist_ok=True)
 		partial = target.with_suffix(target.suffix + ".part")
 		done = 0
@@ -159,7 +159,7 @@ def open_zst_text(path: Path):
 			import zstandard
 		except ImportError as error:
 			raise SystemExit(
-				"Precisa do Python 3.14+ (compression.zstd) ou do pacote `zstandard` (pip install zstandard).",
+				"Requires Python 3.14+ (compression.zstd) or the `zstandard` package (pip install zstandard).",
 			) from error
 		stream = zstandard.ZstdDecompressor().stream_reader(raw)
 	else:
@@ -200,7 +200,7 @@ def build_tier(
 	db_path = out_dir / f"puzzles-{tier}.db"
 	if db_path.exists():
 		db_path.unlink()
-	log(f"{tier}: gerando {db_path.name}")
+	log(f"{tier}: generating {db_path.name}")
 	connection = sqlite3.connect(db_path)
 	# A fresh database, disposable if it fails partway through: no journal or
 	# fsync, which would only cost time here.
@@ -221,10 +221,10 @@ def build_tier(
 			connection.executemany(insert, batch)
 			batch.clear()
 			if kept % 500_000 < BATCH:
-				log(f"  {kept:,} puzzles gravados ({seen:,} lidos)")
+				log(f"  {kept:,} puzzles written ({seen:,} read)")
 	if batch:
 		connection.executemany(insert, batch)
-	log(f"  índices ({kept:,} puzzles)")
+	log(f"  indexes ({kept:,} puzzles)")
 	connection.executescript(PUZZLES_INDEXES)
 	meta = {
 		"schemaVersion": str(SCHEMA_VERSION),
@@ -241,7 +241,7 @@ def build_tier(
 	connection.close()
 
 	gz_path = db_path.with_suffix(db_path.suffix + ".gz")
-	log(f"  comprimindo {gz_path.name}")
+	log(f"  compressing {gz_path.name}")
 	with db_path.open("rb") as src, gzip.open(gz_path, "wb", compresslevel=6) as dst:
 		shutil.copyfileobj(src, dst, 1 << 20)
 	parts = split_into_parts(gz_path, part_size)
@@ -264,8 +264,8 @@ def build_tier(
 		},
 	}
 	log(
-		f"  pronto: {entry['bytes'] / 1e6:.0f} MB no disco, "
-		f"{entry['download']['bytes'] / 1e6:.0f} MB para baixar em {len(parts)} parte(s)",
+		f"  done: {entry['bytes'] / 1e6:.0f} MB on disk, "
+		f"{entry['download']['bytes'] / 1e6:.0f} MB to download in {len(parts)} part(s)",
 	)
 	return entry
 
@@ -322,22 +322,24 @@ def main(argv: list[str] | None = None) -> int:
 		formatter_class=argparse.RawDescriptionHelpFormatter,
 	)
 	source = parser.add_mutually_exclusive_group(required=True)
-	source.add_argument("--download", action="store_true", help="baixa o CSV do Lichess (com cache por ETag)")
-	source.add_argument("--csv", type=Path, help="usa um lichess_db_puzzle.csv.zst já baixado")
+	source.add_argument(
+		"--download", action="store_true", help="download the CSV from Lichess (cached by ETag)"
+	)
+	source.add_argument("--csv", type=Path, help="use an already downloaded lichess_db_puzzle.csv.zst")
 	parser.add_argument(
 		"--cache-dir",
 		type=Path,
 		default=Path("build/lichess"),
-		help="onde o download fica guardado",
+		help="where the download is kept",
 	)
 	parser.add_argument("--tier", choices=[*TIERS, "all"], default="all")
 	parser.add_argument("--out", type=Path, default=Path("dist/puzzles"))
-	parser.add_argument("--limit", type=int, default=0, help="lê só as N primeiras linhas (para testar)")
+	parser.add_argument("--limit", type=int, default=0, help="read only the first N lines (for testing)")
 	parser.add_argument(
 		"--part-size",
 		type=int,
 		default=DEFAULT_PART_SIZE,
-		help="tamanho máximo de cada parte do .gz, em bytes (padrão: 300 MiB)",
+		help="maximum size of each .gz part, in bytes (default: 300 MiB)",
 	)
 	args = parser.parse_args(argv)
 
@@ -375,7 +377,7 @@ def main(argv: list[str] | None = None) -> int:
 	}
 	manifest_path = args.out / "manifest.json"
 	manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
-	log(f"manifesto: {manifest_path}")
+	log(f"manifest: {manifest_path}")
 	return 0
 
 

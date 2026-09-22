@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS attempts (
 CREATE INDEX IF NOT EXISTS idx_attempts_puzzle_id ON attempts(puzzle_id);
 CREATE INDEX IF NOT EXISTS idx_attempts_created_at ON attempts(created_at);
 
--- Uma linha só: o rating atual do jogador. O CHECK garante isso.
+-- A single row: the player's current rating. The CHECK guarantees this.
 CREATE TABLE IF NOT EXISTS player_rating (
   id INTEGER PRIMARY KEY CHECK (id = 1),
   rating REAL NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS player_rating (
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Uma linha por atualização, para desenhar a evolução ao longo do tempo.
+-- One row per update, to draw the evolution over time.
 CREATE TABLE IF NOT EXISTS rating_history (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   attempt_id INTEGER,

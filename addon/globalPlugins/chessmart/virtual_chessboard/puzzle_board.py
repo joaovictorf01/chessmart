@@ -205,7 +205,7 @@ class PuzzleCell(UserDrivenCell):
 					],
 				)
 				return
-			log.info(f"chessmart: tática {puzzle.puzzle_id} pulada com Control+N")
+			log.info(f"chessmart: tactic {puzzle.puzzle_id} skipped with Control+N")
 			speak_next([_("Skipping tactic {puzzle_id}.").format(puzzle_id=puzzle.puzzle_id)])
 		self.parent.next_puzzle()
 
@@ -622,7 +622,7 @@ class PuzzleChessboard(UserDrivenChessboard):
 		try:
 			summary = self.session.rating()
 		except Exception:
-			log.exception("chessmart: falha ao ler o rating")
+			log.exception("chessmart: failed to read the rating")
 			summary = None
 		if summary is None:
 			ui.message(_("No tactics rating yet."))
@@ -850,6 +850,6 @@ class PuzzleChessboard(UserDrivenChessboard):
 		except Exception:
 			# Losing the rating for one attempt is annoying; losing the solved
 			# puzzle because the database choked would be worse.
-			log.exception("chessmart: falha ao gravar a tentativa")
+			log.exception("chessmart: failed to record the attempt")
 			self._last_rating = None
 		self._attempt.recorded = True

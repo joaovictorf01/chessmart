@@ -49,7 +49,7 @@ def main() -> int:
 		for match in LISTING_LINE.finditer(fetch(f"{MIRROR}{folder}/")):
 			name = match.group("name")
 			if name not in checksums:
-				print(f"sem sha256: {name}", file=sys.stderr)
+				print(f"missing sha256: {name}", file=sys.stderr)
 				return 1
 			files.append(
 				{
@@ -69,7 +69,7 @@ def main() -> int:
 	}
 	TARGET.write_text(json.dumps(manifest, indent=1) + "\n", encoding="utf-8")
 	total = sum(f["bytes"] for f in files)
-	print(f"{TARGET.name}: {len(files)} arquivos, {total / 1e6:.0f} MB")
+	print(f"{TARGET.name}: {len(files)} files, {total / 1e6:.0f} MB")
 	return 0
 
 

@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import dataclasses
 import math
-from typing import Iterable
 
 from ..i18n import _
 from ..paths import import_bundled
@@ -188,7 +187,3 @@ def result_names() -> dict[str, str]:
 		# Translators: One of the answers to "win or draw?".
 		LOSS: _("Loss"),
 	}
-
-
-def sans(board: chess.Board, moves: Iterable[chess.Move]) -> list[str]:
-	return [board.san(move) for move in moves]
