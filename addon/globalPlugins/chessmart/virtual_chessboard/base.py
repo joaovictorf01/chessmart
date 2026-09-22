@@ -34,7 +34,6 @@ from ..addon_config import get_move_notation
 from ..paths import import_bundled
 from ..sounds import GameSound
 from ..speaking import intersperse, speak_next
-from ..concurrency import call_threaded
 from ..signals import (
 	move_completed_signal,
 	game_started_signal,
@@ -869,8 +868,10 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 		eventHandler.queueEvent("gainFocus", self.parent)
 		self.dialog.Close()
 
-	@call_threaded
 	def save_game(self):
+		# wx dialogs must be created and shown on the GUI thread (NVDA developer
+		# guide); this runs from a script, which is already on that thread. The
+		# PGN write is small enough to stay here too.
 		saveFileDialog = wx.FileDialog(
 			parent=None,
 			# Translators: Title of the dialog that saves the game as a PGN file.
@@ -893,8 +894,8 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 			exporter = chess.pgn.FileExporter(file)
 			game.accept(exporter)
 
-	@call_threaded
 	def save_board_image(self):
+		# Same rule as `save_game`: dialog and bitmap access on the GUI thread.
 		saveFileDialog = wx.FileDialog(
 			parent=None,
 			# Translators: Title of the dialog that saves the board as an image.

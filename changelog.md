@@ -16,6 +16,7 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 
 ## Fixed
 
+- Control+S and Control+Shift+S (save the game as PGN, save the board as an image): the save dialog is now opened on NVDA's main thread, as wx requires; opening it from a worker thread could freeze or crash NVDA.
 - Puzzle download dialog: when the list cannot be fetched, the message now carries the exact error ("Details: ..."), so a report of "could not reach the download server" already says whether it was the network, a proxy or a certificate. The first status says to wait for the list; if the list cannot be fetched, the button becomes **Try again** instead of leaving everything disabled.
 - README: the submenu is under NVDA menu > Tools.
 
