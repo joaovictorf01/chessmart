@@ -6,8 +6,9 @@
 Minimal blinker-style implementation: a `Signal` holds receivers, each one
 optionally bound to a `sender`, and `send` calls the ones that match.
 References to receivers are strong: a chessboard connects lambdas and its own
-methods and stays alive as long as its window does; only `disconnect` (or
-process exit) releases them.
+methods, so the dialog that closes the board calls
+`chessboard_signals.disconnect_sender(board)` to release them; otherwise every
+board played since NVDA started would stay in memory.
 """
 
 _ANY_SENDER = object()
@@ -32,6 +33,14 @@ class Signal:
 			)
 		]
 
+	def disconnect_sender(self, sender):
+		"""Drops every receiver that was connected for `sender`."""
+		self._receivers = [
+			(receiver, registered_sender)
+			for (receiver, registered_sender) in self._receivers
+			if registered_sender is _ANY_SENDER or registered_sender != sender
+		]
+
 	def send(self, sender=None, **kwargs):
 		results = []
 		for receiver, expected_sender in tuple(self._receivers):
@@ -49,6 +58,11 @@ class Namespace:
 		if name not in self._signals:
 			self._signals[name] = Signal(name=name, doc=doc)
 		return self._signals[name]
+
+	def disconnect_sender(self, sender):
+		"""Drops every receiver connected for `sender` on every signal of the namespace."""
+		for signal in self._signals.values():
+			signal.disconnect_sender(sender)
 
 
 chessboard_signals = Namespace()

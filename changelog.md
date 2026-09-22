@@ -18,6 +18,7 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 
 ## Fixed
 
+- Closing a board now releases it: every board (game, puzzle, endgame position, PGN replay) connected callbacks to the add-on's signals and nothing ever removed them, so each board played since NVDA started stayed in memory with its 64 squares, its score sheet and its closed engine wrapper. The dialog now drops the board's receivers when it closes.
 - Internal: message boxes and the dialogs opened from the menu use NVDA's `MessageDialog` and `displayDialogAsModal` instead of `gui.messageBox` and `gui.runScriptModalDialog`, which NVDA 2025.1 deprecated (each call was logging a deprecation warning). Error messages keep the error icon and sound, warnings the alert sound. The clock warnings (time passing, time critical) are played through NVDA's own audio output like every other sound of the add-on, instead of through wx, so they follow NVDA's output device and audio ducking.
 - Internal: a failed board-image conversion is logged as an error instead of a bogus exception ("NoneType: None") in the NVDA log; log calls use lazy formatting; the plugin's `terminate` calls NVDA's; the last three Portuguese code comments are in English.
 - Puzzle download: a manifest that carries no SHA-256 for the file or for one of its parts is refused before anything is downloaded ("manifest has no checksum for ..."); the check used to be skipped silently when the hash was missing.

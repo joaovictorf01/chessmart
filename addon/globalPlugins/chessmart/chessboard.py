@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 	from .virtual_chessboard.base import BaseVirtualChessboard
 from .paths import BIN_DIRECTORY, import_bundled
 from .sounds import GameSound
-from .signals import chessboard_closed_signal
+from .signals import chessboard_closed_signal, chessboard_signals
 from .concurrency import call_threaded
 
 
@@ -114,6 +114,9 @@ class ChessboardDialog(wx.Frame):
 		self.timer.Stop()
 		if self.chessboard is not None:
 			chessboard_closed_signal.send(self.chessboard)
+			# The board connected lambdas and bound methods for itself; drop them
+			# or the board, its cells and its engine wrapper outlive the window.
+			chessboard_signals.disconnect_sender(self.chessboard)
 		if self.on_closed is not None:
 			self.on_closed(self)
 
