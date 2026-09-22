@@ -9,9 +9,15 @@ they get minimal stand-ins, and the package is imported as `chessmart` from
 and the rest of NVDA).
 """
 
+import asyncio  # noqa: F401  (see below)
 import sys
 import types
 from pathlib import Path
+
+# `chess.pgn` imports `chess.engine`, which imports asyncio. While lib/ is on
+# sys.path (`import_bundled`), the Python 3.7 `_overlapped.pyd` bundled there
+# would shadow the interpreter's own and fail to load; importing asyncio here
+# first caches the real one in `sys.modules`.
 
 ADDON_PLUGINS = Path(__file__).resolve().parents[3] / "addon" / "globalPlugins"
 

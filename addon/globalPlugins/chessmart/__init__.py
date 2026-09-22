@@ -37,11 +37,10 @@ from .time_control import NULL_TIME_CONTROL, ChessTimeControl, NullChessTimeCont
 from .chessboard import ChessboardDialog
 from .game_elements import GameInfo, ChessVariant
 from .graphical_interface.settings_panel import ChessboardSettingsDialog
+from .pgn import PGNGame, PGNGameInfo
 from .virtual_chessboard import (
 	EndgameDrillChessboard,
 	EndgameLessonChessboard,
-	PGNGame,
-	PGNGameInfo,
 	PGNPlayerChessboard,
 	PuzzleChessboard,
 )
@@ -314,7 +313,14 @@ class ChessboardMenu(wx.Menu):
 		filepath = dialog.GetPath().strip()
 		if not filepath:
 			return
-		games = tuple(PGNGameInfo.game_info_from_pgn_filename(filepath))
+		try:
+			games = tuple(PGNGameInfo.game_info_from_pgn_filename(filepath))
+		except (OSError, UnicodeDecodeError, ValueError) as error:
+			# A file that cannot be read or that python-chess refuses (truncated,
+			# not a PGN at all): say so instead of leaving a traceback in the log.
+			log.warning("chessmart: could not read PGN file %s: %s", filepath, error)
+			self._say_pgn_unreadable(error)
+			return
 		if not games:
 			queueHandler.queueFunction(
 				# Translators: Spoken when the chosen PGN file has no games.
@@ -342,8 +348,21 @@ class ChessboardMenu(wx.Menu):
 		selected_game_info = games[dialog.GetSelection()]
 		self.open_pgn_game(selected_game_info)
 
+	def _say_pgn_unreadable(self, error):
+		queueHandler.queueFunction(
+			queueHandler.eventQueue,
+			ui.message,
+			# Translators: Spoken when the chosen PGN file cannot be read, followed by the error.
+			_("Could not read the PGN file. Details: {error}").format(error=error),
+		)
+
 	def open_pgn_game(self, game_info):
-		pgn_game = PGNGame.from_game_info(game_info)
+		try:
+			pgn_game = PGNGame.from_game_info(game_info)
+		except (OSError, UnicodeDecodeError, ValueError) as error:
+			log.warning("chessmart: could not read PGN game %s: %s", game_info.description, error)
+			self._say_pgn_unreadable(error)
+			return
 		chess_new_game_info = GameInfo(
 			variant=None,
 			time_control=NULL_TIME_CONTROL,

@@ -16,6 +16,7 @@ O versionamento segue o [Semantic Versioning](https://semver.org/lang/pt-BR/): v
 
 ## Corrigido
 
+- Reproduzir arquivo PGN: a lista de partidas mostrava a data no lugar do evento e do local; um arquivo sem a tag `Result`, com resultado fora do padrão ou salvo em Latin-1 não dá mais tom de erro, aparece como "Resultado desconhecido" (ou com um caractere trocado num nome); um arquivo que não pode ser lido é anunciado ("Não foi possível ler o arquivo PGN. Detalhe: ..."). Backspace agora desfaz de verdade o último lance reproduzido, como o README sempre disse, e leva o foco à casa de onde a peça saiu.
 - Partida contra a engine: quando a engine desiste, o tabuleiro agora encerra a partida e diz qual lado desistiu; antes falhava em silêncio (erro interno no log do NVDA) e a partida nunca terminava.
 - Control+S e Control+Shift+S (salvar a partida em PGN, salvar o tabuleiro como imagem): o diálogo de salvar agora abre na thread principal do NVDA, como o wx exige; abri-lo de uma thread de trabalho podia travar ou derrubar o NVDA.
 - Diálogo de download de puzzles: quando a lista não vem, a mensagem traz o erro exato ("Detalhe: ..."), então um relato de "não foi possível alcançar o servidor" já diz se foi rede, proxy ou certificado. A primeira mensagem pede pra aguardar a lista; se a lista não vier, o botão vira **Tentar de novo** em vez de deixar tudo desabilitado.

@@ -16,6 +16,7 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 
 ## Fixed
 
+- Replay PGN File: the game list showed the date where the event and the site should be; a file without a `Result` tag, with an unusual result, or saved in Latin-1 no longer produces an error tone but lists as "Unknown result" (or with a replaced character in a name); a file that cannot be read is announced ("Could not read the PGN file. Details: ..."). Backspace now really takes the last replayed move back, as the README always said, and moves the focus to the square the piece came from.
 - Game against the engine: when the engine resigns, the board now ends the game and says which side resigned; it used to fail silently (an internal error in the NVDA log) and the game never ended.
 - Control+S and Control+Shift+S (save the game as PGN, save the board as an image): the save dialog is now opened on NVDA's main thread, as wx requires; opening it from a worker thread could freeze or crash NVDA.
 - Puzzle download dialog: when the list cannot be fetched, the message now carries the exact error ("Details: ..."), so a report of "could not reach the download server" already says whether it was the network, a proxy or a certificate. The first status says to wait for the list; if the list cannot be fetched, the button becomes **Try again** instead of leaving everything disabled.
