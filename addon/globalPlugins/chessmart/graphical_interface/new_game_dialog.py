@@ -150,6 +150,10 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 
 	def onOk(self, event):
 		game_info = self.get_game_info()
+		if game_info is None:
+			# The message box already explained the invalid time control or FEN;
+			# keep the dialog open so the value can be corrected.
+			return
 		vboard_cls = self.playModeRadioBox.GetSelectedValue().get_board_class()
 		self.callback(vboard_cls, game_info)
 		super().onOk(event)
