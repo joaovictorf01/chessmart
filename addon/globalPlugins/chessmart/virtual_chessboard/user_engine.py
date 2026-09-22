@@ -80,17 +80,20 @@ class UserEngineChessboard(UserDrivenChessboard):
 			)
 
 	def engine_play(self, future):
+		# Always reached through `wx.CallAfter` from the engine future's callback,
+		# so this already runs on the main thread: no further deferral needed.
 		try:
 			play_result = future.result()
 		except chess.engine.EngineError:
-			wx.CallAfter(self.game_error)
+			self.game_error()
 			return
 		if play_result.resigned:
-			wx.CallAfter(self.game_resigned)
+			# The engine plays the side the user does not.
+			self.game_resigned(not self.prospective)
 		else:
 			if play_result.draw_offered:
 				self.draw_offered = True
-			wx.CallAfter(self.move_piece_and_check_game_status, play_result.move)
+			self.move_piece_and_check_game_status(play_result.move)
 
 	@call_threaded
 	def get_next_move_from_engine(self):
