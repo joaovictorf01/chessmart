@@ -11,6 +11,7 @@ from ..i18n import _
 from .components import EnumRadioBox, EnumChoice
 from ..game_elements import PlayMode, TimeControl, ChessVariant, PlayerColor
 from ..time_control import ChessTimeControl
+from .messages import show_error
 
 with import_bundled():
 	import chess
@@ -112,23 +113,21 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 		try:
 			time_control = self._get_time_control()
 		except ValueError:
-			gui.messageBox(
+			show_error(
 				_(
 					"Please enter a valid time control string.\nExample: 10+5 for a 10 minutes base time with 5 seconds increment after each move.",
 				),
 				_("Invalid Time Control String"),
-				style=wx.ICON_ERROR,
 			)
 			return
 		try:
 			pychess_board = self._get_pychess_board()
 		except ValueError:
-			gui.messageBox(
+			show_error(
 				_("Please enter a valid starting FEN.\nExample:\n{fen}\nfor a standard starting FEN.").format(
 					fen=chess.STARTING_FEN,
 				),
 				_("Invalid FEN String"),
-				style=wx.ICON_ERROR,
 			)
 			return
 		game_info = GameInfo(

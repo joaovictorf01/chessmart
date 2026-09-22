@@ -22,6 +22,7 @@ from ..endgame.lessons import ENDGAME_LESSONS, lesson_description, lesson_label,
 from ..i18n import _
 from ..time_control import NULL_TIME_CONTROL, ChessTimeControl
 from .tablebase_dialog import TablebaseDownloadDialog, installed_sentence
+from .messages import show_error
 
 
 class EndgameDialog(gui.SettingsDialog):
@@ -147,12 +148,11 @@ class EndgameDialog(gui.SettingsDialog):
 			try:
 				time_control = ChessTimeControl.from_time_control_notation(text)
 			except ValueError:
-				gui.messageBox(
+				show_error(
 					_(
 						"Please enter a valid time control string.\nExample: 10+5 for a 10 minutes base time with 5 seconds increment after each move.",
 					),
 					_("Invalid Time Control String"),
-					style=wx.ICON_ERROR,
 				)
 				return
 		index = max(self.positionChoice.GetSelection(), 0)

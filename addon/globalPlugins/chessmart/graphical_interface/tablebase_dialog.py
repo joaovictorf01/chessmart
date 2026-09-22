@@ -16,7 +16,6 @@ from __future__ import annotations
 import threading
 
 import wx
-import gui
 import ui
 from gui import guiHelper
 from logHandler import log
@@ -24,6 +23,7 @@ from logHandler import log
 from ..endgame import tablebase
 from ..i18n import _
 from ..tactic import download as puzzle_download
+from .messages import show_error, show_message
 
 
 def _megabytes(size: int) -> str:
@@ -194,7 +194,7 @@ class TablebaseDownloadDialog(wx.Dialog):
 		message = _("Tablebases up to {pieces} pieces installed. The judge is on.").format(
 			pieces=table_set.max_pieces,
 		)
-		gui.messageBox(message, _("Endgame Tablebases"), style=wx.ICON_INFORMATION, parent=self)
+		show_message(message, _("Endgame Tablebases"), parent=self)
 		self.EndModal(wx.ID_OK)
 
 	def _finished_cancelled(self):
@@ -215,7 +215,7 @@ class TablebaseDownloadDialog(wx.Dialog):
 			return
 		# Translators: Message shown when the tablebase download failed.
 		message = _("The download failed: {reason}").format(reason=reason)
-		gui.messageBox(message, _("Endgame Tablebases"), style=wx.ICON_ERROR, parent=self)
+		show_error(message, _("Endgame Tablebases"), parent=self)
 		self.progressText.SetLabel("")
 		self.setRadio.Enable()
 		self.downloadButton.Enable()

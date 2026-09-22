@@ -17,7 +17,6 @@ from pathlib import Path
 from typing import Callable
 
 import wx
-import gui
 import ui
 from gui import guiHelper
 from logHandler import log
@@ -25,6 +24,7 @@ from logHandler import log
 from ..i18n import _
 from ..tactic import download as puzzle_download
 from ..tactic.db import ADDON_DATA_DIRECTORY, PUZZLES_DB_NAME
+from .messages import show_error, show_message
 
 # Order in which the tiers appear; light comes first because it's the right
 # choice for someone installing for the first time.
@@ -329,7 +329,7 @@ class PuzzleDownloadDialog(wx.Dialog):
 			name=TIER_LABELS[info.tier],
 			count=info.puzzle_count,
 		)
-		gui.messageBox(message, _("Puzzle Database"), style=wx.ICON_INFORMATION, parent=self)
+		show_message(message, _("Puzzle Database"), parent=self)
 		if self.on_installed is not None:
 			self.on_installed(self.target_path)
 		self.EndModal(wx.ID_OK)
@@ -352,7 +352,7 @@ class PuzzleDownloadDialog(wx.Dialog):
 			return
 		# Translators: Message shown when the puzzle database download failed.
 		message = _("The download failed: {reason}").format(reason=reason)
-		gui.messageBox(message, _("Puzzle Database"), style=wx.ICON_ERROR, parent=self)
+		show_error(message, _("Puzzle Database"), parent=self)
 		self.progressText.SetLabel("")
 		self.gauge.SetValue(0)
 		self.tierRadio.Enable()

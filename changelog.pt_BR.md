@@ -18,6 +18,7 @@ O versionamento segue o [Semantic Versioning](https://semver.org/lang/pt-BR/): v
 
 ## Corrigido
 
+- Interno: as caixas de mensagem e os diálogos abertos pelo menu usam o `MessageDialog` e o `displayDialogAsModal` do NVDA em vez de `gui.messageBox` e `gui.runScriptModalDialog`, que o NVDA 2025.1 depreciou (cada chamada deixava um aviso de depreciação no log). Mensagens de erro mantêm o ícone e o som de erro; avisos, o som de alerta. Os avisos do relógio (tempo passando, tempo crítico) tocam pela saída de áudio do próprio NVDA, como todos os outros sons do add-on, e não pelo wx — assim seguem o dispositivo de saída e o abaixamento de áudio do NVDA.
 - Interno: uma conversão de imagem do tabuleiro que falha é registrada como erro em vez de uma exceção falsa ("NoneType: None") no log do NVDA; as chamadas de log usam formatação preguiçosa; o `terminate` do plugin chama o do NVDA; os três últimos comentários de código em português passam para o inglês.
 - Download de puzzles: um manifesto sem o SHA-256 do arquivo ou de uma das partes é recusado antes de baixar qualquer coisa ("manifest has no checksum for ..."); antes a conferência era pulada em silêncio quando o hash faltava.
 - Finais: Control+N num treino abria a tablebase Syzygy de novo para cada posição candidata que testava (até 2000 vezes), uma pausa perceptível com as tabelas de 5 peças instaladas; agora abre uma vez por sorteio.

@@ -6,7 +6,6 @@ import subprocess
 from typing import TYPE_CHECKING, Callable
 
 import wx
-import wx.adv
 import queueHandler
 import eventHandler
 import gui
@@ -141,7 +140,7 @@ class ChessboardDialog(wx.Frame):
 			sound = GameSound.time_pass
 		else:
 			sound = GameSound.time_critical
-		wx.adv.Sound(sound.filename).Play(wx.adv.SOUND_ASYNC)
+		sound.play()
 
 	def set_board_image(self, **chess_svg_kwargs):
 		board_svg_bytes = self.get_board_svg(**chess_svg_kwargs)

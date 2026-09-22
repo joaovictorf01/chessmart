@@ -39,6 +39,7 @@ from ..trainer import (
 	resolve_training_selection,
 	uses_custom_themes,
 )
+from .messages import show_error, show_warning
 
 
 if TYPE_CHECKING:
@@ -322,12 +323,11 @@ class TacticsSetupMixin(_MixinBase):
 	def onSelectThemes(self, event):
 		db_path = self._resolved_db_path()
 		if not db_path:
-			gui.messageBox(
+			show_warning(
 				# Translators: Error shown when no database is set yet.
 				_("Choose a tactics database before selecting themes."),
 				# Translators: Title of the no-database error.
 				_("No Database Selected"),
-				style=wx.ICON_WARNING,
 			)
 			return
 		if not ensure_theme_catalog_async(db_path, on_done=self._theme_catalog_ready):
@@ -340,20 +340,18 @@ class TacticsSetupMixin(_MixinBase):
 		try:
 			entries = load_theme_catalog(db_path, allow_rebuild=False)
 		except Exception as error:
-			gui.messageBox(
+			show_error(
 				str(error),
 				# Translators: Title of the error shown when themes cannot be read.
 				_("Could Not Load Themes"),
-				style=wx.ICON_ERROR,
 			)
 			return
 		if not entries:
-			gui.messageBox(
+			show_warning(
 				# Translators: Shown when the database has no themes at all.
 				_("No themes were found in the selected database."),
 				# Translators: Title of the no-themes warning.
 				_("Themes Not Found"),
-				style=wx.ICON_WARNING,
 			)
 			return
 		dialog = wx.MultiChoiceDialog(

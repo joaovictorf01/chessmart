@@ -34,6 +34,7 @@ from .virtual_chessboard import (
 from .training_session import TrainingSession, default_training_options
 from .endgame.drills import opening_fen, random_fen
 from .endgame.lessons import EndgameLesson
+from .graphical_interface.messages import ask_yes_no, run_modal, show_error, show_warning
 
 
 class ChessboardMenu(wx.Menu):
@@ -91,7 +92,7 @@ class ChessboardMenu(wx.Menu):
 		from .graphical_interface.new_game_dialog import NewGameOptionsDialog
 
 		dialog = NewGameOptionsDialog(gui.mainFrame, callback=self.create_new_game)
-		gui.runScriptModalDialog(dialog)
+		run_modal(dialog)
 
 	def create_new_game(self, vboard_cls, game_info):
 		self.global_plugin_object.initialize_and_show_chessboard_dialog(vboard_cls, game_info)
@@ -105,26 +106,24 @@ class ChessboardMenu(wx.Menu):
 			gui.mainFrame,
 			callback=self.open_tactics_session,
 		)
-		gui.runScriptModalDialog(dialog)
+		run_modal(dialog)
 
 	def open_tactics_session(self, options):
 		session = TrainingSession(options)
 		try:
 			session.ensure_ready()
 		except FileNotFoundError:
-			gui.messageBox(
+			show_error(
 				_(
 					"The tactics database was not found. Use Browse in the tactics dialog to point at your puzzle database, or place it in the add-on's data folder as puzzles.db.",
 				),
 				_("Tactics Database Not Found"),
-				style=wx.ICON_ERROR,
 			)
 			return
 		except LookupError as error:
-			gui.messageBox(
+			show_warning(
 				str(error),
 				_("No Tactics Found"),
-				style=wx.ICON_WARNING,
 			)
 			return
 		self.open_training_session(session)
@@ -133,15 +132,14 @@ class ChessboardMenu(wx.Menu):
 		"""Without a puzzle database, offer the download before proceeding."""
 		if default_training_options().db_path:
 			return True
-		answer = gui.messageBox(
+		answer = ask_yes_no(
 			# Translators: Asked when tactics are opened and no puzzle database is installed yet.
 			_(
 				"Tactics need a puzzle database, which is downloaded once (about 76 MB for the light version). Download it now?",
 			),
 			_("Puzzle Database"),
-			style=wx.YES_NO | wx.ICON_QUESTION,
 		)
-		if answer != wx.YES:
+		if not answer:
 			return False
 		from .graphical_interface.download_dialog import PuzzleDownloadDialog
 
@@ -158,16 +156,15 @@ class ChessboardMenu(wx.Menu):
 		try:
 			session.ensure_ready()
 		except FileNotFoundError:
-			gui.messageBox(
+			show_error(
 				_(
 					"The tactics database was not found. Choose a valid database in Chessboard settings first.",
 				),
 				_("Tactics Database Not Found"),
-				style=wx.ICON_ERROR,
 			)
 			return
 		except LookupError as error:
-			gui.messageBox(str(error), _("No Tactics Found"), style=wx.ICON_WARNING)
+			show_warning(str(error), _("No Tactics Found"))
 			return
 		self.open_training_session(session)
 
@@ -175,7 +172,7 @@ class ChessboardMenu(wx.Menu):
 		from .graphical_interface.endgame_dialog import EndgameDialog
 
 		dialog = EndgameDialog(gui.mainFrame, callback=self.open_endgame)
-		gui.runScriptModalDialog(dialog)
+		run_modal(dialog)
 
 	def open_endgame(self, lesson: EndgameLesson, index: int, time_control: ChessTimeControl):
 		"""Opens what the dialog chose: a mate drill or a lesson position."""
@@ -278,11 +275,11 @@ class ChessboardMenu(wx.Menu):
 
 		assert gui.mainFrame is not None
 		dialog = StudyLogDialog(gui.mainFrame)
-		gui.runScriptModalDialog(dialog)
+		run_modal(dialog)
 
 	def onSettings(self, event):
 		dialog = ChessboardSettingsDialog(gui.mainFrame)
-		gui.runScriptModalDialog(dialog)
+		run_modal(dialog)
 
 	def open_training_session(self, session):
 		game_info = GameInfo(
@@ -307,7 +304,7 @@ class ChessboardMenu(wx.Menu):
 			wildcard=_("Portable Game Notation *.pgn | *.pgn"),
 			style=wx.FD_OPEN,
 		)
-		gui.runScriptModalDialog(openFileDialog, functools.partial(self.list_games_in_pgn, openFileDialog))
+		run_modal(openFileDialog, functools.partial(self.list_games_in_pgn, openFileDialog))
 
 	def list_games_in_pgn(self, dialog, res):
 		if res != wx.ID_OK:
@@ -339,7 +336,7 @@ class ChessboardMenu(wx.Menu):
 				_("Select Game"),
 				choices=[g.description for g in games],
 			)
-			gui.runScriptModalDialog(
+			run_modal(
 				choiceDg,
 				functools.partial(self.on_pgn_game_chosen, filepath, choiceDg, games),
 			)
