@@ -11,7 +11,7 @@ from ..paths import BIN_DIRECTORY, import_bundled
 from ..i18n import _
 from ..signals import move_completed_signal, game_started_signal, game_over_signal
 from ..concurrency import call_threaded
-from .user_driven import DrawChoiceMenu, UserDrivenChessboard
+from .user_driven import UserDrivenChessboard
 
 
 STOCKFISH_EXECUTABLE_PATH = os.path.join(BIN_DIRECTORY, "stockfish_14", "stockfish_14_32bit.exe")
@@ -109,14 +109,6 @@ class UserEngineChessboard(UserDrivenChessboard):
 			self.board,
 			limit,
 		)
-
-	def on_user_response_to_engine_draw_offer(self, engine_next_move, user_answer):
-		if isinstance(self._current_focused_object, DrawChoiceMenu):
-			self._current_focused_object = None
-		if user_answer:
-			self.game_drawn()
-		else:
-			self.move_piece_and_check_game_status(engine_next_move)
 
 	def make_first_move(self):
 		if self.prospective is not chess.BLACK:

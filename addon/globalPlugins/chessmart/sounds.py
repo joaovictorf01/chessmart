@@ -40,7 +40,6 @@ class GameSound(enum.Enum):
 	score_list_close = "score_list_close"
 	menu_open = "menu_open"
 	chat = "chat"
-	you_won = "you_won"
 	puzzle_solved = "puzzle_solved"
 
 	def __init__(self, filename):

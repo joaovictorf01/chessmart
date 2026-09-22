@@ -233,7 +233,6 @@ class PuzzleCell(UserDrivenCell):
 class PuzzleChessboard(UserDrivenChessboard):
 	cell_class = PuzzleCell
 	can_draw = False
-	can_resign = False
 
 	def __init__(self, *args, session: TrainingSession, **kwargs):
 		super().__init__(*args, **kwargs)

@@ -29,7 +29,6 @@ class GameInfo:
 	variant: typing.Optional["ChessVariant"]
 	time_control: ChessTimeControl
 	prospective: typing.Optional[chess.Color]
-	custom_starting_fen: typing.Optional[str] = None
 	vboard_kwargs: dict = dataclasses.field(default_factory=dict)
 
 

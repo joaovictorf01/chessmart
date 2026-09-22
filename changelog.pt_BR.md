@@ -12,6 +12,7 @@ O versionamento segue o [Semantic Versioning](https://semver.org/lang/pt-BR/): v
 
 ## Removido
 
+- Restos da remoção do jogo online e outro código que nada usava: uma base de diálogo sem uso e o módulo de terceiros `sized_controls` embarcado só para ela, o parser de controle de tempo com `;` do Lichess, um sinal sem uso, um som sem uso e alguns métodos e flags que nenhum código lia. Nada muda no comportamento.
 - Jogo online no lichess.org. Estava "em breve" desde 2022: um cliente pela metade, uma opção desabilitada no menu e 6 MB de bibliotecas de rede embarcadas. Jogar online com leitor de tela é o que o próprio lichess.org faz bem; este add-on é o lado local — jogar contra a engine, tática, finais, PGN. O pacote encolhe na mesma medida.
 
 ## Corrigido

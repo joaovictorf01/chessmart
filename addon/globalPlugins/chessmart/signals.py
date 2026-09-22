@@ -52,7 +52,6 @@ class Namespace:
 
 
 chessboard_signals = Namespace()
-chessboard_opened_signal = chessboard_signals.signal("chessboard-opened")
 chessboard_closed_signal = chessboard_signals.signal("chessboard-closed")
 game_started_signal = chessboard_signals.signal("game-started")
 game_over_signal = chessboard_signals.signal("game_over", "args: outcome")

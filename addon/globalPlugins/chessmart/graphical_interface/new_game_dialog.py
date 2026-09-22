@@ -136,7 +136,6 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 			variant=self.chessVariantChoice.GetSelectedValue(),
 			time_control=time_control,
 			prospective=self.playerColorRadioBox.GetSelectedValue().get_color(),
-			custom_starting_fen=self.customStartingFEN.GetValue().strip(),
 		)
 		game_info.vboard_kwargs["use_visuals"] = self.useVisualsCheckbox.IsChecked()
 		if self.playModeRadioBox.GetSelectedValue() == PlayMode.HUMAN_VERSUS_COMPUTER:

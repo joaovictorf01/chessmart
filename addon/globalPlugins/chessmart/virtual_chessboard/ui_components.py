@@ -31,20 +31,6 @@ class KeyboardNavigableNVDAObjectMixin(_NVDAObjectBase):
 	windowThreadID = -1
 	windowHandle = -1
 
-	# This should be set to Tru in the final release
-	# It prevent any key strokes from reaching the application
-	CAPTURE_KEYS_WHILE_IN_FOCUS = False
-
-	def script_do_nothing(self, gesture):
-		pass
-
-	def getScript(self, gesture):
-		"""Ensures that no keys are sent to the underlying text control."""
-		script = NVDAObject.getScript(self, gesture)
-		if self.CAPTURE_KEYS_WHILE_IN_FOCUS and script is None:
-			return self.script_do_nothing
-		return script
-
 
 class ItemContainerMixin:
 	def __len__(self):
@@ -78,10 +64,6 @@ class ItemContainerMixin:
 
 	def get_current_item(self):
 		return self.get_item(self._current_index)
-
-	def remove_item(self, item):
-		item_index = self.index_of(item)
-		self.items.pop(item_index)
 
 	def go_to_next(self):
 		item = self.get_item(self._current_index + 1)

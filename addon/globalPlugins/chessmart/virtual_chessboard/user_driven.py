@@ -129,11 +129,6 @@ class UserDrivenChessboard(BaseVirtualChessboard):
 		self._dragged_cell = None
 		self.draw_offered = False
 
-	def get_highlighted_squares(self):
-		yield from super().get_highlighted_squares()
-		if self._dragged_cell is not None:
-			yield self._dragged_cell.index
-
 	def leave_prompt(self):
 		# With no move played there's nothing to lose; from the first one on, it asks.
 		if not self.board.move_stack:

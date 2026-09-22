@@ -392,7 +392,6 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 	)
 	cell_class = BaseChessboardCell
 	can_draw = True
-	can_resign = True
 
 	def __init__(
 		self,
@@ -441,9 +440,6 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 	@property
 	def is_board_visually_flipped(self):
 		return self.is_board_flipped
-
-	def get_highlighted_squares(self):
-		yield self._focused_cell
 
 	def get_containing_row(self, index):
 		for rng in self.row_ranges:

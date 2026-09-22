@@ -14,9 +14,6 @@ with import_bundled():
 	from chess_clock import ChessClock, ClockState, Seconds
 
 
-TIME_CONTROL_REGEX = re.compile(
-	r"(?P<white_base_time>[0-9]+);(?P<white_increment>[0-9]+);?(?P<black_base_time>[0-9]+)?;?(?P<black_increment>[0-9]+)?",
-)
 SHORT_TIME_CONTROL_REGEX = re.compile(r"^(?P<base_time>[0-9]+)\+(?P<increment>[0-9]+)$")
 
 
@@ -43,20 +40,6 @@ class ChessTimeControl:
 				name=_("Black Clock"),
 			),
 		}
-
-	@classmethod
-	def from_string(cls, string_representation: str):
-		match = TIME_CONTROL_REGEX.match(string_representation)
-		if match is None:
-			raise ValueError(
-				f"{string_representation} is not a valid string representation of a chess time control",
-			)
-		kwargs = match.groupdict()
-		if kwargs["black_base_time"] is None:
-			kwargs["black_base_time"] = kwargs["white_base_time"]
-		if kwargs["black_increment"] is None:
-			kwargs["black_increment"] = kwargs["white_increment"]
-		return cls(**{k: int(v) for k, v in kwargs.items()})
 
 	@classmethod
 	def from_time_control_notation(cls, tc):

@@ -19,10 +19,7 @@ if TYPE_CHECKING:
 	from .virtual_chessboard.base import BaseVirtualChessboard
 from .paths import BIN_DIRECTORY, import_bundled
 from .sounds import GameSound
-from .signals import (
-	chessboard_opened_signal,
-	chessboard_closed_signal,
-)
+from .signals import chessboard_closed_signal
 from .concurrency import call_threaded
 
 
@@ -91,7 +88,6 @@ class ChessboardDialog(wx.Frame):
 		if self.chessboard is None:
 			self.chessboard = self.chessboard_class(dialog=self, **self.vboard_kwargs)
 			queueHandler.queueFunction(queueHandler.eventQueue, GameSound.start_game.play)
-			chessboard_opened_signal.send(self.chessboard)
 			self.timer.Start(TIME_CHECK_INTERVAL, wx.TIMER_CONTINUOUS)
 			self.set_board_image()
 		assert self.chessboard is not None

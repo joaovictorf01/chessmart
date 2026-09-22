@@ -12,6 +12,7 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 
 ## Removed
 
+- Leftovers of the online-play removal and other code nothing used: an unused dialog base and the third-party `sized_controls` module bundled for it, the Lichess-style `;` time-control parser, an unused signal, an unused sound, and a few methods and flags no code read. No behaviour changes.
 - Online play on lichess.org. It had been "coming soon" since 2022: a half-built client, a disabled menu entry and 6 MB of bundled networking libraries. Playing online with a screen reader is what lichess.org itself does well; this add-on is the local side — play the engine, tactics, endgames, PGN. The package shrinks accordingly.
 
 ## Fixed
