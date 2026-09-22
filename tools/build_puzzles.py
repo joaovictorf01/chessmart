@@ -323,7 +323,9 @@ def main(argv: list[str] | None = None) -> int:
 	)
 	source = parser.add_mutually_exclusive_group(required=True)
 	source.add_argument(
-		"--download", action="store_true", help="download the CSV from Lichess (cached by ETag)"
+		"--download",
+		action="store_true",
+		help="download the CSV from Lichess (cached by ETag)",
 	)
 	source.add_argument("--csv", type=Path, help="use an already downloaded lichess_db_puzzle.csv.zst")
 	parser.add_argument(

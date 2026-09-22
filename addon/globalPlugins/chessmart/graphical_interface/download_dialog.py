@@ -73,7 +73,7 @@ class PuzzleDownloadDialog(wx.Dialog):
 			-1,
 			# Translators: First status of the download dialog, while the list of databases is fetched.
 			_(
-				"Checking for the latest puzzle database. Please wait: the choices and the Download button come alive when the list arrives."
+				"Checking for the latest puzzle database. Please wait: the choices and the Download button come alive when the list arrives.",
 			),
 		)
 		helper.addItem(self.statusText)
@@ -158,7 +158,7 @@ class PuzzleDownloadDialog(wx.Dialog):
 		self.statusText.SetLabel(
 			# Translators: Shown when the list of available puzzle databases could not be downloaded; {reason} is the technical error.
 			_(
-				"Could not reach the download server. Check your internet connection and try again. Details: {reason}"
+				"Could not reach the download server. Check your internet connection and try again. Details: {reason}",
 			).format(
 				reason=reason or _("unknown"),
 			),
@@ -237,7 +237,7 @@ class PuzzleDownloadDialog(wx.Dialog):
 			self.statusText.SetLabel(
 				# Translators: Status while the list of databases is fetched again.
 				_(
-					"Checking for the latest puzzle database. Please wait: the choices and the Download button come alive when the list arrives."
+					"Checking for the latest puzzle database. Please wait: the choices and the Download button come alive when the list arrives.",
 				),
 			)
 			ui.message(self.statusText.GetLabel())
