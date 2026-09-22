@@ -212,10 +212,12 @@ class ChessboardMenu(wx.Menu):
 		except Exception as error:
 			log.warning("chessmart: could not open the tablebase for the drill draw: %s", error)
 			tables = None
-		if tables is None:
-			# As before this helper existed: with no tablebase every candidate
-			# is refused and the draw falls back to one of the examples.
-			return random_fen(drill, accept=lambda _board: False)
+		if tables is None or not drill.needs_judge:
+			# Mate drills (queen, rook, ...) are won from any legal position and
+			# need no judge; a drill that needs one falls back to its examples.
+			if tables is not None:
+				tables.close()
+			return random_fen(drill)
 
 		def is_won(board) -> bool:
 			verdict = judge.probe(tables, board)
