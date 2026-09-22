@@ -8,7 +8,9 @@ with import_bundled():
 	import chess
 
 
-IBCA_COLOR_NAMES = {chess.WHITE: "schwarts", chess.BLACK: "Schwarze Farbe"}
+# German colour names, transliterated like the pieces below; the IBCA words
+# are never translated. White used to be "schwarts", which is black.
+IBCA_COLOR_NAMES = {chess.WHITE: "weiss", chess.BLACK: "schwarz"}
 
 IBCA_FILE_NAMES = {
 	"a": "Anna",

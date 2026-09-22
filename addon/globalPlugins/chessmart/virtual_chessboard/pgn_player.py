@@ -35,7 +35,7 @@ class PGNPlayerChessboard(BaseVirtualChessboard):
 		self.current_move = -1
 		# GUI Stuff
 		info = self.game.info
-		self._title = f"{info.white} versus {info.black} {info.date} {info.event} "
+		self._title = f"{info.players} {info.date} {info.event} "
 		self.dialog.SetTitle(self._title)
 
 	def activate_cell(self, index):

@@ -16,6 +16,7 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 
 ## Fixed
 
+- IBCA notation (F3) said "schwarts" (black) for white; white is now "weiss" and black "schwarz". At game over the reason is spoken in your language ("stalemate", "threefold repetition", "insufficient material"...) instead of the English internal name. Crazyhouse pocket counts and the "X versus Y" line of the PGN game list are translatable too.
 - New Game: an invalid time control or starting FEN no longer closes the dialog with an internal error after the message; the dialog stays open so the value can be corrected.
 - Replay PGN File: the game list showed the date where the event and the site should be; a file without a `Result` tag, with an unusual result, or saved in Latin-1 no longer produces an error tone but lists as "Unknown result" (or with a replaced character in a name); a file that cannot be read is announced ("Could not read the PGN file. Details: ..."). Backspace now really takes the last replayed move back, as the README always said, and moves the focus to the square the piece came from.
 - Game against the engine: when the engine resigns, the board now ends the game and says which side resigned; it used to fail silently (an internal error in the NVDA log) and the game never ended.

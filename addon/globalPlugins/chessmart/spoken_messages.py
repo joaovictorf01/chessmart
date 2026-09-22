@@ -89,6 +89,32 @@ def spoken_color_name(color: chess.Color) -> str:
 	return _("white") if color == chess.WHITE else _("black")
 
 
+def spoken_termination_name(termination: chess.Termination) -> str:
+	"""How the game ended, in NVDA's language; one entry per `chess.Termination` value."""
+	return {
+		# Translators: How a game ended, spoken at game over.
+		chess.Termination.CHECKMATE: _("checkmate"),
+		# Translators: How a game ended, spoken at game over.
+		chess.Termination.STALEMATE: _("stalemate"),
+		# Translators: How a game ended, spoken at game over.
+		chess.Termination.INSUFFICIENT_MATERIAL: _("insufficient material"),
+		# Translators: How a game ended, spoken at game over (the automatic 75-move rule).
+		chess.Termination.SEVENTYFIVE_MOVES: _("seventy-five move rule"),
+		# Translators: How a game ended, spoken at game over (the automatic fivefold repetition rule).
+		chess.Termination.FIVEFOLD_REPETITION: _("fivefold repetition"),
+		# Translators: How a game ended, spoken at game over.
+		chess.Termination.FIFTY_MOVES: _("fifty-move rule"),
+		# Translators: How a game ended, spoken at game over.
+		chess.Termination.THREEFOLD_REPETITION: _("threefold repetition"),
+		# Translators: How a game ended, spoken at game over (a win by the rules of a chess variant).
+		chess.Termination.VARIANT_WIN: _("win by the rules of the variant"),
+		# Translators: How a game ended, spoken at game over (a loss by the rules of a chess variant).
+		chess.Termination.VARIANT_LOSS: _("loss by the rules of the variant"),
+		# Translators: How a game ended, spoken at game over (a draw by the rules of a chess variant).
+		chess.Termination.VARIANT_DRAW: _("draw by the rules of the variant"),
+	}[termination]
+
+
 class StandardGameAnnouncer(GameAnnouncer):
 	def piece_name(self, piece_type: chess.PieceType) -> str:
 		return spoken_piece_name(piece_type)

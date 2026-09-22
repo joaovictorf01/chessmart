@@ -96,14 +96,14 @@ msgstr "Antixadrez"
 #. Spoken in place of the drop sign "@" when reading a move. Spoken between an
 #. attacking piece and its square, e.g. "knight, at, f3".
 #: addon/globalPlugins/chessmart/notation.py:134
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:711
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:716
 msgid "at"
 msgstr "em"
 
 #. Square where a capture happened, e.g. "at f3".
-#: addon/globalPlugins/chessmart/spoken_messages.py:135
-#: addon/globalPlugins/chessmart/spoken_messages.py:195
-#: addon/globalPlugins/chessmart/spoken_messages.py:208
+#: addon/globalPlugins/chessmart/spoken_messages.py:161
+#: addon/globalPlugins/chessmart/spoken_messages.py:221
+#: addon/globalPlugins/chessmart/spoken_messages.py:234
 msgid "at {square}"
 msgstr "em {square}"
 
@@ -112,7 +112,7 @@ msgid "Atomic"
 msgstr "Atômico"
 
 #. Spoken before the list of pieces attacking a square.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:701
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:706
 msgid "Attacked by"
 msgstr "Atacada por"
 
@@ -149,7 +149,7 @@ msgid "Black Clock"
 msgstr "Relógio das pretas"
 
 #. Result of a PGN game.
-#: addon/globalPlugins/chessmart/pgn.py:93
+#: addon/globalPlugins/chessmart/pgn.py:99
 msgid "Black won"
 msgstr "Pretas venceram"
 
@@ -162,7 +162,7 @@ msgid "Blitz (5+5)"
 msgstr "Blitz (5+5)"
 
 #. Role of the chessboard control, spoken by the screen reader.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:382
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:387
 msgid "Board"
 msgstr "Tabuleiro"
 
@@ -185,13 +185,13 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #. Spoken between the capturing piece and the captured piece.
-#: addon/globalPlugins/chessmart/spoken_messages.py:132
-#: addon/globalPlugins/chessmart/spoken_messages.py:193
+#: addon/globalPlugins/chessmart/spoken_messages.py:158
+#: addon/globalPlugins/chessmart/spoken_messages.py:219
 msgid "captured"
 msgstr "capturou"
 
 #. Spoken after the color that castled.
-#: addon/globalPlugins/chessmart/spoken_messages.py:142
+#: addon/globalPlugins/chessmart/spoken_messages.py:168
 msgid "castled"
 msgstr "fizeram roque"
 
@@ -210,13 +210,15 @@ msgstr "Desafio: {level}"
 msgid "check"
 msgstr "xeque"
 
-#. Spoken after a move that gives checkmate.
+#. Spoken after a move that gives checkmate. How a game ended, spoken at game
+#. over.
 #: addon/globalPlugins/chessmart/notation.py:147
+#: addon/globalPlugins/chessmart/spoken_messages.py:96
 msgid "checkmate"
 msgstr "mate"
 
 #. Name of the chessboard control, spoken by the screen reader.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:384
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:389
 msgid "Chess"
 msgstr "Xadrez"
 
@@ -230,7 +232,7 @@ msgid "Chess Board"
 msgstr "Tabuleiro de xadrez"
 
 #. File type filter of the PGN save dialog.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:881
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:886
 msgid "Chess Game *.pgn | *.pgn"
 msgstr "Partida de xadrez *.pgn | *.pgn"
 
@@ -329,8 +331,8 @@ msgid "Could Not Load Themes"
 msgstr "Não foi possível carregar os temas"
 
 #. Spoken when saving is refused because NVDA runs in secure mode.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:304
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:310
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:309
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:315
 msgid "Could not save game. NVDA running in secure mode."
 msgstr "Não foi possível salvar a partida. O NVDA está em modo seguro."
 
@@ -414,13 +416,13 @@ msgid "Drop Piece. Select piece type:"
 msgstr "Colocar peça. Escolha o tipo de peça:"
 
 #. A piece dropped on the board (Crazyhouse), e.g. "dropped a knight".
-#: addon/globalPlugins/chessmart/spoken_messages.py:152
-#: addon/globalPlugins/chessmart/spoken_messages.py:207
+#: addon/globalPlugins/chessmart/spoken_messages.py:178
+#: addon/globalPlugins/chessmart/spoken_messages.py:233
 msgid "dropped a {piece}"
 msgstr "colocaram {piece}"
 
 #. Spoken after an en passant capture.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:630
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:635
 msgid "en passant"
 msgstr "en passant"
 
@@ -428,15 +430,15 @@ msgstr "en passant"
 msgid "Engine &Options..."
 msgstr "&Opções do motor..."
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:202
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:206
 msgid "Engine Options"
 msgstr "Opções do motor"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:211
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:215
 msgid "Engine Strength (ELO Rating)"
 msgstr "Força do motor (rating Elo)"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:217
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:221
 msgid "Engine Thinking Time (in seconds)"
 msgstr "Tempo de reflexão do motor (em segundos)"
 
@@ -449,43 +451,43 @@ msgid "from {count} rated attempts"
 msgstr "em {count} tentativas valendo rating"
 
 #. Origin of a move, spoken after the piece, e.g. "from g1".
-#: addon/globalPlugins/chessmart/spoken_messages.py:123
+#: addon/globalPlugins/chessmart/spoken_messages.py:149
 msgid "from {square}"
 msgstr "de {square}"
 
 #. Window title when the game ended in a draw.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:479
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:484
 msgid "Game Drawn"
 msgstr "Partida empatada"
 
 #. Result of a PGN game.
-#: addon/globalPlugins/chessmart/pgn.py:96
+#: addon/globalPlugins/chessmart/pgn.py:102
 msgid "Game ended in a draw"
 msgstr "Partida terminou empatada"
 
 #. Spoken when the game ended in a draw.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:485
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:490
 msgid "Game is drawn"
 msgstr "Partida empatada"
 
 #. Result of a PGN game that has no result yet.
-#: addon/globalPlugins/chessmart/pgn.py:84
+#: addon/globalPlugins/chessmart/pgn.py:90
 msgid "Game not finished"
 msgstr "Partida não terminada"
 
 #. Window title when a game has ended.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:455
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:460
 msgid "Game Over"
 msgstr "Fim de partida"
 
 #. Window title when a game was lost on time, e.g. "Game Over: Time Forfeit -
 #. white is the winner".
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:492
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:497
 msgid "Game Over: Time Forfeit - {color} is the winner"
 msgstr "Fim de partida: derrota por tempo - {color} venceram"
 
 #. Window title and message when a game stopped because of an error.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:510
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:515
 msgid "Game terminated due to an error"
 msgstr "Partida encerrada por um erro"
 
@@ -534,7 +536,7 @@ msgid "Human versus human"
 msgstr "Humano contra humano"
 
 #. Spoken when the requested move is not legal.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:534
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:539
 msgid "Illegal move"
 msgstr "Lance ilegal"
 
@@ -574,7 +576,7 @@ msgid "King of the hill"
 msgstr "Rei da colina"
 
 #. King-side castling. Queen-side castling.
-#: addon/globalPlugins/chessmart/spoken_messages.py:145
+#: addon/globalPlugins/chessmart/spoken_messages.py:171
 msgid "king side"
 msgstr "pequeno"
 
@@ -618,12 +620,12 @@ msgid "long castling"
 msgstr "roque grande"
 
 #. Spoken when both sides have the same material.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:773
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:778
 msgid "Material is even."
 msgstr "Material igual."
 
 #. Heading of the material count announcement.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:759
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:764
 msgid "Material."
 msgstr "Material."
 
@@ -633,7 +635,7 @@ msgid "Minimum popularity: {popularity}"
 msgstr "Popularidade mínima: {popularity}"
 
 #. Bishops and knights together, in the material count.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:747
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:752
 msgid "minor pieces"
 msgstr "peças menores"
 
@@ -730,13 +732,13 @@ msgstr "Nenhum tema foi encontrado na base selecionada."
 
 #. Spoken when the clock is asked for in a game without time control.
 #: addon/globalPlugins/chessmart/game_elements.py:72
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:270
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:279
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:275
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:284
 msgid "No Time Control"
 msgstr "Sem controle de tempo"
 
 #. Option in the draw offer menu.
-#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:354
+#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:353
 msgid "No, decline offer and continue game"
 msgstr "Não, recusar a oferta e continuar a partida"
 
@@ -771,7 +773,7 @@ msgid "Opening tags: {opening}."
 msgstr "Abertura: {opening}."
 
 #. Spoken in the material count.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:781
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:786
 msgid "Opponent has the bishop pair."
 msgstr "O adversário tem o par de bispos."
 
@@ -782,7 +784,7 @@ msgid "pawn"
 msgstr "peão"
 
 #. Plural piece name in the material count.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:752
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:757
 msgid "pawns"
 msgstr "peões"
 
@@ -833,7 +835,7 @@ msgid "Portable Game Notation *.pgn | *.pgn"
 msgstr "Portable Game Notation *.pgn | *.pgn"
 
 #. File type filter of the image save dialog.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:905
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:910
 msgid "Portable Network Graphics *.png | *.png"
 msgstr "Portable Network Graphics *.png | *.png"
 
@@ -866,8 +868,8 @@ msgid "Promote Pawn. Select promotion piece type:"
 msgstr "Promover peão. Escolha a peça:"
 
 #. Pawn promotion, e.g. "promoted pawn at b7 to a queen at b8".
-#: addon/globalPlugins/chessmart/spoken_messages.py:159
-#: addon/globalPlugins/chessmart/spoken_messages.py:214
+#: addon/globalPlugins/chessmart/spoken_messages.py:185
+#: addon/globalPlugins/chessmart/spoken_messages.py:240
 msgid "promoted {pawn} at {origin} to a {piece} at {target}"
 msgstr "promoveram {pawn} de {origin} a {piece} em {target}"
 
@@ -963,12 +965,12 @@ msgid "queen"
 msgstr "dama"
 
 #. King-side castling. Queen-side castling.
-#: addon/globalPlugins/chessmart/spoken_messages.py:145
+#: addon/globalPlugins/chessmart/spoken_messages.py:171
 msgid "queen side"
 msgstr "grande"
 
 #. Plural piece name in the material count.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:742
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:747
 msgid "queens"
 msgstr "damas"
 
@@ -1036,7 +1038,7 @@ msgid "rook"
 msgstr "torre"
 
 #. Plural piece name in the material count.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:744
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:749
 msgid "rooks"
 msgstr "torres"
 
@@ -1046,22 +1048,22 @@ msgid "SAN: Nf3"
 msgstr "SAN: Cf3"
 
 #. Title of the dialog that saves the board as an image.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:902
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:907
 msgid "Save Board To Image"
 msgstr "Salvar o tabuleiro como imagem"
 
 #. Title of the dialog that saves the game as a PGN file.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:878
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:883
 msgid "Save Game As"
 msgstr "Salvar partida como"
 
 #. Name of the list of moves played so far.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:422
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:427
 msgid "Score sheet"
 msgstr "Planilha de lances"
 
 #. Spoken when the score sheet is opened before any move.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:298
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:303
 msgid "Score sheet is empty"
 msgstr "A planilha de lances está vazia"
 
@@ -1134,12 +1136,12 @@ msgid "SQLite databases (*.db;*.sqlite)|*.db;*.sqlite|All files|*.*"
 msgstr "Bases SQLite (*.db;*.sqlite)|*.db;*.sqlite|Todos os arquivos|*.*"
 
 #. Role of an empty board square, spoken by the screen reader.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:153
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:158
 msgid "Square"
 msgstr "Casa"
 
 #. Color of the focused square, e.g. "square color: white,".
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:257
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:262
 msgid "square color: {color},"
 msgstr "cor da casa: {color},"
 
@@ -1223,7 +1225,7 @@ msgstr "O arquivo contém as seguintes partidas"
 
 #. Spoken at the end of a replayed PGN game, with the Termination tag of the
 #. file.
-#: addon/globalPlugins/chessmart/virtual_chessboard/pgn_player.py:64
+#: addon/globalPlugins/chessmart/virtual_chessboard/pgn_player.py:65
 msgid "The game has been terminated because of: {reason}"
 msgstr "A partida foi encerrada por: {reason}"
 
@@ -1308,7 +1310,7 @@ msgid "This puzzle: your move {current} of {total}."
 msgstr "Este puzzle: seu lance {current} de {total}."
 
 #. Spoken when the focused square has no attackers.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:692
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:697
 msgid "This square is not under attack"
 msgstr "Esta casa não está atacada"
 
@@ -1326,7 +1328,7 @@ msgid "Time Control"
 msgstr "Controle de tempo"
 
 #. Destination of a move, spoken after the piece, e.g. "to f3".
-#: addon/globalPlugins/chessmart/spoken_messages.py:119
+#: addon/globalPlugins/chessmart/spoken_messages.py:145
 msgid "to {square}"
 msgstr "para {square}"
 
@@ -1387,7 +1389,7 @@ msgid "Visually highlight board interactions"
 msgstr "Destacar visualmente as interações no tabuleiro"
 
 #. Origin of a capturing piece, e.g. "was at g1".
-#: addon/globalPlugins/chessmart/spoken_messages.py:130
+#: addon/globalPlugins/chessmart/spoken_messages.py:156
 msgid "was at {square}"
 msgstr "estava em {square}"
 
@@ -1406,27 +1408,27 @@ msgid "White Clock"
 msgstr "Relógio das brancas"
 
 #. Result of a PGN game.
-#: addon/globalPlugins/chessmart/pgn.py:90
+#: addon/globalPlugins/chessmart/pgn.py:96
 msgid "White won"
 msgstr "Brancas venceram"
 
 #. Option in the draw offer menu.
-#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:356
+#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:355
 msgid "Yes, accept offer and end game"
 msgstr "Sim, aceitar a oferta e encerrar a partida"
 
 #. Material balance against the player, in pawn units.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:770
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:775
 msgid "You are down {points}."
 msgstr "Você está com {points} a menos."
 
 #. Material balance in the player's favor, in pawn units.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:767
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:772
 msgid "You are up {points}."
 msgstr "Você está com {points} a mais."
 
 #. Spoken in the material count.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:778
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:783
 msgid "You have the bishop pair."
 msgstr "Você tem o par de bispos."
 
@@ -1436,7 +1438,7 @@ msgid "Your puzzle database is up to date (Lichess base of {when})."
 msgstr "Sua base de puzzles está atualizada (base do Lichess de {when})."
 
 #. Spoken when a king is in check, e.g. "white is in check".
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:555
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:560
 msgid "{color} is in check"
 msgstr "{color} em xeque"
 
@@ -1446,18 +1448,18 @@ msgid "{color} is offering to draw. Do you want to accept the draw offer?"
 msgstr "{color} oferecem empate. Quer aceitar?"
 
 #. Spoken to name the winner, e.g. "white is the winner".
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:504
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:679
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:509
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:684
 msgid "{color} is the winner"
 msgstr "{color} venceram"
 
 #. Window title after a resignation, e.g. "white resigned".
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:466
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:471
 msgid "{color} resigned"
 msgstr "{color} desistiram"
 
 #. Spoken after a resignation, e.g. "white resigned the game".
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:472
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:477
 msgid "{color} resigned the game"
 msgstr "{color} desistiram da partida"
 
@@ -1469,7 +1471,7 @@ msgstr "{color} jogam."
 
 #. A piece with its color, e.g. "white knight". Reorder the placeholders as
 #. your language needs.
-#: addon/globalPlugins/chessmart/spoken_messages.py:101
+#: addon/globalPlugins/chessmart/spoken_messages.py:127
 msgid "{color} {piece}"
 msgstr "{piece} das {color}"
 
@@ -1482,7 +1484,7 @@ msgid "{color}'s pocket is empty"
 msgstr "a reserva das {color} está vazia"
 
 #. Spoken when a side ran out of time, e.g. "black, time over".
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:501
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:506
 msgid "{color}, time over"
 msgstr "{color}, tempo esgotado"
 
@@ -1495,13 +1497,12 @@ msgstr "{count} deles revelados com Control+Enter."
 msgid "{count} selected: {themes}"
 msgstr "{count} selecionados: {themes}"
 
+#. One entry of the Crazyhouse pocket, e.g. "1 knight" / "2 knights".
 #: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:290
 msgid "{count} {piece}"
-msgstr "{count} {piece}"
-
-#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:294
-msgid "{count} {piece}s"
-msgstr "{count} {piece}s"
+msgid_plural "{count} {piece}s"
+msgstr[0] "{count} {piece}"
+msgstr[1] "{count} {piece}s"
 
 #. Download progress text, e.g. "30 MB of 76 MB (40%)".
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:297
@@ -1510,12 +1511,12 @@ msgid "{done} of {total} ({percent}%)"
 msgstr "{done} de {total} ({percent}%)"
 
 #. Remaining clock time, e.g. "5 minutes and 30 seconds remaining for white".
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:196
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:201
 msgid "{minutes} minutes and {seconds} seconds remaining for {color}"
 msgstr "{minutes} minutos e {seconds} segundos restantes para as {color}"
 
 #. Remaining clock time, e.g. "5 minutes remaining for white".
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:194
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:199
 msgid "{minutes} minutes remaining for {color}"
 msgstr "{minutes} minutos restantes para as {color}"
 
@@ -1532,12 +1533,12 @@ msgid "{percent} percent"
 msgstr "{percent} por cento"
 
 #. One line of the material count, e.g. "rooks: 2 to 1.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:763
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:768
 msgid "{pieces}: {mine} to {theirs}."
 msgstr "{pieces}: {mine} contra {theirs}."
 
 #. Remaining clock time, e.g. "45 seconds remaining for white".
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:191
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:196
 msgid "{seconds} seconds remaining for {color}"
 msgstr "{seconds} segundos restantes para as {color}"
 
@@ -2502,7 +2503,7 @@ msgstr "{name}: {rating_range}"
 
 #. Spoken when jumping to a piece that is no longer on the board, e.g. "No
 #. white knight".
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:644
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:649
 msgid "No {piece}"
 msgstr "Sem {piece}"
 
@@ -2540,12 +2541,12 @@ msgid "Leave training? The session status will be lost."
 msgstr "Sair do treino? O status da sessão será perdido."
 
 #. Option in the menu shown when Escape is pressed during a game.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:366
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:371
 msgid "No, keep playing"
 msgstr "Não, continuar jogando"
 
 #. Option in the menu shown when Escape is pressed during a game.
-#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:368
+#: addon/globalPlugins/chessmart/virtual_chessboard/base.py:373
 msgid "Yes, leave"
 msgstr "Sim, sair"
 
@@ -4126,14 +4127,71 @@ msgstr "Não foi possível ler o arquivo PGN. Detalhe: {error}"
 
 #. Spoken after Backspace took a move back in a PGN replay, e.g. "Took back
 #. Nf3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/pgn_player.py:92
+#: addon/globalPlugins/chessmart/virtual_chessboard/pgn_player.py:93
 msgid "Took back {move}"
 msgstr "Desfeito {move}"
 
 #. Result of a PGN game whose Result tag is missing or not understood.
-#: addon/globalPlugins/chessmart/pgn.py:98
+#: addon/globalPlugins/chessmart/pgn.py:104
 msgid "Unknown result"
 msgstr "Resultado desconhecido"
+
+#. How a game ended, spoken at game over (a draw by the rules of a chess
+#. variant).
+#: addon/globalPlugins/chessmart/spoken_messages.py:114
+msgid "draw by the rules of the variant"
+msgstr "empate pelas regras da variante"
+
+#. How a game ended, spoken at game over.
+#: addon/globalPlugins/chessmart/spoken_messages.py:106
+msgid "fifty-move rule"
+msgstr "regra dos cinquenta lances"
+
+#. How a game ended, spoken at game over (the automatic fivefold repetition
+#. rule).
+#: addon/globalPlugins/chessmart/spoken_messages.py:104
+msgid "fivefold repetition"
+msgstr "repetição quíntupla"
+
+#. How a game ended, spoken at game over.
+#: addon/globalPlugins/chessmart/spoken_messages.py:100
+msgid "insufficient material"
+msgstr "material insuficiente"
+
+#. How a game ended, spoken at game over (a loss by the rules of a chess
+#. variant).
+#: addon/globalPlugins/chessmart/spoken_messages.py:112
+msgid "loss by the rules of the variant"
+msgstr "derrota pelas regras da variante"
+
+#. How a game ended, spoken at game over (the automatic 75-move rule).
+#: addon/globalPlugins/chessmart/spoken_messages.py:102
+msgid "seventy-five move rule"
+msgstr "regra dos setenta e cinco lances"
+
+#. How a game ended, spoken at game over.
+#: addon/globalPlugins/chessmart/spoken_messages.py:98
+msgid "stalemate"
+msgstr "afogamento"
+
+#. How a game ended, spoken at game over.
+#: addon/globalPlugins/chessmart/spoken_messages.py:108
+msgid "threefold repetition"
+msgstr "tripla repetição"
+
+#. How a game ended, spoken at game over (a win by the rules of a chess
+#. variant).
+#: addon/globalPlugins/chessmart/spoken_messages.py:110
+msgid "win by the rules of the variant"
+msgstr "vitória pelas regras da variante"
+
+#. The two players of a PGN game, white first.
+#: addon/globalPlugins/chessmart/pgn.py:72
+msgid "{white} versus {black}"
+msgstr "{white} contra {black}"
+
+#~ msgid "{count} {piece}s"
+#~ msgstr "{count} {piece}s"
 
 #~ msgid "&Seek Game"
 #~ msgstr "&Buscar partida"

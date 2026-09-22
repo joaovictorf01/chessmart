@@ -27,7 +27,12 @@ from .ui_components import (
 	SimpleList,
 )
 from ..time_control import NULL_TIME_CONTROL
-from ..spoken_messages import standard_game_announcer, ibca_game_announcer, spoken_color_name
+from ..spoken_messages import (
+	standard_game_announcer,
+	ibca_game_announcer,
+	spoken_color_name,
+	spoken_termination_name,
+)
 from ..i18n import _
 from ..notation import DESCRIPTIVE, render_san, render_square
 from ..addon_config import get_move_notation
@@ -666,7 +671,7 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 	def _get_game_over_messages(self):
 		outcome = self.board.outcome()
 		assert outcome is not None, "called only when board.is_game_over()"
-		termination_reason = outcome.termination.name.replace("_", " ")
+		termination_reason = spoken_termination_name(outcome.termination)
 		yield from [
 			speech.commands.WaveFileCommand(GameSound.game_over.filename),
 			speech.commands.BreakCommand(250),

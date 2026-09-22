@@ -66,10 +66,16 @@ class PGNGameInfo:
 				yield cls(filename=filename, offset=offset, **cls.args_from_headers(headers))
 
 	@property
+	def players(self):
+		"""Both players, e.g. "Kasparov versus Karpov"."""
+		# Translators: The two players of a PGN game, white first.
+		return _("{white} versus {black}").format(white=self.white, black=self.black)
+
+	@property
 	def description(self):
 		return " ".join(
 			[
-				f"{self.white} versus {self.black},",
+				f"{self.players},",
 				f"{self.event},",
 				f" - {self.date}",
 			],

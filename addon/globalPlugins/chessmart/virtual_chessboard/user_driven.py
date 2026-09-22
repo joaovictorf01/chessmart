@@ -19,7 +19,7 @@ from .ui_components import (
 from ..paths import import_bundled
 from ..sounds import GameSound
 from ..speaking import speak_next
-from ..i18n import _
+from ..i18n import _, ngettext
 from ..spoken_messages import spoken_piece_name
 from .base import BaseChessboardCell, BaseVirtualChessboard, Color
 from .ui_components import SimpleList
@@ -285,14 +285,13 @@ class UserDrivenChessboard(BaseVirtualChessboard):
 		pocket_list = SimpleList(parent=self, name=pocket_list_name, close_gesture="kb:f6")
 		pocket = self._crazyhouse_board().pockets[color].pieces
 		for ptype, pcount in zip(pieces, (pocket[p] for p in pieces)):
-			if pcount == 1:
-				pocket_list.add_item(
-					_("{count} {piece}").format(count=pcount, piece=self.game_announcer.piece_name(ptype)),
-				)
-			else:
-				pocket_list.add_item(
-					_("{count} {piece}s").format(count=pcount, piece=self.game_announcer.piece_name(ptype)),
-				)
+			pocket_list.add_item(
+				# Translators: One entry of the Crazyhouse pocket, e.g. "1 knight" / "2 knights".
+				ngettext("{count} {piece}", "{count} {piece}s", pcount).format(
+					count=pcount,
+					piece=self.game_announcer.piece_name(ptype),
+				),
+			)
 		eventHandler.queueEvent("gainFocus", pocket_list)
 
 	def get_available_droppable_pieces(self, color):

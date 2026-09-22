@@ -16,6 +16,7 @@ O versionamento segue o [Semantic Versioning](https://semver.org/lang/pt-BR/): v
 
 ## Corrigido
 
+- Notação IBCA (F3) dizia "schwarts" (preto) para as brancas; agora as brancas são "weiss" e as pretas "schwarz". No fim da partida o motivo é falado no seu idioma ("afogamento", "tripla repetição", "material insuficiente"...) em vez do nome interno em inglês. A contagem do bolso no Crazyhouse e a linha "X contra Y" da lista de partidas PGN também são traduzidas.
 - Nova partida: controle de tempo ou FEN inicial inválido não fecha mais o diálogo com erro interno depois da mensagem; o diálogo continua aberto para corrigir o valor.
 - Reproduzir arquivo PGN: a lista de partidas mostrava a data no lugar do evento e do local; um arquivo sem a tag `Result`, com resultado fora do padrão ou salvo em Latin-1 não dá mais tom de erro, aparece como "Resultado desconhecido" (ou com um caractere trocado num nome); um arquivo que não pode ser lido é anunciado ("Não foi possível ler o arquivo PGN. Detalhe: ..."). Backspace agora desfaz de verdade o último lance reproduzido, como o README sempre disse, e leva o foco à casa de onde a peça saiu.
 - Partida contra a engine: quando a engine desiste, o tabuleiro agora encerra a partida e diz qual lado desistiu; antes falhava em silêncio (erro interno no log do NVDA) e a partida nunca terminava.
