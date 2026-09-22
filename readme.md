@@ -112,10 +112,9 @@ All the board commands below work here too.
 | F4 | Score sheet: the moves played so far |
 | F6 / Shift+F6 | Your pocket / the opponent's pocket (Crazyhouse) |
 | Control+D | Offer a draw, or withdraw the offer |
-| Control+Shift+R | Resign (online games) |
 | Control+S | Save the game as a PGN file |
 | Control+Shift+S | Save the board as a PNG image |
-| Escape | Close the board. During a game it asks first: leaving abandons the game against the engine and resigns (or aborts, in the first moves) an online game |
+| Escape | Close the board. During a game it asks first: leaving abandons the game against the engine |
 
 ## Settings
 

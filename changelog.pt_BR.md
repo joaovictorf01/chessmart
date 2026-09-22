@@ -10,6 +10,10 @@ O versionamento segue o [Semantic Versioning](https://semver.org/lang/pt-BR/): v
 
 - Download de puzzles: aceitar um `.db.gz` baixado à mão no navegador (pra máquina que não alcança o GitHub pelo add-on); registrar o erro exato quando o manifesto não vem. Primeiro relato: 21-09-2026, "não foi possível alcançar o servidor de download".
 
+## Removido
+
+- Jogo online no lichess.org. Estava "em breve" desde 2022: um cliente pela metade, uma opção desabilitada no menu e 6 MB de bibliotecas de rede embarcadas. Jogar online com leitor de tela é o que o próprio lichess.org faz bem; este add-on é o lado local — jogar contra a engine, tática, finais, PGN. O pacote encolhe na mesma medida.
+
 ## Corrigido
 
 - Diálogo de download de puzzles: quando a lista não vem, a mensagem traz o erro exato ("Detalhe: ..."), então um relato de "não foi possível alcançar o servidor" já diz se foi rede, proxy ou certificado. A primeira mensagem pede pra aguardar a lista; se a lista não vier, o botão vira **Tentar de novo** em vez de deixar tudo desabilitado.

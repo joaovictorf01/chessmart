@@ -9,7 +9,6 @@ from .pgn_player import (
 	PGNGame,
 	PGNGameInfo,
 )
-from .internet_chessboard import InternetChessboard
 from .puzzle_board import PuzzleChessboard
 from .endgame_board import EndgameDrillChessboard, EndgameLessonChessboard
 
@@ -20,7 +19,6 @@ __all__ = [
 	"PGNPlayerChessboard",
 	"PGNGame",
 	"PGNGameInfo",
-	"InternetChessboard",
 	"PuzzleChessboard",
 	"EndgameDrillChessboard",
 	"EndgameLessonChessboard",

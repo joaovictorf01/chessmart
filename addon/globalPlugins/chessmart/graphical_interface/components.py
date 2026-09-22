@@ -2,7 +2,6 @@
 # pyright: basic
 
 import typing as t
-from typing import TYPE_CHECKING
 import contextlib
 from concurrent.futures import Future
 import wx
@@ -110,32 +109,7 @@ class SnakDialog(SimpleDialog):
 		return
 
 
-class AsyncSnakDialog:
-	"""A helper to make the use of SnakDialogs Ergonomic."""
-
-	def __init__(
-		self,
-		task: LongRunningTask,
-		done_callback: DoneCallback,
-		*sdg_args,
-		**sdg_kwargs,
-	):
-		self.snak_dg = SnakDialog(*sdg_args, **sdg_kwargs)
-		self.done_callback = done_callback
-		self.future = task.add_done_callback(self.on_future_completed)
-		self.snak_dg.Show()
-
-	def on_future_completed(self, completed_future):
-		self.Dismiss()
-		wx.CallAfter(self.done_callback, completed_future)
-
-	def Dismiss(self):
-		if self.snak_dg:
-			wx.CallAfter(self.snak_dg.Hide)
-			wx.CallAfter(self.snak_dg.Destroy)
-
-
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
 	_ItemContainerBase = wx.ItemContainerImmutable
 else:
 	_ItemContainerBase = object

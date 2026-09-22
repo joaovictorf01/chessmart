@@ -10,6 +10,10 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 
 - Puzzle download: accept a `.db.gz` downloaded by hand in the browser (for machines that cannot reach GitHub from the add-on); log the exact error when the manifest cannot be fetched. First report: 21-09-2026, "could not reach the download server".
 
+## Removed
+
+- Online play on lichess.org. It had been "coming soon" since 2022: a half-built client, a disabled menu entry and 6 MB of bundled networking libraries. Playing online with a screen reader is what lichess.org itself does well; this add-on is the local side — play the engine, tactics, endgames, PGN. The package shrinks accordingly.
+
 ## Fixed
 
 - Puzzle download dialog: when the list cannot be fetched, the message now carries the exact error ("Details: ..."), so a report of "could not reach the download server" already says whether it was the network, a proxy or a certificate. The first status says to wait for the list; if the list cannot be fetched, the button becomes **Try again** instead of leaving everything disabled.

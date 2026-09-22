@@ -53,8 +53,6 @@ from .endgame.lessons import EndgameLesson
 class ChessboardMenu(wx.Menu):
 	def __init__(self, global_plugin_object):
 		super().__init__()
-		# Start an asyncio event loop for running io tasks
-		concurrency.start_asyncio_event_loop()
 		self.global_plugin_object = global_plugin_object
 		# Append the menu items
 		new_game_item = self.Append(wx.ID_ANY, _("&New Game..."), _("Start a new chess game"))

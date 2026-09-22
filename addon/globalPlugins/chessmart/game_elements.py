@@ -36,29 +36,23 @@ class GameInfo:
 class PlayMode(DisplayStringIntEnum):
 	HUMAN_VERSUS_COMPUTER = 0
 	HUMAN_VERSUS_HUMAN = 1
-	ONLINE_LICHESS_ORG = 2
 
 	@cached_property
 	def _displayStringLabels(self):
 		return {
 			PlayMode.HUMAN_VERSUS_HUMAN: _("Human versus human"),
 			PlayMode.HUMAN_VERSUS_COMPUTER: _("Human versus computer"),
-			PlayMode.ONLINE_LICHESS_ORG: _("Online: lichess.org (coming soon)"),
 		}
 
 	def get_board_class(self):
 		from .virtual_chessboard import (
 			UserUserChessboard,
 			UserEngineChessboard,
-			InternetChessboard,
 		)
 
 		if self is PlayMode.HUMAN_VERSUS_HUMAN:
 			return UserUserChessboard
-		elif self is PlayMode.HUMAN_VERSUS_COMPUTER:
-			return UserEngineChessboard
-		elif self is PlayMode.ONLINE_LICHESS_ORG:
-			return InternetChessboard
+		return UserEngineChessboard
 
 
 class TimeControl(DisplayStringIntEnum):
