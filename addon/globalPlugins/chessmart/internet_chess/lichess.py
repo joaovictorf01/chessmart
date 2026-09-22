@@ -70,8 +70,8 @@ class LichessAPIClient(InternetChessAPIClient):
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		# O cliente da biblioteca, criado em `connect`. Anotado como Any porque a
-		# biblioteca embarcada não tem tipos que ajudem.
+		# The library client, created in `connect`. Annotated as Any because the
+		# bundled library lacks helpful types.
 		self.lichess: Any = None
 		self.current_challenge_id = None
 		self._lichess_events_listener_task: asyncio.Task | None = None
@@ -79,7 +79,7 @@ class LichessAPIClient(InternetChessAPIClient):
 		self.seek_future = ASYNCIO_EVENT_LOOP.create_future()
 
 	def _requested_color(self) -> ColorType:
-		"""A cor pedida ao servidor; sem lado escolhido, deixa o Lichess sortear."""
+		"""The color requested from the server; with no side chosen, let Lichess randomize it."""
 		prospective = self.game_info.prospective
 		if prospective is None:
 			return ColorType.RANDOM
@@ -235,7 +235,7 @@ class LichessBoardClient(InternetChessBoardClient):
 			if response.entity.status is StatusTypes.ERROR:
 				tones.beep(500, 500)
 				await asyncio.sleep(5)
-				# Sem o await isto criava a corrotina e a jogava fora: o fluxo nunca reabria.
+				# Without the await this created the coroutine and threw it away: the stream never reopened.
 				return await self.start_realtime_game_stream()
 			try:
 				tones.beep(100, 100)

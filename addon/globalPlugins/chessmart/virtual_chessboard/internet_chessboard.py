@@ -102,11 +102,11 @@ class InternetChessboard(UserDrivenChessboard):
 			return True
 		return super().is_busy(index)
 
-	# -- sair -----------------------------------------------------------------
+	# -- leaving -----------------------------------------------------------------
 
 	def _can_abort(self):
-		# Regra do Lichess: até o segundo lance a partida pode ser abortada
-		# sem contar; depois disso, sair é desistir.
+		# Lichess rule: up to the second move the game can be aborted without
+		# counting; after that, leaving means resigning.
 		return len(self.board.move_stack) < 2
 
 	def leave_prompt(self):
@@ -120,10 +120,10 @@ class InternetChessboard(UserDrivenChessboard):
 		return _("Leave the online game? You will resign it.")
 
 	def leave_game(self):
-		"""Avisa o Lichess antes de fechar: abort nos primeiros lances, resign depois.
+		"""Notifies Lichess before closing: abort in the first moves, resign after.
 
-		Fechar sem avisar deixava a partida correndo no servidor com o relógio
-		andando, e a derrota vinha por tempo, sem janela para ver.
+		Closing without notifying left the game running on the server with the
+		clock ticking, and the loss came by timeout, with no window left to see it.
 		"""
 		if not self._is_game_started:
 			self._disconnect_quietly()
@@ -191,11 +191,12 @@ class InternetChessboard(UserDrivenChessboard):
 				black_rating=info.black_rating,
 			),
 		)
-		# O relógio da partida online é o do servidor: cada `clock_tick` chega
-		# com o tempo restante dos dois lados, e `on_clock_tick` troca o controle
-		# inteiro. Aqui só se adota o inicial; nada é iniciado localmente, senão
-		# o tempo seria contado duas vezes. (Antes isto chamava um método que a
-		# janela nunca teve, e o início de toda partida online estourava no log.)
+		# The online game's clock is the server's: each `clock_tick` arrives with
+		# the time remaining for both sides, and `on_clock_tick` swaps the whole
+		# control object. Here only the initial one is adopted; nothing starts
+		# locally, or the time would be counted twice. (This used to call a
+		# method the window never had, and the start of every online game
+		# raised an error in the log.)
 		self.time_control = info.time_control
 
 	def on_game_checkmate(self, event):
@@ -228,8 +229,8 @@ class InternetChessboard(UserDrivenChessboard):
 		self.make_opponent_draw_offer()
 
 	def draw_offer_callback(self, accepted: bool):
-		# A resposta vai ao servidor; o empate em si chega depois como evento
-		# (`on_game_draw`), então aqui não se encerra a partida localmente.
+		# The response goes to the server; the draw itself arrives later as an
+		# event (`on_game_draw`), so the game is not ended locally here.
 		if isinstance(self._current_focused_object, DrawChoiceMenu):
 			self._current_focused_object = None
 		self.client.handle_draw_offer(accepted)

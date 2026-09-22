@@ -1,16 +1,15 @@
 # coding: utf-8
 # pyright: basic
 
-"""Acesso ao banco de puzzles e ao histórico do jogador, em SQLite.
+"""Access to the puzzle database and the player's history, in SQLite.
 
-Uma conexão, dois arquivos: o histórico (`tactic.db`) é o banco principal e o
-de puzzles (`puzzles.db`) vai anexado só para leitura como `lichess`. Todas as
-funções recebem a conexão aberta por `connect` e devolvem os dataclasses de
-`models.py`; nenhuma fala em texto ou dicionário.
+One connection, two files: the history (`tactic.db`) is the main database
+and the puzzles one (`puzzles.db`) is attached read-only as `lichess`. Every
+function takes the connection opened by `connect` and returns the
+dataclasses from `models.py`; none of them speak in plain text or dictionaries.
 
-Este módulo já foi um processo à parte, chamado por linha de comando, e por
-isso recebia tudo como string e devolvia JSON. O processo acabou; a interface
-em texto acabou junto.
+This module used to be a separate process, invoked from the command line,
+and so it took everything as strings and returned JSON. The process is gone; so is the text interface.
 """
 
 from __future__ import annotations
@@ -62,11 +61,11 @@ CREATE TABLE IF NOT EXISTS rating_history (
 CREATE INDEX IF NOT EXISTS idx_rating_history_created_at ON rating_history(created_at);
 """
 
-# Colunas acrescentadas a `attempts` depois que ela já existia em bancos reais.
-# O SQLite não tem "ADD COLUMN IF NOT EXISTS", então a migração é feita à mão.
-# Guardar o rating do puzzle no momento da tentativa é o que torna o histórico
-# reproduzível: se o banco do Lichess for atualizado, aquele puzzle pode valer
-# outra coisa, e sem isto o passado mudaria junto.
+# Columns added to `attempts` after it already existed in real databases.
+# SQLite has no "ADD COLUMN IF NOT EXISTS", so the migration is done by hand.
+# Storing the puzzle's rating at the time of the attempt is what makes the
+# history reproducible: if the Lichess database is updated, that puzzle may
+# be worth something else, and without this the past would change along with it.
 ATTEMPT_COLUMNS = (
 	("puzzle_rating", "REAL"),
 	("puzzle_deviation", "REAL"),
@@ -77,15 +76,15 @@ ATTEMPT_COLUMNS = (
 HISTORY_TABLES = ("attempts", "player_rating", "rating_history")
 
 
-# ---------------------------------------------------------------- conexão
+# ---------------------------------------------------------------- connection
 
 
 def file_uri(db_path: Path, mode: str) -> str:
-	"""URI de arquivo para o SQLite, com o modo de abertura.
+	"""File URI for SQLite, with the open mode.
 
-	Caminho absoluto com barras normais e prefixo `file:///`, que é a forma
-	que o SQLite documenta para Windows. `?` e `#` têm significado numa URI;
-	num caminho são raros, mas não impossíveis.
+	Absolute path with forward slashes and the `file:///` prefix, which is
+	the form SQLite documents for Windows. `?` and `#` are meaningful in a
+	URI; rare in a path, but not impossible.
 	"""
 	escaped = Path(db_path).resolve().as_posix().replace("%", "%25").replace("?", "%3F").replace("#", "%23")
 	return f"file:///{escaped.lstrip('/')}?mode={mode}"
@@ -96,11 +95,11 @@ def read_only_uri(db_path: Path) -> str:
 
 
 def _migrate_attempts(connection: sqlite3.Connection) -> None:
-	"""Acrescenta a `attempts` as colunas de rating que faltarem.
+	"""Add to `attempts` whichever rating columns are missing.
 
-	Roda a cada conexão e é barata: uma consulta ao catálogo do SQLite e, na
-	imensa maioria das vezes, nenhum ALTER. Bancos criados antes do rating
-	existir continuam funcionando, ganhando as colunas na primeira abertura.
+	Runs on every connection and is cheap: one query to SQLite's catalog and,
+	the vast majority of the time, no ALTER at all. Databases created before
+	rating existed keep working, gaining the columns on first open.
 	"""
 	existing = {row[1] for row in connection.execute("PRAGMA table_info(attempts)")}
 	for column, column_type in ATTEMPT_COLUMNS:
@@ -109,7 +108,7 @@ def _migrate_attempts(connection: sqlite3.Connection) -> None:
 
 
 def has_puzzles_table(db_path: Path) -> bool:
-	"""Diz se o arquivo tem a tabela `puzzles` do Lichess, isto é, se é um banco de puzzles."""
+	"""Say whether the file has the Lichess `puzzles` table, i.e. whether it is a puzzle database."""
 	try:
 		connection = sqlite3.connect(read_only_uri(db_path), uri=True)
 	except sqlite3.Error:
@@ -126,12 +125,12 @@ def has_puzzles_table(db_path: Path) -> bool:
 
 
 def connect(puzzles_path: Path, history_path: Path) -> sqlite3.Connection:
-	"""Abre o histórico do jogador e anexa o banco de puzzles como `lichess`.
+	"""Open the player's history and attach the puzzle database as `lichess`.
 
-	São dois arquivos de propósito: o de puzzles vem do Lichess e é trocado
-	inteiro a cada atualização; o histórico é do jogador e não pode ser tocado
-	por atualização nenhuma. O de puzzles é anexado só para leitura -- nada
-	aqui escreve nele, e assim fica garantido pelo SQLite, não por disciplina.
+	Two files on purpose: the puzzles one comes from Lichess and is replaced
+	wholesale on every update; the history belongs to the player and must
+	never be touched by an update. The puzzles one is attached read-only --
+	nothing here writes to it, and that is guaranteed by SQLite, not by discipline.
 	"""
 	history_path.parent.mkdir(parents=True, exist_ok=True)
 	connection = sqlite3.connect(file_uri(history_path, "rwc"), uri=True)
@@ -147,19 +146,19 @@ def connect(puzzles_path: Path, history_path: Path) -> sqlite3.Connection:
 	return connection
 
 
-# ---------------------------------------------------------------- migração de formato
+# ---------------------------------------------------------------- format migration
 
 
 def split_legacy_database(legacy_path: Path, puzzles_path: Path, history_path: Path) -> Path:
-	"""Divide um `tactic.db` antigo, que juntava puzzles e histórico num arquivo só.
+	"""Split an old `tactic.db` that combined puzzles and history in a single file.
 
-	Na ordem que deixa o pior caso recuperável:
-	1. o histórico é copiado para um arquivo novo e para um backup datado;
-	2. as tabelas de histórico são apagadas do arquivo antigo;
-	3. o antigo é renomeado para `puzzles.db` e o novo para `tactic.db`.
-	Se o passo 3 falhar no meio, o antigo (só puzzles) e o novo (só histórico)
-	ficam lado a lado com nomes provisórios, e nada se perdeu.
-	Devolve o caminho do backup.
+	In the order that leaves the worst case recoverable:
+	1. the history is copied to a new file and to a dated backup;
+	2. the history tables are dropped from the old file;
+	3. the old file is renamed to `puzzles.db` and the new one to `tactic.db`.
+	If step 3 fails partway through, the old file (puzzles only) and the new
+	one (history only) sit side by side with provisional names, and nothing is lost.
+	Returns the backup path.
 	"""
 	if puzzles_path.exists():
 		raise FileExistsError(f"refusing to overwrite {puzzles_path}")
@@ -184,13 +183,13 @@ def split_legacy_database(legacy_path: Path, puzzles_path: Path, history_path: P
 
 
 def slim_legacy_history(history_path: Path) -> Path:
-	"""Tira a tabela `puzzles` de um histórico que ainda a carrega.
+	"""Strip the `puzzles` table from a history that still carries it.
 
-	Caso de quem baixou um banco de puzzles antes de a divisão rodar: o
-	`tactic.db` antigo ficou como histórico, com os milhões de puzzles
-	dentro. O histórico é copiado para um arquivo novo (e um backup datado),
-	e o novo toma o lugar do antigo -- mais rápido e mais seguro do que
-	apagar a tabela e compactar 1,4 GB no lugar.
+	The case of someone who downloaded a puzzle database before the split
+	ran: the old `tactic.db` was left as the history, with the millions of
+	puzzles inside it. The history is copied to a new file (and a dated
+	backup), and the new one replaces the old -- faster and safer than
+	dropping the table and vacuuming 1.4 GB in place.
 	"""
 	fresh_path = history_path.with_name(history_path.name + ".new")
 	backup_path = _backup_path(history_path)
@@ -225,8 +224,8 @@ def _copy_history_tables(legacy_path: Path, target_path: Path) -> None:
 			).fetchone()
 			if exists is None:
 				continue
-			# Só as colunas que os dois lados conhecem: o antigo pode ter nascido
-			# antes de uma coluna existir, e o novo já nasce com todas.
+			# Only the columns both sides know about: the old database may predate
+			# a column's existence, while the new one is born with all of them.
 			old_columns = [row[1] for row in connection.execute(f"PRAGMA old.table_info({table})")]
 			new_columns = [row[1] for row in connection.execute(f"PRAGMA main.table_info({table})")]
 			columns = ", ".join(column for column in old_columns if column in new_columns)
@@ -237,11 +236,11 @@ def _copy_history_tables(legacy_path: Path, target_path: Path) -> None:
 		connection.close()
 
 
-# ---------------------------------------------------------------- rating do jogador
+# ---------------------------------------------------------------- player rating
 
 
 def _load_rating(connection: sqlite3.Connection) -> glicko2.Rating:
-	"""O rating atual, ou o inicial se ainda não houver nenhum registrado."""
+	"""The current rating, or the initial one if none has been recorded yet."""
 	row = connection.execute(
 		"SELECT rating, deviation, volatility FROM player_rating WHERE id = 1",
 	).fetchone()
@@ -255,7 +254,7 @@ def _store_rating(
 	rating: glicko2.Rating,
 	attempt_id: int | None = None,
 ) -> None:
-	"""Grava o rating atual e acrescenta uma linha ao histórico."""
+	"""Store the current rating and append a row to the history."""
 	connection.execute(
 		"""
         INSERT INTO player_rating (id, rating, deviation, volatility, updated_at)
@@ -329,35 +328,35 @@ def get(connection: sqlite3.Connection, puzzle_id: str) -> Puzzle | None:
 
 
 def _random_row(connection: sqlite3.Connection, filters: PuzzleFilters) -> sqlite3.Row | None:
-	"""Sorteia uma linha sem contar o conjunto inteiro.
+	"""Pick a random row without counting the whole set.
 
-	O padrão COUNT(*) seguido de LIMIT 1 OFFSET n custa caro em tabela grande:
-	o COUNT percorre tudo e o OFFSET percorre de novo até a enésima linha. Com
-	filtro de tema é pior ainda, porque o LIKE não usa índice -- medido neste
-	banco, dava mais de 10 segundos por sorteio, com o NVDA mudo enquanto isso.
+	The usual COUNT(*) followed by LIMIT 1 OFFSET n pattern is expensive on a
+	large table: COUNT scans everything and OFFSET scans again up to the nth
+	row. With a theme filter it's worse still, because LIKE cannot use an
+	index -- measured on this database, it took over 10 seconds per draw, with NVDA silent the whole time.
 
-	Aqui a ideia é outra: escolher um `rowid` ao acaso e pegar a PRIMEIRA linha
-	que casa dali para frente; se não houver nenhuma até o fim, procurar antes
-	do ponto escolhido. As duas consultas juntas cobrem a tabela exatamente uma
-	vez, então o pior caso (filtro que não casa com nada) é uma varredura, não
-	duas -- e o caso comum termina em algumas dezenas de linhas.
+	The idea here is different: pick a random `rowid` and take the FIRST row
+	that matches from there onward; if none matches to the end, look before
+	the chosen point. The two queries together cover the table exactly once,
+	so the worst case (a filter matching nothing) is one scan, not two -- and
+	the common case finishes within a few dozen rows.
 
-	Ressalva honesta: isto não é uniforme. Uma linha que vem logo depois de uma
-	sequência longa de linhas que não casam tem chance maior de ser escolhida.
-	O viés é pequeno e o preço da uniformidade eram dez segundos de espera.
+	Honest caveat: this is not uniform. A row right after a long run of
+	non-matching rows has a higher chance of being picked. The bias is small,
+	and the price of uniformity was a ten-second wait.
 	"""
 	bounds = connection.execute("SELECT MIN(rowid), MAX(rowid) FROM lichess.puzzles").fetchone()
 	if bounds is None or bounds[0] is None:
 		return None
 	anchor = random.randint(bounds[0], bounds[1])
 	where, params = _where_clause(filters)
-	# NOT INDEXED é obrigatório aqui, e não é micro-otimização. Sem ele o
-	# SQLite prefere o índice de rating e percorre em ordem de rating, então
-	# "a primeira que casa" passa a ser sempre a de menor rating da faixa --
-	# medido: 20 sorteios seguidos devolveram exatamente o piso da janela.
-	# NOT INDEXED força a varredura pela ordem física da tabela, que é o que
-	# dá sentido à âncora sorteada. O rowid continua utilizável, porque é a
-	# chave da própria tabela e não um índice secundário.
+	# NOT INDEXED is required here, and it is not a micro-optimization.
+	# Without it SQLite prefers the rating index and scans in rating order, so
+	# "the first one that matches" always becomes the lowest rating in the
+	# range -- measured: 20 draws in a row returned exactly the floor of the
+	# window. NOT INDEXED forces a scan in the table's physical order, which
+	# is what makes the random anchor meaningful. rowid remains usable,
+	# because it is the table's own key, not a secondary index.
 	row = connection.execute(
 		f"SELECT * FROM lichess.puzzles NOT INDEXED WHERE rowid >= ? AND {where} LIMIT 1",
 		[anchor, *params],
@@ -375,23 +374,22 @@ def random_puzzle(connection: sqlite3.Connection, filters: PuzzleFilters) -> Puz
 
 
 def adaptive_random_puzzle(connection: sqlite3.Connection, filters: PuzzleFilters) -> Puzzle | None:
-	"""Sorteia um puzzle calibrado pelo rating atual do jogador.
+	"""Draw a puzzle calibrated to the player's current rating.
 
-	A faixa de rating de `filters` é ignorada: a janela é centrada um pouco
-	ACIMA do rating -- um puzzle levemente além do teu nível ensina mais do que
-	um que você resolve no automático -- e a largura dela acompanha o DESVIO:
-	enquanto o sistema não te conhece, sorteia largo (o que também é o jeito
-	mais rápido de te conhecer); conforme a confiança aumenta, a janela fecha
-	em volta de você.
+	The rating range in `filters` is ignored: the window is centered a bit
+	ABOVE the rating -- a puzzle slightly beyond the player's level teaches
+	more than one solved on autopilot -- and its width tracks the DEVIATION:
+	while the system doesn't know the player yet, it draws wide (which is
+	also the fastest way to learn); as confidence grows, the window closes in.
 
-	Se a janela vier vazia -- possível quando há filtro de tema estreito --,
-	ela é alargada em etapas, e no limite o rating é ignorado: é melhor um
-	puzzle fora da faixa ideal do que nenhum puzzle.
+	If the window comes back empty -- possible with a narrow theme filter --
+	it is widened in steps, and as a last resort the rating is ignored
+	altogether: a puzzle outside the ideal range beats no puzzle at all.
 	"""
 	player = _load_rating(connection)
-	# 2,5 desvios cobrem a faixa em que o jogador plausivelmente está. Os
-	# limites impedem os dois extremos ruins: janela estreita demais para achar
-	# puzzle, e larga a ponto de deixar de ser calibrada.
+	# 2.5 deviations cover the range where the player plausibly stands. The
+	# bounds prevent both bad extremes: a window too narrow to find a puzzle,
+	# and one so wide it stops being calibrated.
 	spread = max(120.0, min(2.5 * player.deviation, 700.0))
 	center = player.rating + 50.0
 	for multiplier in (1.0, 2.0, 4.0):
@@ -405,7 +403,7 @@ def adaptive_random_puzzle(connection: sqlite3.Connection, filters: PuzzleFilter
 		puzzle = random_puzzle(connection, window)
 		if puzzle is not None:
 			return puzzle
-	# Nada na vizinhança: cai para o sorteio sem restrição de rating.
+	# Nothing nearby: fall back to drawing with no rating restriction.
 	return random_puzzle(
 		connection,
 		PuzzleFilters(
@@ -416,7 +414,7 @@ def adaptive_random_puzzle(connection: sqlite3.Connection, filters: PuzzleFilter
 	)
 
 
-# ---------------------------------------------------------------- histórico
+# ---------------------------------------------------------------- history
 
 
 def record_attempt(
@@ -427,7 +425,7 @@ def record_attempt(
 	hints_used: int,
 	elapsed_ms: int,
 ) -> AttemptResult:
-	"""Grava a tentativa, atualiza o rating do jogador e devolve o que mudou."""
+	"""Record the attempt, update the player's rating, and return what changed."""
 	cursor = connection.execute(
 		"""
         INSERT INTO attempts (puzzle_id, solved, mistakes, hints_used, elapsed_ms)
@@ -445,9 +443,9 @@ def record_attempt(
 	before = _load_rating(connection)
 	after = before
 	if puzzle is not None:
-		# A tentativa vira uma partida contra este puzzle. Só o jogador muda:
-		# o rating do puzzle vem do Lichess, calculado sobre milhões de
-		# tentativas, e não é nosso para mexer.
+		# The attempt becomes a game against this puzzle. Only the player
+		# changes: the puzzle's rating comes from Lichess, computed over
+		# millions of attempts, and is not ours to touch.
 		after = glicko2.update(before, float(puzzle["rating"]), float(puzzle["rating_deviation"]), solved)
 		connection.execute(
 			"""
@@ -509,7 +507,7 @@ def attempt_stats(connection: sqlite3.Connection) -> AttemptStats:
 
 
 def theme_counts(connection: sqlite3.Connection) -> list[tuple[str, int]]:
-	"""Cada tema do banco com quantos puzzles o têm. Varre a tabela inteira."""
+	"""Each theme in the database with how many puzzles have it. Scans the whole table."""
 	counts: Counter[str] = Counter()
 	for (themes,) in connection.execute("SELECT themes FROM lichess.puzzles"):
 		for slug in (themes or "").split():

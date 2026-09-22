@@ -14,7 +14,7 @@ from .components import EnumRadioBox, EnumChoice, AsyncSnakDialog
 from ..game_elements import PlayMode, TimeControl, ChessVariant, PlayerColor
 from ..time_control import ChessTimeControl
 
-# As exceções não dependem da biblioteca do Lichess; só o cliente depende.
+# The exceptions don't depend on the Lichess library; only the client does.
 from ..internet_chess.abstract.exceptions import (
 	ChallengedUserIsOffline,
 	ChallengeRejected,
@@ -362,7 +362,7 @@ class UCIEngineOptionsDialog(gui.SettingsDialog):
 		self.engineSkillLevel.SetFocus()
 
 	def onOk(self, event):
-		# O pai é sempre o NewGameOptionsDialog, que tem set_engine_options.
+		# The parent is always NewGameOptionsDialog, which has set_engine_options.
 		self.Parent.set_engine_options(self.get_options())  # pyright: ignore[reportAttributeAccessIssue]
 		super().onOk(event)
 

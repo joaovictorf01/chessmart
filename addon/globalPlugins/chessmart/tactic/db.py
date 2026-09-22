@@ -13,15 +13,15 @@ PLUGIN_DIRECTORY = Path(__file__).resolve().parents[1]
 
 
 def _user_data_directory() -> Path:
-	"""Onde ficam os dados do usuário: o banco de puzzles, o histórico e o cache.
+	"""Where the user's data lives: the puzzle database, the history and the cache.
 
-	Dentro do NVDA é `<pasta de configuração do NVDA>/chessmart`, como os
-	outros add-ons fazem: a pasta do add-on é apagada e recriada a cada
-	atualização, e o histórico do jogador não pode ir junto. Fora do NVDA
-	(testes, ferramentas) é `data/` ao lado do código, como sempre foi.
+	Inside NVDA it's `<NVDA config folder>/chessmart`, like other add-ons do:
+	the add-on folder is wiped and recreated on every update, and the player's
+	history can't go along with it. Outside NVDA (tests, tools) it's `data/`
+	next to the code, as it always was.
 	"""
 	try:
-		import globalVars  # pyright: ignore[reportMissingImports] - módulo do NVDA
+		import globalVars  # pyright: ignore[reportMissingImports] - NVDA module
 
 		config_path = globalVars.appArgs.configPath
 	except (ImportError, AttributeError):
@@ -33,15 +33,14 @@ def _user_data_directory() -> Path:
 
 ADDON_DATA_DIRECTORY = _user_data_directory()
 LEGACY_DATA_DIRECTORY = PLUGIN_DIRECTORY / "data"
-# O Python do NVDA não traz `sqlite3`; a pasta abaixo carrega a extensão e o
-# pacote da biblioteca padrão do CPython 3.13 x64 (ver o README que está lá).
+# NVDA's Python does not ship `sqlite3`; the folder below carries the
+# extension and the standard library package from CPython 3.13 x64 (see the README there).
 SQLITE_RUNTIME_DIRECTORY = PLUGIN_DIRECTORY / "lib" / "sqlite3_runtime"
 
-# Dois arquivos, de propósito. `puzzles.db` é a base do Lichess: grande,
-# substituída inteira a cada atualização, e é ela que o usuário pode apontar
-# para outro lugar. `tactic.db` é o histórico do jogador -- tentativas, rating,
-# evolução -- e mora sempre na pasta de dados do add-on, intocado por
-# atualização nenhuma.
+# Two files, on purpose. `puzzles.db` is the Lichess database: large,
+# replaced wholesale on every update, and the one the user can point
+# elsewhere. `tactic.db` is the player's history -- attempts, rating,
+# progress -- and always lives in the add-on's data folder, untouched by any update.
 PUZZLES_DB_NAME = "puzzles.db"
 HISTORY_DB_NAME = "tactic.db"
 HISTORY_DB_PATH = ADDON_DATA_DIRECTORY / HISTORY_DB_NAME
@@ -56,11 +55,11 @@ DEFAULT_DB_CANDIDATES = tuple(
 
 
 def _ensure_sqlite3_importable() -> None:
-	"""Deixa `import sqlite3` funcionar dentro do NVDA.
+	"""Make `import sqlite3` work inside NVDA.
 
-	Fora do NVDA (Python de sistema, testes) o módulo já existe e nada é feito.
-	Dentro, a pasta do runtime entra no `sys.path` e no caminho de DLLs, para
-	que `_sqlite3.pyd` encontre o `sqlite3.dll` que está ao lado dele.
+	Outside NVDA (system Python, tests) the module already exists and nothing
+	is done. Inside, the runtime folder is added to `sys.path` and to the DLL
+	search path, so that `_sqlite3.pyd` finds the `sqlite3.dll` next to it.
 	"""
 	try:
 		import sqlite3  # noqa: F401
@@ -78,7 +77,7 @@ def _ensure_sqlite3_importable() -> None:
 
 def _log(message: str) -> None:
 	try:
-		from logHandler import log  # pyright: ignore[reportMissingImports] - módulo do NVDA
+		from logHandler import log  # pyright: ignore[reportMissingImports] - NVDA module
 	except ImportError:
 		print(message, file=sys.stderr)
 	else:
@@ -86,10 +85,10 @@ def _log(message: str) -> None:
 
 
 def _move_legacy_data_if_needed() -> None:
-	"""Leva os dados da pasta antiga (dentro do add-on) para a pasta do usuário, uma vez.
+	"""Move data from the old folder (inside the add-on) to the user's folder, once.
 
-	Só move o que ainda não existe no destino; é rename, não cópia, então
-	o banco de 1,4 GB não custa nada.
+	Only moves what does not already exist at the destination; it's a rename,
+	not a copy, so the 1.4 GB database costs nothing.
 	"""
 	if LEGACY_DATA_DIRECTORY == ADDON_DATA_DIRECTORY or not LEGACY_DATA_DIRECTORY.is_dir():
 		return
@@ -113,15 +112,15 @@ def _move_legacy_data_if_needed() -> None:
 				continue
 	if moved:
 		_log(
-			f"chessmart: dados movidos de {LEGACY_DATA_DIRECTORY} para {ADDON_DATA_DIRECTORY}: {', '.join(moved)}",
+			f"chessmart: data moved from {LEGACY_DATA_DIRECTORY} to {ADDON_DATA_DIRECTORY}: {', '.join(moved)}",
 		)
 
 
 def _split_legacy_if_needed() -> None:
-	"""Divide o `tactic.db` antigo (puzzles + histórico num arquivo só), uma vez.
+	"""Split the old `tactic.db` (puzzles + history in a single file), once.
 
-	Acontece na primeira abertura depois da atualização, e só quando ainda não
-	existe `puzzles.db`. O histórico ganha um backup datado ao lado.
+	Happens on the first open after an update, and only when `puzzles.db`
+	does not exist yet. The history gets a dated backup alongside it.
 	"""
 	puzzles_path = ADDON_DATA_DIRECTORY / PUZZLES_DB_NAME
 	if not HISTORY_DB_PATH.is_file():
@@ -130,28 +129,28 @@ def _split_legacy_if_needed() -> None:
 	if not store.has_puzzles_table(HISTORY_DB_PATH):
 		return
 	if puzzles_path.exists():
-		# Já existe um banco de puzzles (baixado antes de a divisão rodar):
-		# o histórico só precisa largar a tabela de puzzles que carrega.
+		# A puzzle database already exists (downloaded before the split ran):
+		# the history just needs to drop the puzzles table it's carrying.
 		backup = store.slim_legacy_history(HISTORY_DB_PATH)
 		_log(
-			f"chessmart: tabela de puzzles removida de {HISTORY_DB_PATH.name}; backup do histórico em {backup.name}",
+			f"chessmart: puzzles table removed from {HISTORY_DB_PATH.name}; history backup at {backup.name}",
 		)
 		return
 	backup = store.split_legacy_database(HISTORY_DB_PATH, puzzles_path, HISTORY_DB_PATH)
 	_repoint_theme_catalog_cache(HISTORY_DB_PATH, puzzles_path)
 	_log(
-		f"chessmart: tactic.db dividido em {puzzles_path.name} e {HISTORY_DB_PATH.name}; "
-		f"backup do histórico em {backup.name}",
+		f"chessmart: tactic.db split into {puzzles_path.name} and {HISTORY_DB_PATH.name}; "
+		f"history backup at {backup.name}",
 	)
 
 
 def _repoint_theme_catalog_cache(old_path: Path, new_path: Path) -> None:
-	"""Faz o cache de temas seguir o arquivo renomeado.
+	"""Make the theme cache follow the renamed file.
 
-	A assinatura do cache guarda caminho, tamanho e data do banco. Depois da
-	divisão o caminho muda, e sem isto a primeira abertura refaria a varredura
-	dos milhões de puzzles com o NVDA parado. Os temas são os mesmos; só o
-	envelope precisa acompanhar.
+	The cache signature stores the database's path, size and date. After the
+	split the path changes, and without this the first open would redo the
+	scan of millions of puzzles with NVDA frozen. The themes are the same;
+	only the envelope needs to follow along.
 	"""
 	cache_path = ADDON_DATA_DIRECTORY / "theme_catalog_cache.json"
 	if not cache_path.is_file():
@@ -164,17 +163,17 @@ def _repoint_theme_catalog_cache(old_path: Path, new_path: Path) -> None:
 		payload.update(dbPath=str(new_path.resolve()), dbSize=stat.st_size, dbModifiedNs=stat.st_mtime_ns)
 		cache_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 	except (OSError, ValueError):
-		# Cache é conveniência; se não der para ajustar, ele se refaz sozinho.
+		# The cache is a convenience; if it can't be adjusted, it rebuilds itself.
 		return
 
 
 def load_store():
-	"""O módulo `store`, com o `sqlite3` garantido antes.
+	"""The `store` module, with `sqlite3` guaranteed to be importable first.
 
-	`store.py` importa `sqlite3` no topo, e dentro do NVDA isso só funciona
-	depois que a pasta do runtime entrou no caminho. Por isso ele não é
-	importado por ninguém diretamente: passa sempre por aqui, na hora de usar,
-	e o resto do add-on carrega mesmo numa máquina onde o SQLite falte.
+	`store.py` imports `sqlite3` at the top, and inside NVDA that only works
+	once the runtime folder is on the path. That's why nothing imports it
+	directly: it always goes through here, at the point of use, so the rest
+	of the add-on still loads on a machine where SQLite is missing.
 	"""
 	_ensure_sqlite3_importable()
 	from . import store
@@ -183,12 +182,12 @@ def load_store():
 
 
 def is_puzzles_database(db_path: Path) -> bool:
-	"""Diz se o arquivo é um banco de puzzles (tem a tabela `puzzles`)."""
+	"""Say whether the file is a puzzle database (has the `puzzles` table)."""
 	return load_store().has_puzzles_table(db_path)
 
 
 def resolve_default_db_path() -> Path | None:
-	"""O banco de puzzles em uso, ou None se ainda não houver nenhum."""
+	"""The puzzle database in use, or None if there isn't one yet."""
 	_move_legacy_data_if_needed()
 	_split_legacy_if_needed()
 	for candidate in DEFAULT_DB_CANDIDATES:

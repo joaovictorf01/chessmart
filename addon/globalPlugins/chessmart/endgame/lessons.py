@@ -1,20 +1,20 @@
 # coding: utf-8
 # pyright: basic
 
-"""A trilha de finais: lições com posições-chave, a pergunta e a regra.
+"""The endgame trail: lessons with key positions, the question and the rule.
 
-A ordem e o recorte seguem o currículo que os livros de final usam para
-quem está começando: *Silman's Complete Endgame Course* (Partes 1 a 4,
-até 1599) e *100 Endgames You Must Know* (De la Villa), com o número do
-final correspondente anotado em cada lição. Cada posição é uma posição
-teórica -- resultado conhecido e método com nome --, conferida na tablebase
-Syzygy; a regra é a frase que o jogador deve levar para a partida.
+The order and scope follow the curriculum beginner-level endgame books use:
+*Silman's Complete Endgame Course* (Parts 1 to 4, up to 1599) and *100
+Endgames You Must Know* (De la Villa), with the matching ending number noted
+in each lesson. Each position is a theoretical position -- known result and
+a named method -- checked against the Syzygy tablebase; the rule is the
+sentence the player should carry into their own games.
 
-O método é o dos livros: antes de mexer, responder "ganha ou empata?" e por
-quê; depois jogar a posição contra a defesa perfeita, com a tablebase de juiz,
-até manter o resultado. Lances não têm dono; a explicação é nossa.
+The method follows the books: before moving, answer "win or draw?" and why;
+then play the position out against perfect defence, with the tablebase as
+judge, until the result is held. The moves are not original; the explanations are.
 
-Sem NVDA aqui: o tabuleiro e o diálogo ficam fora deste pacote.
+No NVDA here: the board and the dialog live outside this package.
 """
 
 from __future__ import annotations
@@ -34,18 +34,18 @@ with import_bundled():
 class LessonPosition:
 	position_id: str
 	fen: str
-	# De que lado o jogador está; o outro lado é a engine.
+	# Which side the player is on; the other side is the engine.
 	player: chess.Color
-	# O resultado teórico para o jogador: judge.WIN, judge.DRAW ou judge.LOSS.
+	# The theoretical result for the player: judge.WIN, judge.DRAW or judge.LOSS.
 	expected: str
 	title: str
 	rule: str
-	# Onde o tema está nos livros; texto de referência, não traduzido.
+	# Where the topic is in the books; a reference string, not translated.
 	source: str
 
 	@property
 	def playable(self) -> bool:
-		"""Perdida para o jogador não se joga: a lição é só a pergunta e a regra."""
+		"""A position lost for the player is not played out: the lesson is just the question and the rule."""
 		return self.expected != judge.LOSS
 
 
@@ -56,7 +56,7 @@ class EndgameLesson:
 	description: str
 	source: str
 	positions: tuple[LessonPosition, ...] = ()
-	# A lição 1 são os mates elementares: treinos contra a engine, sem pergunta.
+	# Lesson 1 is the elementary mates: drills against the engine, no question.
 	drill: EndgameDrill | None = None
 
 
@@ -740,7 +740,7 @@ def all_positions() -> tuple[tuple[EndgameLesson, LessonPosition], ...]:
 
 
 def play_goal(position: LessonPosition) -> str:
-	"""O que fazer depois da pergunta: ganhar, ou segurar o empate."""
+	"""What to do after the question: win it, or hold the draw."""
 	if position.expected == judge.WIN:
 		# Translators: Instruction after the question in a lesson: the position is won.
 		return _("Now win it: play the position out against the engine.")

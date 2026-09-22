@@ -1,11 +1,11 @@
 # coding: utf-8
 # pyright: basic
-"""Download e atualização do banco de puzzles.
+"""Download and update of the puzzle database.
 
-O banco é publicado como asset da release fixa `puzzles-latest` do repositório,
-regenerado todo mês pelo workflow a partir da base do Lichess. Aqui não há
-nada de interface: quem chama passa uma função de progresso e um `Event` de
-cancelamento, e cuida de mostrar isso do jeito que quiser.
+The database is published as an asset of the fixed `puzzles-latest` release
+of the repository, regenerated monthly by the workflow from the Lichess
+database. There is no UI here: the caller passes a progress function and a
+cancellation `Event`, and takes care of displaying that however it likes.
 """
 
 from __future__ import annotations
@@ -30,8 +30,8 @@ DEFAULT_MANIFEST_URL = (
 
 
 def manifest_url() -> str:
-	"""De onde vem o manifesto: variável de ambiente, arquivo de override na
-	pasta de dados (para testar contra um servidor local), ou a release."""
+	"""Where the manifest comes from: environment variable, an override file in
+	the data folder (for testing against a local server), or the release."""
 	from .db import ADDON_DATA_DIRECTORY
 
 	override = os.environ.get("CHESSMART_PUZZLES_MANIFEST_URL")
@@ -61,7 +61,7 @@ class DownloadError(Exception):
 
 @dataclasses.dataclass(frozen=True)
 class DownloadPart:
-	"""Um arquivo a baixar: uma fatia do .gz, ou ele inteiro quando é pequeno."""
+	"""A file to download: a slice of the .gz, or the whole thing when it's small."""
 
 	file: str
 	bytes: int
@@ -79,8 +79,8 @@ class TierInfo:
 	download_file: str
 	download_sha256: str
 	download_url: str
-	# As partes, na ordem; concatenadas são o .gz inteiro. Um manifesto antigo,
-	# sem `parts`, vira uma parte só: o próprio arquivo.
+	# The parts, in order; concatenated they form the whole .gz. An older
+	# manifest, without `parts`, becomes a single part: the file itself.
 	parts: tuple[DownloadPart, ...] = ()
 
 
@@ -114,7 +114,7 @@ def _parse_http_date(value: str):
 		return None
 
 
-# ---------------------------------------------------------------- manifesto
+# ---------------------------------------------------------------- manifest
 
 
 def fetch_manifest(url: str | None = None, timeout: float = 30.0) -> Manifest:
@@ -162,11 +162,11 @@ def parse_manifest(payload: dict, base_url: str) -> Manifest:
 	)
 
 
-# ---------------------------------------------------------------- instalado
+# ---------------------------------------------------------------- installed
 
 
 def installed_info(db_path: Path | None) -> InstalledInfo | None:
-	"""Lê a tabela `meta` do banco instalado; None se não houver banco ou meta."""
+	"""Read the `meta` table of the installed database; None if there is no database or meta."""
 	if db_path is None or not Path(db_path).is_file():
 		return None
 	from .db import load_store
@@ -193,7 +193,7 @@ def installed_info(db_path: Path | None) -> InstalledInfo | None:
 
 
 def update_available(manifest: Manifest, installed: InstalledInfo | None) -> bool:
-	"""Há base mais nova do que a instalada? Sem `meta` no instalado, sim."""
+	"""Is there a newer database than the installed one? With no `meta` on the installed one, yes."""
 	if installed is None:
 		return True
 	new, old = manifest.source_date, installed.source_date
@@ -206,7 +206,7 @@ def update_available(manifest: Manifest, installed: InstalledInfo | None) -> boo
 
 
 class _PartFailed(Exception):
-	"""Uma parte não chegou inteira ou não conferiu; vale tentar essa parte de novo."""
+	"""A part did not arrive whole or did not check out; worth retrying that part."""
 
 
 def download_tier(
@@ -218,20 +218,20 @@ def download_tier(
 	attempts_per_part: int = 3,
 	retry_delay: float = 5.0,
 ) -> Path:
-	"""Baixa o `.db.gz` do nível, descomprime em fluxo e instala em `target_path`.
+	"""Download the tier's `.db.gz`, decompress it as a stream and install it at `target_path`.
 
-	O .gz pode vir em partes (assets grandes falham no GitHub); elas passam, em
-	ordem, pelo mesmo descompressor, como se fossem um arquivo só. O arquivo
-	comprimido nunca toca o disco: cada pedaço vai para o zlib e o resultado
-	para `target.part`.
+	The .gz can arrive in parts (large assets fail on GitHub); they pass, in
+	order, through the same decompressor, as if they were a single file. The
+	compressed file never touches disk: each chunk goes to zlib and the
+	result to `target.part`.
 
-	Conferência em dois níveis: o SHA-256 de cada parte assim que ela termina
-	(um erro aparece cedo, não depois de 600 MB) e o do .gz inteiro no fim, que
-	é o que o manifesto assina. Uma parte que falha é tentada de novo sozinha:
-	antes de cada parte guardam-se cópias do descompressor e do hash do todo, e
-	a saída volta ao ponto em que a parte começou. Só com tudo conferido o
-	`.part` toma o lugar do banco atual -- quem estiver no meio de uma sessão
-	continua com o antigo até a próxima abertura.
+	Checked at two levels: the SHA-256 of each part as soon as it finishes (an
+	error shows up early, not after 600 MB) and that of the whole .gz at the
+	end, which is what the manifest signs. A part that fails is retried on
+	its own: before each part, copies of the decompressor and of the running
+	hash are kept, and the output rewinds to where the part started. Only
+	once everything checks out does `.part` replace the current database --
+	anyone mid-session keeps using the old one until the next startup.
 	"""
 	target_path = Path(target_path)
 	target_path.parent.mkdir(parents=True, exist_ok=True)
@@ -269,7 +269,7 @@ def download_tier(
 					except (_PartFailed, urllib.error.URLError, OSError, zlib.error) as error:
 						if attempt == attempts_per_part:
 							raise DownloadError(f"download: {part.file}: {error}") from error
-						# Volta ao estado de antes desta parte e tenta só ela de novo.
+						# Rewind to the state before this part and retry just that one.
 						out.seek(out_offset)
 						out.truncate()
 						done = done_before
@@ -319,11 +319,11 @@ def _download_part(
 	cancel: threading.Event | None,
 	timeout: float,
 ) -> int:
-	"""Baixa uma parte para dentro do fluxo em andamento; devolve o total de bytes recebidos.
+	"""Download one part into the stream in progress; return the total bytes received.
 
-	Levanta `_PartFailed` se a parte veio com tamanho ou SHA-256 diferentes do
-	manifesto, `DownloadCancelled` se o usuário desistiu, e deixa passar os
-	erros de rede e de zlib para quem chamou decidir a repetição.
+	Raises `_PartFailed` if the part came with a size or SHA-256 different
+	from the manifest, `DownloadCancelled` if the user gave up, and lets
+	network and zlib errors pass through for the caller to decide on a retry.
 	"""
 	request = urllib.request.Request(part.url, headers={"User-Agent": USER_AGENT})
 	part_digest = hashlib.sha256()

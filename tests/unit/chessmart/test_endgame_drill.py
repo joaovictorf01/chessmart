@@ -1,7 +1,7 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
 
-"""Finais contra a engine: posições, sorteio e o anúncio do resultado."""
+"""Endgame drills against the engine: positions, random draws and result messages."""
 
 import random
 import sys
@@ -61,23 +61,23 @@ class TestRandomPositions(unittest.TestCase):
 			self.assertIn(endgame_drill.random_fen(drill, rng), drill.example_fens)
 
 	def test_hanging_piece_is_rejected(self):
-		# Rei preto em e5 ataca a torre de d4 pela diagonal, e o rei branco em h1 não a defende.
-		# (Com a dama isso não acontece: rei ao lado da dama está em xeque, e a posição é ilegal.)
+		# Black king on e5 attacks the rook on d4 diagonally, and the white king on h1 doesn't defend it.
+		# (This can't happen with the queen: a king next to the queen would be in check, an illegal position.)
 		board = chess.Board("8/8/8/4k3/3R4/8/8/7K w - - 0 1")
 		self.assertFalse(endgame_drill.is_playable_drill_position(board))
-		# Com o rei branco em c3 a torre está defendida: o rei preto não pode tomar.
+		# With the white king on c3 the rook is defended: the black king can't capture it.
 		board = chess.Board("8/8/8/4k3/3R4/2K5/8/8 w - - 0 1")
 		self.assertTrue(endgame_drill.is_playable_drill_position(board))
 
 	def test_positions_already_over_are_rejected(self):
-		# Afogado antes de começar: rei preto em a8, dama em b6, rei branco em c7 -- e Pretas a jogar.
+		# Stalemate before the drill starts: black king on a8, queen on b6, white king on c7 -- Black to move.
 		board = chess.Board("k7/2K5/1Q6/8/8/8/8/8 b - - 0 1")
 		self.assertFalse(endgame_drill.is_playable_drill_position(board))
 
 
 class TestResultMessages(unittest.TestCase):
 	def _mate_board(self):
-		# Mate do exemplo 4 do Capablanca, 8 lances das Brancas.
+		# Mate from Capablanca's example 4, 8 moves for White.
 		board = chess.Board("8/8/8/4k3/8/8/8/4K2Q w - - 0 1")
 		for san in "Qc6 Kd4 Kd2 Ke5 Ke3 Kf5 Qd6 Kg4 Qe6+ Kh4 Qg6 Kh3 Kf3 Kh2 Qg2#".split():
 			board.push_san(san)
@@ -100,7 +100,7 @@ class TestResultMessages(unittest.TestCase):
 	def test_checkmate_over_target_names_the_target(self):
 		drill = endgame_drill.get_endgame_drill("queenVsKing")
 		board = self._mate_board()
-		# O mesmo mate, mas com 13 lances na pilha.
+		# The same mate, but with 13 moves on the stack.
 		messages = endgame_drill.drill_result_messages(drill, _LongerBoard(board, 13), None)
 		self.assertEqual(messages, ["Checkmate in 13 moves.", "The target was under 10 moves."])
 
@@ -125,7 +125,7 @@ class TestResultMessages(unittest.TestCase):
 
 
 class _LongerBoard:
-	"""Um tabuleiro terminado com mais lances na pilha do que o de verdade."""
+	"""A finished board with more moves on the stack than the real one."""
 
 	def __init__(self, board, white_moves):
 		self._board = board

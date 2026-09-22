@@ -1,7 +1,7 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
 
-"""Planos, níveis, filtro de temas e nomes de temas: as regras puras do treinador."""
+"""Presets, levels, theme filtering and theme names: the trainer's pure rules."""
 
 import unittest
 

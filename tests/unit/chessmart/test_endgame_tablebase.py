@@ -1,7 +1,7 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
 
-"""Tabelas Syzygy: manifesto, o que está instalado, e o juiz sobre tabelas de 3 peças."""
+"""Syzygy tables: manifest, what's installed, and the judge over 3-piece tables."""
 
 import sys
 import tempfile
@@ -74,14 +74,14 @@ class TestJudge(unittest.TestCase):
 			self.assertEqual(judge.probe(self.tb, chess.Board(fen)).result, judge.DRAW, fen)
 
 	def test_verdict_is_seen_from_the_other_side_when_black_moves(self):
-		# Rei na sexta na frente do peão: ganho das Brancas mesmo com as Pretas a jogar.
+		# King on the sixth rank in front of the pawn: White wins even with Black to move.
 		board = chess.Board("4k3/8/4K3/4P3/8/8/8/8 b - - 0 1")
 		verdict = judge.probe(self.tb, board)
 		self.assertEqual(verdict.result, judge.LOSS)
 		self.assertEqual(verdict.for_color(chess.WHITE, board.turn).result, judge.WIN)
 
 	def test_judge_flags_the_move_that_lets_the_win_slip(self):
-		# Ke3, Pe2, ke6, Brancas jogam: ganho. 1.e4?? deixa escapar; 1.Kd4 mantém.
+		# Ke3, Pe2, ke6, White to move: winning. 1.e4?? lets it slip; 1.Kd4 keeps it.
 		board = chess.Board("8/8/4k3/8/8/4K3/4P3/8 w - - 0 1")
 		bad = judge.judge_move(self.tb, board, chess.Move.from_uci("e2e4"))
 		good = judge.judge_move(self.tb, board, chess.Move.from_uci("e3d4"))
@@ -100,7 +100,7 @@ class TestJudge(unittest.TestCase):
 		self.assertNotIn(chess.Move.from_uci("e2e4"), best)
 
 	def test_no_table_means_no_verdict(self):
-		# Dois cavalos contra rei: fora das tabelas de 3 peças do repositório.
+		# Two knights against a king: outside the repository's 3-piece tables.
 		self.assertIsNone(judge.probe(self.tb, chess.Board("8/8/8/4k3/8/8/8/1NN1K3 w - - 0 1")))
 		self.assertIsNone(judge.probe(self.tb, chess.Board()))
 		self.assertEqual(judge.rate_moves(self.tb, chess.Board()), ())

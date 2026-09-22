@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Extrai, atualiza e compila as traduções do add-on, sem GNU gettext.
+"""Extract, update and compile the add-on's translations, without GNU gettext.
 
-    py -3 tools/i18n.py extract            # gera chessmart.pot na raiz
-    py -3 tools/i18n.py update [pt_BR]     # cria/atualiza addon/locale/<lang>/LC_MESSAGES/nvda.po
-    py -3 tools/i18n.py compile            # gera os .mo ao lado de cada .po
-    py -3 tools/i18n.py check              # confere placeholders e strings sem tradução
+    py -3 tools/i18n.py extract            # generates chessmart.pot at the repo root
+    py -3 tools/i18n.py update [pt_BR]     # creates/updates addon/locale/<lang>/LC_MESSAGES/nvda.po
+    py -3 tools/i18n.py compile            # generates the .mo files next to each .po
+    py -3 tools/i18n.py check              # checks placeholders and untranslated strings
 
-A extração é por AST: cada `_("...")`, `N_("...")`, `ngettext(...)` e
-`pgettext(...)` nos fontes do add-on, com o comentário `# Translators:` que
-estiver logo acima. `N_` só marca o literal (constantes traduzidas depois com
-`_()`); para o catálogo, é uma mensagem como qualquer outra.
-Precisa do pacote `polib` (pip install polib).
+Extraction is AST-based: every `_("...")`, `N_("...")`, `ngettext(...)` and
+`pgettext(...)` call in the add-on sources, with the `# Translators:` comment
+directly above it, if any. `N_` only marks the literal (translated later via
+`_()` on the constant); for the catalog, it's a message like any other.
+Requires the `polib` package (pip install polib).
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ REPO = Path(__file__).resolve().parents[1]
 ADDON = REPO / "addon"
 PLUGIN = ADDON / "globalPlugins" / "chessmart"
 LOCALE = ADDON / "locale"
-# Na raiz, como o `scons pot` do template; dentro de addon/ ele entraria no pacote.
+# At the repo root, like the template's `scons pot`; inside addon/ it would end up in the package.
 POT = REPO / "chessmart.pot"
 SKIP_DIRS = {"lib", "__pycache__", "bin", "sounds"}
 PLACEHOLDER = re.compile(r"\{[^{}]*\}|%\([^)]+\)[sd]|%[sd]")
@@ -64,7 +64,7 @@ class Extractor(ast.NodeVisitor):
 				comments.insert(0, text.lstrip("#").strip())
 				line -= 1
 			elif text == "" or text.endswith(("(", "[", ",")) or text.startswith(("_(", "(")):
-				# pula linhas de estrutura entre o comentário e o literal
+				# skip structural lines between the comment and the literal
 				line -= 1
 				if len(comments) or line < lineno - 4:
 					break

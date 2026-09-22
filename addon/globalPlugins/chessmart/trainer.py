@@ -1,12 +1,13 @@
 # coding: utf-8
 # pyright: basic
 
-"""Planos de treino e níveis de desafio do treinador de táticas.
+"""Training plans and challenge levels for the tactics trainer.
 
-Os textos que o usuário vê ficam nas constantes, marcados com `N_()`: isso os
-entrega ao extrator de traduções sem traduzir no momento da importação. A
-tradução acontece em `preset_label`, `challenge_label` e companhia, a cada
-chamada, para que trocar o idioma do NVDA não exija reiniciar o add-on.
+The strings the user sees live in the constants, marked with `N_()`: this
+hands them to the translation extractor without translating at import time.
+The actual translation happens in `preset_label`, `challenge_label` and
+similar functions, on every call, so changing NVDA's language doesn't
+require restarting the add-on.
 """
 
 from __future__ import annotations
@@ -31,14 +32,14 @@ class ChallengeLevel:
 	challenge_id: str
 	label: str
 	description: str
-	# None em qualquer das pontas significa "sem limite": o filtro SQL
-	# simplesmente não acrescenta a cláusula, então o treino alcança o banco
-	# inteiro em vez de uma faixa arbitrária.
+	# None on either end means "no limit": the SQL filter simply doesn't add
+	# the clause, so training reaches the whole database instead of an
+	# arbitrary range.
 	min_rating: int | None
 	max_rating: int | None
 	min_popularity: int
-	# No modo adaptativo as faixas acima são ignoradas: a dificuldade passa a
-	# seguir o rating do jogador, sorteio a sorteio.
+	# In adaptive mode the ranges above are ignored: difficulty instead
+	# follows the player's rating, draw by draw.
 	adaptive: bool = False
 
 
@@ -62,12 +63,13 @@ TRAINER_PRESETS = (
 		description=N_(
 			"The most common tactical patterns: short mates, hanging pieces, forks, pins and skewers. Pick an easier challenge level to keep the positions short.",
 		),
-		# `short` e `oneMove` saíram. O filtro de temas é um OU, então incluir
-		# "posição curta" numa lista de motivos não restringia nada: liberava
-		# QUALQUER puzzle curto, sem motivo algum. Como `short` sozinho cobre
-		# metade do banco, o plano alcançava 75% dele e os motivos viravam
-		# enfeite. Sem os dois, cai para 49,6% e volta a significar o que diz.
-		# A intenção de "manter curto" pertence ao nível de dificuldade.
+		# `short` and `oneMove` were removed. The theme filter is an OR, so
+		# including "short position" in a list of motifs didn't restrict
+		# anything: it let in ANY short puzzle, regardless of motif. Since
+		# `short` alone covers half the database, the plan reached 75% of it
+		# and the motifs became decoration. Without the two, it drops to
+		# 49.6% and means what it says again. The intent of "keep it short"
+		# belongs to the challenge level.
 		theme_slugs=(
 			"mateIn1",
 			"mateIn2",
@@ -102,10 +104,11 @@ TRAINER_PRESETS = (
 		label=N_("Attack the king: mating nets and king hunts"),
 		# Translators: Description of the training plan about attacking the king.
 		description=N_("Mates in one to three, back rank mates, exposed kings and attacks on either wing."),
-		# `mate` saiu: ele só diz que a posição termina em mate, aparece em
-		# 31,6% dos puzzles e, num filtro que é OU, engolia os motivos de
-		# ataque ao rei que dão nome ao plano. Sem ele o plano passa de 38,4%
-		# para 17,5% do banco -- e o que sobra é ataque ao rei de verdade.
+		# `mate` was removed: it only says the position ends in mate, appears
+		# in 31.6% of puzzles, and, in an OR filter, swallowed the king-attack
+		# motifs that give the plan its name. Without it the plan drops from
+		# 38.4% to 17.5% of the database -- and what's left is a real king
+		# attack.
 		theme_slugs=(
 			"mateIn1",
 			"mateIn2",
@@ -126,22 +129,22 @@ TRAINER_PRESETS = (
 		description=N_(
 			"A broad spread across the tactical motif families: winning material, mating, sacrifice and deflection, defence and quiet moves, converting an advantage.",
 		),
-		# Antes esta lista trazia `short`, `middlegame`, `advantage` e `mate`,
-		# que não são motivos táticos e sim comprimento da solução, fase do
-		# jogo, avaliação e desfecho. Como `short` sozinho aparece em metade
-		# dos puzzles, o filtro alcançava 89,5% do banco: era "todos os temas"
-		# com outro nome. Esta lista cobre 72,7%, e cada puzzle entra por causa
-		# de um motivo de verdade. Quem quer o banco inteiro escolhe o plano
-		# "All themes", que diz o que faz.
+		# This list used to include `short`, `middlegame`, `advantage` and
+		# `mate`, which aren't tactical motifs but solution length, game
+		# phase, evaluation and outcome. Since `short` alone appears in half
+		# the puzzles, the filter reached 89.5% of the database: it was "all
+		# themes" under another name. This list covers 72.7%, and each puzzle
+		# enters because of a real motif. Anyone who wants the whole database
+		# picks the "All themes" plan, which says what it does.
 		theme_slugs=(
-			# ganho de material
+			# material gain
 			"fork",
 			"pin",
 			"skewer",
 			"hangingPiece",
 			"discoveredAttack",
 			"trappedPiece",
-			# sacrifício e desvio
+			# sacrifice and deflection
 			"sacrifice",
 			"deflection",
 			"attraction",
@@ -150,10 +153,10 @@ TRAINER_PRESETS = (
 			"mateIn1",
 			"mateIn2",
 			"backRankMate",
-			# defesa e lance quieto
+			# defense and quiet move
 			"defensiveMove",
 			"quietMove",
-			# conversão de vantagem
+			# advantage conversion
 			"advancedPawn",
 			"promotion",
 		),
@@ -164,10 +167,10 @@ TRAINER_PRESETS = (
 		label=N_("All themes: no filter"),
 		# Translators: Description of the training plan that applies no theme filter.
 		description=N_("No theme filter at all: the whole puzzle database is in play."),
-		# Nenhum slug, e sem ser tema personalizado: o filtro sai vazio e a
-		# consulta não acrescenta cláusula de tema. Existe como escolha
-		# explícita porque antes o único jeito de chegar aqui era escolher
-		# "Custom themes" e deixar o campo em branco, o que ninguém descobre.
+		# No slugs, and not a custom theme: the filter comes out empty and
+		# the query adds no theme clause. This exists as an explicit choice
+		# because previously the only way to get here was picking "Custom
+		# themes" and leaving the field blank, which nobody discovers.
 	),
 	TrainerPreset(
 		preset_id="customThemes",
@@ -187,8 +190,9 @@ CHALLENGE_LEVELS = (
 		label=N_("Beginner"),
 		# Translators: Description of the easiest challenge level.
 		description=N_("Shorter, cleaner and well liked examples."),
-		# Sem piso: o banco desce até rating 399 hoje, e um número fixo aqui
-		# esconderia os puzzles mais fáceis de quem mais precisa deles.
+		# No floor: the database currently goes down to rating 399, and a
+		# fixed number here would hide the easiest puzzles from the people
+		# who need them most.
 		min_rating=None,
 		max_rating=1100,
 		min_popularity=70,
@@ -219,8 +223,9 @@ CHALLENGE_LEVELS = (
 		label=N_("Hard"),
 		# Translators: Description of the hardest fixed challenge level.
 		description=N_("The top of the database, with no popularity filter."),
-		# Sem teto: o banco sobe até 3329, e travar em 2400 tiraria do treino
-		# justamente os puzzles que ainda teriam algo a ensinar.
+		# No ceiling: the database goes up to 3329, and capping at 2400 would
+		# remove from training exactly the puzzles that would still have
+		# something to teach.
 		min_rating=1600,
 		max_rating=None,
 		min_popularity=0,
@@ -238,8 +243,9 @@ CHALLENGE_LEVELS = (
 	),
 )
 
-# Identificadores gravados na configuração por versões anteriores. O nome
-# mudou porque "stretch" e "challenge" não diziam nada a quem ouvia a lista.
+# Identifiers saved in the configuration by earlier versions. The name
+# changed because "stretch" and "challenge" didn't mean anything to someone
+# hearing the list read aloud.
 LEGACY_CHALLENGE_IDS = {
 	"veryAccessible": "beginner",
 	"balanced": "intermediate",
@@ -279,7 +285,7 @@ def preset_description(preset: TrainerPreset) -> str:
 
 
 def challenge_label(level: ChallengeLevel) -> str:
-	"""Nome do nível com a faixa de rating: é tudo o que o leitor de tela fala na lista."""
+	"""Name of the level with the rating range: it's everything the screen reader speaks in the list."""
 	# Translators: One challenge level in the combo box, e.g. "Intermediate: puzzles rated 900 to 1500".
 	return _("{name}: {rating_range}").format(name=_(level.label), rating_range=describe_rating_range(level))
 
@@ -289,12 +295,12 @@ def challenge_description(level: ChallengeLevel) -> str:
 
 
 def describe_rating_range(selection: ChallengeLevel | ResolvedTrainingSelection) -> str:
-	"""A faixa de rating em palavras, para ser lida em voz alta.
+	"""The rating range in words, meant to be read aloud.
 
-	Vive aqui, e não em cada diálogo, porque são dois -- o de sessão e o painel
-	de configurações -- e eles já divergiram uma vez: um tratava a ponta aberta
-	e o outro anunciava a palavra "None" para o usuário. Regra de leitura de
-	tela em uma frase só, num lugar só.
+	Lives here, not in each dialog, because there are two -- the session one
+	and the settings panel -- and they've already diverged once: one handled
+	the open end and the other announced the word "None" to the user. One
+	screen reader rule, in one place.
 	"""
 	if selection.adaptive:
 		# Translators: Rating description when the trainer follows the user's own rating.

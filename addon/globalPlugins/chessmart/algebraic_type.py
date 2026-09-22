@@ -13,9 +13,9 @@ class Variant:
 		self.kwargs = kwargs
 
 	if TYPE_CHECKING:
-		# Depois de `__init_subclass__` o atributo da classe é o dataclass gerado,
-		# e chamá-lo constrói o evento. Para o verificador de tipos, é uma chamada
-		# qualquer; o construtor de verdade fica abaixo.
+		# After `__init_subclass__`, the class attribute is the generated dataclass,
+		# and calling it constructs the event. For the type checker, this is just
+		# a regular call; the real constructor is below.
 		def __call__(self, *args: Any, **kwargs: Any) -> Any: ...
 
 	else:

@@ -1,21 +1,21 @@
 # coding: utf-8
 # pyright: basic
-"""Ponto único de tradução do add-on: `from .i18n import _`.
+"""Single point of translation for the add-on: `from .i18n import _`.
 
-`addonHandler.initTranslation()` descobre o módulo que o chamou pelo frame e
-grava NESSE módulo as funções `_`, `ngettext`, `pgettext` e `npgettext`
-apontando para o catálogo do add-on (locale/<idioma>/LC_MESSAGES/nvda.mo).
-Por isso a chamada fica aqui, no nível do módulo, e não dentro de uma função:
-de dentro de uma função ela gravaria no módulo do mesmo jeito, mas o valor
-devolvido pela função -- o `_` do `builtins`, que é a tradução do próprio NVDA
--- sobrescreveria o certo. Foi exatamente esse o bug até a 1.0.
+`addonHandler.initTranslation()` finds the calling module via the stack frame
+and writes the functions `_`, `ngettext`, `pgettext` and `npgettext` into THAT
+module, pointing at the add-on's catalog (locale/<language>/LC_MESSAGES/nvda.mo).
+That's why the call sits here at module level rather than inside a function:
+called from within a function it would still write to the module, but the
+function's return value -- `builtins`' `_`, which is NVDA's own translation --
+would overwrite the correct one. That was exactly the bug until 1.0.
 
-Fora de um add-on instalado (scratchpad, testes) a chamada falha, e `_`
-cai no `_` que já existir ou na identidade.
+Outside an installed add-on (scratchpad, tests) the call fails, and `_` falls
+back to whatever `_` already exists, or to the identity function.
 
-`N_()` é o marcador para texto que vive numa constante e só será traduzido
-mais tarde, com `_()`, no momento de mostrar. Ele não traduz nada; existe para
-o extrator (`tools/i18n.py`) encontrar o literal e levá-lo ao catálogo.
+`N_()` marks text that lives in a constant and will only be translated later,
+with `_()`, at display time. It doesn't translate anything; it exists so the
+extractor (`tools/i18n.py`) can find the literal and add it to the catalog.
 """
 
 import builtins
@@ -28,7 +28,7 @@ def _identity(message):
 
 
 def N_(message: str) -> str:
-	"""Marca `message` para tradução sem traduzir agora. Ver o docstring do módulo."""
+	"""Marks `message` for translation without translating it now. See the module docstring."""
 	return message
 
 

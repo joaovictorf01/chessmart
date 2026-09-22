@@ -1,10 +1,10 @@
 # coding: utf-8
 # pyright: basic
 
-"""A fachada que o resto do add-on usa para falar com o banco.
+"""The facade the rest of the add-on uses to talk to the database.
 
-Cada chamada abre a conexão, faz uma coisa e fecha. É simples e é o que cabe
-aqui: as chamadas são raras (um sorteio, uma gravação) e nunca concorrem.
+Each call opens the connection, does one thing and closes it. It's simple
+and it fits: calls are rare (a random draw, a recorded attempt) and never concurrent.
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from .models import AttemptResult, AttemptStats, Puzzle, PuzzleFilters, RatingSu
 
 class PuzzleRepository:
 	def __init__(self, db_path: Path, history_path: Path | None = None):
-		"""`db_path` é o banco de puzzles; o histórico é sempre o do usuário, salvo em teste."""
+		"""`db_path` is the puzzle database; the history is always the user's own, except in tests."""
 		self.db_path = Path(db_path)
 		self.history_path = Path(history_path) if history_path else HISTORY_DB_PATH
 
@@ -27,7 +27,7 @@ class PuzzleRepository:
 		store = load_store()
 		connection = store.connect(self.db_path, self.history_path)
 		try:
-			# O `with` da conexão cuida do commit/rollback; fechar é por nossa conta.
+			# The connection's `with` handles commit/rollback; closing is on us.
 			with connection:
 				yield store, connection
 		finally:
@@ -46,7 +46,7 @@ class PuzzleRepository:
 			return store.random_puzzle(connection, filters)
 
 	def adaptive_random_puzzle(self, filters: PuzzleFilters) -> Puzzle | None:
-		"""Sorteia calibrado pelo rating atual; a faixa de rating de `filters` é ignorada."""
+		"""Draws a puzzle calibrated to the current rating; the rating range in `filters` is ignored."""
 		with self._open() as (store, connection):
 			return store.adaptive_random_puzzle(connection, filters)
 
@@ -70,6 +70,6 @@ class PuzzleRepository:
 			return store.attempt_stats(connection)
 
 	def theme_counts(self) -> list[tuple[str, int]]:
-		"""Cada tema do banco com quantos puzzles o têm. Varre a tabela inteira."""
+		"""Each theme in the database with how many puzzles have it. Scans the whole table."""
 		with self._open() as (store, connection):
 			return store.theme_counts(connection)

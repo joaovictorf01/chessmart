@@ -64,10 +64,10 @@ class ChessboardDialog(wx.Frame):
 		self.bitmap_buffer = wx.Bitmap(*size)
 		self.Bind(wx.EVT_PAINT, self.onPaint, self)
 		self.Bind(wx.EVT_CLOSE, self.onClose, self)
-		# O tabuleiro virtual é criado na primeira vez que a janela recebe foco (set_focus_to_board).
+		# The virtual chessboard is created the first time the window receives focus (set_focus_to_board).
 		self.chessboard: "BaseVirtualChessboard | None" = None
-		# Quem abriu a janela pode querer saber quando ela fecha (o plugin, para
-		# esquecê-la). Recebe este diálogo.
+		# Whoever opened the window may want to know when it closes (the plugin,
+		# to forget it). Receives this dialog.
 		self.on_closed: "Callable[[ChessboardDialog], None] | None" = None
 		# Time related stuff
 		self.timer = wx.Timer(self)
@@ -136,7 +136,7 @@ class ChessboardDialog(wx.Frame):
 			self.chessboard.game_time_forfeit(losing_color)
 			return
 		current_player = self.chessboard.board.turn
-		# Décimos do tempo total que ainda restam (7 = 70%); as chaves do dicionário são inteiras.
+		# Tenths of the total time still remaining (7 = 70%); the dictionary keys are integers.
 		remaining = time_control.percentage_remaining(current_player) // 10
 		if self.notification_records[current_player].get(remaining, True):
 			return
@@ -180,7 +180,7 @@ class ChessboardDialog(wx.Frame):
 
 	def _set_bitmap_data(self, data):
 		if not self:
-			# A conversão do SVG corre em thread; a janela pode ter fechado no meio.
+			# The SVG conversion runs in a thread; the window may have closed in the meantime.
 			return
 		self.bitmap_buffer.CopyFromBuffer(data)
 		self.Refresh(eraseBackground=False)

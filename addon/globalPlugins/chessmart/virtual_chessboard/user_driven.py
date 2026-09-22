@@ -135,7 +135,7 @@ class UserDrivenChessboard(BaseVirtualChessboard):
 			yield self._dragged_cell.index
 
 	def leave_prompt(self):
-		# Sem lance jogado não há o que perder; a partir do primeiro, pergunta.
+		# With no move played there's nothing to lose; from the first one on, it asks.
 		if not self.board.move_stack:
 			return None
 		# Translators: Asked when Escape is pressed during a game between two people at the keyboard.
@@ -201,8 +201,8 @@ class UserDrivenChessboard(BaseVirtualChessboard):
 		)
 
 	def _crazyhouse_board(self) -> "chess.variant.CrazyhouseBoard":
-		# Só é chamado quando a variante aceita drop (ver is_drop_moves_supported),
-		# e a única que aceita é o Crazyhouse.
+		# Only called when the variant supports drops (see is_drop_moves_supported),
+		# and the only one that does is Crazyhouse.
 		return typing.cast("chess.variant.CrazyhouseBoard", self.board)
 
 	def _is_drop_move_drop_target(self, index):

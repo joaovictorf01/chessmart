@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
-"""Gera o `puzzles.db` do chessmart a partir da base aberta de puzzles do Lichess.
+"""Generates chessmart's `puzzles.db` from Lichess's open puzzle database.
 
-Uso típico (quem roda é o mantenedor ou a Action mensal, nunca o usuário):
+Typical usage (run by the maintainer or the monthly Action, never the user):
 
     py -3 tools/build_puzzles.py --download --out dist/puzzles
     py -3 tools/build_puzzles.py --csv lichess_db_puzzle.csv.zst --tier light --out dist/puzzles
 
-Saída em `--out`:
+Output in `--out`:
 
-    puzzles-light.db, puzzles-full.db   bancos prontos para o add-on
-    puzzles-light.db.gz, ...            os mesmos, comprimidos para transporte
-    manifest.json                       o que o add-on lê para saber se há base nova
+    puzzles-light.db, puzzles-full.db   databases ready for the add-on
+    puzzles-light.db.gz, ...            the same, compressed for transport
+    manifest.json                       what the add-on reads to know if there's a new database
 
-A base do Lichess (https://database.lichess.org/#puzzles) é CC0 e é atualizada
-mensalmente. O download guarda o ETag ao lado do arquivo e, se o servidor disser
-que nada mudou, não baixa de novo -- é o que permite rodar isto todo mês sem
-custo quando não há nada novo.
+The Lichess database (https://database.lichess.org/#puzzles) is CC0 and is
+updated monthly. The download keeps the ETag alongside the file and, if the
+server says nothing changed, doesn't download again -- which lets this run
+every month at no cost when there's nothing new.
 """
 
 from __future__ import annotations
@@ -37,12 +37,12 @@ from pathlib import Path
 LICHESS_URL = "https://database.lichess.org/lichess_db_puzzle.csv.zst"
 USER_AGENT = "chessmart-build-puzzles/1.0 (+https://github.com/joaovictorf01/chessmart)"
 SCHEMA_VERSION = 2
-# Assets de release acima de uns 500 MB falham no GitHub ("Error saving asset");
-# o .gz sai em partes deste tamanho e o add-on as baixa em sequencia.
+# Release assets above ~500 MB fail on GitHub ("Error saving asset");
+# the .gz is split into parts of this size and the add-on downloads them in sequence.
 DEFAULT_PART_SIZE = 300 * 1024 * 1024
 
-# Cada nível é um filtro sobre a base inteira. O leve fica com o que muita
-# gente jogou e aprovou: é o que faz sentido baixar na primeira vez.
+# Each tier is a filter over the whole database. The light one keeps what
+# a lot of people have played and approved of: the sensible first download.
 TIERS = {
 	"light": {
 		"description": "Puzzles com popularidade >= 95 e pelo menos 500 jogadas",
@@ -54,8 +54,8 @@ TIERS = {
 	},
 }
 
-# O mesmo schema que o add-on sempre usou (tactic/store.py consulta
-# `lichess.puzzles` com estas colunas e estes índices).
+# The same schema the add-on has always used (tactic/store.py queries
+# `lichess.puzzles` with these columns and these indexes).
 PUZZLES_SCHEMA = """
 CREATE TABLE puzzles (
   id TEXT PRIMARY KEY,
@@ -102,7 +102,7 @@ def log(message: str) -> None:
 
 
 def download(target: Path) -> tuple[Path, str | None]:
-	"""Baixa o CSV do Lichess se ele mudou. Devolve (caminho, Last-Modified)."""
+	"""Download the Lichess CSV if it changed. Returns (path, Last-Modified)."""
 	etag_path = target.with_suffix(target.suffix + ".etag")
 	headers = {"User-Agent": USER_AGENT}
 	if target.is_file() and etag_path.is_file():
@@ -146,11 +146,11 @@ def _read_sidecar(target: Path, name: str) -> str | None:
 	return path.read_text(encoding="utf-8").strip() if path.is_file() else None
 
 
-# ---------------------------------------------------------------- leitura
+# ---------------------------------------------------------------- reading
 
 
 def open_zst_text(path: Path):
-	"""Abre o `.csv.zst` como texto, com o zstd da stdlib (3.14+) ou o pacote `zstandard`."""
+	"""Opens the `.csv.zst` as text, using stdlib zstd (3.14+) or the `zstandard` package."""
 	raw = path.open("rb")
 	try:
 		from compression import zstd  # Python 3.14+
@@ -168,7 +168,7 @@ def open_zst_text(path: Path):
 
 
 def iter_rows(csv_path: Path):
-	"""Linhas do CSV já convertidas: números como int, texto como veio."""
+	"""CSV rows already converted: numbers as int, text as-is."""
 	with open_zst_text(csv_path) as text:
 		reader = csv.DictReader(text)
 		for record in reader:
@@ -186,7 +186,7 @@ def iter_rows(csv_path: Path):
 			}
 
 
-# ---------------------------------------------------------------- escrita
+# ---------------------------------------------------------------- writing
 
 
 def build_tier(
@@ -202,8 +202,8 @@ def build_tier(
 		db_path.unlink()
 	log(f"{tier}: gerando {db_path.name}")
 	connection = sqlite3.connect(db_path)
-	# Banco novo, descartável se falhar no meio: sem journal nem fsync, que
-	# aqui só custariam tempo.
+	# A fresh database, disposable if it fails partway through: no journal or
+	# fsync, which would only cost time here.
 	connection.execute("PRAGMA journal_mode = OFF")
 	connection.execute("PRAGMA synchronous = OFF")
 	connection.execute("PRAGMA cache_size = -200000")
@@ -253,13 +253,13 @@ def build_tier(
 		"bytes": db_path.stat().st_size,
 		"sha256": sha256(db_path),
 		"download": {
-			# O todo: nome logico, tamanho e SHA-256 do .gz inteiro, que o add-on
-			# confere depois de juntar as partes.
+			# The whole: logical name, size and SHA-256 of the entire .gz, which the
+			# add-on checks after joining the parts.
 			"file": gz_path.name,
 			"bytes": gz_path.stat().st_size,
 			"sha256": sha256(gz_path),
-			# As partes, na ordem: cada uma com o proprio SHA-256, conferido assim
-			# que ela termina de chegar.
+			# The parts, in order: each with its own SHA-256, checked as soon as it
+			# finishes arriving.
 			"parts": parts,
 		},
 	}
@@ -271,11 +271,11 @@ def build_tier(
 
 
 def split_into_parts(gz_path: Path, part_size: int) -> list[dict]:
-	"""Divide o .gz em `nome.partN` de ate `part_size` bytes; um arquivo pequeno vira uma parte so.
+	"""Splits the .gz into `name.partN` files of up to `part_size` bytes; a small file becomes a single part.
 
-	A concatenacao das partes e o .gz original, byte a byte: o add-on nao
-	precisa saber onde uma termina e a outra comeca, so alimentar o mesmo
-	descompressor com todas, em ordem.
+	Concatenating the parts reproduces the original .gz byte for byte: the
+	add-on doesn't need to know where one ends and the next begins, just feed
+	the same decompressor all of them, in order.
 	"""
 	for stale in gz_path.parent.glob(gz_path.name + ".part*"):
 		stale.unlink()

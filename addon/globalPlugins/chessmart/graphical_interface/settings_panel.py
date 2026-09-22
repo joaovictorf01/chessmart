@@ -1,11 +1,11 @@
 # coding: utf-8
 # pyright: basic
 
-"""Painel de preferências: o plano de treino que vale por padrão.
+"""Preferences panel: the training plan that applies by default.
 
-O que esta tela tem de próprio é o layout, o texto do resumo e o que acontece
-ao confirmar -- salvar as preferências. Todo o resto vem de `TacticsSetupMixin`,
-porque é idêntico ao diálogo da sessão.
+What is specific to this screen is the layout, the summary text, and what
+happens on confirm -- saving the preferences. Everything else comes from
+`TacticsSetupMixin`, since it is identical to the session dialog.
 """
 
 import wx
@@ -31,8 +31,8 @@ class ChessboardSettingsDialog(TacticsSetupMixin, gui.SettingsDialog):
 	title = _("Chessboard")
 
 	def __init__(self, *args, **kwargs):
-		# Antes do super: o SettingsDialog do NVDA chama makeSettings() de
-		# dentro do próprio construtor. Ver _init_trainer_state.
+		# Before super(): NVDA's SettingsDialog calls makeSettings() from
+		# within its own constructor. See _init_trainer_state.
 		self._init_trainer_state()
 		super().__init__(*args, **kwargs)
 

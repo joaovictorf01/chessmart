@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Gera o manifesto das tabelas Syzygy de 3, 4 e 5 peças a partir do espelho do Lichess.
+"""Generates the manifest of 3, 4 and 5-piece Syzygy tables from the Lichess mirror.
 
     py -3 tools/build_syzygy_manifest.py
 
-Lê a listagem das pastas `3-4-5-wdl` e `3-4-5-dtz` (nome e tamanho de cada
-arquivo) e o arquivo `sha256` do espelho, e escreve
-`addon/globalPlugins/chessmart/endgame/syzygy_manifest.json`. O add-on baixa
-arquivo por arquivo a partir desse manifesto e confere cada um pelo SHA-256:
-a listagem não precisa ser lida em tempo de execução, e o tamanho total é
-conhecido antes de começar.
+Reads the listing of the `3-4-5-wdl` and `3-4-5-dtz` folders (name and size of
+each file) and the mirror's `sha256` file, and writes
+`addon/globalPlugins/chessmart/endgame/syzygy_manifest.json`. The add-on
+downloads file by file from this manifest and checks each one by SHA-256:
+the listing doesn't need to be read at runtime, and the total size is known
+before starting.
 """
 
 from __future__ import annotations

@@ -1,16 +1,17 @@
 # coding: utf-8
 # pyright: basic
 
-"""O juiz: a tablebase traduzida em veredito.
+"""The judge: the tablebase translated into a verdict.
 
-WDL diz se a posição é ganha, empatada ou perdida para quem joga; DTZ, em
-quantos lances (meios-lances na tabela) vem o próximo lance irreversível --
-peão, captura ou mate -- com jogo perfeito. O juiz compara o veredito antes e
-depois de um lance e diz quando o resultado mudou de mão: é isso que ensina
-"o que empata e o que não empata" na hora, não depois.
+WDL says whether the position is won, drawn or lost for the side to move;
+DTZ, in how many moves (half-moves in the table) the next irreversible
+move -- pawn move, capture or mate -- comes with perfect play. The judge
+compares the verdict before and after a move and says when the result
+changed hands: that's what teaches "what draws and what doesn't" on the
+spot, not after the fact.
 
-Ganho "amaldiçoado" (mate forçado, mas empate pela regra dos 50 lances) conta
-como empate aqui: é o que vale na mesa.
+A "cursed" win (forced mate, but a draw under the fifty-move rule) counts
+as a draw here: that's what holds at the board.
 """
 
 from __future__ import annotations
@@ -33,7 +34,7 @@ WIN, DRAW, LOSS = "win", "draw", "loss"
 
 @dataclasses.dataclass(frozen=True)
 class Verdict:
-	"""O que a tabela diz de uma posição, para o lado que joga."""
+	"""What the table says about a position, for the side to move."""
 
 	wdl: int
 	dtz: int
@@ -48,18 +49,18 @@ class Verdict:
 
 	@property
 	def moves(self) -> int:
-		"""DTZ em lances inteiros, arredondado para cima."""
+		"""DTZ in whole moves, rounded up."""
 		return math.ceil(abs(self.dtz) / 2)
 
 	def for_color(self, color: chess.Color, turn: chess.Color) -> "Verdict":
-		"""O mesmo veredito visto por `color`, dado de quem é a vez."""
+		"""The same verdict as seen by `color`, given whose turn it is."""
 		if color is turn:
 			return self
 		return Verdict(-self.wdl, -self.dtz)
 
 
 def probe(tablebase: "chess.syzygy.Tablebase | None", board: chess.Board) -> Verdict | None:
-	"""Veredito para o lado que joga; None sem tabela para o material, ou com peças demais."""
+	"""Verdict for the side to move; None with no table for this material, or with too many pieces."""
 	if tablebase is None or board.uci_variant != "chess" or chess.popcount(board.occupied) > MAX_PIECES:
 		return None
 	try:
@@ -78,7 +79,7 @@ class MoveVerdict:
 
 	@property
 	def spoiled(self) -> bool:
-		"""O lance piorou o resultado: ganho que virou empate ou perda, empate que virou perda."""
+		"""The move made the result worse: a win that became a draw or loss, a draw that became a loss."""
 		order = {WIN: 2, DRAW: 1, LOSS: 0}
 		return order[self.after.result] < order[self.before.result]
 
@@ -88,7 +89,7 @@ def judge_move(
 	board_before: chess.Board,
 	move: chess.Move,
 ) -> MoveVerdict | None:
-	"""Compara o veredito do lado que jogou antes e depois de `move`."""
+	"""Compare the verdict for the side to move before and after `move`."""
 	before = probe(tablebase, board_before)
 	if before is None:
 		return None
@@ -104,14 +105,14 @@ def judge_move(
 @dataclasses.dataclass(frozen=True)
 class RatedMove:
 	move: chess.Move
-	verdict: Verdict  # para quem joga, depois do lance
+	verdict: Verdict  # for the side to move, after the move
 
 
 def rate_moves(tablebase: "chess.syzygy.Tablebase | None", board: chess.Board) -> tuple[RatedMove, ...]:
-	"""Todos os lances legais com o veredito para quem joga, do melhor ao pior.
+	"""All legal moves with the verdict for the side to move, best to worst.
 
-	Melhor: maior WDL; entre ganhos, menor DTZ (o caminho mais curto); entre
-	perdas, maior DTZ (a resistência mais longa). Vazio sem tabela.
+	Best: highest WDL; among wins, lowest DTZ (the shortest path); among
+	losses, highest DTZ (the longest resistance). Empty without a table.
 	"""
 	rated = []
 	mover = board.turn
@@ -131,7 +132,7 @@ def rate_moves(tablebase: "chess.syzygy.Tablebase | None", board: chess.Board) -
 
 
 def best_moves(tablebase: "chess.syzygy.Tablebase | None", board: chess.Board) -> tuple[chess.Move, ...]:
-	"""Os lances que mantêm o melhor resultado, os mais curtos primeiro."""
+	"""The moves that hold the best result, the shortest ones first."""
 	rated = rate_moves(tablebase, board)
 	if not rated:
 		return ()
@@ -139,7 +140,7 @@ def best_moves(tablebase: "chess.syzygy.Tablebase | None", board: chess.Board) -
 	return tuple(item.move for item in rated if item.verdict.wdl == top.wdl and item.verdict.dtz == top.dtz)
 
 
-# ---------------------------------------------------------------- fala
+# ---------------------------------------------------------------- speech
 
 
 def describe_verdict(verdict: Verdict, color_name: str) -> str:
@@ -164,7 +165,7 @@ def describe_verdict(verdict: Verdict, color_name: str) -> str:
 
 
 def describe_spoiled(move_verdict: MoveVerdict) -> str | None:
-	"""O que dizer quando o lance mudou o resultado; None se não mudou."""
+	"""What to say when the move changed the result; None if it didn't."""
 	if not move_verdict.spoiled:
 		return None
 	before, after = move_verdict.before.result, move_verdict.after.result

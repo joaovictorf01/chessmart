@@ -1,12 +1,12 @@
 # coding: utf-8
 # pyright: basic
 
-"""Uma sessão de treino de táticas: as opções escolhidas e a sequência de puzzles.
+"""A tactics training session: the chosen options and the sequence of puzzles.
 
-`TrainingOptions` é o que o usuário decidiu (banco, plano, nível, temas, ou um
-id de puzzle). `TrainingSession` sorteia os puzzles a partir disso, um por vez,
-sem repetir, e faz de passagem o que a tela precisa do banco: gravar tentativa,
-ler rating e estatísticas.
+`TrainingOptions` is what the user decided (database, plan, level, themes, or
+a puzzle id). `TrainingSession` draws puzzles from that, one at a time,
+without repeating, and along the way does what the screen needs from the
+database: recording attempts, reading rating and statistics.
 """
 
 from __future__ import annotations
@@ -45,7 +45,7 @@ class ThemeInfo:
 
 @dataclasses.dataclass(frozen=True)
 class PuzzleInfo:
-	"""Um puzzle pronto para o tabuleiro: lances já convertidos, temas já nomeados."""
+	"""A puzzle ready for the board: moves already converted, themes already named."""
 
 	puzzle_id: str
 	rating: int | None
@@ -80,11 +80,12 @@ class PuzzleInfo:
 
 @dataclasses.dataclass(frozen=True)
 class TrainingOptions:
-	"""O que o usuário escolheu para a sessão.
+	"""What the user chose for the session.
 
-	Só a escolha, não o que se deriva dela: a faixa de rating e a popularidade
-	vêm do nível, e os temas do plano (ou de `custom_theme_text`, quando o
-	plano é o personalizado). `selection` faz essa conta.
+	Only the choice, not what's derived from it: the rating range and
+	popularity come from the level, and the themes from the plan (or from
+	`custom_theme_text`, when the plan is the custom one). `selection` does
+	that math.
 	"""
 
 	db_path: str | None = None
@@ -95,7 +96,7 @@ class TrainingOptions:
 
 	@property
 	def single_puzzle_id(self) -> str:
-		"""O id digitado, limpo; vazio quando a sessão é de sorteio."""
+		"""The typed id, stripped; empty when the session draws at random."""
 		return self.puzzle_id.strip()
 
 	@property
@@ -109,17 +110,18 @@ def default_db_path() -> str | None:
 
 
 def usable_db_path(candidate: str | None) -> str | None:
-	"""Devolve `candidate` só se ele apontar para um banco de puzzles que existe.
+	"""Returns `candidate` only if it points to a puzzle database that exists.
 
-	Um caminho guardado na configuração envelhece: o banco muda de pasta, o
-	disco sai da máquina, o usuário reinstala. Preencher não é o mesmo que
-	existir, e entregar um caminho morto ao SQLite estoura três camadas
-	abaixo com "unable to open database file", que não diz nada a quem lê.
-	Preferimos cair no caminho padrão, que é o que o usuário esperaria.
+	A path saved in the configuration goes stale: the database moves to
+	another folder, the drive is removed, the user reinstalls. Being set is
+	not the same as existing, and handing a dead path to SQLite blows up
+	three layers down with "unable to open database file", which tells the
+	reader nothing. We'd rather fall back to the default path, which is what
+	the user would expect.
 
-	Existir também não basta: desde a divisão em dois arquivos, `tactic.db` é
-	o histórico, e uma configuração antiga ainda aponta para ele. Só vale o
-	arquivo que tem a tabela de puzzles.
+	Existing isn't enough either: since the split into two files, `tactic.db`
+	is the history file, and an old configuration may still point to it. Only
+	a file that has the puzzles table counts.
 	"""
 	if not candidate or not Path(candidate).is_file():
 		return None
@@ -127,7 +129,7 @@ def usable_db_path(candidate: str | None) -> str | None:
 
 
 def default_training_options() -> TrainingOptions:
-	"""As opções guardadas na configuração do NVDA, com o banco já validado."""
+	"""The options saved in NVDA's configuration, with the database already validated."""
 	from .addon_config import get_tactics_defaults
 
 	defaults = get_tactics_defaults()
@@ -141,7 +143,7 @@ def default_training_options() -> TrainingOptions:
 
 class TrainingSession:
 	def __init__(self, options: TrainingOptions, history_path: Path | None = None):
-		"""`history_path` só existe para os testes não tocarem o histórico do usuário."""
+		"""`history_path` exists only so tests don't touch the user's real history."""
 		self.options = options
 		self.selection = options.selection
 		resolved_db_path = usable_db_path(options.db_path) or default_db_path()
@@ -149,14 +151,14 @@ class TrainingSession:
 		self.repository = None if self.db_path is None else PuzzleRepository(self.db_path, history_path)
 		self._served = 0
 		self._seen_ids: list[str] = []
-		# O próximo puzzle, já sorteado e convertido numa thread enquanto o
-		# jogador ainda resolve o atual. Ver prefetch_next.
+		# The next puzzle, already drawn and converted on a thread while the
+		# player is still solving the current one. See prefetch_next.
 		self._prefetched: Future | None = None
 
-	# -- preparação -----------------------------------------------------------
+	# -- preparation ------------------------------------------------------------
 
 	def ensure_ready(self) -> None:
-		"""Levanta FileNotFoundError sem banco e LookupError sem puzzle para as opções."""
+		"""Raises FileNotFoundError with no database, and LookupError when no puzzle matches the options."""
 		if self.repository is None:
 			raise FileNotFoundError("Tactics database not found.")
 		puzzle_id = self.options.single_puzzle_id
@@ -178,14 +180,15 @@ class TrainingSession:
 			excluded_ids=excluded_ids,
 		)
 
-	# -- sequência de puzzles ------------------------------------------------
+	# -- puzzle sequence --------------------------------------------------------
 
 	def next_puzzle(self) -> PuzzleInfo | None:
-		"""O próximo puzzle, ou None quando a sessão acabou."""
+		"""The next puzzle, or None when the session has ended."""
 		future, self._prefetched = self._prefetched, None
 		if future is not None:
-			# Se a thread já terminou, isto volta na hora; se não, espera só
-			# o que falta -- nunca mais do que o sorteio inteiro custaria aqui.
+			# If the thread has already finished, this returns right away; if
+			# not, it waits only for what's left -- never more than the full
+			# draw would cost here.
 			puzzle = future.result()
 		else:
 			puzzle = self._draw(tuple(self._seen_ids))
@@ -197,14 +200,14 @@ class TrainingSession:
 		return PuzzleInfo.from_puzzle(puzzle)
 
 	def prefetch_next(self) -> None:
-		"""Sorteia o próximo puzzle numa thread, para o Control+N não esperar.
+		"""Draws the next puzzle on a thread, so Control+N doesn't have to wait.
 
-		Chamado logo depois de um puzzle ser carregado. O sorteio usa os ids já
-		vistos até aqui (o atual incluído) e, no modo adaptativo, o rating de
-		agora -- a tentativa em andamento vai mexer nele um pouco, e o puzzle
-		pré-sorteado fica calibrado pelo rating de um puzzle atrás. É uma
-		diferença de poucos pontos dentro de uma janela de centenas, e o
-		preço de esperar o banco a cada Control+N era maior.
+		Called right after a puzzle is loaded. The draw uses the ids already
+		seen so far (including the current one) and, in adaptive mode, the
+		rating as of now -- the attempt in progress will nudge it a little, so
+		the prefetched puzzle ends up calibrated on the rating from one puzzle
+		back. That's a difference of a few points within a window of hundreds,
+		and the cost of waiting on the database on every Control+N was bigger.
 		"""
 		if self._prefetched is not None or self.repository is None or self.options.single_puzzle_id:
 			return
@@ -214,7 +217,7 @@ class TrainingSession:
 		try:
 			self._prefetched = THREADED_EXECUTOR.submit(self._draw, seen_snapshot)
 		except RuntimeError:
-			# Executor já encerrado (NVDA fechando): o próximo sorteio será síncrono.
+			# Executor already shut down (NVDA closing): the next draw will be synchronous.
 			self._prefetched = None
 
 	def _draw(self, excluded_ids: tuple[str, ...]) -> Puzzle | None:
@@ -222,17 +225,17 @@ class TrainingSession:
 			raise FileNotFoundError("Tactics database not found.")
 		puzzle_id = self.options.single_puzzle_id
 		if puzzle_id:
-			# Sessão de um puzzle só: ele sai uma vez, e depois a sessão acaba.
+			# Single-puzzle session: it comes out once, then the session ends.
 			return None if self._served else self.repository.get(puzzle_id)
 		filters = self._filters(excluded_ids)
 		if self.selection.adaptive:
-			# No modo adaptativo a faixa de rating não vem da escolha do
-			# usuário: ela é derivada do rating dele a cada sorteio, do lado do
-			# banco, onde o rating vive.
+			# In adaptive mode the rating range doesn't come from the user's
+			# choice: it's derived from their rating on every draw, on the
+			# database side, where the rating lives.
 			return self.repository.adaptive_random_puzzle(filters)
 		return self.repository.random_puzzle(filters)
 
-	# -- descrição ------------------------------------------------------------
+	# -- description ------------------------------------------------------------
 
 	def describe_filters(self) -> str:
 		puzzle_id = self.options.single_puzzle_id
@@ -255,10 +258,10 @@ class TrainingSession:
 			parts.append(
 				_("Minimum popularity: {popularity}").format(popularity=self.selection.min_popularity),
 			)
-		# A faixa de rating já vem dentro de challenge_label; repeti-la seria falar duas vezes.
+		# The rating range is already inside challenge_label; repeating it here would say it twice.
 		return "; ".join(parts)
 
-	# -- histórico do jogador --------------------------------------------------
+	# -- player history ---------------------------------------------------------
 
 	def record_attempt(
 		self,
@@ -268,13 +271,13 @@ class TrainingSession:
 		hints_used: int,
 		elapsed_ms: int,
 	) -> AttemptResult | None:
-		"""Grava a tentativa e devolve o que mudou no rating, ou None sem banco."""
+		"""Records the attempt and returns how the rating changed, or None with no database."""
 		if self.repository is None:
 			return None
 		return self.repository.record_attempt(puzzle_id, solved, mistakes, hints_used, elapsed_ms)
 
 	def rating(self) -> RatingSummary | None:
-		"""O rating atual do jogador, ou None quando não há banco."""
+		"""The player's current rating, or None when there's no database."""
 		if self.repository is None:
 			return None
 		return self.repository.rating()

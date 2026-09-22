@@ -1,12 +1,12 @@
 # coding: utf-8
 # pyright: basic
 
-"""Diálogo que abre uma sessão de treino de táticas.
+"""Dialog that opens a tactics training session.
 
-O que esta tela tem de próprio: o campo de ID de puzzle -- que desliga os
-filtros, porque pedir um puzzle pelo id é pedir aquele puzzle --, a caixa de
-salvar como padrão, e o que acontece ao confirmar. O resto vem de
-`TacticsSetupMixin`, compartilhado com o painel de preferências.
+What is specific to this screen: the puzzle ID field -- which turns off the
+filters, because asking for a puzzle by id is asking for that exact puzzle
+--, the "save as default" checkbox, and what happens on confirm. The rest
+comes from `TacticsSetupMixin`, shared with the preferences panel.
 """
 
 import wx
@@ -26,8 +26,8 @@ class TacticsOptionsDialog(TacticsSetupMixin, gui.SettingsDialog):
 	title = _("Tactics")
 
 	def __init__(self, *args, callback, **kwargs):
-		# Antes do super: o SettingsDialog do NVDA chama makeSettings() de
-		# dentro do próprio construtor. Ver _init_trainer_state.
+		# Before super(): NVDA's SettingsDialog calls makeSettings() from
+		# within its own constructor. See _init_trainer_state.
 		self.callback = callback
 		self._init_trainer_state()
 		super().__init__(*args, **kwargs)
@@ -95,9 +95,9 @@ class TacticsOptionsDialog(TacticsSetupMixin, gui.SettingsDialog):
 		return bool(self.puzzleIdTextCtrl.GetValue().strip())
 
 	def _refresh_theme_controls(self):
-		# Com um id digitado os filtros não valem, então as caixas de plano e
-		# nível também são desligadas -- senão a tela sugere uma escolha que
-		# não terá efeito nenhum.
+		# With an id typed in, the filters don't apply, so the plan and level
+		# boxes are also turned off -- otherwise the screen would suggest a
+		# choice that has no effect.
 		filters_enabled = not self._in_puzzle_id_mode()
 		is_custom = uses_custom_themes(self._trainer_preset_id())
 		self.trainerPresetChoice.Enable(filters_enabled)
@@ -121,8 +121,9 @@ class TacticsOptionsDialog(TacticsSetupMixin, gui.SettingsDialog):
 		return super()._trainer_summary_text()
 
 	def get_options(self):
-		# Com um id digitado, plano e nível ficam guardados nas opções mas não
-		# filtram nada: pedir um puzzle pelo id é pedir aquele puzzle.
+		# With an id typed in, plan and level are still stored in the options
+		# but filter nothing: asking for a puzzle by id is asking for that
+		# exact puzzle.
 		return TrainingOptions(
 			db_path=self.databasePathTextCtrl.GetValue().strip() or None,
 			puzzle_id=self.puzzleIdTextCtrl.GetValue().strip(),

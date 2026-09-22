@@ -1,13 +1,14 @@
 # coding: utf-8
 # pyright: basic
 
-"""Diálogo de download das tabelas Syzygy.
+"""Dialog for downloading the Syzygy tablebases.
 
-Dois conjuntos: até 4 peças (poucos MB, cobre rei e peão contra rei e os
-mates) e até 5 (quase 1 GB, cobre torre e peão contra torre, dama contra
-peão e o resto da trilha). O download corre numa thread, arquivo por
-arquivo, com progresso na barra e na fala; cancelar guarda o que já chegou,
-e o próximo download continua de onde parou.
+Two sets: up to 4 pieces (a few MB, covers king and pawn against king and
+the elementary mates) and up to 5 (almost 1 GB, covers rook and pawn against
+rook, queen against pawn, and the rest of the lesson track). The download
+runs on a thread, file by file, with progress shown on the bar and spoken;
+cancelling keeps what already arrived, and the next download resumes from
+where it stopped.
 """
 
 from __future__ import annotations

@@ -1,16 +1,16 @@
 # coding: utf-8
 # pyright: basic
 
-"""Quanto e como se estudou: o resumo por dia e o mapa das lições.
+"""How much and how study happened: the daily summary and the lesson map.
 
-Tudo sai do histórico do jogador (`tactic.db`): as tentativas de tática e as
-de final, com hora. Partidas ficam de fora de propósito -- a partida de
-verdade é no Lichess, não contra a engine. Duas leituras: por dia (quantas
-táticas, quantas certas, quantos minutos; quantas posições de final, quantas
-mantidas, minutos; total) e por lição (quais posições estão firmes, isto é,
-mantidas três vezes seguidas, e onde a pessoa está).
+Everything comes from the player's history (`tactic.db`): tactic attempts and
+endgame attempts, with timestamps. Games are deliberately left out -- the real
+game is on Lichess, not against the engine. Two views: by day (how many
+tactics, how many correct, how many minutes; how many endgame positions, how
+many held, minutes; total) and by lesson (which positions are firm, i.e. held
+three times in a row, and where the player currently stands).
 
-Sem NVDA aqui; o diálogo só formata.
+No NVDA here; the dialog only formats the text.
 """
 
 from __future__ import annotations
@@ -47,8 +47,8 @@ class DaySummary:
 @dataclasses.dataclass(frozen=True)
 class LessonProgress:
 	lesson: EndgameLesson
-	firm: tuple[str, ...]  # position_ids firmes
-	pending: tuple[str, ...]  # position_ids ainda não firmes
+	firm: tuple[str, ...]  # firm position_ids
+	pending: tuple[str, ...]  # position_ids not yet firm
 	attempted: int
 
 	@property
@@ -65,10 +65,10 @@ def _has_table(connection, name: str) -> bool:
 
 
 def daily_summaries(connection, days: int, today: datetime.date | None = None) -> list[DaySummary]:
-	"""Um resumo por dia, do mais recente ao mais antigo, só dos dias com algo.
+	"""One summary per day, most recent first, only for days with something recorded.
 
-	`created_at` é UTC (CURRENT_TIMESTAMP do SQLite); o dia é o local, pela
-	conversão do próprio SQLite, para uma sessão de madrugada cair no dia certo.
+	`created_at` is UTC (SQLite's CURRENT_TIMESTAMP); the day is converted to
+	local time by SQLite itself, so a late-night session lands on the right day.
 	"""
 	today = today or datetime.date.today()
 	since = (today - datetime.timedelta(days=days - 1)).isoformat()
@@ -113,7 +113,7 @@ def daily_summaries(connection, days: int, today: datetime.date | None = None) -
 
 
 def lesson_progress(connection) -> list[LessonProgress]:
-	"""Por lição: posições firmes (três seguidas), pendentes, e quantas já foram tentadas."""
+	"""Per lesson: firm positions (three in a row), pending ones, and how many were attempted."""
 	result = []
 	for lesson in ENDGAME_LESSONS:
 		if lesson.drill is not None:
@@ -136,14 +136,14 @@ def lesson_progress(connection) -> list[LessonProgress]:
 
 
 def current_lesson(progress: list[LessonProgress]) -> LessonProgress | None:
-	"""A primeira lição com algo pendente: onde a pessoa está."""
+	"""The first lesson with something pending: where the player currently stands."""
 	for item in progress:
 		if not item.complete:
 			return item
 	return None
 
 
-# ---------------------------------------------------------------- texto
+# ---------------------------------------------------------------- text
 
 
 def _minutes(ms: int) -> int:

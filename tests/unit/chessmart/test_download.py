@@ -1,11 +1,11 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
 
-"""Download do banco de puzzles: manifesto, partes, conferência e cancelamento.
+"""Puzzle database download: manifest, parts, verification and cancellation.
 
-Sobe um servidor HTTP local com um .gz de mentira (não precisa ser um banco
-válido: `is_puzzles_database` é substituído), dividido em partes, e um
-manipulador que pode corromper ou cortar uma parte na primeira requisição.
+Spins up a local HTTP server with a fake .gz (it doesn't need to be a valid
+database: `is_puzzles_database` is mocked out), split into parts, and a
+handler that can corrupt or truncate a part on its first request.
 """
 
 import functools
@@ -28,8 +28,8 @@ def _sha256(data: bytes) -> str:
 
 
 class FlakyHandler(http.server.SimpleHTTPRequestHandler):
-	"""A primeira requisição de um nome em `corrupt_once` sai com bytes trocados;
-	em `short_once`, cortada no meio; em `missing`, 404. Conta os acessos."""
+	"""The first request for a name in `corrupt_once` comes back with mangled bytes;
+	for `short_once`, truncated midway; for `missing`, 404. Counts the hits."""
 
 	corrupt_once: set[str] = set()
 	short_once: set[str] = set()
@@ -69,10 +69,10 @@ class TestPartsDownload(unittest.TestCase):
 		cls.tmp = tempfile.TemporaryDirectory()
 		cls.dist = Path(cls.tmp.name) / "dist"
 		cls.dist.mkdir()
-		# Bytes aleatórios não comprimem: o .gz fica com ~50 KB e sai em várias partes.
+		# Random bytes don't compress: the .gz ends up ~50 KB and splits into several parts.
 		cls.payload = os.urandom(50_000)
 		gz = gzip.compress(cls.payload, compresslevel=1)
-		assert len(gz) > 3 * cls.PART_SIZE, "o fixture precisa render pelo menos quatro partes"
+		assert len(gz) > 3 * cls.PART_SIZE, "the fixture needs to yield at least four parts"
 		parts = [gz[i : i + cls.PART_SIZE] for i in range(0, len(gz), cls.PART_SIZE)]
 		for index, part in enumerate(parts, 1):
 			(cls.dist / f"puzzles-light.db.gz.part{index}").write_bytes(part)
@@ -104,7 +104,7 @@ class TestPartsDownload(unittest.TestCase):
 		cls.server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
 		threading.Thread(target=cls.server.serve_forever, daemon=True).start()
 		cls.base = f"http://127.0.0.1:{cls.server.server_address[1]}/"
-		# O arquivo de teste não é um SQLite; a validação estrutural fica fora daqui.
+		# The test file isn't a real SQLite database; structural validation is out of scope here.
 		cls.patcher = mock.patch("chessmart.tactic.db.is_puzzles_database", return_value=True)
 		cls.patcher.start()
 

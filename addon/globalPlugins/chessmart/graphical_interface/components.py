@@ -72,7 +72,7 @@ class SnakDialog(SimpleDialog):
 
 	def addControls(self, parent):
 		ai = wx.ActivityIndicator(parent)
-		# SetSizerProp vem do wx.lib.sized_controls, acrescentado em tempo de execução.
+		# SetSizerProp comes from wx.lib.sized_controls, added at runtime.
 		ai.SetSizerProp("halign", "center")  # pyright: ignore[reportAttributeAccessIssue]
 		self.staticMessage = wx.StaticText(parent, -1, self.message)
 		self.staticMessage.SetCanFocus(True)

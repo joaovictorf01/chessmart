@@ -1,7 +1,7 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
 
-"""Meu estudo: o resumo por dia e o mapa das lições, lidos do histórico."""
+"""My Study: the per-day summary and the lesson map, read from the history."""
 
 import datetime
 import tempfile
@@ -18,7 +18,7 @@ class TestStudyLog(unittest.TestCase):
 		self.directory = tempfile.TemporaryDirectory()
 		path = Path(self.directory.name) / "tactic.db"
 		self.connection = log.open_log(path)
-		# A tabela de táticas, como o histórico de verdade a cria.
+		# The tactics table, created the same way the real history creates it.
 		self.connection.executescript(load_store().SCHEMA)
 
 	def tearDown(self):
@@ -46,7 +46,7 @@ class TestStudyLog(unittest.TestCase):
 		self._tactic("2026-09-19 11:13:00", True, 480000)
 		self._tactic("2026-09-19 11:20:00", False, 420000)
 		self._endgame("2026-09-19 14:00:00", "kingFirst", True, 300000)
-		self._tactic("2026-09-10 05:00:00", True, 60000)  # fora dos 7 dias
+		self._tactic("2026-09-10 05:00:00", True, 60000)  # outside the 7-day window
 		summaries = study_log.daily_summaries(self.connection, 7, today=today)
 		self.assertEqual(len(summaries), 1)
 		day = summaries[0]

@@ -1,7 +1,7 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
 
-"""A trilha de finais: catálogo consistente, resultados conferidos onde há tabela, e o registro."""
+"""The endgame track: consistent catalog, results checked against tables where available, and the log."""
 
 import sys
 import tempfile
@@ -62,7 +62,7 @@ class TestCatalog(unittest.TestCase):
 				)
 		finally:
 			tb.close()
-		# As tabelas de 3 peças do repositório cobrem toda a lição 2 e a 3.
+		# The repository's 3-piece tables cover all of lesson 2 and lesson 3.
 		self.assertGreaterEqual(checked, 12)
 
 	def test_unknown_lesson_falls_back_to_the_first(self):

@@ -1,12 +1,12 @@
 # coding: utf-8
 # pyright: basic
 
-"""O que o add-on guarda na configuração do NVDA.
+"""What the add-on stores in NVDA's configuration.
 
-Do treino de táticas ficam só as escolhas do usuário: banco, plano, nível e os
-temas personalizados. A faixa de rating e a popularidade mínima são função do
-nível (ver `trainer.py`) e se derivam na hora; guardá-las também era ter duas
-fontes para o mesmo dado, e elas já divergiram uma vez.
+For the tactics trainer, only the user's choices are kept: database, plan, level
+and custom themes. The rating range and minimum popularity are a function of the
+level (see `trainer.py`) and are derived on the fly; storing them too would mean
+two sources for the same data, and they have already diverged once.
 """
 
 import dataclasses
@@ -24,8 +24,8 @@ CONFIG_SPEC = {
 	"tacticsTheme": 'string(default="")',
 	"tacticsTrainerPreset": f'string(default="{DEFAULT_TRAINER_PRESET_ID}")',
 	"tacticsChallengeLevel": f'string(default="{DEFAULT_CHALLENGE_ID}")',
-	# Como os lances são falados; ver notation.py. Texto livre validado por nós,
-	# e não `option(...)`, para um valor de versão futura não estourar o config.
+	# How moves are spoken; see notation.py. Free text validated by us, not
+	# `option(...)`, so a value from a future version doesn't blow up the config.
 	"moveNotation": 'string(default="descriptive")',
 }
 
@@ -46,7 +46,7 @@ def ensure_config_spec():
 
 
 def _section() -> Any:
-	"""A seção do add-on no config do NVDA. `Any` porque o ConfigObj não tem tipo útil por chave."""
+	"""The add-on's section in NVDA's config. `Any` because ConfigObj has no useful per-key type."""
 	ensure_config_spec()
 	return config.conf[CONFIG_SECTION]
 
@@ -70,7 +70,7 @@ def save_tactics_defaults(defaults: TacticsDefaults) -> None:
 
 
 def get_move_notation() -> str:
-	"""O estilo de fala dos lances; volta ao padrão se o valor guardado for desconhecido."""
+	"""The move-speaking style; falls back to the default if the stored value is unknown."""
 	from .notation import DEFAULT_STYLE, STYLE_IDS
 
 	value = str(_section()["moveNotation"]).strip()

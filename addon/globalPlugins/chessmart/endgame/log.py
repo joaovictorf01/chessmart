@@ -1,12 +1,12 @@
 # coding: utf-8
 # pyright: basic
 
-"""O registro dos treinos de final, no mesmo `tactic.db` do histórico de táticas.
+"""Log of endgame drill attempts, in the same `tactic.db` as the tactics history.
 
-Uma linha por tentativa: qual posição, se a pergunta foi acertada, se o
-resultado teórico foi mantido até o fim, em quantos lances, em quanto tempo,
-e como terminou. É o que responde "quantas vezes seguidas" por posição e o
-que a revisão da semana lê. Nada aqui toca o banco de puzzles.
+One row per attempt: which position, whether the question was answered
+correctly, whether the theoretical result was held to the end, in how many
+moves, in how much time, and how it ended. This is what answers "how many
+in a row" per position. Nothing here touches the puzzle database.
 """
 
 from __future__ import annotations
@@ -39,12 +39,12 @@ CREATE INDEX IF NOT EXISTS idx_endgame_attempts_position ON endgame_attempts(pos
 @dataclasses.dataclass(frozen=True)
 class PositionStats:
 	attempts: int
-	streak: int  # tentativas seguidas, da mais recente para trás, com pergunta certa e resultado mantido
-	best_moves: int | None  # menor número de lances numa tentativa que manteve o resultado
+	streak: int  # consecutive attempts, most recent first, with correct question and result held
+	best_moves: int | None  # fewest moves in an attempt that held the result
 
 
 def open_log(history_path: Path = HISTORY_DB_PATH):
-	"""Abre (e cria, se preciso) a tabela no histórico do jogador."""
+	"""Open (and create, if needed) the table in the player's history."""
 	store = load_store()
 	import sqlite3
 
@@ -57,7 +57,7 @@ def open_log(history_path: Path = HISTORY_DB_PATH):
 
 
 def _migrate(connection) -> None:
-	"""A coluna `line` (os lances, em UCI) veio depois da tabela; bancos antigos ganham ela aqui."""
+	"""The `line` column (the moves, in UCI) was added after the table; older databases get it here."""
 	existing = {row[1] for row in connection.execute("PRAGMA table_info(endgame_attempts)")}
 	if "line" not in existing:
 		connection.execute("ALTER TABLE endgame_attempts ADD COLUMN line TEXT NOT NULL DEFAULT ''")
@@ -81,10 +81,10 @@ def record(
 	fen: str = "",
 	hints: int = 0,
 ) -> int:
-	"""`fen` é a posição de partida e `line` os lances em UCI: juntos permitem rever a tentativa.
+	"""`fen` is the starting position and `line` the moves in UCI: together they let the attempt be replayed.
 
-	`hints` conta as vezes que a tablebase foi consultada pelo melhor lance:
-	a tentativa vale como treino, mas com ajuda não entra na sequência.
+	`hints` counts how many times the tablebase was queried for the best move:
+	the attempt still counts as practice, but a hinted one doesn't count toward the streak.
 	"""
 	cursor = connection.execute(
 		"INSERT INTO endgame_attempts (lesson_id, position_id, answer_correct, kept_result, moves, elapsed_ms,"

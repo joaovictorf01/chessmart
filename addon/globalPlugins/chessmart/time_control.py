@@ -22,7 +22,7 @@ SHORT_TIME_CONTROL_REGEX = re.compile(r"^(?P<base_time>[0-9]+)\+(?P<increment>[0
 
 @dataclasses.dataclass
 class ChessTimeControl:
-	# Em segundos. O Lichess manda milissegundos divididos por mil, por isso float.
+	# In seconds. Lichess sends milliseconds divided by a thousand, hence float.
 	white_base_time: float
 	white_increment: float
 	black_base_time: float
@@ -73,7 +73,7 @@ class ChessTimeControl:
 
 	@staticmethod
 	def parse_time_control_notation(tc: str) -> t.Optional[t.Tuple[int, int]]:
-		""" "10+5" -> (600, 5), em segundos; None quando o texto não é um controle de tempo."""
+		""" "10+5" -> (600, 5), in seconds; None when the text is not a time control."""
 		match = SHORT_TIME_CONTROL_REGEX.match(tc)
 		if not match:
 			return None

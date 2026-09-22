@@ -1,12 +1,12 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
 
-"""Testes unitários do chessmart que rodam fora do NVDA.
+"""Unit tests for chessmart that run outside of NVDA.
 
-Os módulos do add-on importam `logHandler` e `addonHandler` (do NVDA); aqui
-eles ganham substitutos mínimos, e o pacote é importado como `chessmart` a
-partir de `addon/globalPlugins`, sem passar pelo `__init__` do plugin (que
-puxa wx e o resto do NVDA).
+The add-on modules import `logHandler` and `addonHandler` (from NVDA); here
+they get minimal stand-ins, and the package is imported as `chessmart` from
+`addon/globalPlugins`, bypassing the plugin's `__init__` (which pulls in wx
+and the rest of NVDA).
 """
 
 import sys
@@ -35,7 +35,7 @@ _stub(
 		exception=lambda *a, **k: None,
 	),
 )
-_stub("addonHandler")  # sem initTranslation: i18n cai na identidade
+_stub("addonHandler")  # no initTranslation: i18n falls back to identity
 
 if "chessmart" not in sys.modules:
 	package = types.ModuleType("chessmart")

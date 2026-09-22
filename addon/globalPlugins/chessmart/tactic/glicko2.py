@@ -1,22 +1,23 @@
 # coding: utf-8
 # pyright: basic
 
-"""Glicko-2 para o treinador de táticas.
+"""Glicko-2 for the tactics trainer.
 
-Cada tentativa de puzzle é tratada como uma partida: você de um lado, o puzzle
-do outro. O banco do Lichess já traz `rating` e `rating_deviation` de cada
-puzzle, que são exatamente as duas entradas que a fórmula pede do adversário,
-então o número que sai daqui é comparável a um rating de tática do Lichess.
+Each puzzle attempt is treated as a game: the player on one side, the puzzle
+on the other. The Lichess database already provides `rating` and
+`rating_deviation` for each puzzle, which are exactly the two inputs the
+formula needs for the opponent, so the number produced here is comparable
+to a Lichess tactics rating.
 
-Só o jogador é atualizado. O rating do puzzle vem do banco e fica onde está --
-ele foi calculado sobre milhões de tentativas e nada que você faça sozinho
-deveria movê-lo.
+Only the player is updated. The puzzle's rating comes from the database and
+stays put -- it was computed over millions of attempts, and nothing a single
+player does should move it.
 
-Módulo puro de propósito: não importa NVDA, não importa sqlite, não toca em
-disco. Dá para exercitar com um Python qualquer, o que é o que permite testar a
-matemática sem subir um leitor de tela.
+A pure module by design: no NVDA, no sqlite, no disk access. It can be
+exercised with any Python, which is what lets the math be tested without
+starting a screen reader.
 
-Referência: Mark E. Glickman, "Example of the Glicko-2 system" (glicko.net).
+Reference: Mark E. Glickman, "Example of the Glicko-2 system" (glicko.net).
 """
 
 from __future__ import annotations
@@ -25,69 +26,69 @@ import dataclasses
 import math
 
 
-# A escala interna do Glicko-2 é diferente da que se lê na tela. 173.7178 é o
-# fator de conversão entre as duas, e 1500 é o centro da escala visível.
+# The Glicko-2 internal scale differs from the one shown on screen. 173.7178
+# is the conversion factor between the two, and 1500 is the center of the visible scale.
 SCALE = 173.7178
 CENTER = 1500.0
 
-# Rating de partida de quem nunca resolveu nada: 1500 com desvio 350 quer dizer
-# "não faço ideia do teu nível". O desvio despenca nas primeiras tentativas.
+# Starting rating for someone who has never solved anything: 1500 with a
+# deviation of 350 means "no idea what your level is". The deviation drops fast in the first attempts.
 DEFAULT_RATING = 1500.0
 DEFAULT_DEVIATION = 350.0
 DEFAULT_VOLATILITY = 0.06
 
-# Tau limita o quanto a volatilidade pode mudar de uma vez. Valores baixos
-# deixam o rating mais estável; altos deixam ele reagir mais rápido a uma
-# sequência fora do normal. Glickman sugere entre 0.3 e 1.2.
+# Tau limits how much volatility can change at once. Low values keep the
+# rating more stable; high values let it react faster to an unusual streak.
+# Glickman suggests between 0.3 and 1.2.
 DEFAULT_TAU = 0.5
 
-# Critério de parada da iteração que resolve a volatilidade.
+# Stopping criterion for the iteration that solves for volatility.
 CONVERGENCE = 1e-6
 MAX_ITERATIONS = 100
 
-# Acima deste desvio o rating ainda é palpite: 1500 com desvio 200 quer dizer
-# "algo entre 1100 e 1900". Quem anuncia o número deve dizer que é provisório.
+# Above this deviation the rating is still a guess: 1500 with a deviation of
+# 200 means "somewhere between 1100 and 1900". Whoever announces the number should say it's provisional.
 PROVISIONAL_DEVIATION = 110.0
 
 
 @dataclasses.dataclass(frozen=True)
 class Rating:
-	"""Os três números que descrevem a força de alguém no Glicko-2."""
+	"""The three numbers that describe someone's strength in Glicko-2."""
 
 	rating: float = DEFAULT_RATING
 	deviation: float = DEFAULT_DEVIATION
 	volatility: float = DEFAULT_VOLATILITY
 
 	def rounded(self) -> int:
-		"""O rating como se mostra a um humano."""
+		"""The rating as shown to a human."""
 		return int(round(self.rating))
 
 	def confidence_interval(self) -> tuple[int, int]:
-		"""Faixa de ~95% de confiança: rating +- dois desvios.
+		"""~95% confidence interval: rating +- two deviations.
 
-		Serve para dizer honestamente "entre 1420 e 1580" enquanto o sistema
-		ainda não te conhece, em vez de fingir precisão que não existe.
+		Lets the system honestly say "between 1420 and 1580" while it still
+		doesn't know the player, instead of faking a precision that isn't there.
 		"""
 		margin = 2 * self.deviation
 		return int(round(self.rating - margin)), int(round(self.rating + margin))
 
 
 def _g(phi: float) -> float:
-	"""Peso do adversário: quanto mais incerto o rating dele, menos ele pesa."""
+	"""Weight of the opponent: the more uncertain their rating, the less it weighs."""
 	return 1.0 / math.sqrt(1.0 + 3.0 * phi * phi / (math.pi * math.pi))
 
 
 def _expected(mu: float, mu_j: float, phi_j: float) -> float:
-	"""Probabilidade de você resolver este puzzle, entre 0 e 1."""
+	"""Probability of solving this puzzle, between 0 and 1."""
 	return 1.0 / (1.0 + math.exp(-_g(phi_j) * (mu - mu_j)))
 
 
 def _new_volatility(phi: float, v: float, delta: float, sigma: float, tau: float) -> float:
-	"""Resolve a nova volatilidade pelo método de Illinois.
+	"""Solve for the new volatility using the Illinois method.
 
-	Esta é a única parte do Glicko-2 sem fórmula fechada: a equação não se
-	isola, então se procura a raiz por tentativa dirigida. O método de Illinois
-	é uma variação da falsa posição que evita ficar preso de um lado só.
+	This is the only part of Glicko-2 without a closed-form formula: the
+	equation cannot be isolated, so the root is found by directed search. The
+	Illinois method is a variant of regula falsi that avoids getting stuck on one side.
 	"""
 	a = math.log(sigma * sigma)
 	phi2, delta2 = phi * phi, delta * delta
@@ -102,7 +103,7 @@ def _new_volatility(phi: float, v: float, delta: float, sigma: float, tau: float
 	if delta2 > phi2 + v:
 		B = math.log(delta2 - phi2 - v)
 	else:
-		# Nenhum palpite óbvio: recua de tau em tau até a função trocar de sinal.
+		# No obvious guess: step back by tau until the function changes sign.
 		k = 1
 		while f(a - k * tau) < 0 and k <= MAX_ITERATIONS:
 			k += 1
@@ -117,8 +118,8 @@ def _new_volatility(phi: float, v: float, delta: float, sigma: float, tau: float
 		if fC * fB <= 0:
 			A, fA = B, fB
 		else:
-			# O "Illinois": corta o valor pela metade do lado que não se moveu,
-			# senão a convergência se arrasta.
+			# The "Illinois" trick: halve the value on the side that hasn't
+			# moved, otherwise convergence drags on.
 			fA = fA / 2.0
 		B, fB = C, fC
 	return math.exp(A / 2.0)
@@ -131,16 +132,16 @@ def update(
 	solved: bool,
 	tau: float = DEFAULT_TAU,
 ) -> Rating:
-	"""Devolve o rating do jogador depois de uma tentativa.
+	"""Return the player's rating after one attempt.
 
-	`solved` é o placar da "partida": resolver vale 1, errar vale 0. O Glicko-2
-	aceita empate (0.5), mas um puzzle não empata.
+	`solved` is the "game" score: solving is worth 1, missing is worth 0.
+	Glicko-2 accepts a draw (0.5), but a puzzle has no draw.
 
-	O rating do puzzle entra como adversário e sai intacto -- quem muda é você.
+	The puzzle's rating enters as the opponent and comes out unchanged -- only the player's rating moves.
 	"""
 	score = 1.0 if solved else 0.0
 
-	# Para a escala interna.
+	# To the internal scale.
 	mu = (player.rating - CENTER) / SCALE
 	phi = player.deviation / SCALE
 	mu_j = (puzzle_rating - CENTER) / SCALE
@@ -149,19 +150,19 @@ def update(
 	g_j = _g(phi_j)
 	expected = _expected(mu, mu_j, phi_j)
 
-	# v é a variância da estimativa: o quanto esta única tentativa informa.
-	# Um puzzle muito acima ou muito abaixo de você quase não informa, porque o
-	# resultado já era previsível -- e é isso que o termo E*(1-E) captura.
+	# v is the variance of the estimate: how much this single attempt informs
+	# it. A puzzle far above or far below the player's level barely informs
+	# it, because the result was already predictable -- which is what the E*(1-E) term captures.
 	v = 1.0 / (g_j * g_j * expected * (1.0 - expected))
 
-	# delta é a correção sugerida: a surpresa (placar menos esperado), pesada.
+	# delta is the suggested correction: the surprise (score minus expected), weighted.
 	delta = v * g_j * (score - expected)
 
 	sigma = _new_volatility(phi, v, delta, player.volatility, tau)
 
-	# O desvio primeiro cresce pela volatilidade, depois encolhe pela informação
-	# que a tentativa trouxe. É por isso que sumir por meses aumenta teu desvio:
-	# o sistema volta a desconfiar do número.
+	# The deviation first grows from volatility, then shrinks from the
+	# information the attempt brought. This is why going inactive for months
+	# increases the deviation: the system starts doubting the number again.
 	phi_star = math.sqrt(phi * phi + sigma * sigma)
 	phi_new = 1.0 / math.sqrt(1.0 / (phi_star * phi_star) + 1.0 / v)
 	mu_new = mu + phi_new * phi_new * g_j * (score - expected)
@@ -174,28 +175,28 @@ def update(
 
 
 def decay(player: Rating, periods: float, tau: float = DEFAULT_TAU) -> Rating:
-	"""Aumenta o desvio por inatividade, sem mexer no rating.
+	"""Increase the deviation for inactivity, without touching the rating.
 
-	`periods` é quantos períodos de avaliação se passaram sem tentativa alguma.
-	O rating em si não muda -- não há motivo para supor que você piorou --, mas
-	a confiança nele diminui, que é o que o Glicko-2 chama de rating decay.
+	`periods` is how many rating periods have passed with no attempt at all.
+	The rating itself does not change -- there is no reason to assume the
+	player got worse -- but confidence in it decreases, which is what Glicko-2 calls rating decay.
 	"""
 	if periods <= 0:
 		return player
 	phi = player.deviation / SCALE
 	phi_new = math.sqrt(phi * phi + periods * player.volatility * player.volatility)
-	# Um desvio maior que o inicial seria dizer que se sabe menos do que se
-	# sabia antes de qualquer tentativa, o que não faz sentido.
+	# A deviation larger than the initial one would mean knowing less than
+	# before any attempt at all, which makes no sense.
 	deviation = min(phi_new * SCALE, DEFAULT_DEVIATION)
 	return dataclasses.replace(player, deviation=deviation)
 
 
 def expected_score(player: Rating, puzzle_rating: float, puzzle_deviation: float) -> float:
-	"""Chance de o jogador resolver este puzzle, entre 0 e 1.
+	"""Chance the player solves this puzzle, between 0 and 1.
 
-	É a mesma conta que `update` faz por dentro, exposta para a seleção
-	adaptativa: para treinar de verdade, se procura puzzle com chance perto de
-	meio a meio, onde há mais a aprender.
+	The same computation `update` does internally, exposed for adaptive
+	selection: to train effectively, look for a puzzle with a chance close to
+	fifty-fifty, where there is the most to learn.
 	"""
 	mu = (player.rating - CENTER) / SCALE
 	mu_j = (puzzle_rating - CENTER) / SCALE

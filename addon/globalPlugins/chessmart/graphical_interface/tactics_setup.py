@@ -1,21 +1,15 @@
 # coding: utf-8
 # pyright: basic
 
-"""Base comum das duas telas que configuram o treino de táticas.
+"""Shared base for the two screens that configure tactics training.
 
-São duas: o diálogo da sessão (`tactics_dialog`) e o painel de preferências
-(`settings_panel`). Elas mostram os mesmos controles -- caminho do banco, plano,
-nível, resumo e seleção de temas -- e diferiam só no layout e no que fazem ao
-confirmar. Ainda assim eram duas cópias, e a conta chegou: o mesmo erro de ordem
-no `__init__` precisou ser corrigido nos dois arquivos, e a correção do resumo
-que anunciava a palavra "None" foi feita num e esquecida no outro.
-
-O que mora aqui é o que era idêntico. Cada tela continua dona do próprio
-`makeSettings`, porque a ordem dos controles é decisão de interface, e do
-próprio `onOk`, porque uma inicia sessão e a outra salva preferências.
-
-Os pontos de variação são explícitos, como métodos que a subclasse sobrescreve:
-`_refresh_theme_controls` e `_theme_picker_prompt`.
+The session dialog (`tactics_dialog`) and the preferences panel
+(`settings_panel`) show the same controls -- database path, plan, level,
+summary and theme selection -- and used to be two separate copies, which let
+the same `__init__` ordering bug and a summary fix diverge between them. What
+lives here is what was identical; each screen still owns its own
+`makeSettings` and `onOk`. Points of variation are explicit overridable
+methods: `_refresh_theme_controls` and `_theme_picker_prompt`.
 """
 
 from pathlib import Path
@@ -48,31 +42,32 @@ from ..trainer import (
 
 
 if TYPE_CHECKING:
-	# Só para o verificador de tipos: o mixin é sempre combinado com um
-	# SettingsDialog, e é dele que vêm Bind, GetSize e os outros métodos do wx.
+	# Only for the type checker: the mixin is always combined with a
+	# SettingsDialog, and that is where Bind, GetSize and the other wx
+	# methods come from.
 	_MixinBase = gui.SettingsDialog
 else:
 	_MixinBase = object
 
 
 class TacticsSetupMixin(_MixinBase):
-	"""Controles e regras compartilhados pelas telas de configuração de táticas."""
+	"""Controls and rules shared by the tactics configuration screens."""
 
-	# -- estado ---------------------------------------------------------------
+	# -- state ------------------------------------------------------------------
 
 	def _init_trainer_state(self):
-		"""Cria os atributos que `makeSettings` vai ler.
+		"""Creates the attributes that `makeSettings` will read.
 
-		Precisa ser chamado ANTES de `super().__init__()`: o `SettingsDialog` do
-		NVDA chama `makeSettings()` de dentro do próprio construtor, então tudo
-		que `makeSettings` lê tem que existir antes daquela linha. Foi
-		exatamente esse detalhe que quebrou as duas telas.
+		Must be called BEFORE `super().__init__()`: NVDA's `SettingsDialog`
+		calls `makeSettings()` from within its own constructor, so everything
+		`makeSettings` reads must exist before that line. This exact detail is
+		what broke both screens.
 		"""
 		self._theme_filter_text = ""
 		self._trainer_presets = TRAINER_PRESETS
 		self._challenge_levels = CHALLENGE_LEVELS
 
-	# -- montagem dos controles ----------------------------------------------
+	# -- building the controls --------------------------------------------------
 
 	def _build_database_row(self, helper, default_path):
 		# Translators: Label for the tactics database path field.
@@ -91,10 +86,11 @@ class TacticsSetupMixin(_MixinBase):
 		helper.addItem(row)
 
 	def _build_choice_rows(self, helper, defaults, plan_text, level_text):
-		"""As duas caixas de combinação: plano e nível.
+		"""The two combo boxes: plan and level.
 
-		Os rótulos entram como parâmetro porque o painel de preferências diz
-		"padrão" ("Default training plan") e o diálogo da sessão não.
+		The labels are passed as a parameter because the preferences panel
+		says "default" ("Default training plan") and the session dialog does
+		not.
 		"""
 		plan_label_ctrl = wx.StaticText(self, -1, plan_text)
 		self.trainerPresetChoice = wx.Choice(
@@ -166,7 +162,7 @@ class TacticsSetupMixin(_MixinBase):
 		self.Bind(wx.EVT_CHOICE, self.onTrainerPresetChanged, self.trainerPresetChoice)
 		self.Bind(wx.EVT_CHOICE, self.onChallengeChanged, self.challengeChoice)
 
-	# -- leitura do estado ----------------------------------------------------
+	# -- reading the state --------------------------------------------------
 
 	def _set_choice_by_id(self, choice, ids, selected_id):
 		try:
@@ -181,22 +177,23 @@ class TacticsSetupMixin(_MixinBase):
 		return self._challenge_levels[self.challengeChoice.GetSelection()].challenge_id
 
 	def _resolved_db_path(self):
-		"""O banco que esta tela deve consultar, já validado.
+		"""The database this screen should query, already validated.
 
-		Preenchido não é o mesmo que existente: o caminho pode ter sido salvo
-		meses atrás e o arquivo ter mudado de pasta. Sem esta checagem, o campo
-		entrega um caminho morto ao catálogo de temas e o usuário recebe "No
-		themes were found in the selected database" -- uma mensagem que culpa o
-		banco quando o problema é o caminho.
+		Filled in is not the same as existing: the path may have been saved
+		months ago and the file may have moved since. Without this check, the
+		field hands a dead path to the theme catalog and the user gets "No
+		themes were found in the selected database" -- a message that blames
+		the database when the problem is the path.
 		"""
 		typed = self.databasePathTextCtrl.GetValue().strip()
 		return usable_db_path(typed) or default_db_path() or ""
 
 	def _default_database_value(self, saved_path):
-		"""O que mostrar no campo do banco ao abrir a tela.
+		"""What to show in the database field when the screen opens.
 
-		Um caminho salvo que não existe mais não deve ser oferecido como se
-		valesse: é preferível mostrar o banco que o add-on realmente encontrou.
+		A saved path that no longer exists should not be offered as if it
+		were valid: it is better to show the database the add-on actually
+		found.
 		"""
 		return usable_db_path(saved_path) or default_db_path() or ""
 
@@ -207,19 +204,19 @@ class TacticsSetupMixin(_MixinBase):
 			custom_theme_text=self._theme_filter_text,
 		)
 
-	# -- pontos de variação ---------------------------------------------------
+	# -- variation points ----------------------------------------------------
 
 	def _refresh_theme_controls(self):
-		"""Reavalia o que fica habilitado. Cada tela tem a sua regra."""
+		"""Re-evaluates what is enabled. Each screen has its own rule."""
 
 	def _theme_picker_prompt(self):
 		# Translators: Prompt in the theme picker dialog.
 		return _("Choose one or more Lichess themes to use in the custom training plan.")
 
-	# -- resumo dos temas -----------------------------------------------------
+	# -- theme summary ---------------------------------------------------------
 
 	def _theme_summary_text(self):
-		"""O texto do campo de temas, ou None para deixar a tela decidir."""
+		"""The text for the themes field, or None to let the screen decide."""
 		resolved = self._resolved_selection()
 		if uses_custom_themes(self._trainer_preset_id()):
 			theme_slugs = parse_theme_filter(self._theme_filter_text)
@@ -239,10 +236,10 @@ class TacticsSetupMixin(_MixinBase):
 		self.themeSummaryTextCtrl.SetValue(self._theme_summary_text())
 
 	def _theme_count_sentence(self, resolved):
-		"""Quantos temas a sessão vai usar, dito em uma frase.
+		"""How many themes the session will use, said in one sentence.
 
-		Existe porque o plano decide QUAIS temas e o nível decide QUÃO DIFÍCIL,
-		e nada nos rótulos das caixas diz isso -- então o resumo precisa dizer.
+		Exists because the plan decides WHICH themes and the level decides HOW
+		HARD, and nothing in the box labels says that -- so the summary has to.
 		"""
 		count = len(parse_theme_filter(resolved.theme_text))
 		if not count:
@@ -254,7 +251,7 @@ class TacticsSetupMixin(_MixinBase):
 		)
 
 	def _trainer_summary_text(self):
-		"""Plano, nível e temas em três linhas. O nível já traz a faixa de rating no nome."""
+		"""Plan, level and themes in three lines. The level already carries the rating range in its name."""
 		resolved = self._resolved_selection()
 		# Translators: Summary of the training setup: plan, level and themes, one per line.
 		return _(
@@ -271,7 +268,7 @@ class TacticsSetupMixin(_MixinBase):
 	def _update_trainer_summary(self):
 		self.trainerSummaryTextCtrl.SetValue(self._trainer_summary_text())
 
-	# -- eventos compartilhados -----------------------------------------------
+	# -- shared events ---------------------------------------------------------
 
 	def onBrowseDatabase(self, event):
 		dialog = wx.FileDialog(
@@ -301,8 +298,8 @@ class TacticsSetupMixin(_MixinBase):
 		dialog.Destroy()
 
 	def _on_database_installed(self, path):
-		# O download vai sempre para a pasta padrão; o campo passa a apontar
-		# para lá, mesmo que antes apontasse para um arquivo em outro lugar.
+		# The download always goes to the default folder; the field then
+		# points there, even if it previously pointed to a file elsewhere.
 		self.databasePathTextCtrl.SetValue(str(path))
 		self._update_trainer_summary()
 		self._update_theme_summary()
@@ -388,7 +385,8 @@ class TacticsSetupMixin(_MixinBase):
 		dialog.Destroy()
 
 	def _theme_catalog_ready(self, entries):
-		# Chega da thread de varredura; falar só pode ser feito no fio principal.
+		# Arrives from the scanning thread; speech can only happen on the main
+		# thread.
 		if entries:
 			# Translators: Announced when the theme catalog finished building in the background.
 			wx.CallAfter(ui.message, _("Theme catalog ready. You can select themes now."))

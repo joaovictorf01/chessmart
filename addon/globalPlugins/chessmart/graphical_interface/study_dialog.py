@@ -1,11 +1,10 @@
 # coding: utf-8
 # pyright: basic
 
-"""Diálogo "Meu estudo": quanto se estudou por dia e até onde as lições foram.
+"""The "My Study" dialog: how much was studied per day and how far the lessons went.
 
-Um texto só, legível linha a linha com o leitor de tela, e um botão que o
-copia inteiro para a área de transferência -- para colar num caderno ou
-mandar para alguém.
+A single block of text, readable line by line with the screen reader, and a
+button that copies it all to the clipboard -- to paste elsewhere or share.
 """
 
 from __future__ import annotations

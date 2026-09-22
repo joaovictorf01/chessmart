@@ -18,8 +18,8 @@ from ..sounds import GameSound
 
 
 if TYPE_CHECKING:
-	# O mixin é sempre combinado com NVDAObject; para o verificador de tipos
-	# ele herda daí, para `getScript` e `parent` terem o tipo certo.
+	# The mixin is always combined with NVDAObject; for the type checker it
+	# inherits from it, so `getScript` and `parent` get the right type.
 	_NVDAObjectBase = NVDAObject
 else:
 	_NVDAObjectBase = object
@@ -112,8 +112,8 @@ class ItemContainerMixin:
 
 class MenuItemObject(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 	role = controlTypes.Role.MENUITEM
-	# O NVDA define `parent` como propriedade automática (_get_parent) que pode
-	# ser None. Aqui ele é sempre o menu que contém o item, atribuído na construção.
+	# NVDA defines `parent` as an automatic property (_get_parent) that can
+	# be None. Here it is always the menu containing the item, assigned at construction.
 	parent: Any
 
 	def __init__(self, parent, name, *args, **kwargs):

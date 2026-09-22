@@ -32,30 +32,30 @@ PUZZLE_SOLVED_DELAY_MS = 250
 
 @dataclasses.dataclass
 class AttemptState:
-	"""Tudo o que a tentativa do puzzle atual precisa lembrar. Nasce zerado a cada puzzle."""
+	"""Everything the current puzzle attempt needs to remember. Starts zeroed for each puzzle."""
 
-	# Quando o jogador passou a ter a vez, isto é, depois do lance automático.
-	# None significa que a tentativa ainda não começou.
+	# When the player's turn started, i.e. after the automatic move.
+	# None means the attempt hasn't started yet.
 	started_at: float | None = None
 	mistakes: int = 0
 	hints_used: int = 0
-	# Índice em `solution_moves` do próximo lance esperado (do jogador ou do adversário).
+	# Index in `solution_moves` of the next expected move (the player's or the opponent's).
 	solution_index: int = 0
-	# Já foi para o banco. A gravação pode acontecer no meio do puzzle (no
-	# primeiro erro) ou no fim, mas nunca duas vezes.
+	# Already written to the database. Recording can happen partway through the
+	# puzzle (on the first mistake) or at the end, but never twice.
 	recorded: bool = False
-	# Regra do Lichess: o primeiro lance errado já fecha a conta do rating
-	# como derrota. Terminar o puzzle depois disso serve para aprender e não
-	# mexe mais no número.
+	# Lichess rule: the first wrong move already settles the rating as a
+	# loss. Finishing the puzzle after that is for learning and no longer
+	# affects the number.
 	settled_by_mistake: bool = False
-	# Repetição com Control+R: com a solução na cabeça, não é medida de nada.
+	# Retry with Control+R: with the solution already known, it measures nothing.
 	is_retry: bool = False
-	# Já entrou nos números da sessão. Separado de `recorded` porque a sessão
-	# conta o puzzle uma vez, no fim, e o banco pode ter sido gravado antes.
+	# Already counted in the session numbers. Separate from `recorded` because
+	# the session counts the puzzle once, at the end, and the database write may have happened earlier.
 	counted_in_session: bool = False
-	# Terminado com Control+Enter: conta como resolvido no banco, mas a sessão
-	# diz quantos foram assim. Treinador que esconde isso mede a vontade de
-	# terminar, não a tática.
+	# Finished with Control+Enter: counts as solved in the database, but the
+	# session reports how many were finished this way. A trainer that hides
+	# this measures the will to finish, not the tactic.
 	auto_solved: bool = False
 
 	@property
@@ -64,12 +64,12 @@ class AttemptState:
 
 	@property
 	def touched(self) -> bool:
-		"""O jogador fez algo neste puzzle: um lance, um erro ou uma dica.
+		"""The player did something in this puzzle: a move, a mistake, or a hint.
 
-		É o que separa "desisti" de "nem olhei": um puzzle carregado e deixado
-		de lado (Control+N na hora, Escape sem querer) não é derrota, e não vai
-		para o banco nem para os números da sessão. A dica conta como toque
-		para não dar um jeito de espiar a solução de graça.
+		This separates "gave up" from "never looked at it": a puzzle that was
+		loaded and abandoned (immediate Control+N, accidental Escape) is not a
+		loss, and doesn't go into the database or the session numbers. A hint
+		counts as touched so it can't be used to peek at the solution for free.
 		"""
 		return self.solution_index > 0 or self.mistakes > 0 or self.hints_used > 0
 
@@ -81,7 +81,7 @@ class AttemptState:
 
 @dataclasses.dataclass
 class SessionStats:
-	"""Os números da sessão, em memória. Cada puzzle entra uma vez, quando termina."""
+	"""The session's numbers, in memory. Each puzzle is counted once, when it finishes."""
 
 	attempts: int = 0
 	solved: int = 0
@@ -102,7 +102,7 @@ class SessionStats:
 				self.revealed += 1
 
 	def status_label(self) -> str:
-		"""Nome do botão da barra de ações. Só memória: é lido a cada Tab."""
+		"""Label for the actions bar button. Memory only: read on every Tab."""
 		if not self.attempts:
 			return _("Session status")
 		return _("Session status: {solved} of {attempts} solved").format(
@@ -190,9 +190,10 @@ class PuzzleCell(UserDrivenCell):
 
 	@script(gesture="kb:control+n")
 	def script_next_puzzle(self, gesture):
-		# Puzzle terminado: Control+N vai direto. Puzzle no meio: pede a
-		# segunda pressão, porque um Control+N sem querer joga fora o puzzle
-		# que estava na mesa e o id dele com ele (não vai para o banco).
+		# Puzzle finished: Control+N goes through immediately. Puzzle in
+		# progress: requires a second press, because an accidental Control+N
+		# throws away the puzzle on the board and its id with it (never
+		# reaches the database).
 		puzzle = self.parent.puzzle
 		if puzzle is not None and self.parent.current_expected_move is not None:
 			if getLastScriptRepeatCount() == 0:
@@ -241,11 +242,11 @@ class PuzzleChessboard(UserDrivenChessboard):
 		self._attempt = AttemptState()
 		self._stats = SessionStats()
 		self._announced_puzzle_shortcuts = False
-		# Cresce a cada puzzle carregado; os callbacks agendados com wx.CallLater
-		# carregam o valor da época e desistem se ele mudou.
+		# Incremented for each puzzle loaded; callbacks scheduled with
+		# wx.CallLater carry the value from when they were scheduled and bail out if it changed.
 		self._callback_token = 0
-		# O que a última gravação mudou no rating. Fica guardado porque quem
-		# grava a tentativa e quem anuncia o resultado são momentos diferentes.
+		# What the last write changed in the rating. Kept around because
+		# recording the attempt and announcing the result happen at different moments.
 		self._last_rating: AttemptResult | None = None
 		self._actions_bar = TrainingActionsBar(
 			parent=self,
@@ -261,7 +262,7 @@ class PuzzleChessboard(UserDrivenChessboard):
 				(_("Back to board"), self.focus_board_from_actions),
 			],
 		)
-		# Achado pelo callback, e não pelo índice: a ordem dos botões muda.
+		# Found by callback, not by index: the button order changes.
 		self._session_status_item = next(
 			(item for item in self._actions_bar if item.callback == self.announce_training_status),
 			None,
@@ -277,8 +278,8 @@ class PuzzleChessboard(UserDrivenChessboard):
 		return self.puzzle.solution_moves[self._attempt.solution_index]
 
 	def leave_prompt(self):
-		# Sempre pergunta: além do puzzle, sai o placar da sessão. O texto diz
-		# se o puzzle atual vai contar como não resolvido.
+		# Always asks: leaving loses the session scoreboard too, not just the
+		# puzzle. The text says whether the current puzzle will count as unsolved.
 		if self._attempt.touched and not self._attempt.recorded:
 			# Translators: Asked when Escape is pressed during a puzzle the player has already started solving.
 			return _("Leave training? The current puzzle will count as unsolved.")
@@ -286,13 +287,13 @@ class PuzzleChessboard(UserDrivenChessboard):
 		return _("Leave training? The session status will be lost.")
 
 	def hide_board_gui(self):
-		# Invalida o primeiro lance ou a resposta do adversário que ainda
-		# estivessem agendados: não podem cair numa janela fechada.
+		# Invalidates any pending first move or opponent reply still scheduled:
+		# they must not land on a closed window.
 		self._callback_token += 1
 		self._finish_attempt(solved=False)
 		super().hide_board_gui()
 
-	# -- foco: tabuleiro e barra de ações --------------------------------------
+	# -- focus: board and actions bar --------------------------------------
 
 	def focus_action_bar(self, reverse=False):
 		if not self._actions_bar:
@@ -317,7 +318,7 @@ class PuzzleChessboard(UserDrivenChessboard):
 		self._clear_action_focus()
 		self.next_puzzle()
 
-	# -- carregar puzzles -----------------------------------------------------
+	# -- loading puzzles -----------------------------------------------------
 
 	def next_puzzle(self):
 		self._finish_attempt(solved=False)
@@ -344,7 +345,7 @@ class PuzzleChessboard(UserDrivenChessboard):
 
 		self.puzzle = next_puzzle
 		self._load_current_puzzle(is_retry=False)
-		# Com este puzzle na mesa, o próximo já vai sendo sorteado.
+		# With this puzzle on the board, the next one is already being drawn.
 		self.session.prefetch_next()
 
 	def retry_current_puzzle(self):
@@ -360,9 +361,10 @@ class PuzzleChessboard(UserDrivenChessboard):
 		self._callback_token += 1
 		self._attempt = AttemptState()
 		if is_retry:
-			# A primeira tentativa deste puzzle já foi gravada (como falha ao
-			# pedir o restart, ou no primeiro lance errado). Repetir com a
-			# solução na cabeça não é medida de nada: nem rating, nem sessão.
+			# The first attempt at this puzzle was already recorded (as a
+			# failure when the restart was requested, or on the first wrong
+			# move). Retrying with the solution already known measures
+			# nothing: not the rating, not the session.
 			self._attempt.is_retry = True
 			self._attempt.recorded = True
 			self._attempt.counted_in_session = True
@@ -448,7 +450,7 @@ class PuzzleChessboard(UserDrivenChessboard):
 		)
 		self._attempt.started_at = time.monotonic()
 
-	# -- lances ---------------------------------------------------------------
+	# -- moves ---------------------------------------------------------------
 
 	def move_piece_and_check_game_status(self, move, pre_speech=(), post_speech=(), auto_solved=False):
 		if self.board.turn != self.prospective:
@@ -519,15 +521,15 @@ class PuzzleChessboard(UserDrivenChessboard):
 		if reply is None or self.board.turn == self.prospective:
 			return
 
-		# A mudança de foco precisa ser ADIADA para a fila de eventos, e não
-		# chamada direto daqui. Chamada direto, ela roda no meio do
-		# processamento da fala: o evento de foco cancela a própria sequência
-		# que estava sendo falada, e a descrição do lance do adversário nunca
-		# sai -- que era o bug. O pgn_player, que toca lances do mesmo jeito e
-		# sempre funcionou, já usava este padrão.
-		# Vai para a casa ONDE A PEÇA PAROU, não para o rei: quem está
-		# resolvendo tática precisa saber onde o adversário jogou, que é de
-		# onde vai calcular. É o mesmo destino que o pgn_player usa.
+		# The focus change must be DEFERRED to the event queue, not called
+		# directly from here. Called directly, it runs in the middle of speech
+		# processing: the focus event cancels the very sequence that was being
+		# spoken, and the description of the opponent's move never comes out --
+		# that was the bug. pgn_player, which plays moves the same way and
+		# always worked, already used this pattern.
+		# Focuses the square WHERE THE PIECE LANDED, not the king: whoever is
+		# solving the tactic needs to know where the opponent played, since
+		# that's what they'll calculate from. It's the same destination pgn_player uses.
 		def focus_callback():
 			queueHandler.queueFunction(queueHandler.eventQueue, self.set_focus_to_cell, reply.to_square)
 
@@ -569,11 +571,11 @@ class PuzzleChessboard(UserDrivenChessboard):
 	# -- rating ---------------------------------------------------------------
 
 	def _solved_rating_speech(self):
-		"""O que dizer de rating quando o puzzle termina resolvido.
+		"""What to say about the rating when the puzzle finishes solved.
 
-		Só a tentativa limpa mexe no rating. Nas outras duas situações a conta
-		já estava fechada antes, e dizer isso é melhor do que repetir o número
-		da derrota logo depois de "Tactic solved".
+		Only a clean attempt affects the rating. In the other two situations the
+		outcome was already settled earlier, and saying so is better than
+		repeating the loss's number right after "Tactic solved".
 		"""
 		if self._attempt.is_retry:
 			return [_("Retry: not rated."), speech.commands.BreakCommand(120)]
@@ -585,11 +587,10 @@ class PuzzleChessboard(UserDrivenChessboard):
 		return self._rating_speech()
 
 	def _rating_speech(self):
-		"""A frase do rating para o anúncio, ou nada quando não há o que dizer.
+		"""The rating sentence for the announcement, or nothing when there's nothing to say.
 
-		Devolve uma lista para ser desempacotada dentro do speak_next: assim,
-		quando não há rating, nada é acrescentado e nenhuma pausa sobra soando
-		como hesitação.
+		Returns a list meant to be unpacked inside speak_next: this way, when
+		there is no rating, nothing is added and no leftover pause sounds like hesitation.
 		"""
 		result = self._last_rating
 		if result is None:
@@ -602,9 +603,9 @@ class PuzzleChessboard(UserDrivenChessboard):
 		else:
 			text = _("Rating {rating}, unchanged.")
 		if result.provisional:
-			# Enquanto o desvio é alto o número ainda é chute, e dizer isso é mais
-			# útil do que anunciar um valor preciso que vai oscilar centenas de
-			# pontos nas próximas tentativas.
+			# While the deviation is high the number is still a guess, and
+			# saying so is more useful than announcing a precise value that
+			# will swing by hundreds of points over the next few attempts.
 			text = _("Provisional ") + text
 		return [
 			text.format(rating=result.rating, delta=abs(delta)),
@@ -617,7 +618,7 @@ class PuzzleChessboard(UserDrivenChessboard):
 		gesture="kb:control+shift+r",
 	)
 	def script_report_rating(self, gesture):
-		"""Fala o rating atual a qualquer momento, sem esperar o fim do puzzle."""
+		"""Speaks the current rating at any time, without waiting for the puzzle to end."""
 		try:
 			summary = self.session.rating()
 		except Exception:
@@ -644,7 +645,7 @@ class PuzzleChessboard(UserDrivenChessboard):
 				_("Rating {rating}, {attempts}.").format(rating=summary.rating, attempts=attempts_text),
 			)
 
-	# -- ações faladas --------------------------------------------------------
+	# -- spoken actions --------------------------------------------------------
 
 	def repeat_current_instruction(self):
 		if self.puzzle is None:
@@ -761,11 +762,11 @@ class PuzzleChessboard(UserDrivenChessboard):
 		speak_next([message])
 
 	def _player_move_progress(self):
-		"""Em que lance do jogador o puzzle está, como (atual, total).
+		"""Which player move the puzzle is on, as (current, total).
 
-		`solution_moves` alterna a partir do jogador: índice par é lance dele,
-		ímpar é a resposta do adversário. O lance que arma a posição não entra
-		na conta -- ele é o `auto_performed_move`, jogado antes de tudo.
+		`solution_moves` alternates starting with the player: an even index is
+		their move, odd is the opponent's reply. The move that sets up the
+		position doesn't count -- it's the `auto_performed_move`, played before anything else.
 		"""
 		assert self.puzzle is not None
 		moves = self.puzzle.solution_moves
@@ -791,11 +792,11 @@ class PuzzleChessboard(UserDrivenChessboard):
 		return " ".join([summary, *details])
 
 	def announce_training_status(self):
-		"""Fala primeiro o que muda, e omite contador zerado.
+		"""Speaks what changes first, and omits counters that are at zero.
 
-		A ordem é deliberada: sessão, puzzle atual, histórico, filtros. Antes o
-		filtro vinha primeiro, e ele é justamente a parte que não muda durante
-		o treino.
+		The order is deliberate: session, current puzzle, history, filters. The
+		filters used to come first, and that's precisely the part that doesn't
+		change during training.
 		"""
 		if self.puzzle is None:
 			ui.message(_("No puzzle loaded."))
@@ -817,13 +818,13 @@ class PuzzleChessboard(UserDrivenChessboard):
 			spoken.append(part)
 		speak_next(spoken)
 
-	# -- fechar a tentativa ---------------------------------------------------
+	# -- closing out the attempt ---------------------------------------------------
 
 	def _finish_attempt(self, solved: bool):
-		"""Fecha a tentativa atual: banco (se ainda não fechou) e sessão.
+		"""Closes out the current attempt: database (if not already closed) and session.
 
-		Um puzzle em que o jogador não fez nada não fecha como nada: nem
-		derrota no banco, nem número na sessão. Ver `AttemptState.touched`.
+		A puzzle the player never touched doesn't close as anything: no loss in
+		the database, no number in the session. See `AttemptState.touched`.
 		"""
 		if self.puzzle is None or not self._attempt.started or not self._attempt.touched:
 			return
@@ -835,7 +836,7 @@ class PuzzleChessboard(UserDrivenChessboard):
 				self._session_status_item.name = self._stats.status_label()
 
 	def _write_attempt(self, solved: bool):
-		"""Grava no banco uma vez por tentativa. Quem chama decide o momento."""
+		"""Writes to the database once per attempt. The caller decides when."""
 		if self.puzzle is None or not self._attempt.started or self._attempt.recorded:
 			return
 		try:
@@ -847,8 +848,8 @@ class PuzzleChessboard(UserDrivenChessboard):
 				elapsed_ms=self._attempt.elapsed_ms(),
 			)
 		except Exception:
-			# Perder o rating de uma tentativa é chato; perder o puzzle
-			# resolvido porque o banco engasgou seria pior.
+			# Losing the rating for one attempt is annoying; losing the solved
+			# puzzle because the database choked would be worse.
 			log.exception("chessmart: falha ao gravar a tentativa")
 			self._last_rating = None
 		self._attempt.recorded = True

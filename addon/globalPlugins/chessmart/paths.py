@@ -4,10 +4,10 @@
 # Copyright (c) 2021 Blind Pandas Team
 # This file is covered by the GNU General Public License.
 
-"""Onde as coisas do add-on estão no disco, e como carregar as bibliotecas embarcadas.
+"""Where the add-on's files live on disk, and how to load the bundled libraries.
 
-Sem NVDA aqui de propósito: é o módulo que qualquer outro pode importar, inclusive
-os testes fora do leitor de tela.
+Deliberately free of NVDA imports: this is the module any other module can import,
+including tests running outside the screen reader.
 """
 
 import contextlib
@@ -22,11 +22,11 @@ SOUNDS_DIRECTORY = os.path.join(PLUGIN_DIRECTORY, "sounds")
 
 @contextlib.contextmanager
 def import_bundled(packages_path=LIB_DIRECTORY):
-	"""Deixa `import chess` (e as outras bibliotecas de lib/) funcionar dentro do bloco.
+	"""Lets `import chess` (and the other libraries under lib/) work inside the block.
 
-	A pasta entra no `sys.path` só enquanto o `with` dura: o módulo importado
-	fica em `sys.modules`, então continua acessível depois, mas o caminho não
-	polui o resto do NVDA.
+	The folder is only added to `sys.path` for the duration of the `with`: the
+	imported module stays in `sys.modules` and remains accessible afterward, but
+	the path itself doesn't pollute the rest of NVDA.
 	"""
 	sys.path.insert(0, packages_path)
 	try:

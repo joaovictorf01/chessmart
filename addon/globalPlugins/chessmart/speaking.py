@@ -4,15 +4,15 @@
 # Copyright (c) 2021 Blind Pandas Team
 # This file is covered by the GNU General Public License.
 
-"""Falar pelo NVDA: a fila de fala do add-on e um ajudante para montar sequências."""
+"""Speaking through NVDA: the add-on's speech queue and a helper for building sequences."""
 
 import speech
 
 
 def intersperse(lst, item) -> speech.SpeechSequence:
-	"""Põe `item` entre cada dois elementos: [a, b, c] -> [a, item, b, item, c].
+	"""Puts `item` between every two elements: [a, b, c] -> [a, item, b, item, c].
 
-	Serve para colocar uma pausa (BreakCommand) entre as partes de um anúncio.
+	Used to place a pause (BreakCommand) between the parts of an announcement.
 	Taken from: https://stackoverflow.com/a/5921708
 	"""
 	result = [item] * (len(lst) * 2 - 1)
@@ -21,5 +21,5 @@ def intersperse(lst, item) -> speech.SpeechSequence:
 
 
 def speak_next(speech_sequence: speech.SpeechSequence, priority=speech.priorities.Spri.NEXT) -> None:
-	"""Fala depois do que já está na fila, sem interromper o que o NVDA está dizendo."""
+	"""Speaks after what's already queued, without interrupting what NVDA is currently saying."""
 	speech.speak(speech_sequence, priority=priority)

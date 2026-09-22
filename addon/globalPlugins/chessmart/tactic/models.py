@@ -1,11 +1,11 @@
 # coding: utf-8
 # pyright: basic
 
-"""Os valores que circulam entre o banco de puzzles e o resto do add-on.
+"""The values that flow between the puzzle database and the rest of the add-on.
 
-Tudo aqui é dado puro: nada de NVDA, nada de sqlite. É o contrato que
-`store.py` cumpre e que a camada de cima consome pelo nome do campo, em vez de
-por chave de dicionário.
+Everything here is plain data: no NVDA, no sqlite. It is the contract that
+`store.py` fulfills and that the layer above consumes by field name, instead
+of by dictionary key.
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ class Puzzle:
 
 @dataclass(frozen=True)
 class PuzzleFilters:
-	"""O que restringe um sorteio. Campo em None (ou vazio) não entra na consulta."""
+	"""What constrains a random draw. A field left as None (or empty) is left out of the query."""
 
 	min_rating: int | None = None
 	max_rating: int | None = None
@@ -42,7 +42,7 @@ class PuzzleFilters:
 
 @dataclass(frozen=True)
 class AttemptResult:
-	"""O que uma tentativa gravada mudou no rating do jogador."""
+	"""What a recorded attempt changed in the player's rating."""
 
 	attempt_id: int
 	rating_before: int
@@ -55,13 +55,13 @@ class AttemptResult:
 
 	@property
 	def provisional(self) -> bool:
-		"""Enquanto o desvio é grande o número ainda é chute, e vale dizer isso a quem ouve."""
+		"""While the deviation is large the number is still a guess, and that's worth telling the listener."""
 		return self.deviation > PROVISIONAL_DEVIATION
 
 
 @dataclass(frozen=True)
 class RatingSummary:
-	"""O rating atual, com a faixa de confiança e quantas tentativas o formaram."""
+	"""The current rating, with its confidence interval and how many attempts shaped it."""
 
 	rating: int
 	deviation: float
@@ -77,7 +77,7 @@ class RatingSummary:
 
 @dataclass(frozen=True)
 class AttemptStats:
-	"""Totais do histórico inteiro do jogador."""
+	"""Totals across the player's whole history."""
 
 	total: int = 0
 	solved: int = 0

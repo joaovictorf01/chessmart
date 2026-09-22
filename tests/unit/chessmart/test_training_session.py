@@ -1,10 +1,10 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
 
-"""A sessão de treino: sorteio sem repetir, puzzle por id, pré-sorteio e descrição.
+"""The training session: draw without repeats, puzzle by id, prefetch and description.
 
-Usa o mesmo banco pequeno de `test_store` e um histórico em pasta temporária.
-`chess` vem de `lib/` pelo `import_bundled`, como no add-on.
+Uses the same small database from `test_store` and a history in a temporary
+directory. `chess` comes from `lib/` via `import_bundled`, as in the add-on.
 """
 
 import os
@@ -29,8 +29,8 @@ class TrainingSessionTestCase(unittest.TestCase):
 		connection.executemany(
 			"INSERT INTO puzzles VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 			[
-				# Posição real, para os lances virarem chess.Move sem erro:
-				# 1.e4 e5 2.Nf3 é o lance automático mais dois da solução.
+				# A real position, so the moves become chess.Move without error:
+				# 1.e4 e5 2.Nf3 is the auto-performed move plus two of the solution.
 				(
 					puzzle_id,
 					"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
@@ -72,7 +72,7 @@ class TestDrawing(TrainingSessionTestCase):
 		served = []
 		while (puzzle := session.next_puzzle()) is not None:
 			served.append(puzzle.puzzle_id)
-		# Nível "hard" é rating 1600 ou mais, sem filtro de popularidade.
+		# The "hard" level is rating 1600 or above, with no popularity filter.
 		self.assertEqual(sorted(served), ["hard1", "hard2"])
 
 	def test_puzzle_info_has_the_moves_split(self):
@@ -106,7 +106,7 @@ class TestDrawing(TrainingSessionTestCase):
 		os.environ.pop("CHESSMART_PUZZLES_DB_PATH", None)
 		session = self.session(db_path=str(Path(self.tmp.name) / "nope.db"))
 		if session.repository is not None:
-			self.skipTest("há um banco padrão instalado nesta máquina")
+			self.skipTest("a default database is installed on this machine")
 		with self.assertRaises(FileNotFoundError):
 			session.ensure_ready()
 
@@ -119,7 +119,7 @@ class TestDrawing(TrainingSessionTestCase):
 		first = session.next_puzzle()
 		session.prefetch_next()
 		second = session.next_puzzle()
-		# Só há um "fork" entre 900 e 1500 com popularidade 50: o easy2 (1000, 80).
+		# Only one "fork" between 900 and 1500 with popularity 50: easy2 (1000, 80).
 		self.assertEqual(first.puzzle_id, "easy2")
 		self.assertIsNone(second)
 

@@ -66,7 +66,7 @@ class GameAnnouncer(abc.ABC):
 
 
 def spoken_piece_name(piece_type: chess.PieceType) -> str:
-	"""O nome da peça no idioma do NVDA. Resolvido a cada chamada, como o resto."""
+	"""The piece name in NVDA's language. Resolved on every call, like the rest."""
 	return {
 		# Translators: Name of the chess piece.
 		chess.PAWN: _("pawn"),

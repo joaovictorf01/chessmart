@@ -1,19 +1,18 @@
 # coding: utf-8
 # pyright: basic
 
-"""Nome e descrição de cada tema de puzzle do Lichess, traduzíveis.
+"""Translatable name and description for each Lichess puzzle theme.
 
-Os slugs vêm da base de puzzles (`mateIn1`, `attackingF2F7`, `superGM`...).
-Quebrar o slug por maiúscula, como se fazia antes, dava "Mate In1", "Attacking
-F2 F7" e "Super G M": nem inglês nem português. Aqui cada slug tem um nome que
-uma pessoa diria e uma frase que explica o motivo tático, e os dois passam pela
-tradução.
+Slugs come from the puzzle database (`mateIn1`, `attackingF2F7`, `superGM`...).
+Splitting the slug on capital letters, as before, gave "Mate In1", "Attacking
+F2 F7" and "Super G M" -- not really readable. Here each slug has a name a
+person would actually say and a sentence explaining the tactical idea, both
+translatable.
 
-Os textos são nossos; a licença do Lichess (AGPL) não permitiria copiar os dele
-para um projeto GPLv2.
-
-Um slug que não estiver aqui (tema novo no Lichess) cai em `humanize_theme_slug`,
-para o add-on não quebrar; o nome sai feio, mas sai.
+The text is original, since Lichess's AGPL license wouldn't allow reusing
+theirs in this GPLv2 project. An unlisted slug (a theme new to Lichess) falls
+back to `humanize_theme_slug` so the add-on doesn't break, even if the name
+comes out ugly.
 """
 
 from __future__ import annotations
@@ -24,8 +23,8 @@ from .i18n import N_, _
 
 _CAMEL_CASE_PATTERN = re.compile(r"(?<!^)(?=[A-Z])")
 
-# slug -> (nome, descrição). Os nomes aparecem em listas e resumos; as
-# descrições, na dica do puzzle e no seletor de temas.
+# slug -> (name, description). Names appear in lists and summaries;
+# descriptions appear in the puzzle hint and the theme picker.
 THEME_TEXTS: dict[str, tuple[str, str]] = {
 	# Translators: Name of a puzzle theme.
 	"advancedPawn": (N_("Advanced pawn"), N_("A pawn deep in enemy territory, often about to promote.")),
@@ -289,7 +288,7 @@ THEME_TEXTS: dict[str, tuple[str, str]] = {
 
 
 def humanize_theme_slug(slug: str) -> str:
-	"""Reserva para slug desconhecido: quebra por maiúscula e capitaliza ("someNewTheme" -> "Some New Theme")."""
+	"""Fallback for an unknown slug: splits on capital letters and capitalizes ("someNewTheme" -> "Some New Theme")."""
 	humanized = _CAMEL_CASE_PATTERN.sub(" ", slug).replace("_", " ").strip()
 	return humanized[:1].upper() + humanized[1:] if humanized else slug
 

@@ -1,12 +1,13 @@
 # coding: utf-8
 # pyright: basic
-"""Diálogo de download e atualização do banco de puzzles.
+"""Puzzle database download and update dialog.
 
-Abre, consulta o manifesto da release em segundo plano e mostra o que está
-instalado contra o que está publicado. O usuário escolhe o nível (leve ou
-completo) e o download corre numa thread, com progresso na barra e anúncios
-de fala a cada dez por cento. O NVDA continua livre o tempo todo; Escape ou
-o botão Cancelar interrompem sem deixar arquivo pela metade.
+Opens, fetches the release manifest in the background, and shows what is
+installed against what is published. The user picks the tier (light or
+full) and the download runs on a thread, with progress on the gauge and
+speech announcements every ten percent. NVDA stays responsive throughout;
+Escape or the Cancel button interrupt without leaving a half-downloaded
+file behind.
 """
 
 from __future__ import annotations
@@ -25,8 +26,8 @@ from ..i18n import _
 from ..tactic import download as puzzle_download
 from ..tactic.db import ADDON_DATA_DIRECTORY, PUZZLES_DB_NAME
 
-# Ordem em que os níveis aparecem; o leve primeiro porque é a escolha certa
-# para quem está instalando pela primeira vez.
+# Order in which the tiers appear; light comes first because it's the right
+# choice for someone installing for the first time.
 TIER_ORDER = ("light", "full")
 TIER_LABELS = {
 	# Translators: Name of the smaller puzzle database.
@@ -61,7 +62,7 @@ class PuzzleDownloadDialog(wx.Dialog):
 		self._build()
 		self._start_manifest_fetch()
 
-	# -- construção -----------------------------------------------------------
+	# -- build -----------------------------------------------------------
 
 	def _build(self):
 		sizer = wx.BoxSizer(wx.VERTICAL)
@@ -134,7 +135,7 @@ class PuzzleDownloadDialog(wx.Dialog):
 			when=when,
 		)
 
-	# -- manifesto ------------------------------------------------------------
+	# -- manifest ------------------------------------------------------------
 
 	def _start_manifest_fetch(self):
 		def work():
@@ -151,8 +152,9 @@ class PuzzleDownloadDialog(wx.Dialog):
 	def _manifest_failed(self, reason: str = ""):
 		if not self:
 			return
-		# O motivo vai na própria mensagem: quem reporta "não deu" raramente
-		# abre o log, e é o motivo que diz se foi rede, proxy ou certificado.
+		# The reason goes right into the message: someone reporting "it didn't
+		# work" rarely opens the log, and the reason is what tells whether it
+		# was the network, a proxy, or a certificate.
 		self.statusText.SetLabel(
 			# Translators: Shown when the list of available puzzle databases could not be downloaded; {reason} is the technical error.
 			_(
@@ -161,8 +163,9 @@ class PuzzleDownloadDialog(wx.Dialog):
 				reason=reason or _("unknown"),
 			),
 		)
-		# O botão vira "Tentar de novo": sem isso o usuário fica num diálogo
-		# em que nada está habilitado e conclui que não há o que baixar.
+		# The button becomes "Try again": without it the user is left with a
+		# dialog where nothing is enabled and concludes there's nothing to
+		# download.
 		# Translators: Label of the download button after the list of databases could not be fetched.
 		self.downloadButton.SetLabel(_("&Try again"))
 		self.downloadButton.Enable()
@@ -229,7 +232,7 @@ class PuzzleDownloadDialog(wx.Dialog):
 
 	def onDownload(self, event):
 		if self.manifest is None:
-			# "Tentar de novo" depois de uma falha na lista.
+			# "Try again" after a failure to fetch the list.
 			self.downloadButton.Disable()
 			self.statusText.SetLabel(
 				# Translators: Status while the list of databases is fetched again.
@@ -307,13 +310,13 @@ class PuzzleDownloadDialog(wx.Dialog):
 		ui.message(message)
 
 	def _rebuild_theme_catalog(self):
-		# Feito aqui, ainda na thread, para a primeira abertura da tática não
-		# ter que varrer o banco inteiro com o NVDA parado.
+		# Done here, still on the thread, so the first time tactics open
+		# doesn't have to scan the whole database with NVDA frozen.
 		try:
 			from ..theme_catalog import rebuild_theme_catalog
 
 			rebuild_theme_catalog(self.target_path)
-		except Exception as error:  # cache é conveniência; a tática abre sem ele
+		except Exception as error:  # the cache is a convenience; tactics still open without it
 			log.warning("chessmart: theme catalog rebuild after download failed: %s", error)
 
 	def _finished_ok(self, info):

@@ -146,7 +146,7 @@ class ChessboardMenu(wx.Menu):
 		self.open_training_session(session)
 
 	def _ensure_puzzle_database(self) -> bool:
-		"""Sem banco de puzzles, oferece o download antes de seguir."""
+		"""Without a puzzle database, offer the download before proceeding."""
 		if default_training_options().db_path:
 			return True
 		answer = gui.messageBox(
@@ -167,7 +167,7 @@ class ChessboardMenu(wx.Menu):
 		return result == wx.ID_OK
 
 	def onRandomPuzzle(self, event):
-		"""Uma sessão com as opções guardadas na configuração, sem passar pelo diálogo."""
+		"""A session using the options saved in the configuration, without going through the dialog."""
 		if not self._ensure_puzzle_database():
 			return
 		session = TrainingSession(default_training_options())
@@ -194,7 +194,7 @@ class ChessboardMenu(wx.Menu):
 		gui.runScriptModalDialog(dialog)
 
 	def open_endgame(self, lesson: EndgameLesson, index: int, time_control: ChessTimeControl):
-		"""Abre o que o diálogo escolheu: um treino de mate ou uma posição da lição."""
+		"""Opens what the dialog chose: a mate drill or a lesson position."""
 		if lesson.drill is not None:
 			fen = (
 				opening_fen(lesson.drill)
@@ -206,7 +206,7 @@ class ChessboardMenu(wx.Menu):
 			self.open_endgame_lesson(lesson, index)
 
 	def _drill_position_is_won(self, board) -> bool:
-		"""A tablebase diz que as Brancas ganham? Sem tablebase, ninguém diz, e o sorteio fica nos exemplos."""
+		"""Does the tablebase say White wins? Without a tablebase, nobody can say, and the draw falls back to the examples."""
 		from .endgame import judge, tablebase
 
 		try:
@@ -217,12 +217,13 @@ class ChessboardMenu(wx.Menu):
 		return verdict is not None and verdict.wdl > 0
 
 	def open_endgame_drill(self, lesson: EndgameLesson, time_control: ChessTimeControl, fen: str):
-		"""O treino de mate contra a engine, na força máxima.
+		"""The mate drill against the engine, at maximum strength.
 
-		O tabuleiro recebe como `new_position_callback` esta mesma função com
-		uma posição sorteada e um relógio novo: Control+N fecha o tabuleiro e
-		volta aqui. O relógio é recriado porque o `ChessTimeControl` guarda
-		os relógios já usados; sem relógio, o nulo serve de novo.
+		The board receives this same function as `new_position_callback`, with
+		a newly drawn position and a new clock: Control+N closes the board and
+		comes back here. The clock is recreated because `ChessTimeControl`
+		keeps track of the clocks already used; with no clock, the null one
+		serves again.
 		"""
 		drill = lesson.drill
 		assert drill is not None
@@ -238,7 +239,7 @@ class ChessboardMenu(wx.Menu):
 			vboard_kwargs=dict(
 				drill=drill,
 				lesson_id=lesson.lesson_id,
-				# Força máxima: a defesa perfeita é o que faz a técnica valer.
+				# Maximum strength: perfect defense is what makes the technique worth learning.
 				uci_options={},
 				uci_time_limit=0.5,
 				new_position_callback=functools.partial(
@@ -252,7 +253,7 @@ class ChessboardMenu(wx.Menu):
 		self.global_plugin_object.initialize_and_show_chessboard_dialog(EndgameDrillChessboard, game_info)
 
 	def open_endgame_lesson(self, lesson: EndgameLesson, index: int):
-		"""Uma posição da lição, sem relógio; Control+N abre a seguinte, Control+R a mesma."""
+		"""A lesson position, with no clock; Control+N opens the next one, Control+R repeats this one."""
 		position = lesson.positions[index]
 		next_callback = None
 		if index + 1 < len(lesson.positions):
@@ -370,10 +371,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			ensure_config_spec()
 			self.chessboard_menu = ChessboardMenu(self)
 
-	# -- atalhos ----------------------------------------------------------------
-	# O menu fica em NVDA > Ferramentas > Chessmart; quem treina todo dia não
-	# quer três níveis de menu. Só Táticas tem tecla de fábrica; as outras o
-	# usuário liga em Definir gestos, na categoria Chessmart.
+	# -- shortcuts ----------------------------------------------------------------
+	# The menu lives under NVDA > Tools > Chessmart; daily training shouldn't
+	# require three levels of menu. Only Tactics has a default key; the
+	# others the user enables in Input Gestures, under the Chessmart category.
 
 	def _menu_action(self, handler_name: str):
 		menu = getattr(self, "chessboard_menu", None)
@@ -438,7 +439,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		winUser.setForegroundWindow(chessboard_dialog.GetHandle())
 
 	def _forget_board_dialog(self, dialog):
-		"""Chamado quando a janela fecha: sem isto cada partida ficava na lista para sempre."""
+		"""Called when the window closes: without this, every game would stay in the list forever."""
 		self._active_board_dialogs.pop(dialog.GetHandle(), None)
 
 	def event_gainFocus(self, obj, nextHandler):

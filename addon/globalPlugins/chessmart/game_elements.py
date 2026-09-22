@@ -18,11 +18,11 @@ with import_bundled():
 
 @dataclasses.dataclass
 class GameInfo:
-	"""O que se sabe de uma partida antes de o tabuleiro existir.
+	"""What's known about a game before the chessboard exists.
 
-	`pychess_board`, `variant` e `prospective` são None quando o modo decide
-	sozinho: o replay de PGN traz a posição do arquivo, e o treino de táticas
-	não tem lado até o puzzle carregar.
+	`pychess_board`, `variant` and `prospective` are None when the mode decides
+	on its own: PGN replay brings the position from the file, and the tactics
+	trainer has no side until the puzzle loads.
 	"""
 
 	pychess_board: typing.Optional[chess.BaseBoard]

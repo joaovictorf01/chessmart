@@ -50,7 +50,7 @@ with import_bundled():
 
 
 class Color(enum.Enum):
-	"""Cores do destaque desenhado no tabuleiro (a seta sobre a casa focada)."""
+	"""Colors for the highlight drawn on the board (the arrow over the focused square)."""
 
 	Red = "#96D454"
 	Blue = "#0000FF"
@@ -62,12 +62,12 @@ class Color(enum.Enum):
 
 @dataclasses.dataclass(frozen=True)
 class PlayedMove:
-	"""Tudo o que se precisa saber de um lance para descrevê-lo em voz alta.
+	"""Everything needed to describe a move out loud.
 
-	Capturado ANTES de o lance entrar no tabuleiro, porque depois dele a
-	posição já é outra: a peça capturada sumiu, o SAN não se calcula mais
-	(a desambiguação de "Ngf3" depende das peças que podiam ir à mesma casa) e
-	o roque já moveu a torre.
+	Captured BEFORE the move is applied to the board, because afterwards the
+	position has changed: the captured piece is gone, SAN can no longer be
+	computed (disambiguating "Ngf3" depends on which pieces could reach the
+	same square), and castling has already moved the rook.
 	"""
 
 	move: chess.Move
@@ -84,7 +84,7 @@ class PlayedMove:
 		is_castling = board.is_castling(move)
 		is_en_passant = board.is_en_passant(move)
 		if is_en_passant:
-			# O peão capturado não está na casa de destino, e sim atrás dela.
+			# The captured pawn is not on the destination square, but behind it.
 			captured = board.piece_at(move.to_square - 8)
 		else:
 			captured = board.piece_at(move.to_square)
@@ -105,7 +105,7 @@ class PlayedMove:
 
 	@property
 	def sound(self) -> GameSound:
-		"""O som que anuncia o tipo do lance."""
+		"""The sound that announces the type of move."""
 		if self.move.promotion is not None:
 			return GameSound.promotion
 		if self.is_castling:
@@ -119,8 +119,8 @@ class PlayedMove:
 
 class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 	role = controlTypes.Role.TABLECELL
-	# O NVDA declara `parent` como Optional[NVDAObject], preenchido por `_get_parent`.
-	# Uma casa pertence sempre ao tabuleiro que a criou; o tipo aqui diz isso.
+	# NVDA declares `parent` as Optional[NVDAObject], populated by `_get_parent`.
+	# A square always belongs to the board that created it; the type here reflects that.
 	parent: "BaseVirtualChessboard"
 	PIECE_LETTERS = {
 		"r": chess.ROOK,
@@ -351,10 +351,11 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 
 
 class LeaveGameMenu(MenuObject):
-	"""A pergunta que o Escape faz antes de fechar um jogo em andamento.
+	"""The confirmation Escape triggers before closing a game in progress.
 
-	Duas opções, e a primeira é ficar: um Escape a mais (dentro do menu) volta
-	ao tabuleiro em vez de sair. Sair exige escolher "Yes" de propósito.
+	Two options, with staying listed first: pressing Escape again (inside the
+	menu) returns to the board instead of leaving. Leaving requires
+	deliberately choosing "Yes".
 	"""
 
 	def __init__(self, choice_callback, *args, **kwargs):
@@ -448,14 +449,14 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 	def game_over(self, dialog_title=None):
 		was_over = self.is_game_over
 		self.is_game_over = True
-		# Fechar a janela de um jogo já terminado passa por aqui de novo, e a
-		# janela pode já ter sido destruída pelo wx: um objeto wx apagado é falso.
+		# Closing the window of an already-finished game runs through here again,
+		# and the window may already have been destroyed by wx: a deleted wx object is falsy.
 		if self.dialog:
 			# Translators: Window title when a game has ended.
 			self.dialog.SetTitle(dialog_title or _("Game Over"))
 		eventHandler.queueEvent("stateChange", api.getFocusObject())
-		# Uma vez só: fechar a janela de um jogo já terminado chama isto de
-		# novo, e quem escuta o sinal (a engine, por exemplo) já se despediu.
+		# Only once: closing the window of an already-finished game calls this
+		# again, and whoever listens to the signal (the engine, for instance) has already detached.
 		if not was_over:
 			game_over_signal.send(self, board_outcome=self.board.outcome())
 
@@ -573,24 +574,22 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 					],
 				)
 		spoken_commands.append(post_speech)
-		# O list() aqui não é estilo, é o conserto: itertools.chain devolve um
-		# ITERADOR preguiçoso, e a fala do NVDA espera uma sequência de
-		# verdade. Recebendo o iterador, o NVDA o percorre uma vez ao inspecionar
-		# a sequência e depois não sobra nada para falar -- o lance ia para o
-		# tabuleiro e o anúncio simplesmente desaparecia, sem erro nenhum.
-		# Medido com o log de io do NVDA: a sequência tinha 15 itens e 7 textos,
-		# e mesmo assim não havia registro de "Speaking".
+		# list() here isn't a style choice, it's the fix: itertools.chain returns a
+		# lazy ITERATOR, and NVDA's speech expects an actual sequence. Given an
+		# iterator, NVDA consumes it once while inspecting the sequence, leaving
+		# nothing left to speak -- the move would land on the board and the
+		# announcement would simply vanish, with no error raised.
 		speak_next(list(itertools.chain(*spoken_commands)))
 		self.dialog.set_board_image(lastmove=move)
 		move_completed_signal.send(self, move=move, move_maker=move_maker)
 
 	def _describe_move(self, played: PlayedMove):
-		"""A sequência falada de um lance já jogado: som do tipo do lance e o texto."""
+		"""The spoken sequence for an already-played move: the move-type sound followed by the text."""
 		move = played.move
 		style = get_move_notation()
 		if style != DESCRIPTIVE and played.san:
-			# Estilo curto (SAN, UCI, anna...): o som do tipo de lance continua,
-			# e o texto vem de uma só vez, como o Lichess fala.
+			# Short style (SAN, UCI, anna...): the move-type sound still plays,
+			# and the text comes as a single chunk, the way Lichess announces it.
 			yield speech.commands.WaveFileCommand(played.sound.filename)
 			yield speech.commands.BreakCommand(150)
 			yield render_san(played.san, move.uci(), style)
@@ -611,7 +610,7 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 				speech.commands.BreakCommand(200),
 			)
 			return
-		# Depois do push a peça movida está na casa de destino (já promovida, se for o caso).
+		# After the push, the moved piece is on the destination square (already promoted, if applicable).
 		moved_piece = self.board.piece_at(move.to_square)
 		assert moved_piece is not None, "a legal move always leaves a piece on its destination"
 		if move.drop:
@@ -656,7 +655,7 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 		speech.speakObject(api.getFocusObject(), controlTypes.OutputReason.FOCUS)
 
 	def spoken_square_name(self, square):
-		"""A casa como ela é falada: "f3", ou "felix 3" / "foxtrot 3" nesses estilos."""
+		"""The square as it is spoken: "f3", or "felix 3" / "foxtrot 3" in those styles."""
 		return render_square(self.game_announcer.square_name(square), get_move_notation())
 
 	def get_piece_name_at_square(self, index):
@@ -717,8 +716,8 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 			spoken_commands.append(speech.commands.BreakCommand(350))
 		speak_next(spoken_commands)
 
-	# Valores classicos. Bispo e cavalo valem o mesmo de proposito: contar os
-	# dois juntos e o que evita se perder quando houve troca de um pelo outro.
+	# Classic values. Bishop and knight are intentionally worth the same:
+	# counting them together avoids getting lost when one was traded for the other.
 	MATERIAL_VALUES = {
 		chess.QUEEN: 9,
 		chess.ROOK: 5,
@@ -728,10 +727,10 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 	}
 
 	def announce_material(self):
-		"""Conta o material pela foto do tabuleiro, tipo a tipo, e da o saldo.
+		"""Counts material from a snapshot of the board, type by type, and gives the balance.
 
-		Nada de historico de trocas: e o que esta no tabuleiro agora, do ponto
-		de vista de quem joga neste tabuleiro (brancas quando nao ha lado).
+		No trade history: it's what's on the board right now, from the
+		perspective of whoever plays on this board (white when no side is set).
 		"""
 		me = self.prospective if self.prospective is not None else chess.WHITE
 		them = not me
@@ -825,19 +824,19 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 			return self.notify_invalid_navigation()
 		self.set_focus_to_cell(prev_index)
 
-	# -- sair do tabuleiro ----------------------------------------------------
+	# -- leaving the board ----------------------------------------------------
 
 	def leave_prompt(self):
-		"""A pergunta a fazer antes de sair, ou None para sair sem perguntar.
+		"""The confirmation to show before leaving, or None to leave without asking.
 
-		Cada modo diz o que se perde: a partida contra a engine, a partida
-		online, o puzzle em andamento. O replay de PGN não perde nada e não
-		pergunta. Com o jogo terminado ninguém pergunta.
+		Each mode states what would be lost: the game against the engine, the
+		online game, the puzzle in progress. PGN replay loses nothing and never
+		asks. With the game already over, nothing asks either.
 		"""
 		return None
 
 	def request_leave(self):
-		"""Escape no tabuleiro: pergunta se houver o que perder, senão sai."""
+		"""Escape on the board: asks if there's something to lose, otherwise leaves."""
 		prompt = None if self.is_game_over else self.leave_prompt()
 		if prompt is None:
 			self.leave_game()
@@ -855,17 +854,17 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 			eventHandler.queueEvent("gainFocus", self)
 
 	def leave_game(self):
-		"""Sai de vez. Modos com adversário do outro lado avisam antes (ver subclasses)."""
+		"""Leaves for good. Modes with an opponent on the other end warn first (see subclasses)."""
 		self.hide_board_gui()
 
 	def hide_board_gui(self):
-		"""Fecha a janela do tabuleiro de verdade.
+		"""Actually closes the board window.
 
-		Era `Hide()`: a janela sumia, mas o `onClose` do diálogo nunca rodava,
-		então o timer seguia batendo, a engine continuava viva e o diálogo ficava
-		para sempre na lista de janelas ativas do plugin. `Close()` passa pelo
-		`onClose`, que para o timer, dispara o sinal de fechamento (e com ele o
-		fim do jogo) e destrói a janela.
+		Used to be `Hide()`: the window disappeared, but the dialog's `onClose`
+		never ran, so the timer kept ticking, the engine stayed alive, and the
+		dialog remained forever in the plugin's list of active windows. `Close()`
+		goes through `onClose`, which stops the timer, fires the close signal
+		(and with it, the end of the game), and destroys the window.
 		"""
 		eventHandler.queueEvent("gainFocus", self.parent)
 		self.dialog.Close()

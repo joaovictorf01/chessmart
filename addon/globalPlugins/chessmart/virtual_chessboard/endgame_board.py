@@ -1,23 +1,17 @@
 # coding: utf-8
 # pyright: basic
 
-"""Tabuleiros dos finais: o treino de mate e a lição, os dois com o juiz por tablebase.
+"""Endgame boards: the mate drill and the lesson, both judged via tablebase.
 
-`TablebaseJudgeMixin` é o que os dois têm em comum: depois de cada lance do
-jogador a tabela diz se o resultado mudou de mão; Control+T fala o veredito
-da posição, Control+Shift+T o lance que mantém o resultado. Sem tabelas
-instaladas o juiz fica calado e as teclas dizem por quê.
+`TablebaseJudgeMixin`, shared by both, reports after each player move
+whether the tablebase result changed hands (Control+T for the verdict,
+Control+Shift+T for the move that keeps it); without tablebases installed
+it stays silent and says why.
 
-`EndgameDrillChessboard` é uma partida contra a engine com meta: quantos
-lances o mate levou, se coube na meta, afogamento pelo nome.
-
-`EndgameLessonChessboard` é a lição: monta a posição, pergunta "ganha,
-empata ou perde?", diz se acertou e fala a regra, e então põe o jogador para
-jogar a posição contra a engine até manter o resultado, com Backspace para
-voltar um lance. Tudo o que acontece vai para o registro (`endgame.log`).
-
-A engine joga sempre na força máxima: quem defende com rei nu não precisa
-de handicap, e a defesa perfeita é o que faz a técnica valer.
+Drills chase a move-count goal against the engine; lessons ask "win, draw or
+loss?" first, then have the player hold that answer against the engine
+(Backspace to undo). The engine always plays at full strength, since perfect
+defense is what makes the technique matter. Attempts are recorded to `endgame.log`.
 """
 
 import time
@@ -62,18 +56,18 @@ with import_bundled():
 
 
 def spoken_move(board: chess.Board, move: chess.Move) -> str:
-	"""O lance na notação que o usuário escolheu nas configurações."""
+	"""The move in the notation the user chose in the settings."""
 	return render_san(board.san(move), move.uci(), get_move_notation())
 
 
-# ---------------------------------------------------------------- juiz
+# ---------------------------------------------------------------- judge
 
 
 class TablebaseJudgeMixin:
-	"""Consulta a tabela a cada lance do jogador e nas teclas de veredito.
+	"""Queries the tablebase after each player move and on the verdict keys.
 
-	Combinado com `UserEngineChessboard`: usa `board`, `prospective`,
-	`game_announcer` e `move_piece_and_check_game_status` de lá.
+	Combined with `UserEngineChessboard`: it uses `board`, `prospective`,
+	`game_announcer` and `move_piece_and_check_game_status` from there.
 	"""
 
 	board: chess.Board
@@ -108,7 +102,7 @@ class TablebaseJudgeMixin:
 		self.set_focus_to_cell(self._focused_cell)  # pyright: ignore[reportAttributeAccessIssue]
 
 	def _from_actions(self, callback):
-		"""Envolve uma ação da barra: volta o foco ao tabuleiro e chama."""
+		"""Wraps an actions-bar action: returns focus to the board, then calls it."""
 
 		def run():
 			self._current_focused_object = None
@@ -119,13 +113,13 @@ class TablebaseJudgeMixin:
 	def open_judge(self):
 		try:
 			self.tablebase = tablebase.open_tablebase()
-		except Exception as error:  # tabela corrompida ou pasta ilegível: o treino segue sem juiz
+		except Exception as error:  # corrupted table or unreadable folder: training continues without a judge
 			nvda_log.warning("chessmart: could not open the tablebases: %s", error)
 			self.tablebase = None
 		self.spoiled_moves = 0
 		self.hints_used = 0
-		# A tabela fecha com a janela, não com o fim do jogo: depois do mate o
-		# veredito e os melhores lances continuam à mão para rever a posição.
+		# The tablebase closes with the window, not with the end of the game:
+		# after checkmate, the verdict and best moves are still available to review the position.
 		chessboard_closed_signal.connect(lambda sender: self.close_judge(), sender=self)
 
 	def close_judge(self):
@@ -137,7 +131,7 @@ class TablebaseJudgeMixin:
 			self.tablebase = None
 
 	def judge_speech(self, move: chess.Move) -> list:
-		"""O que dizer depois do lance `move` do jogador, se a tabela tiver algo a dizer."""
+		"""What to say after the player's `move`, if the tablebase has anything to say."""
 		verdict = judge.judge_move(self.tablebase, self.board, move)
 		if verdict is None:
 			return []
@@ -183,7 +177,7 @@ class TablebaseJudgeMixin:
 
 
 def _record(lesson_id: str, position_id: str, **fields) -> None:
-	"""Grava uma tentativa; o registro é conveniência e nunca derruba o treino."""
+	"""Records an attempt; logging is a convenience and never breaks training."""
 	try:
 		connection = endgame_log.open_log()
 		try:
@@ -194,14 +188,14 @@ def _record(lesson_id: str, position_id: str, **fields) -> None:
 		nvda_log.warning("chessmart: could not record the endgame attempt: %s", error)
 
 
-# ---------------------------------------------------------------- treino de mate
+# ---------------------------------------------------------------- mate drill
 
 
 class EndgameDrillCell(UserDrivenCell):
 	parent: "EndgameDrillChessboard"
 
-	# Os gestos ficam aqui, e não num mixin: o metaclass do NVDA só recolhe
-	# `script_*` do namespace da própria classe (ver baseObject.ScriptableType).
+	# Gestures live here, not in a mixin: NVDA's metaclass only collects
+	# `script_*` from the class's own namespace (see baseObject.ScriptableType).
 
 	@script(gesture="kb:tab")
 	def script_open_actions(self, gesture):
@@ -290,11 +284,11 @@ class EndgameDrillChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		speak_next(spoken)
 
 	def new_position(self):
-		"""Outra posição do mesmo final: fecha este tabuleiro e quem o abriu abre o próximo.
+		"""Another position of the same endgame: closes this board and whoever opened it opens the next one.
 
-		Fechar passa pelo `onClose` do diálogo, que desliga a engine e o
-		relógio; abrir de novo é do menu, que sabe montar a partida. Sem
-		pergunta: recomeçar é o uso normal do treino.
+		Closing goes through the dialog's `onClose`, which shuts down the engine
+		and the clock; reopening is the menu's job, since it knows how to set
+		up the game. No confirmation: restarting is normal training use.
 		"""
 		callback = self.new_position_callback
 		self.hide_board_gui()
@@ -368,11 +362,11 @@ class EndgameDrillChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		)
 
 
-# ---------------------------------------------------------------- lição
+# ---------------------------------------------------------------- lesson
 
 
 class ResultQuestionMenu(MenuObject):
-	"""A pergunta da lição: ganha, empata ou perde, para o lado do jogador."""
+	"""The lesson question: win, draw, or loss, for the player's side."""
 
 	def __init__(self, choice_callback, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -389,7 +383,7 @@ class ResultQuestionMenu(MenuObject):
 			self.choice_callback(self.answers[index])
 
 	def close_menu(self):
-		# Escape não escapa da pergunta: a lição começa por ela.
+		# Escape doesn't escape the question: the lesson starts with it.
 		return
 
 
@@ -472,10 +466,10 @@ class EndgameLessonChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		self.dialog.SetTitle(f"{lesson_label(lesson)}: {position_title(position)}")
 		queueHandler.queueFunction(queueHandler.eventQueue, self._ask)
 
-	# -- a pergunta -----------------------------------------------------------
+	# -- the question -----------------------------------------------------------
 
 	def make_first_move(self):
-		# A engine só joga depois da resposta, e só se o lance for dela.
+		# The engine only plays after the answer, and only if the move is its turn.
 		return
 
 	def _ask(self):
@@ -544,7 +538,7 @@ class EndgameLessonChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 			[position_title(self.position), speech.commands.BreakCommand(150), position_rule(self.position)],
 		)
 
-	# -- jogar ------------------------------------------------------------------
+	# -- playing ------------------------------------------------------------------
 
 	def leave_prompt(self):
 		if not self.playing or self.is_game_over or not self.board.move_stack:
@@ -573,7 +567,7 @@ class EndgameLessonChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		super().move_piece_and_check_game_status(move, pre_speech, list(post_speech) + extra)
 
 	def take_back(self):
-		"""Desfaz o último par de lances (o do jogador e a resposta da engine)."""
+		"""Undoes the last pair of moves (the player's and the engine's reply)."""
 		if not self.playing or self.is_game_over or self.board.turn is not self.prospective:
 			GameSound.invalid.play()
 			return
@@ -662,7 +656,7 @@ class EndgameLessonChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 			hints=self.hints_used,
 		)
 
-	# -- navegar ------------------------------------------------------------------
+	# -- navigation ------------------------------------------------------------------
 
 	def next_position(self):
 		callback = self.next_callback

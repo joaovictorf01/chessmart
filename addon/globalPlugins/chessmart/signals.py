@@ -1,13 +1,13 @@
 # coding: utf-8
 # pyright: basic
 
-"""Sinais entre o tabuleiro, o diálogo e os jogadores (engine, Lichess).
+"""Signals between the chessboard, the dialog and the players (engine, Lichess).
 
-Implementação mínima no estilo do blinker: um `Signal` guarda receptores, cada
-um opcionalmente preso a um `sender`, e `send` chama os que casam. As
-referências aos receptores são fortes: um tabuleiro conecta lambdas e métodos
-próprios e vive enquanto a janela dele viver, e é `disconnect` (ou o fim do
-processo) que os solta.
+Minimal blinker-style implementation: a `Signal` holds receivers, each one
+optionally bound to a `sender`, and `send` calls the ones that match.
+References to receivers are strong: a chessboard connects lambdas and its own
+methods and stays alive as long as its window does; only `disconnect` (or
+process exit) releases them.
 """
 
 _ANY_SENDER = object()

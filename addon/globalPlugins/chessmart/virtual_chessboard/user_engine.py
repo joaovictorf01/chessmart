@@ -62,7 +62,7 @@ class UserEngineChessboard(UserDrivenChessboard):
 		try:
 			self.uci_engine.quit()
 		except chess.engine.EngineError:
-			# Já tinha morrido (erro de engine encerrou a partida): nada a desligar.
+			# Already gone (an engine error ended the game): nothing to shut down.
 			log.debug("chessmart: engine already gone at game over")
 
 	def leave_prompt(self):

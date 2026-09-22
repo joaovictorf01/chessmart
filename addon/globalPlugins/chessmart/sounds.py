@@ -4,7 +4,7 @@
 # Copyright (c) 2021 Blind Pandas Team
 # This file is covered by the GNU General Public License.
 
-"""Os sons do tabuleiro, um por evento, em `sounds/*.wav`."""
+"""The board's sounds, one per event, under `sounds/*.wav`."""
 
 import enum
 import os

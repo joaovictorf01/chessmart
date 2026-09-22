@@ -1,11 +1,11 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
 
-"""O acesso ao banco: sorteio com filtros, gravação de tentativa e rating.
+"""Database access: filtered random draws, attempt logging and rating.
 
-Um banco de puzzles pequeno é criado num diretório temporário com o mesmo
-schema que `tools/build_puzzles.py` gera; o histórico vai para outro arquivo
-no mesmo lugar, para nunca tocar o do usuário.
+A small puzzle database is created in a temporary directory with the same
+schema that `tools/build_puzzles.py` generates; the history goes to another
+file in the same place, so the user's own data is never touched.
 """
 
 import sqlite3
@@ -33,8 +33,8 @@ CREATE TABLE puzzles (
 CREATE INDEX idx_puzzles_rating ON puzzles(rating);
 """
 
-# (id, rating, popularity, temas). O FEN e os lances são os mesmos em todos:
-# o que está em teste é o filtro, não o xadrez.
+# (id, rating, popularity, themes). The FEN and moves are the same for all of them:
+# what's under test is the filter, not the chess.
 PUZZLES = [
 	("easy1", 800, 90, "mateIn1 short"),
 	("easy2", 1000, 80, "fork short hangingPiece"),
@@ -78,7 +78,7 @@ class StoreTestCase(unittest.TestCase):
 		cls.tmp.cleanup()
 
 	def setUp(self):
-		# Histórico novo a cada teste: o rating começa do zero.
+		# Fresh history for each test: the rating starts from scratch.
 		self.history_dir = tempfile.TemporaryDirectory(dir=self.tmp.name)
 		self.repository = PuzzleRepository(self.puzzles_path, Path(self.history_dir.name) / "tactic.db")
 
@@ -104,7 +104,7 @@ class TestPuzzles(StoreTestCase):
 	def test_theme_filter_is_an_or_and_matches_whole_words(self):
 		ids = {self.repository.random_puzzle(PuzzleFilters(theme_slugs=("fork",))).id for _ in range(40)}
 		self.assertEqual(ids, {"easy2", "mid2"})
-		# "long" não pode casar com "veryLong": o LIKE é por palavra inteira.
+		# "long" must not match "veryLong": the LIKE matches whole words only.
 		ids = {self.repository.random_puzzle(PuzzleFilters(theme_slugs=("long",))).id for _ in range(20)}
 		self.assertEqual(ids, {"mid2"})
 		ids = {
@@ -120,9 +120,10 @@ class TestPuzzles(StoreTestCase):
 		self.assertIsNone(self.repository.random_puzzle(PuzzleFilters(min_rating=5000)))
 
 	def test_adaptive_uses_the_player_rating_window(self):
-		# Rating inicial 1500, desvio 350: janela de 1550 +- 700 alcança tudo
-		# menos o extremo... aqui só o hard2 (2300) fica de fora da primeira
-		# janela, mas a exclusão de ids força o alargamento até chegar nele.
+		# Starting rating 1500, deviation 350: a window of 1550 +- 700 reaches
+		# everything except the extreme... here only hard2 (2300) falls outside
+		# the first window, but excluding ids forces the window to widen until
+		# it reaches it.
 		excluded = tuple(puzzle_id for puzzle_id, *_ in PUZZLES if puzzle_id != "hard2")
 		puzzle = self.repository.adaptive_random_puzzle(PuzzleFilters(excluded_ids=excluded))
 		self.assertEqual(puzzle.id, "hard2")

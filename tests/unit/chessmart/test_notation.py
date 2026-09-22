@@ -1,7 +1,7 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
 
-"""A notação falada dos lances, nos estilos do modo cego do Lichess."""
+"""Spoken move notation, in the styles used by Lichess's blind mode."""
 
 import unittest
 

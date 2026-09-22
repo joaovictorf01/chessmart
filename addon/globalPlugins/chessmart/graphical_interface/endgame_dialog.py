@@ -1,13 +1,13 @@
 # coding: utf-8
 # pyright: basic
 
-"""Diálogo de Finais: qual lição, qual posição, e as tabelas.
+"""Endgames dialog: which lesson, which position, and the tables.
 
-A lição 1 são os treinos de mate (posição do Capablanca ou sorteada, relógio
-opcional); as outras são as posições da trilha, cada uma com o que o registro
-diz dela: quantas vezes seguidas o jogador acertou a pergunta e manteve o
-resultado. A regra de cada posição não aparece aqui, de propósito: ela vem
-depois da resposta, no tabuleiro.
+Lesson 1 is the mate drills (Capablanca's position or a random one, with an
+optional clock); the others are the course positions, each annotated with
+what the log says about it: how many times in a row the player got it right
+and held the result. Each position's rule is deliberately left out here --
+it appears after the answer, on the board.
 """
 
 from __future__ import annotations

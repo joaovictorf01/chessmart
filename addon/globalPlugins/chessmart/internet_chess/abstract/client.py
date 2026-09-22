@@ -53,7 +53,7 @@ class InternetChessAPIClient(ABC):
 	def __del__(self):
 		try:
 			self.disconnect()
-		except Exception:  # noqa: BLE001 - destrutor: nada a fazer com o erro
+		except Exception:  # noqa: BLE001 - destructor: nothing to do with the error
 			pass
 
 

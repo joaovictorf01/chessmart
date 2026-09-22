@@ -1,11 +1,11 @@
 # coding: utf-8
 # pyright: basic
 
-"""Finais: treinos de mate, lições com pergunta e regra, e o juiz por tablebase.
+"""Endgames: mate drills, lessons with question-and-rule, and the tablebase judge.
 
-`drills` são os mates elementares contra a engine; `tablebase` baixa e abre
-as tabelas Syzygy; `judge` traduz a consulta à tabela em veredito falado;
-`lessons` é a trilha de ideias (o que empata, o que não empata). Nenhum
-destes módulos importa o NVDA: o tabuleiro e os diálogos ficam em
-`virtual_chessboard` e `graphical_interface`.
+`drills` are the elementary mates against the engine; `tablebase` downloads
+and opens the Syzygy tables; `judge` translates a table lookup into a spoken
+verdict; `lessons` is the trail of ideas (what draws, what doesn't). None of
+these modules import NVDA: the board and dialogs live in `virtual_chessboard`
+and `graphical_interface`.
 """

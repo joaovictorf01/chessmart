@@ -53,11 +53,12 @@ def asyncio_coroutine_to_concurrent_future(func):
 
 
 def call_threaded(func: t.Callable[..., t.Any]) -> t.Callable[..., Future]:
-	"""Roda `func` no pool de threads; a chamada devolve o `Future` do resultado.
+	"""Runs `func` in the thread pool; the call returns the result's `Future`.
 
-	Depois de `terminate()` o pool recusa trabalho novo. Em vez de devolver None
-	-- e estourar em quem faz `.add_done_callback` no retorno --, sai um Future
-	já falho com a exceção, que segue o caminho normal de erro.
+	After `terminate()` the pool refuses new work. Instead of returning None --
+	and blowing up whoever calls `.add_done_callback` on the result --, a Future
+	that has already failed with the exception comes back, following the normal
+	error path.
 	"""
 
 	@wraps(func)

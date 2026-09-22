@@ -1,12 +1,12 @@
 # coding: utf-8
 # pyright: basic
 
-"""Filtro de temas e catálogo de contagens do banco de puzzles.
+"""Theme filter and puzzle-database theme count catalog.
 
-O que é tema (nome, descrição) mora em `theme_names`. Aqui ficam duas coisas:
-o texto do filtro ("fork, pin") e o catálogo, que é a lista dos temas que o
-banco instalado realmente tem, com quantos puzzles cada um -- isso exige varrer
-o banco inteiro, por isso é feito uma vez e guardado em cache.
+What a theme is (name, description) lives in `theme_names`. Two things live
+here: the filter text ("fork, pin") and the catalog, i.e. the list of themes
+the installed database actually has, with how many puzzles each one -- that
+requires scanning the whole database, so it's done once and cached.
 """
 
 from __future__ import annotations
@@ -50,7 +50,7 @@ def format_theme_filter(theme_slugs) -> str:
 
 
 def describe_theme_filter(theme_text: str) -> str:
-	"""Os temas do filtro pelos nomes, em uma linha: "Fork, Pin, Back rank mate"."""
+	"""The filter's themes by name, on one line: "Fork, Pin, Back rank mate"."""
 	return ", ".join(theme_label(slug) for slug in parse_theme_filter(theme_text))
 
 
@@ -135,13 +135,14 @@ def load_theme_catalog(
 	db_path: str | Path | None = None,
 	allow_rebuild: bool = True,
 ) -> tuple[ThemeCatalogEntry, ...]:
-	"""O catálogo de temas do banco, do cache.
+	"""The database's theme catalog, from cache.
 
-	Sem cache, `allow_rebuild=True` varre o banco aqui mesmo -- e isso leva
-	dezenas de segundos na base completa, com quem chamou parado. Só o
-	download faz isso de propósito, na própria thread. Todo o resto passa
-	`allow_rebuild=False` e, se não houver cache, dispara a varredura em
-	segundo plano com `ensure_theme_catalog_async` e segue sem o catálogo.
+	Without a cache, `allow_rebuild=True` scans the database right here -- and
+	that takes tens of seconds on the full database, blocking the caller. Only
+	the download does this on purpose, on its own thread. Everything else
+	passes `allow_rebuild=False` and, if there is no cache, triggers the scan
+	in the background with `ensure_theme_catalog_async` and proceeds without
+	the catalog.
 	"""
 	resolved_db_path = resolve_theme_db_path(db_path)
 	if resolved_db_path is None:
@@ -160,11 +161,11 @@ _REBUILD_IN_PROGRESS: set[str] = set()
 
 
 def ensure_theme_catalog_async(db_path: str | Path | None = None, on_done=None) -> bool:
-	"""Garante que o catálogo existe, sem parar quem chamou.
+	"""Ensures the catalog exists, without blocking the caller.
 
-	Devolve True se o cache já está pronto. Se não está, começa UMA varredura
-	em thread (chamadas repetidas enquanto ela corre não começam outra) e
-	devolve False; `on_done(entries)` é chamado na thread quando terminar.
+	Returns True if the cache is already ready. If not, starts ONE scan in a
+	thread (repeated calls while it's running don't start another) and returns
+	False; `on_done(entries)` is called on that thread when it finishes.
 	"""
 	resolved_db_path = resolve_theme_db_path(db_path)
 	if resolved_db_path is None:

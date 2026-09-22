@@ -1,17 +1,18 @@
 # coding: utf-8
 # pyright: basic
 
-"""Finais elementares contra a engine: dama, torre, dois bispos, bispo e cavalo, e peão contra rei nu.
+"""Elementary endgames against the engine: queen, rook, two bishops, bishop and knight, and pawn against bare king.
 
-O que se treina aqui não é ver, é técnica: levar o rei adversário à borda,
-subir o próprio rei e dar o mate sem afogar, num relógio curto. Cada final
-tem as posições do Capablanca (*Chess Fundamentals*, capítulo 1) como
-exemplo e, para dama e torre, posições sorteadas -- três peças no tabuleiro,
-qualquer uma é ganha, e sortear evita decorar uma só. Rei e peão contra rei
-usa posições fixas, conferidas como ganhas com as Brancas a jogar: aí nem
-toda posição é ganha, e o treino é justamente saber por quê.
+What is being trained here is not calculation, it's technique: drive the
+opposing king to the edge, bring up your own king, and deliver mate without
+stalemating, on a short clock. Each endgame has Capablanca's positions
+(*Chess Fundamentals*, chapter 1) as an example and, for queen and rook,
+randomly generated positions -- with only three pieces on the board, any
+one is won, and randomizing avoids memorizing a single case. King and pawn
+against king uses fixed positions, checked as won with White to move: there,
+not every position is won, and the drill is precisely about knowing why.
 
-Sem NVDA neste módulo, de propósito: é o que os testes importam.
+No NVDA in this module, on purpose: it's what the tests import.
 """
 
 from __future__ import annotations
@@ -33,20 +34,20 @@ class EndgameDrill:
 	drill_id: str
 	label: str
 	description: str
-	# Lances das Brancas em que o mate "deve" sair, segundo o Capablanca.
-	# None quando a meta é só ganhar (rei e peão: primeiro coroar, depois o mate).
+	# White's move count within which mate "should" come, per Capablanca.
+	# None when the goal is just to win (king and pawn: promote first, then mate).
 	target_moves: int | None
-	# Posições de exemplo, com as Brancas a jogar. A primeira é a que abre.
+	# Example positions, with White to move. The first one is the opening position.
 	example_fens: tuple[str, ...]
-	# Peças brancas além do rei, para sortear posições; vazio = só os exemplos.
+	# White pieces besides the king, for randomizing positions; empty = examples only.
 	random_pieces: tuple[chess.PieceType, ...] = ()
-	# Sorteio só com juiz: nem toda posição deste final é ganha (rei e peão),
-	# então a sorteada precisa ser confirmada por quem chama (`accept`), e sem
-	# juiz o treino fica nos exemplos.
+	# Randomizing needs a judge: not every position of this endgame is won
+	# (king and pawn), so the random one needs confirmation from the caller
+	# (`accept`), and without a judge the drill sticks to the examples.
 	needs_judge: bool = False
 
 
-# Os FENs dos exemplos batem com `livros/capablanca/capitulo-01-secao-1.md`.
+# The example FENs match Capablanca, Chess Fundamentals, chapter 1, section 1.
 ENDGAME_DRILLS = (
 	EndgameDrill(
 		drill_id="queenVsKing",
@@ -120,24 +121,24 @@ ENDGAME_DRILLS = (
 			"Promote the pawn and checkmate. The king goes in front of the pawn and takes the opposition; the pawn moves last.",
 		),
 		target_moves=None,
-		# Conferidas com o Stockfish 14 do add-on: todas com mate forçado
-		# para as Brancas a jogar (11, 21, 34 e 63 lances, nesta ordem).
+		# Checked with the add-on's Stockfish 14: all have forced mate
+		# for White to move (11, 21, 34 and 63 moves, in this order).
 		example_fens=(
 			"4k3/8/4K3/4P3/8/8/8/8 w - - 0 1",
 			"8/8/8/2k5/8/3KP3/8/8 w - - 0 1",
 			"8/4k3/8/8/8/8/4PK2/8 w - - 0 1",
 			"8/8/4k3/8/8/4K3/4P3/8 w - - 0 1",
 		),
-		# Com a tablebase instalada, sorteia peão de qualquer coluna, inclusive
-		# de torre, e só aceita posição ganha: o treino é reconhecer e converter.
+		# With the tablebase installed, randomizes a pawn on any file,
+		# including a rook pawn, and only accepts a won position: the
+		# drill is to recognize and convert it.
 		random_pieces=(chess.PAWN,),
 		needs_judge=True,
 	),
 )
 
 DEFAULT_ENDGAME_DRILL_ID = ENDGAME_DRILLS[0].drill_id
-# Um minuto: o final de hoje se perdeu com 19 segundos e a técnica na cabeça
-# leva menos que isso. O usuário muda no diálogo.
+# One minute: enough for a known technique; the user changes it in the dialog.
 DEFAULT_DRILL_TIME_CONTROL = "1+0"
 
 
@@ -157,7 +158,7 @@ def drill_description(drill: EndgameDrill) -> str:
 
 
 def opening_fen(drill: EndgameDrill) -> str:
-	"""A posição que abre o treino: o primeiro exemplo do Capablanca."""
+	"""The position that opens the drill: Capablanca's first example."""
 	return drill.example_fens[0]
 
 
@@ -166,13 +167,14 @@ def random_fen(
 	rng: random.Random | None = None,
 	accept: "typing.Callable[[chess.Board], bool] | None" = None,
 ) -> str:
-	"""Uma posição nova do mesmo final.
+	"""A new position of the same endgame.
 
-	Com peças para sortear, monta rei branco, rei preto e a peça em casas
-	distintas e aceita a posição quando é legal com as Brancas a jogar, a
-	peça não está de graça e o jogo não acabou antes de começar. Um final
-	que `needs_judge` só sorteia com `accept` (a tablebase dizendo que a
-	posição é ganha); sem isso, e sem peças para sortear, escolhe um exemplo.
+	With pieces to randomize, places the white king, black king and the
+	piece on distinct squares, and accepts the position when it is legal
+	with White to move, the piece is not hanging, and the game is not
+	already over. An endgame that `needs_judge` only randomizes with
+	`accept` (the tablebase saying the position is won); without that,
+	and without pieces to randomize, it picks an example.
 	"""
 	rng = rng or random.Random()
 	if not drill.random_pieces or (drill.needs_judge and accept is None):
@@ -196,11 +198,11 @@ def _random_board(pieces: tuple[chess.PieceType, ...], rng: random.Random) -> ch
 
 
 def is_playable_drill_position(board: chess.Board) -> bool:
-	"""Legal, Brancas a jogar, nenhuma peça branca de graça, jogo em aberto."""
+	"""Legal, White to move, no white piece hanging, game not over."""
 	if board.turn is not chess.WHITE or not board.is_valid() or board.is_game_over():
 		return False
-	# Dois bispos da mesma cor não dão mate: a posição sorteada tem que ter
-	# um em casa clara e outro em casa escura.
+	# Two same-colored bishops cannot mate: the randomized position needs
+	# one on a light square and the other on a dark square.
 	bishops = board.pieces(chess.BISHOP, chess.WHITE)
 	if (
 		len(bishops) >= 2
@@ -219,16 +221,17 @@ def is_playable_drill_position(board: chess.Board) -> bool:
 
 
 def white_moves_played(board: chess.Board) -> int:
-	"""Quantos lances as Brancas fizeram desde a posição inicial do treino."""
+	"""How many moves White has made since the drill's starting position."""
 	return (len(board.move_stack) + 1) // 2
 
 
 def drill_result_messages(drill: EndgameDrill, board: chess.Board, seconds_left: float | None) -> list[str]:
-	"""O que dizer quando o treino termina, além do anúncio normal de fim de jogo.
+	"""What to say when the drill ends, beyond the normal end-of-game announcement.
 
-	Mate: quantos lances levou e se coube na meta. Afogamento: o que é, porque
-	é o erro deste final. Empate por outro motivo (repetição, 50 lances, só
-	os reis): a partida não foi ganha. Tempo: quem anuncia é o relógio.
+	Mate: how many moves it took and whether it fit the target. Stalemate:
+	what it is, since it's the mistake to avoid in this endgame. Draw for
+	another reason (repetition, fifty moves, king vs. king only): the game
+	was not won. Time: the clock announces that on its own.
 	"""
 	outcome = board.outcome()
 	if outcome is None:

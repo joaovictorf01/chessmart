@@ -1,15 +1,16 @@
 # coding: utf-8
 # pyright: basic
-"""Notação falada dos lances e das casas.
+"""Spoken notation for moves and squares.
 
-O modelo é o modo cego do Lichess (`ui/nvui`), que deixa escolher como um
-lance é lido: SAN cru, UCI, ou o SAN "por extenso", com a coluna dita como
-letra, no alfabeto da OTAN ou nos nomes da notação anna (anna, bella, cesar...),
-que é a que os jogadores cegos usam à mesa. Aqui só a FALA muda; a entrada
-de lances continua a mesma.
+The model is Lichess's blind mode (`ui/nvui`), which lets the player choose
+how a move is read aloud: raw SAN, UCI, or SAN "spelled out", with the file
+read as a letter, in the NATO alphabet, or in the anna notation names (anna,
+bella, cesar...), which is what blind players use over the board. Only the
+SPEECH changes here; move input stays the same.
 
-`descriptive` é o jeito que o chessmart sempre falou ("white knight from g1
-to f3") e fica como padrão; os outros vêm do `render_san`, portado do Lichess.
+`descriptive` is how chessmart has always spoken moves ("white knight from g1
+to f3") and remains the default; the others come from `render_san`, ported
+from Lichess.
 """
 
 from __future__ import annotations
@@ -23,7 +24,7 @@ LITERATE = "literate"
 NATO = "nato"
 ANNA = "anna"
 
-# Ordem da lista de escolha; a primeira é o padrão.
+# Order of the choice list; the first one is the default.
 NOTATION_STYLES = (
 	# Translators: Move notation style that describes moves in full sentences.
 	(DESCRIPTIVE, _("Descriptive: white knight from g1 to f3")),
@@ -64,7 +65,7 @@ ANNA_FILES = {
 
 
 def _piece_names() -> dict[str, str]:
-	# Função, e não constante, para a tradução ser resolvida na hora de falar.
+	# A function, not a constant, so the translation is resolved at speech time.
 	return {
 		# Translators: Piece name used when reading moves aloud.
 		"P": _("pawn"),
@@ -82,7 +83,7 @@ def _piece_names() -> dict[str, str]:
 
 
 def render_file(file_letter: str, style: str) -> str:
-	"""A coluna (a-h) como ela é dita no estilo: letra, OTAN ou anna."""
+	"""The file (a-h) as spoken in the given style: letter, NATO or anna."""
 	if style == NATO:
 		return NATO_FILES.get(file_letter, file_letter)
 	if style == ANNA:
@@ -91,20 +92,20 @@ def render_file(file_letter: str, style: str) -> str:
 
 
 def render_square(square_name: str, style: str) -> str:
-	"""Uma casa ("f3") dita no estilo. Nos estilos de letra fica como está."""
+	"""A square ("f3") spoken in the given style. In letter styles it stays as-is."""
 	if style in (NATO, ANNA) and len(square_name) == 2:
 		return f"{render_file(square_name[0], style)} {square_name[1]}"
 	return square_name
 
 
 def render_san(san: str, uci: str, style: str) -> str:
-	"""Um lance dito no estilo, a partir do SAN e do UCI dele.
+	"""A move spoken in the given style, from its SAN and UCI.
 
-	Porte de `renderSan` do Lichess (ui/nvui/src/nvui.ts): roque vira
-	"short/long castling"; `san` e `uci` vão crus (sem o `+`/`#`, que é
-	dito por extenso no fim); os demais soletram o SAN trocando a letra da
-	peça pelo nome, `x` por "takes", `=` por "promotion", `@` por "at", e a
-	coluna pela forma do estilo.
+	Port of Lichess's `renderSan` (ui/nvui/src/nvui.ts): castling becomes
+	"short/long castling"; `san` and `uci` are used raw (without `+`/`#`, which
+	are spoken out at the end); the other styles spell out the SAN, replacing
+	the piece letter with its name, `x` with "takes", `=` with "promotion", `@`
+	with "at", and the file with the style's form.
 	"""
 	if not san:
 		return ""
