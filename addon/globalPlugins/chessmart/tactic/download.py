@@ -49,6 +49,8 @@ USER_AGENT = "chessmart-nvda-addon/1.0"
 CHUNK = 256 * 1024
 
 ProgressCallback = Callable[[int, int], None]
+RetryCallback = Callable[[str, int, int, str], None]
+"""Called when a part has to be downloaded again: file, attempt, attempts, reason."""
 
 
 class DownloadCancelled(Exception):
@@ -217,6 +219,7 @@ def download_tier(
 	timeout: float = 60.0,
 	attempts_per_part: int = 3,
 	retry_delay: float = 5.0,
+	on_retry: RetryCallback | None = None,
 ) -> Path:
 	"""Download the tier's `.db.gz`, decompress it as a stream and install it at `target_path`.
 
@@ -276,6 +279,12 @@ def download_tier(
 					except (_PartFailed, urllib.error.URLError, OSError, zlib.error) as error:
 						if attempt == attempts_per_part:
 							raise DownloadError(f"download: {part.file}: {error}") from error
+						# Say what happened: a retry that says nothing looks like the
+						# download starting over on its own, and the reason (a checksum
+						# that does not match the manifest, a connection that dropped)
+						# is what tells the two apart.
+						if on_retry is not None:
+							on_retry(part.file, attempt, attempts_per_part, str(error))
 						# Rewind to the state before this part and retry just that one.
 						out.seek(out_offset)
 						out.truncate()

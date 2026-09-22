@@ -265,6 +265,7 @@ class PuzzleDownloadDialog(wx.Dialog):
 					self.target_path,
 					progress=self._progress,
 					cancel=self._cancel,
+					on_retry=self._retrying,
 				)
 				wx.CallAfter(self._prepare_catalog_status)
 				self._rebuild_theme_catalog()
@@ -279,6 +280,33 @@ class PuzzleDownloadDialog(wx.Dialog):
 
 		self._worker = threading.Thread(target=work, name="chessmart.download", daemon=True)
 		self._worker.start()
+
+	def _retrying(self, file: str, attempt: int, attempts: int, reason: str):
+		"""A part is being downloaded again: the progress goes back, so say why."""
+		log.warning(
+			"chessmart: %s failed (attempt %d of %d): %s; downloading it again",
+			file,
+			attempt,
+			attempts,
+			reason,
+		)
+		self._last_announced_percent = -1
+		# Translators: Announced when a piece of the download has to be fetched again; {reason} is the technical error.
+		message = _(
+			"{file} did not arrive whole (attempt {attempt} of {attempts}: {reason}). Downloading it again."
+		).format(
+			file=file,
+			attempt=attempt,
+			attempts=attempts,
+			reason=reason,
+		)
+		wx.CallAfter(self._show_retry, message)
+
+	def _show_retry(self, message: str):
+		if not self:
+			return
+		self.progressText.SetLabel(message)
+		ui.message(message)
 
 	def _progress(self, done: int, total: int):
 		percent = int(done * 100 / total) if total else 0

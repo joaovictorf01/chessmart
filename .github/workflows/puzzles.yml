@@ -44,6 +44,13 @@ jobs:
       - name: Baixar a base do Lichess e gerar os bancos
         run: python3 tools/build_puzzles.py --download --tier all --out dist/puzzles
 
+      # O add-on recusa qualquer parte cujo SHA-256 nao bata com o manifesto, tenta
+      # de novo tres vezes e desiste. Um manifesto que nao descreve os proprios
+      # arquivos quebra o download para todo mundo, entao ele e conferido aqui,
+      # antes de subir qualquer coisa.
+      - name: O manifesto descreve o que foi gerado?
+        run: python3 tools/verify_puzzles.py --local dist/puzzles
+
       - name: Há base nova?
         id: fresh
         run: |
@@ -67,9 +74,13 @@ jobs:
           fi
           # Um arquivo por vez, com tentativas. Assets acima de uns 500 MB falham no
           # GitHub ("Error saving asset"), por isso o .gz grande vai em partes de 300 MB
-          # (e o inteiro so quando cabe numa parte). O manifesto vai por ultimo, quando
-          # tudo que ele descreve ja esta no ar.
-          for asset in dist/puzzles/*.db.gz.part* dist/puzzles/*.db.gz dist/puzzles/manifest.json; do
+          # (e o inteiro so quando cabe numa parte). A lista sai do proprio manifesto:
+          # subir tambem o .gz inteiro de um banco ja dividido e subir justamente o
+          # arquivo que o GitHub recusa, e a rodada morre no meio, com metade dos
+          # arquivos publicados. O manifesto vai por ultimo, quando tudo que ele
+          # descreve ja esta no ar.
+          python3 tools/verify_puzzles.py --local dist/puzzles --list > upload.txt
+          for asset in $(sed 's|^|dist/puzzles/|' upload.txt) dist/puzzles/manifest.json; do
             for attempt in 1 2 3 4 5; do
               if gh release upload "$RELEASE_TAG" "$asset" --clobber; then break; fi
               echo "upload de $asset falhou (tentativa $attempt); esperando..."
@@ -77,6 +88,12 @@ jobs:
               [ "$attempt" = 5 ] && exit 1
             done
           done
+
+      # Ultima linha de defesa: o que esta publicado tem que ser o que o manifesto
+      # publicado descreve, mesmo que um upload tenha falhado em silencio.
+      - name: A release publicada confere?
+        if: steps.fresh.outputs.publish == 'true'
+        run: python3 tools/verify_puzzles.py --release "$RELEASE_TAG"
 
       - name: Nada a publicar
         if: steps.fresh.outputs.publish != 'true'

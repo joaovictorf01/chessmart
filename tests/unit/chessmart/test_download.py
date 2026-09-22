@@ -154,6 +154,33 @@ class TestPartsDownload(unittest.TestCase):
 		self.assertEqual(FlakyHandler.hits["puzzles-light.db.gz.part1"], 1)
 		self.assertEqual(FlakyHandler.hits["puzzles-light.db.gz.part2"], 2)
 
+	def test_a_retry_says_which_part_failed_and_why(self):
+		# A silent retry looks like the download restarting by itself: the
+		# reason is what tells a bad checksum from a dropped connection.
+		FlakyHandler.corrupt_once.add("puzzles-light.db.gz.part2")
+		notices = []
+		dl.download_tier(
+			self.tier,
+			self.work / "n.db",
+			retry_delay=0,
+			on_retry=lambda file, attempt, attempts, reason: notices.append(
+				(file, attempt, attempts, reason),
+			),
+		)
+		self.assertEqual(len(notices), 1)
+		file, attempt, attempts, reason = notices[0]
+		self.assertEqual((file, attempt, attempts), ("puzzles-light.db.gz.part2", 1, 3))
+		self.assertIn("checksum", reason)
+
+	def test_no_retry_means_no_notice(self):
+		notices = []
+		dl.download_tier(
+			self.tier,
+			self.work / "q.db",
+			on_retry=lambda *args: notices.append(args),
+		)
+		self.assertEqual(notices, [])
+
 	def test_cut_connection_is_retried_alone(self):
 		last = self.tier.parts[-1].file
 		FlakyHandler.short_once.add(last)
