@@ -17,6 +17,7 @@ O versionamento segue o [Semantic Versioning](https://semver.org/lang/pt-BR/): v
 
 ## Corrigido
 
+- Download de puzzles: um manifesto sem o SHA-256 do arquivo ou de uma das partes é recusado antes de baixar qualquer coisa ("manifest has no checksum for ..."); antes a conferência era pulada em silêncio quando o hash faltava.
 - Finais: Control+N num treino abria a tablebase Syzygy de novo para cada posição candidata que testava (até 2000 vezes), uma pausa perceptível com as tabelas de 5 peças instaladas; agora abre uma vez por sorteio.
 - Notação IBCA (F3) dizia "schwarts" (preto) para as brancas; agora as brancas são "weiss" e as pretas "schwarz". No fim da partida o motivo é falado no seu idioma ("afogamento", "tripla repetição", "material insuficiente"...) em vez do nome interno em inglês. A contagem do bolso no Crazyhouse e a linha "X contra Y" da lista de partidas PGN também são traduzidas.
 - Nova partida: controle de tempo ou FEN inicial inválido não fecha mais o diálogo com erro interno depois da mensagem; o diálogo continua aberto para corrigir o valor.

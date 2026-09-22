@@ -192,6 +192,27 @@ class TestPartsDownload(unittest.TestCase):
 		self.assertIn("checksum", str(raised.exception))
 		self.assertFalse((self.work / "w.db").exists())
 
+	def test_manifest_without_whole_checksum_is_refused_before_downloading(self):
+		bad = json.loads(json.dumps(self.manifest))
+		bad["tiers"]["light"]["download"]["sha256"] = ""
+		tier = dl.parse_manifest(bad, self.base).tiers["light"]
+		with self.assertRaises(dl.DownloadError) as raised:
+			dl.download_tier(tier, self.work / "n.db", retry_delay=0)
+		self.assertIn("no checksum", str(raised.exception))
+		self.assertEqual([name for name in FlakyHandler.hits if name != "manifest.json"], [])
+		self.assertFalse((self.work / "n.db").exists())
+		self.assertFalse((self.work / "n.db.part").exists())
+
+	def test_manifest_part_without_checksum_is_refused_before_downloading(self):
+		bad = json.loads(json.dumps(self.manifest))
+		del bad["tiers"]["light"]["download"]["parts"][1]["sha256"]
+		tier = dl.parse_manifest(bad, self.base).tiers["light"]
+		with self.assertRaises(dl.DownloadError) as raised:
+			dl.download_tier(tier, self.work / "q.db", retry_delay=0)
+		self.assertIn("part2", str(raised.exception))
+		self.assertEqual([name for name in FlakyHandler.hits if name != "manifest.json"], [])
+		self.assertFalse((self.work / "q.db.part").exists())
+
 
 class TestUpdateAvailable(unittest.TestCase):
 	def _manifest(self, last_modified):

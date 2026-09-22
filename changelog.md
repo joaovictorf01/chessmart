@@ -17,6 +17,7 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 
 ## Fixed
 
+- Puzzle download: a manifest that carries no SHA-256 for the file or for one of its parts is refused before anything is downloaded ("manifest has no checksum for ..."); the check used to be skipped silently when the hash was missing.
 - Endgames: Control+N in a drill opened the Syzygy tablebase again for every candidate position it tried (up to 2000 times), a visible pause with the 5-piece set installed; it is now opened once per draw.
 - IBCA notation (F3) said "schwarts" (black) for white; white is now "weiss" and black "schwarz". At game over the reason is spoken in your language ("stalemate", "threefold repetition", "insufficient material"...) instead of the English internal name. Crazyhouse pocket counts and the "X versus Y" line of the PGN game list are translatable too.
 - New Game: an invalid time control or starting FEN no longer closes the dialog with an internal error after the message; the dialog stays open so the value can be corrected.

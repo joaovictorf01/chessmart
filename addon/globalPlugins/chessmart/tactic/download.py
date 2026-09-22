@@ -234,11 +234,18 @@ def download_tier(
 	anyone mid-session keeps using the old one until the next startup.
 	"""
 	target_path = Path(target_path)
-	target_path.parent.mkdir(parents=True, exist_ok=True)
-	partial = target_path.with_name(target_path.name + ".part")
 	parts = tier.parts or (
 		DownloadPart(tier.download_file, tier.download_bytes, tier.download_sha256, tier.download_url),
 	)
+	# The manifest is the trust root: without its hashes nothing verifies the
+	# file, so a manifest that lacks one is refused before a byte is fetched.
+	if not tier.download_sha256:
+		raise DownloadError(f"manifest has no checksum for {tier.download_file or tier.tier}")
+	for part in parts:
+		if not part.sha256:
+			raise DownloadError(f"manifest has no checksum for {part.file}")
+	target_path.parent.mkdir(parents=True, exist_ok=True)
+	partial = target_path.with_name(target_path.name + ".part")
 	total = tier.download_bytes or sum(part.bytes for part in parts)
 	whole_digest = hashlib.sha256()
 	inflater = zlib.decompressobj(16 + zlib.MAX_WBITS)
@@ -290,7 +297,7 @@ def download_tier(
 		partial.unlink(missing_ok=True)
 		raise DownloadError(f"download: {error}") from error
 
-	if tier.download_sha256 and whole_digest.hexdigest() != tier.download_sha256:
+	if whole_digest.hexdigest() != tier.download_sha256:
 		partial.unlink(missing_ok=True)
 		raise DownloadError("download: checksum mismatch, the file is corrupt or was changed in transit")
 
@@ -344,6 +351,6 @@ def _download_part(
 				progress(done, total)
 	if part.bytes and received != part.bytes:
 		raise _PartFailed(f"expected {part.bytes} bytes, received {received}")
-	if part.sha256 and part_digest.hexdigest() != part.sha256:
+	if part_digest.hexdigest() != part.sha256:
 		raise _PartFailed("checksum mismatch")
 	return done
