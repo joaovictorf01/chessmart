@@ -169,7 +169,8 @@ class ChessboardDialog(wx.Frame):
 	def set_background_png(self, future):
 		sp_result = future.result()
 		if sp_result.returncode != 0:
-			log.exception(f"Failed to convert svg to png.\n{sp_result.stderr}")
+			# Not an exception: the converter simply returned an error code.
+			log.error("chessmart: failed to convert the board SVG to PNG: %s", sp_result.stderr)
 			return
 		board_image = wx.Image(BytesIO(sp_result.stdout))
 		wx.CallAfter(self._set_bitmap_data, board_image.GetData())

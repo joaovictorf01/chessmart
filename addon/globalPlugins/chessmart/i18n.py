@@ -36,7 +36,7 @@ try:
 	import addonHandler
 
 	addonHandler.initTranslation()
-except Exception as error:  # noqa: BLE001 - fora do NVDA ou fora de um add-on instalado
+except Exception as error:  # noqa: BLE001 - outside NVDA, or outside an installed add-on
 	log.debug("Chessmart translation is unavailable in this context: %s", error)
 	_ = builtins.__dict__.get("_", _identity)
 	ngettext = builtins.__dict__.get("ngettext", lambda singular, plural, n: singular if n == 1 else plural)

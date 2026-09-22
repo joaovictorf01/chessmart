@@ -29,7 +29,7 @@ def call_threaded(func: t.Callable[..., t.Any]) -> t.Callable[..., Future]:
 		try:
 			return THREADED_EXECUTOR.submit(func, *args, **kwargs)
 		except RuntimeError as error:
-			log.debug(f"Failed to submit function {func}: {error}")
+			log.debug("Failed to submit function %s: %s", func, error)
 			failed: Future = Future()
 			failed.set_exception(error)
 			return failed

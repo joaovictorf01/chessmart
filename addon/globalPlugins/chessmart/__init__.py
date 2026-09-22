@@ -22,11 +22,11 @@ with import_bundled():
 	# to fix some missing sub packages and modules
 	if "http" in sys.modules:
 		sys.modules.pop("http")
-	import http  # noqa: F401 - substitui o pacote do NVDA pela versão completa
+	import http  # noqa: F401 - replaces NVDA's package with the complete one
 
 	if "xml" in sys.modules:
 		sys.modules.pop("xml")
-	import xml  # noqa: F401 - idem
+	import xml  # noqa: F401 - same
 
 	# Normal imports
 	import chess
@@ -451,6 +451,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self._menu_action("onNewGame")
 
 	def terminate(self):
+		super().terminate()
 		chessboard_menu = getattr(self, "chessboard_menu", None)
 		if chessboard_menu is not None and gui.mainFrame is not None:
 			gui.mainFrame.sysTrayIcon.toolsMenu.DestroyItem(chessboard_menu.itemHandle)

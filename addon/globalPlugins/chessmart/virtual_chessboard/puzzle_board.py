@@ -205,7 +205,7 @@ class PuzzleCell(UserDrivenCell):
 					],
 				)
 				return
-			log.info(f"chessmart: tactic {puzzle.puzzle_id} skipped with Control+N")
+			log.info("chessmart: tactic %s skipped with Control+N", puzzle.puzzle_id)
 			speak_next([_("Skipping tactic {puzzle_id}.").format(puzzle_id=puzzle.puzzle_id)])
 		self.parent.next_puzzle()
 
