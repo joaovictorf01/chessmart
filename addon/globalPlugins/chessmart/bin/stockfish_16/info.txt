@@ -1,0 +1,4 @@
+Official Stockfish 16 release, build for any 64-bit x86 processor (stockfish-windows-x86-64).
+Source: https://github.com/official-stockfish/Stockfish/releases/tag/sf_16
+Zip SHA-256: 1a39b928669ee38b68a5a9be8ce0481e2325eaefbca4188af0c3078ba0280a4c
+License: GNU GPL v3, see Copying.txt.

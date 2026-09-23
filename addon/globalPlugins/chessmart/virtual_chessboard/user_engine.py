@@ -14,7 +14,9 @@ from ..concurrency import call_threaded
 from .user_driven import UserDrivenChessboard
 
 
-STOCKFISH_EXECUTABLE_PATH = os.path.join(BIN_DIRECTORY, "stockfish_14", "stockfish_14_32bit.exe")
+STOCKFISH_VERSION = "16"
+# The official Stockfish 16 build for any 64-bit x86 processor; see bin/stockfish_16/info.txt.
+STOCKFISH_EXECUTABLE_PATH = os.path.join(BIN_DIRECTORY, "stockfish_16", "stockfish_16_x86-64.exe")
 FAIRY_STOCKFISH_EXECUTABLE_PATH = os.path.join(
 	BIN_DIRECTORY,
 	"fairy_stockfish",
