@@ -11,6 +11,7 @@ import io
 import unittest
 
 from chessmart.game_clock import (
+	MoveClock,
 	format_clock,
 	move_clocks,
 	node_clock,
@@ -95,6 +96,16 @@ class SummaryTest(unittest.TestCase):
 		self.assertEqual(black.lowest and black.lowest.left, 41.0)
 		# 5... Qxg5: 15:06 before, +10, 0:50 after -> 14 minutes 26 seconds.
 		self.assertEqual((black.longest_think.san, black.longest_think.spent), ("Qxg5", 866.0))
+
+	def test_time_trouble_starts_under_one_minute(self):
+		clocks = [
+			MoveClock(ply=1, color=chess.WHITE, san="e4", left=90.0, spent=5.0),
+			MoveClock(ply=3, color=chess.WHITE, san="Nf3", left=60.0, spent=5.0),
+			MoveClock(ply=5, color=chess.WHITE, san="Bc4", left=59.0, spent=5.0),
+		]
+		trouble = summarize(clocks, chess.WHITE).first_in_time_trouble
+		assert trouble is not None
+		self.assertEqual(trouble.san, "Bc4")
 
 	def test_a_side_that_never_reached_time_trouble(self):
 		self.assertIsNone(summarize(move_clocks(game()), chess.WHITE).first_in_time_trouble)

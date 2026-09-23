@@ -218,10 +218,12 @@ class MoveReview:
 def threat_position(board: "chess.Board") -> t.Optional["chess.Board"]:
 	"""The position with the move handed to the other side: its best move there is the threat.
 
-	None when the side to move is in check (it cannot pass) or the game is over.
-	The en passant square goes, since passing gives no pawn the right to it.
+	None when the game is over, or when the side to move is in check: passing
+	would leave its king in check with the other side to move, which the
+	validity check refuses. The en passant square goes, since passing gives no
+	pawn the right to it.
 	"""
-	if board.is_check() or board.is_game_over():
+	if board.is_game_over():
 		return None
 	passed = board.copy(stack=False)
 	passed.turn = not passed.turn

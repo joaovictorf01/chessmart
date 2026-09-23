@@ -60,6 +60,11 @@ class LichessGameTest(unittest.TestCase):
 		# Lichess shows whole numbers: 87 for White, 96 for Black.
 		self.assertEqual(round(accuracy[chess.WHITE]), data["accuracy"]["white"])
 		self.assertEqual(round(accuracy[chess.BLACK]), data["accuracy"]["black"])
+		# Lichess publishes whole numbers; these are the unrounded values our
+		# transcription gives, pinned so a change to the window, the weights or
+		# the starting evaluation cannot hide behind the rounding.
+		self.assertAlmostEqual(accuracy[chess.WHITE], 86.9165, places=4)
+		self.assertAlmostEqual(accuracy[chess.BLACK], 96.3901, places=4)
 
 	def test_move_judgments_match_lichess(self):
 		data = load()
