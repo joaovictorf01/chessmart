@@ -139,11 +139,15 @@ class ChessboardMenu(wx.Menu):
 		self.Bind(wx.EVT_MENU, self.onBoardEditor, board_editor_item)
 		self.Bind(wx.EVT_MENU, self.onSettings, settings_item)
 
-	def onNewGame(self, event):
+	def onNewGame(self, event, fen=None):
 		from .graphical_interface.new_game_dialog import NewGameOptionsDialog
 
-		dialog = NewGameOptionsDialog(gui.mainFrame, callback=self.create_new_game)
+		dialog = NewGameOptionsDialog(gui.mainFrame, callback=self.create_new_game, fen=fen)
 		run_modal(dialog)
+
+	def new_game_from(self, fen):
+		"""The analysis board's "Play from here": the New Game dialog on that position."""
+		wx.CallAfter(self.onNewGame, None, fen)
 
 	def create_new_game(self, vboard_cls, game_info):
 		self.global_plugin_object.initialize_and_show_chessboard_dialog(vboard_cls, game_info)
@@ -500,6 +504,7 @@ class ChessboardMenu(wx.Menu):
 				tree=tree,
 				source_path=source_path,
 				flipped=flipped,
+				on_play_from=self.new_game_from,
 				use_visuals=True,
 				visual_arrows=True,
 			),

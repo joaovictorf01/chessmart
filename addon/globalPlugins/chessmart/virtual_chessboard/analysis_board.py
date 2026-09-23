@@ -216,11 +216,13 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 	cell_class = AnalysisCell
 	can_draw = False
 
-	def __init__(self, *args, tree=None, source_path=None, flipped=False, **kwargs):
+	def __init__(self, *args, tree=None, source_path=None, flipped=False, on_play_from=None, **kwargs):
 		# Before super(): the base constructor already asks which side is at the bottom.
 		self._flipped = flipped
 		self.tree = tree if tree is not None else GameTree()
 		self.source_path = source_path
+		# Opens the New Game dialog on a FEN; given by the menu that opened this board.
+		self.on_play_from = on_play_from
 		self.unsaved = False
 		kwargs["pychess_board"] = self.tree.board()
 		super().__init__(*args, **kwargs)
@@ -279,6 +281,8 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 					_("Make this variation the main line, Control+P"),
 					self._from_actions(self.promote_variation),
 				),
+				# Translators: Tab bar action on the analysis board: plays the current position against the engine.
+				(_("Play from here against the computer..."), self.play_from_here),
 				# Translators: Tab bar action on the analysis board: turns the board around.
 				(_("Flip the board"), self._from_actions(self.flip_board)),
 				# Translators: Tab bar action on the analysis board, with its key.
@@ -313,6 +317,17 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 		# False: the menu was closed without a choice; None: "no mark".
 		if nag is not False:
 			queueHandler.queueFunction(queueHandler.eventQueue, self.mark_move, nag)
+
+	def play_from_here(self):
+		"""The New Game dialog, with this position as the start and its side to move as the player's."""
+		self.focus_board_from_actions()
+		board = self.tree.board()
+		if board.is_game_over() or self.on_play_from is None:
+			GameSound.invalid.play()
+			# Translators: Spoken by "Play from here" on a checkmate or stalemate.
+			ui.message(_("The game is over in this position: there is nothing to play."))
+			return
+		self.on_play_from(board.fen())
 
 	def flip_board(self):
 		self._flipped = not self._flipped

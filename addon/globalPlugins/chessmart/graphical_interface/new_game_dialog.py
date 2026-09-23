@@ -21,7 +21,10 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 	# Translators: Title of the new game dialog.
 	title = _("New Game")
 
-	def __init__(self, *args, callback, **kwargs):
+	def __init__(self, *args, callback, fen=None, **kwargs):
+		# Before super(): NVDA's SettingsDialog builds the controls inside its constructor.
+		# A FEN given here fills the starting position, and the side to move is offered as the player's.
+		self._initial_fen = fen
 		super().__init__(*args, **kwargs)
 		self.callback = callback
 		self._uci_options = self._uci_time_limit = None
@@ -90,6 +93,12 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 		guiHelper.associateElements(customFENLabel, self.customStartingFEN)
 		secondaryOptionsSizerHelper.addItem(customFENLabel)
 		secondaryOptionsSizerHelper.addItem(self.customStartingFEN)
+		if self._initial_fen:
+			self.customStartingFEN.SetValue(self._initial_fen)
+			turn = chess.Board(self._initial_fen).turn
+			self.playerColorRadioBox.SetSelectionByValue(
+				PlayerColor.WHITE if turn == chess.WHITE else PlayerColor.BLACK
+			)
 		# Custom Time Control
 		# Translators: Time control choice: the user types their own, e.g. 10+5.
 		customTimeControlLable = wx.StaticText(self, -1, _("Custom Time Control"))

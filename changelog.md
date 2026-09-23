@@ -4,6 +4,7 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 
 ## Added
 
+- "Play from here against the computer..." in the analysis board's Tab bar opens New Game with the position filled in and its side to move as the player's, so the engine strength and clock are still chosen there.
 - E on the analysis board answers from the Syzygy tablebases, when installed and with five pieces or fewer: the exact result ("white wins: 12 moves to the next pawn move, capture or mate") and the moves that keep it, through the endgame judge already used by the drills.
 - X on the analysis board, as on Lichess: the threat, the move the other side would play if it were its turn, with its evaluation and line; worked out by handing the move over (engine_eval.threat_position), refused in check.
 - The game review says each player's accuracy, with Lichess's formula (AccuracyPercent.scala). Checked against a real Lichess game: the same accuracy (87 and 96) and the same eleven move judgments from the same evaluations.

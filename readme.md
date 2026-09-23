@@ -174,6 +174,7 @@ The commands of the game board work here too (arrows, Enter, A, M, F1, F4...). O
 | T | The clock of the game, for both sides (imported games) |
 | T | The clock of the game, for both sides (imported games) |
 | O | The opening the line is in, with its ECO code, and whether the position is still theory |
+| Tab, "Play from here against the computer..." | The New Game dialog with this position as the start and its side to move as yours: choose the engine strength and the clock |
 | Tab / Shift+Tab | All these actions as a bar, each with its key: for when a key is forgotten. Also flips the board |
 | Control+S | Save the game in the games folder |
 | Escape | Close the board; if something changed since the last save, it asks first |
@@ -182,7 +183,7 @@ The commands of the game board work here too (arrows, Enter, A, M, F1, F4...). O
 
 **Board Editor** opens an empty board to set up any position square by square. The piece letters place pieces, as in FEN: **Shift+K, Q, R, B, N, P** for a white king, queen, rook, bishop, knight or pawn, the letter alone for a black one. **Delete** or **Backspace** empties the square; **Enter** says what is on it. **Control+C** copies the position as FEN, **Control+V** takes one from the clipboard.
 
-**Tab** opens the editor's actions: switch whose move it is; switch each castling right (a right exists only while its king and rook stand on their starting squares); check the position, which says in words what is wrong ("There is no black king.", "A pawn stands on the first or the eighth rank.", "The side that is not to move is in check.") or that it is valid; analyse the position on the analysis board; the starting position; clear the board; flip it. A position copied as FEN can be pasted in New Game to play it against the computer.
+**Tab** opens the editor's actions: switch whose move it is; switch each castling right (a right exists only while its king and rook stand on their starting squares); check the position, which says in words what is wrong ("There is no black king.", "A pawn stands on the first or the eighth rank.", "The side that is not to move is in check.") or that it is valid; analyse the position on the analysis board; the starting position; clear the board; flip it. "Analyse this position" opens it on the analysis board, where "Play from here against the computer..." in the Tab bar starts a game from it.
 
 ## Settings
 
