@@ -39,6 +39,13 @@ What the unit tests cannot see. After a change, run the parts it touches, with t
 - A named opening is spoken; O repeats it; "out of theory" after the last book move.
 - Control+S asks for the headers and says the file name; the file opens again with Analyse PGN File.
 
+## Board editor
+
+- Shift+K on e1 says "white king, e1"; k on e8 "black king, e8"; Delete empties; Enter says the square.
+- Tab: switch whose move, a castling right (and "not possible" without king and rook), check the position, analyse.
+- Control+C then Control+V round-trips the position; a non-FEN on the clipboard is refused.
+- Escape with pieces on the board asks first.
+
 ## Lichess import
 
 - Tools > Chessmart > Import Lichess Game: a link, a code, a username; the game opens and says its opening and clock on each move.

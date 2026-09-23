@@ -126,7 +126,7 @@ Nothing ends the session: a checkmate inside a variation is only a position. Whe
 
 ### Import a Lichess game
 
-**Import Lichess Game...** asks for a game link, a game code, or a Lichess username (that player's last game; the name is remembered for next time). The game is saved in the games folder as `year-month-day_White-vs-Black_lichess-code.pgn` and opens on the analysis board, from Black's side when the remembered user played Black. Importing the same game again opens your saved copy, with your notes, instead of downloading over it. Lichess's own evaluations are left out: the engine answers you, it does not speak first.
+**Import Lichess Game...** offers the Lichess link on the clipboard, if there is one (in the browser, Control+L then Control+C copies it), and otherwise asks for a game link, a game code, or a Lichess username (that player's last game; the name is remembered for next time). The game is saved in the games folder as `year-month-day_White-vs-Black_lichess-code.pgn` and opens on the analysis board, from Black's side when the remembered user played Black. Importing the same game again opens your saved copy, with your notes, instead of downloading over it. Lichess's own evaluations are left out: the engine answers you, it does not speak first.
 
 Every move carries its clock: moving through the game says the time left and the time the move took ("clock 0:48, took 0:12, under a minute"). **T** sums up the clock for both sides: from which move a player was under a minute, the lowest clock, the longest think.
 
@@ -168,6 +168,12 @@ The commands of the game board work here too (arrows, Enter, A, M, F1, F4...). O
 | Tab / Shift+Tab | All these actions as a bar, each with its key: for when a key is forgotten. Also flips the board |
 | Control+S | Save the game in the games folder |
 | Escape | Close the board; if something changed since the last save, it asks first |
+
+## Board Editor
+
+**Board Editor** opens an empty board to set up any position square by square. The piece letters place pieces, as in FEN: **Shift+K, Q, R, B, N, P** for a white king, queen, rook, bishop, knight or pawn, the letter alone for a black one. **Delete** or **Backspace** empties the square; **Enter** says what is on it. **Control+C** copies the position as FEN, **Control+V** takes one from the clipboard.
+
+**Tab** opens the editor's actions: switch whose move it is; switch each castling right (a right exists only while its king and rook stand on their starting squares); check the position, which says in words what is wrong ("There is no black king.", "A pawn stands on the first or the eighth rank.", "The side that is not to move is in check.") or that it is valid; analyse the position on the analysis board; the starting position; clear the board; flip it. A position copied as FEN can be pasted in New Game to play it against the computer.
 
 ## Settings
 

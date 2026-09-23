@@ -3,6 +3,7 @@
 
 from .base import BaseVirtualChessboard
 from .analysis_board import AnalysisChessboard
+from .editor_board import PositionEditorChessboard
 from .user_engine import UserEngineChessboard
 from .user_user import UserUserChessboard
 from .pgn_player import PGNPlayerChessboard
@@ -11,6 +12,7 @@ from .endgame_board import EndgameDrillChessboard, EndgameLessonChessboard
 
 __all__ = [
 	"AnalysisChessboard",
+	"PositionEditorChessboard",
 	"BaseVirtualChessboard",
 	"UserEngineChessboard",
 	"UserUserChessboard",

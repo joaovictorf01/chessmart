@@ -33,6 +33,7 @@ PURE_MODULES = (
 	"paths",
 	"pgn",
 	"played_move",
+	"position_editor",
 	"puzzle_attempt",
 	"study_log",
 	"tactic.download",

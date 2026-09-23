@@ -16,6 +16,7 @@ import typing
 
 import controlTypes
 import eventHandler
+import queueHandler
 
 from .ui_components import MenuItemObject, MenuObject
 
@@ -76,3 +77,15 @@ class ActionsBarMixin:
 	def focus_board_from_actions(self):
 		self._current_focused_object = None
 		self.set_focus_to_cell(self._focused_cell)  # pyright: ignore[reportAttributeAccessIssue]
+
+	def _from_actions(self, action):
+		"""An action run from the bar: back to the board first, so what it says is heard there.
+
+		The endgame boards override this: their actions move the focus themselves.
+		"""
+
+		def run():
+			self.focus_board_from_actions()
+			queueHandler.queueFunction(queueHandler.eventQueue, action)
+
+		return run

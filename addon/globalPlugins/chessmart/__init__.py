@@ -3,6 +3,7 @@
 
 import functools
 import os
+import api
 import wx
 import globalPluginHandler
 import gui
@@ -18,6 +19,7 @@ from .i18n import _
 
 with import_bundled():
 	import chess
+	import chess.pgn
 
 from . import concurrency
 from .addon_config import ensure_config_spec, get_games_folder, get_lichess_user, save_lichess_user
@@ -31,6 +33,7 @@ from .tactic.download import DownloadError
 from .pgn import PGNGame, PGNGameInfo, read_game_at
 from .virtual_chessboard import (
 	AnalysisChessboard,
+	PositionEditorChessboard,
 	EndgameDrillChessboard,
 	EndgameLessonChessboard,
 	PGNPlayerChessboard,
@@ -84,6 +87,13 @@ class ChessboardMenu(wx.Menu):
 				"Enter a game move by move, with variations, comments and marks, and save it in your games folder"
 			),
 		)
+		board_editor_item = self.Append(
+			wx.ID_ANY,
+			# Translators: Menu item that opens the board editor.
+			_("&Board Editor"),
+			# Translators: Help text of the board editor menu item.
+			_("Set up a position square by square, check it, and analyse it"),
+		)
 		import_lichess_item = self.Append(
 			wx.ID_ANY,
 			# Translators: Menu item that downloads a game from Lichess and opens it on the analysis board.
@@ -126,6 +136,7 @@ class ChessboardMenu(wx.Menu):
 		self.Bind(wx.EVT_MENU, self.onRecordGame, record_game_item)
 		self.Bind(wx.EVT_MENU, self.onAnalysePGN, analyse_pgn_item)
 		self.Bind(wx.EVT_MENU, self.onImportLichess, import_lichess_item)
+		self.Bind(wx.EVT_MENU, self.onBoardEditor, board_editor_item)
 		self.Bind(wx.EVT_MENU, self.onSettings, settings_item)
 
 	def onNewGame(self, event):
@@ -386,14 +397,40 @@ class ChessboardMenu(wx.Menu):
 		# is saved as a new file, so the rest of the collection is never rewritten.
 		self.open_analysis_board(GameTree(game), source_path=game_info.filename if single_game_file else None)
 
+	def onBoardEditor(self, event):
+		chess_new_game_info = GameInfo(
+			variant=ChessVariant.STANDARD,
+			time_control=NULL_TIME_CONTROL,
+			pychess_board=None,
+			prospective=chess.WHITE,
+			vboard_kwargs=dict(on_analyse=self._analyse_edited_position, use_visuals=True),
+		)
+		self.global_plugin_object.initialize_and_show_chessboard_dialog(
+			PositionEditorChessboard,
+			chess_new_game_info,
+		)
+
+	def _analyse_edited_position(self, board):
+		# Game.from_board writes the FEN and SetUp tags, so the saved PGN starts from this position.
+		wx.CallAfter(self.open_analysis_board, GameTree(chess.pgn.Game.from_board(board)))
+
 	def onImportLichess(self, event):
+		# A Lichess link copied from the browser (Control+L, Control+C) is offered first.
+		clipboard = ""
+		try:
+			clipboard = (api.getClipData() or "").strip()
+		except OSError:
+			pass
+		initial = (
+			clipboard if "lichess.org/" in clipboard and parse_reference(clipboard) else get_lichess_user()
+		)
 		dialog = wx.TextEntryDialog(
 			gui.mainFrame,
 			# Translators: Prompt of the Lichess import dialog.
 			_("Game link or code, or a Lichess username for that player's last game:"),
 			# Translators: Title of the Lichess import dialog.
 			_("Import Lichess Game"),
-			value=get_lichess_user(),
+			value=initial,
 		)
 		run_modal(dialog, functools.partial(self._on_lichess_reference, dialog))
 

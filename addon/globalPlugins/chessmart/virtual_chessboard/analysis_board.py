@@ -258,15 +258,6 @@ class AnalysisChessboard(EngineActionsMixin, ActionsBarMixin, UserDrivenChessboa
 
 	# -- the Tab bar ------------------------------------------------------------------
 
-	def _from_actions(self, action):
-		"""An action run from the Tab bar: back to the board first, so what it says is heard there."""
-
-		def run():
-			self.focus_board_from_actions()
-			queueHandler.queueFunction(queueHandler.eventQueue, action)
-
-		return run
-
 	def open_mark_menu(self):
 		if self.tree.at_start:
 			self.focus_board_from_actions()
