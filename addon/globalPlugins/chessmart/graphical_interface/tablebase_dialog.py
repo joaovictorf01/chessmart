@@ -13,7 +13,6 @@ where it stopped.
 
 from __future__ import annotations
 
-import threading
 
 import wx
 import ui
@@ -23,12 +22,8 @@ from logHandler import log
 from ..endgame import tablebase
 from ..i18n import _
 from ..tactic import download as puzzle_download
+from .download_base import DownloadDialogBase, format_megabytes
 from .messages import show_error, show_message
-
-
-def _megabytes(size: int) -> str:
-	# Translators: File size in megabytes, e.g. "76 MB".
-	return _("{size} MB").format(size=round(size / 1e6))
 
 
 def installed_sentence() -> str:
@@ -40,14 +35,11 @@ def installed_sentence() -> str:
 	return _("Tablebases: up to {pieces} pieces installed.").format(pieces=limit)
 
 
-class TablebaseDownloadDialog(wx.Dialog):
+class TablebaseDownloadDialog(DownloadDialogBase):
 	def __init__(self, parent):
 		# Translators: Title of the tablebase download dialog.
 		super().__init__(parent, title=_("Endgame Tablebases"))
 		self.sets = tablebase.table_sets()
-		self._cancel = threading.Event()
-		self._worker = None
-		self._last_announced_percent = -1
 		self._build()
 
 	def _build(self):
@@ -74,8 +66,8 @@ class TablebaseDownloadDialog(wx.Dialog):
 				choices.append(
 					_("{name}: {total}, {remaining} still to download").format(
 						name=name,
-						total=_megabytes(table_set.total_bytes),
-						remaining=_megabytes(remaining),
+						total=format_megabytes(table_set.total_bytes),
+						remaining=format_megabytes(remaining),
 					),
 				)
 			else:
@@ -83,7 +75,7 @@ class TablebaseDownloadDialog(wx.Dialog):
 				choices.append(
 					_("{name}: {total}, installed").format(
 						name=name,
-						total=_megabytes(table_set.total_bytes),
+						total=format_megabytes(table_set.total_bytes),
 					),
 				)
 		# Translators: Label of the list where the user picks which tablebases to download.
@@ -137,15 +129,13 @@ class TablebaseDownloadDialog(wx.Dialog):
 			# Translators: Announced when the chosen tablebases are already installed.
 			ui.message(_("These tables are already installed."))
 			return
-		self._cancel.clear()
-		self._last_announced_percent = -1
 		self.downloadButton.Disable()
 		self.setRadio.Disable()
 		# Translators: Announced when the tablebase download starts.
 		ui.message(
 			_("Downloading {count} files, {size}.").format(
 				count=len(missing),
-				size=_megabytes(sum(f.bytes for f in missing)),
+				size=format_megabytes(sum(f.bytes for f in missing)),
 			),
 		)
 
@@ -161,29 +151,7 @@ class TablebaseDownloadDialog(wx.Dialog):
 				return
 			wx.CallAfter(self._finished_ok, table_set)
 
-		self._worker = threading.Thread(target=work, name="chessmart.tablebases", daemon=True)
-		self._worker.start()
-
-	def _progress(self, done: int, total: int):
-		percent = int(done * 100 / total) if total else 0
-		wx.CallAfter(self._show_progress, done, total, percent)
-		if percent // 10 > self._last_announced_percent // 10:
-			self._last_announced_percent = percent
-			# Translators: Download progress announced by speech, e.g. "40 percent".
-			wx.CallAfter(ui.message, _("{percent} percent").format(percent=percent))
-
-	def _show_progress(self, done, total, percent):
-		if not self:
-			return
-		self.gauge.SetValue(min(percent, 100))
-		# Translators: Download progress text, e.g. "30 MB of 76 MB (40%)".
-		self.progressText.SetLabel(
-			_("{done} of {total} ({percent}%)").format(
-				done=_megabytes(done),
-				total=_megabytes(total),
-				percent=percent,
-			),
-		)
+		self.start_worker(work, "chessmart.tablebases")
 
 	def _finished_ok(self, table_set):
 		self._worker = None
@@ -220,9 +188,3 @@ class TablebaseDownloadDialog(wx.Dialog):
 		self.setRadio.Enable()
 		self.downloadButton.Enable()
 		self.statusText.SetLabel(installed_sentence())
-
-	def onCancel(self, event):
-		if self._worker is not None and self._worker.is_alive():
-			self._cancel.set()
-			return
-		self.EndModal(wx.ID_CANCEL)

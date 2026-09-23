@@ -24,6 +24,7 @@ from logHandler import log
 from ..i18n import _
 from ..tactic import download as puzzle_download
 from ..tactic.db import ADDON_DATA_DIRECTORY, PUZZLES_DB_NAME
+from .download_base import DownloadDialogBase, format_megabytes
 from .messages import show_error, show_message
 
 # Order in which the tiers appear; light comes first because it's the right
@@ -37,12 +38,7 @@ TIER_LABELS = {
 }
 
 
-def _megabytes(size: int) -> str:
-	# Translators: File size in megabytes, e.g. "76 MB".
-	return _("{size} MB").format(size=round(size / 1e6))
-
-
-class PuzzleDownloadDialog(wx.Dialog):
+class PuzzleDownloadDialog(DownloadDialogBase):
 	def __init__(
 		self,
 		parent,
@@ -56,9 +52,6 @@ class PuzzleDownloadDialog(wx.Dialog):
 		self.target_path = ADDON_DATA_DIRECTORY / PUZZLES_DB_NAME
 		self.manifest = None
 		self.installed = puzzle_download.installed_info(installed_path)
-		self._cancel = threading.Event()
-		self._worker = None
-		self._last_announced_percent = -1
 		self._build()
 		self._start_manifest_fetch()
 
@@ -206,8 +199,8 @@ class PuzzleDownloadDialog(wx.Dialog):
 				_("{name}: {count:,} puzzles, {download} to download, {disk} on disk").format(
 					name=TIER_LABELS[tier],
 					count=info.puzzle_count,
-					download=_megabytes(info.download_bytes),
-					disk=_megabytes(info.disk_bytes),
+					download=format_megabytes(info.download_bytes),
+					disk=format_megabytes(info.disk_bytes),
 				),
 			)
 		default = self.installed.tier if self.installed and self.installed.tier in available else available[0]
@@ -246,15 +239,13 @@ class PuzzleDownloadDialog(wx.Dialog):
 		info = self._selected_tier()
 		if info is None or self._worker is not None:
 			return
-		self._cancel.clear()
-		self._last_announced_percent = -1
 		self.downloadButton.Disable()
 		self.tierRadio.Disable()
 		# Translators: Announced when the puzzle database download starts.
 		ui.message(
 			_("Downloading {name}, {size}.").format(
 				name=TIER_LABELS[info.tier],
-				size=_megabytes(info.download_bytes),
+				size=format_megabytes(info.download_bytes),
 			),
 		)
 
@@ -278,8 +269,7 @@ class PuzzleDownloadDialog(wx.Dialog):
 				return
 			wx.CallAfter(self._finished_ok, info)
 
-		self._worker = threading.Thread(target=work, name="chessmart.download", daemon=True)
-		self._worker.start()
+		self.start_worker(work, "chessmart.download")
 
 	def _retrying(self, file: str, attempt: int, attempts: int, reason: str):
 		"""A part is being downloaded again: the progress goes back, so say why."""
@@ -307,27 +297,6 @@ class PuzzleDownloadDialog(wx.Dialog):
 			return
 		self.progressText.SetLabel(message)
 		ui.message(message)
-
-	def _progress(self, done: int, total: int):
-		percent = int(done * 100 / total) if total else 0
-		wx.CallAfter(self._show_progress, done, total, percent)
-		if percent // 10 > self._last_announced_percent // 10:
-			self._last_announced_percent = percent
-			# Translators: Download progress announced by speech, e.g. "40 percent".
-			wx.CallAfter(ui.message, _("{percent} percent").format(percent=percent))
-
-	def _show_progress(self, done, total, percent):
-		if not self:
-			return
-		self.gauge.SetValue(min(percent, 100))
-		self.progressText.SetLabel(
-			# Translators: Download progress text, e.g. "30 MB of 76 MB (40%)".
-			_("{done} of {total} ({percent}%)").format(
-				done=_megabytes(done),
-				total=_megabytes(total),
-				percent=percent,
-			),
-		)
 
 	def _prepare_catalog_status(self):
 		if not self:
@@ -385,9 +354,3 @@ class PuzzleDownloadDialog(wx.Dialog):
 		self.gauge.SetValue(0)
 		self.tierRadio.Enable()
 		self.downloadButton.Enable()
-
-	def onCancel(self, event):
-		if self._worker is not None and self._worker.is_alive():
-			self._cancel.set()
-			return
-		self.EndModal(wx.ID_CANCEL)

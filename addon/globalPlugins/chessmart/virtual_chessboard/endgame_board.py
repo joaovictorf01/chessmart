@@ -45,7 +45,7 @@ from ..signals import chessboard_closed_signal
 from ..sounds import GameSound
 from ..speaking import speak_next
 from ..time_control import NullChessTimeControl
-from .puzzle_board import TrainingActionsBar
+from .actions_bar import ActionsBarMixin
 from .ui_components import MenuItemObject, MenuObject
 from .user_driven import UserDrivenCell
 from .user_engine import UserEngineChessboard
@@ -63,7 +63,7 @@ def spoken_move(board: chess.Board, move: chess.Move) -> str:
 # ---------------------------------------------------------------- judge
 
 
-class TablebaseJudgeMixin:
+class TablebaseJudgeMixin(ActionsBarMixin):
 	"""Queries the tablebase after each player move and on the verdict keys.
 
 	Combined with `UserEngineChessboard`: it uses `board`, `prospective`,
@@ -76,30 +76,39 @@ class TablebaseJudgeMixin:
 	tablebase: typing.Any = None
 	spoiled_moves: int = 0
 	hints_used: int = 0
-
-	_actions_bar: typing.Any = None
-	_current_focused_object: typing.Any
-	_focused_cell: int
+	_started_at: float
+	_start_fen: str
 
 	def build_action_bar(self, items):
-		self._actions_bar = TrainingActionsBar(
-			parent=self,
+		self.install_actions_bar(
 			# Translators: Name of the toolbar reached with Tab on the endgame board.
 			name=_("Endgame actions"),
 			items=items,
 		)
 
-	def focus_action_bar(self, reverse=False):
-		if not self._actions_bar:
-			return
-		self._current_focused_object = self._actions_bar
-		target_index = len(self._actions_bar) - 1 if reverse else 0
-		self._actions_bar.set_current(target_index)
-		eventHandler.executeEvent("gainFocus", self._actions_bar)
+	def hints_note(self):
+		"""Said at the end of a drill or lesson position when the tablebase gave hints."""
+		if self.hints_used:
+			yield speech.commands.BreakCommand(250)
+			# Translators: Spoken at the end of a drill or lesson that used tablebase hints; {hints} is a number.
+			yield _("With {hints} hints from the tablebase: it counts as practice, not as held.").format(
+				hints=self.hints_used,
+			)
 
-	def focus_board_from_actions(self):
-		self._current_focused_object = None
-		self.set_focus_to_cell(self._focused_cell)  # pyright: ignore[reportAttributeAccessIssue]
+	def record_played(self, lesson_id, position_id, *, answer_correct, kept_result, outcome):
+		"""One row of `endgame_attempts`: what was decided here, plus what the board already knows."""
+		_record(
+			lesson_id,
+			position_id,
+			answer_correct=answer_correct,
+			kept_result=kept_result,
+			moves=(len(self.board.move_stack) + 1) // 2,
+			elapsed_ms=int((time.monotonic() - self._started_at) * 1000),
+			outcome=outcome,
+			line=" ".join(move.uci() for move in self.board.move_stack),
+			fen=self._start_fen,
+			hints=self.hints_used,
+		)
 
 	def _from_actions(self, callback):
 		"""Wraps an actions-bar action: returns focus to the board, then calls it."""
@@ -313,12 +322,7 @@ class EndgameDrillChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		for message in drill_result_messages(self.drill, self.board, seconds):
 			yield speech.commands.BreakCommand(250)
 			yield message
-		if self.hints_used:
-			yield speech.commands.BreakCommand(250)
-			# Translators: Spoken at the end of a drill or lesson that used tablebase hints; {hints} is a number.
-			yield _("With {hints} hints from the tablebase: it counts as practice, not as held.").format(
-				hints=self.hints_used,
-			)
+		yield from self.hints_note()
 		yield speech.commands.BreakCommand(250)
 		# Translators: Spoken when an endgame drill ends.
 		yield _("Control+N opens another position.")
@@ -348,17 +352,12 @@ class EndgameDrillChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		self._recorded = True
 		outcome = self.board.outcome()
 		mated = outcome is not None and outcome.termination is chess.Termination.CHECKMATE
-		_record(
+		self.record_played(
 			self.lesson_id,
 			self.drill.drill_id,
 			answer_correct=None,
 			kept_result=mated and self.spoiled_moves == 0,
-			moves=(len(self.board.move_stack) + 1) // 2,
-			elapsed_ms=int((time.monotonic() - self._started_at) * 1000),
 			outcome=outcome.termination.name.lower() if outcome else "abandoned",
-			line=" ".join(move.uci() for move in self.board.move_stack),
-			fen=self._start_fen,
-			hints=self.hints_used,
 		)
 
 
@@ -607,11 +606,7 @@ class EndgameLessonChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		else:
 			# Translators: Spoken when the lesson position was not held.
 			yield _("The result slipped. Control+R plays the same position again.")
-		if self.hints_used:
-			yield speech.commands.BreakCommand(250)
-			yield _("With {hints} hints from the tablebase: it counts as practice, not as held.").format(
-				hints=self.hints_used,
-			)
+		yield from self.hints_note()
 		yield speech.commands.BreakCommand(250)
 		# Translators: Spoken at the end of a lesson position.
 		yield _("Control+N goes to the next position.")
@@ -643,17 +638,12 @@ class EndgameLessonChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		if self.playing and not self.board.move_stack and outcome == "abandoned":
 			return
 		self._recorded = True
-		_record(
+		self.record_played(
 			self.lesson.lesson_id,
 			self.position.position_id,
 			answer_correct=self.answer == self.position.expected,
 			kept_result=kept,
-			moves=(len(self.board.move_stack) + 1) // 2,
-			elapsed_ms=int((time.monotonic() - self._started_at) * 1000),
 			outcome=outcome,
-			line=" ".join(move.uci() for move in self.board.move_stack),
-			fen=self._start_fen,
-			hints=self.hints_used,
 		)
 
 	# -- navigation ------------------------------------------------------------------

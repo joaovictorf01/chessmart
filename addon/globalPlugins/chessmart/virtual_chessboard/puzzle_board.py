@@ -6,7 +6,6 @@ import functools
 import time
 
 import api
-import controlTypes
 import eventHandler
 import queueHandler
 import speech
@@ -21,7 +20,7 @@ from ..speaking import speak_next
 from ..i18n import _
 from ..tactic.models import AttemptResult
 from ..training_session import PuzzleInfo, TrainingSession
-from .ui_components import MenuItemObject, MenuObject
+from .actions_bar import ActionsBarMixin
 from .user_driven import UserDrivenCell, UserDrivenChessboard
 
 
@@ -131,40 +130,6 @@ class SessionStats:
 		return " ".join([summary, *details])
 
 
-class TrainingActionItem(MenuItemObject):
-	role = controlTypes.Role.BUTTON
-
-	def __init__(self, *args, callback, **kwargs):
-		super().__init__(*args, **kwargs)
-		self.callback = callback
-		self.bindGesture("kb:tab", "go_next")
-		self.bindGesture("kb:shift+tab", "go_prev")
-		self.bindGesture("kb:rightarrow", "go_next")
-		self.bindGesture("kb:leftarrow", "go_prev")
-
-
-class TrainingActionsBar(MenuObject):
-	role = controlTypes.Role.TOOLBAR
-	use_default_navigation_scripts = False
-
-	def __init__(self, *args, items, **kwargs):
-		super().__init__(*args, **kwargs)
-		action_items = [
-			TrainingActionItem(parent=self, name=name, callback=callback) for name, callback in items
-		]
-		self.init_container_state(
-			action_items,
-			on_top_edge=self.parent.focus_board_from_actions,
-			on_bottom_edge=self.parent.focus_board_from_actions,
-		)
-
-	def close_menu(self):
-		self.parent.focus_board_from_actions()
-
-	def on_item_activated(self, item):
-		item.callback()
-
-
 class PuzzleCell(UserDrivenCell):
 	parent: "PuzzleChessboard"
 
@@ -230,7 +195,7 @@ class PuzzleCell(UserDrivenCell):
 			speak_next([_("Press Control+Enter twice to play the expected move.")])
 
 
-class PuzzleChessboard(UserDrivenChessboard):
+class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 	cell_class = PuzzleCell
 	can_draw = False
 
@@ -247,8 +212,7 @@ class PuzzleChessboard(UserDrivenChessboard):
 		# What the last write changed in the rating. Kept around because
 		# recording the attempt and announcing the result happen at different moments.
 		self._last_rating: AttemptResult | None = None
-		self._actions_bar = TrainingActionsBar(
-			parent=self,
+		self.install_actions_bar(
 			name=_("Training actions"),
 			items=[
 				(_("Repeat instruction"), self.repeat_current_instruction),
@@ -293,18 +257,6 @@ class PuzzleChessboard(UserDrivenChessboard):
 		super().hide_board_gui()
 
 	# -- focus: board and actions bar --------------------------------------
-
-	def focus_action_bar(self, reverse=False):
-		if not self._actions_bar:
-			return
-		self._current_focused_object = self._actions_bar
-		target_index = len(self._actions_bar) - 1 if reverse else 0
-		self._actions_bar.set_current(target_index)
-		eventHandler.executeEvent("gainFocus", self._actions_bar)
-
-	def focus_board_from_actions(self):
-		self._current_focused_object = None
-		self.set_focus_to_cell(self._focused_cell)
 
 	def _clear_action_focus(self):
 		self._current_focused_object = None
