@@ -17,14 +17,22 @@ import speech
 import speech.commands
 import ui
 import wx
+from logHandler import log
 
 from ..analysis_words import MARK_KEYS, spoken_assessment, spoken_mark, spoken_pawns, spoken_verdict
-from ..i18n import _, ngettext
+from ..endgame import judge, tablebase
 from ..engine_eval import threat_position
+from ..i18n import _, ngettext
 from ..openings import lookup
+from ..paths import import_bundled
 from ..sounds import GameSound
 from ..speaking import speak_next
+from ..spoken_messages import spoken_color_name
 from .analysis_engine import DEEP_SECONDS, QUICK_SECONDS, result_of
+
+
+with import_bundled():
+	import chess
 
 
 # How much of the engine's line goes into the game with Control+E, in half-moves:
@@ -60,6 +68,8 @@ class EngineActionsMixin:
 		if board.is_game_over():
 			# Translators: Spoken when E is pressed on a checkmate or stalemate.
 			ui.message(_("There is nothing to evaluate: the game is over in this position."))
+			return
+		if self._say_tablebase(board):
 			return
 		if deep and self.engine.busy:
 			self._deep_pending = True
@@ -125,6 +135,51 @@ class EngineActionsMixin:
 			spoken.append(_("Also: {moves}").format(moves="; ".join(others)))
 		sequence: list = [speech.commands.BreakCommand(100), *spoken]
 		speak_next(sequence)
+
+	# -- the tablebase: exact answers with few pieces ------------------------------------
+
+	_tablebase: typing.Any = None
+	_tablebase_opened: bool = False
+
+	def _open_tablebase(self):
+		"""The Syzygy tables the endgames downloaded, opened once per board; None without them."""
+		if not self._tablebase_opened:
+			self._tablebase_opened = True
+			try:
+				self._tablebase = tablebase.open_tablebase()
+			except (
+				Exception
+			) as error:  # a damaged table must not stop the analysis: the engine answers instead
+				log.warning("chessmart: could not open the tablebases for analysis: %s", error)
+				self._tablebase = None
+		return self._tablebase
+
+	def close_tablebase(self):
+		if self._tablebase is not None:
+			self._tablebase.close()
+			self._tablebase = None
+
+	def _say_tablebase(self, board) -> bool:
+		"""With few enough pieces and the tables installed, the exact result replaces the engine."""
+		if chess.popcount(board.occupied) > judge.MAX_PIECES:
+			return False
+		tables = self._open_tablebase()
+		verdict = judge.probe(tables, board)
+		if verdict is None:
+			return False
+		spoken: list = [
+			# Translators: Start of a tablebase answer on the analysis board.
+			_("Tablebase:"),
+			judge.describe_verdict(verdict, spoken_color_name(board.turn)),
+		]
+		best = judge.best_moves(tables, board)
+		if best:
+			# Translators: The moves that keep the tablebase result, e.g. "Best: Kd6, Qe7.".
+			spoken.append(
+				_("Best: {moves}.").format(moves=", ".join(self._san_text(board, move) for move in best[:4])),
+			)
+		speak_next(spoken)
+		return True
 
 	def show_threat(self):
 		"""X, as on Lichess: what the other side would play if it were its move."""

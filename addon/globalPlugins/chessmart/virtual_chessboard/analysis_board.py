@@ -230,7 +230,10 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 		# E pressed twice: the first press already started the quick think; the
 		# second is remembered and turns into the long one when the quick one ends.
 		self._deep_pending = False
-		chessboard_closed_signal.connect(lambda sender: (self.stop_review(), self.engine.quit()), sender=self)
+		chessboard_closed_signal.connect(
+			lambda sender: (self.stop_review(), self.engine.quit(), self.close_tablebase()),
+			sender=self,
+		)
 		self.install_actions_bar(
 			# Translators: Name of the Tab bar on the analysis board.
 			name=_("Analysis actions"),

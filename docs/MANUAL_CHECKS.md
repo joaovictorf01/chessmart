@@ -37,6 +37,7 @@ What the unit tests cannot see. After a change, run the parts it touches, with t
 - C writes a comment, Shift+C reads it; Control+1 to 6 mark, spoken in words.
 - E speaks an evaluation; E twice thinks longer; Shift+E reviews the move; Control+E adds the engine line.
 - A named opening is spoken; O repeats it; "out of theory" after the last book move.
+- E with king and queen against king (tablebases installed) says "Tablebase: white wins..." and the best moves.
 - X says the threat and its line; in check it says the threat is already on the board.
 - F7 reviews with spoken progress; F7 again stops; the summary lists the moments; Alt+Page Down / Up walk them, from the position before the move, the engine's move hidden by default.
 - Control+S asks for the headers and says the file name; the file opens again with Analyse PGN File.

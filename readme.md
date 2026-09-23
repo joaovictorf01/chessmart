@@ -165,7 +165,7 @@ The commands of the game board work here too (arrows, Enter, A, M, F1, F4...). O
 | Control+1 to Control+6 | Mark the move: ! ? !! ?? !? ?! |
 | Control+0 | Remove the mark |
 | Control+P | Make the current variation the main line |
-| E | Engine evaluation: who is better and by how much, the best move with its line, and two other candidates. Press twice to let the engine think 8 seconds instead of 2 |
+| E | With five pieces or fewer and the tablebases installed (Endgames, Download tablebases): the exact result and the moves that keep it, instead of the engine. Otherwise the engine evaluation: who is better and by how much, the best move with its line, and two other candidates. Press twice to let the engine think 8 seconds instead of 2 |
 | X | The threat, as on Lichess: what the other side would play if it were its move, with the evaluation and the line. Not in check (the threat is already there) |
 | Shift+E | Review the move that led here against the engine's best: the engine's move, good, inaccuracy, mistake or blunder, and the mark that suggests |
 | Control+E | After E, add the engine's line (up to 8 half-moves) as a variation, with the evaluation as its comment |
