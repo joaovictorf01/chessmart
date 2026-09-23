@@ -12,6 +12,7 @@ database: recording attempts, reading rating and statistics.
 from __future__ import annotations
 
 import dataclasses
+import datetime
 from concurrent.futures import Future
 from pathlib import Path
 
@@ -20,6 +21,7 @@ from .i18n import _
 from .tactic.db import is_puzzles_database, resolve_default_db_path
 from .tactic.models import AttemptResult, AttemptStats, Puzzle, PuzzleFilters, RatingSummary
 from .tactic.repository import PuzzleRepository
+from .tactic.review import REVIEWS_PER_SESSION, ReviewOutcome
 from .theme_catalog import describe_theme_filter, parse_theme_filter
 from .theme_names import theme_description, theme_label
 from .trainer import (
@@ -57,9 +59,11 @@ class PuzzleInfo:
 	auto_performed_move: chess.Move
 	solution_moves: tuple[chess.Move, ...]
 	themes: tuple[ThemeInfo, ...]
+	# A puzzle the player missed before, served again from the review queue: never rated.
+	review: bool = False
 
 	@classmethod
-	def from_puzzle(cls, puzzle: Puzzle) -> PuzzleInfo:
+	def from_puzzle(cls, puzzle: Puzzle, review: bool = False) -> PuzzleInfo:
 		auto_performed_move, *solution_moves = (chess.Move.from_uci(move) for move in puzzle.moves)
 		return cls(
 			puzzle_id=puzzle.id,
@@ -75,6 +79,7 @@ class PuzzleInfo:
 				ThemeInfo(slug=slug, label=theme_label(slug), description=theme_description(slug))
 				for slug in puzzle.themes
 			),
+			review=review,
 		)
 
 
@@ -154,6 +159,11 @@ class TrainingSession:
 		# The next puzzle, already drawn and converted on a thread while the
 		# player is still solving the current one. See prefetch_next.
 		self._prefetched: Future | None = None
+		# Puzzles the player missed, due today, served before any new one. Filled
+		# by ensure_ready; emptied as they are served or when the player skips them.
+		self._reviews: list[Puzzle] = []
+		self.reviews_total = 0
+		self.reviews_served = 0
 
 	# -- preparation ------------------------------------------------------------
 
@@ -170,6 +180,25 @@ class TrainingSession:
 		if self.repository.random_puzzle(self._filters()) is None:
 			# Translators: Error shown when no puzzle matches the chosen plan, level and themes.
 			raise LookupError(_("No puzzles found for the selected filters."))
+		self._load_reviews()
+
+	def _load_reviews(self) -> None:
+		"""The misses due today open the session, whatever its plan: a missed pattern is worth it at any level."""
+		assert self.repository is not None
+		self._reviews = self.repository.due_review_puzzles(datetime.date.today(), REVIEWS_PER_SESSION)
+		self.reviews_total = len(self._reviews)
+		self.reviews_served = 0
+		# Kept out of the random draws, so a new puzzle is never one waiting its review turn.
+		self._seen_ids.extend(puzzle.id for puzzle in self._reviews if puzzle.id not in self._seen_ids)
+
+	@property
+	def reviews_left(self) -> int:
+		"""Reviews not served yet in this session."""
+		return len(self._reviews)
+
+	def skip_reviews(self) -> None:
+		"""The player chose to go straight to new puzzles. The skipped ones stay due for the next session."""
+		self._reviews = []
 
 	def _filters(self, excluded_ids: tuple[str, ...] = ()) -> PuzzleFilters:
 		return PuzzleFilters(
@@ -183,7 +212,11 @@ class TrainingSession:
 	# -- puzzle sequence --------------------------------------------------------
 
 	def next_puzzle(self) -> PuzzleInfo | None:
-		"""The next puzzle, or None when the session has ended."""
+		"""The next puzzle, or None when the session has ended. Due reviews come first."""
+		if self._reviews:
+			puzzle = self._reviews.pop(0)
+			self.reviews_served += 1
+			return PuzzleInfo.from_puzzle(puzzle, review=True)
 		future, self._prefetched = self._prefetched, None
 		if future is not None:
 			# If the thread has already finished, this returns right away; if
@@ -270,11 +303,26 @@ class TrainingSession:
 		mistakes: int,
 		hints_used: int,
 		elapsed_ms: int,
+		revealed: bool = False,
 	) -> AttemptResult | None:
 		"""Records the attempt and returns how the rating changed, or None with no database."""
 		if self.repository is None:
 			return None
-		return self.repository.record_attempt(puzzle_id, solved, mistakes, hints_used, elapsed_ms)
+		return self.repository.record_attempt(puzzle_id, solved, mistakes, hints_used, elapsed_ms, revealed)
+
+	def record_review(
+		self,
+		puzzle_id: str,
+		solved: bool,
+		mistakes: int,
+		hints_used: int,
+		revealed: bool,
+		elapsed_ms: int,
+	) -> ReviewOutcome | None:
+		"""Records a review (never rated) and says where the puzzle stands, or None with no database."""
+		if self.repository is None:
+			return None
+		return self.repository.record_review(puzzle_id, solved, mistakes, hints_used, revealed, elapsed_ms)
 
 	def rating(self) -> RatingSummary | None:
 		"""The player's current rating, or None when there's no database."""

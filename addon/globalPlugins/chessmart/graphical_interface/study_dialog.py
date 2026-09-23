@@ -9,6 +9,8 @@ button that copies it all to the clipboard -- to paste elsewhere or share.
 
 from __future__ import annotations
 
+import datetime
+
 import api
 import wx
 import gui
@@ -74,6 +76,7 @@ class StudyLogDialog(gui.SettingsDialog):
 			try:
 				summaries = study_log.daily_summaries(connection, days)
 				progress = study_log.lesson_progress(connection)
+				reviews = study_log.review_queue(connection)
 			finally:
 				connection.close()
 		except Exception as error:
@@ -85,6 +88,10 @@ class StudyLogDialog(gui.SettingsDialog):
 			# Translators: Heading of the daily part of the study log.
 			_("By day"),
 			*study_log.render_days(summaries, days),
+			"",
+			# Translators: Heading of the review part of the study log: puzzles the player missed.
+			_("Puzzles you missed"),
+			*study_log.render_reviews(reviews, datetime.date.today()),
 			"",
 			# Translators: Heading of the lessons part of the study log.
 			_("Endgame lessons: how far you go"),

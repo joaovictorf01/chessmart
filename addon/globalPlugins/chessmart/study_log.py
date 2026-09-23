@@ -21,6 +21,8 @@ import datetime
 from .endgame import log as endgame_log
 from .endgame.lessons import ENDGAME_LESSONS, EndgameLesson, lesson_label, position_title
 from .i18n import _
+from .tactic.db import load_store
+from .tactic.review import REVIEWS_PER_SESSION, ReviewQueue
 
 FIRM_STREAK = 3
 
@@ -34,14 +36,17 @@ class DaySummary:
 	endgame_attempts: int = 0
 	endgame_held: int = 0
 	endgame_ms: int = 0
+	reviews: int = 0
+	reviews_clean: int = 0
+	reviews_ms: int = 0
 
 	@property
 	def total_minutes(self) -> int:
-		return round((self.tactics_ms + self.endgame_ms) / 60000)
+		return round((self.tactics_ms + self.endgame_ms + self.reviews_ms) / 60000)
 
 	@property
 	def empty(self) -> bool:
-		return self.tactics_attempts == 0 and self.endgame_attempts == 0
+		return self.tactics_attempts == 0 and self.endgame_attempts == 0 and self.reviews == 0
 
 
 @dataclasses.dataclass(frozen=True)
@@ -83,6 +88,18 @@ def daily_summaries(connection, days: int, today: datetime.date | None = None) -
 			(since,),
 		):
 			tactics[row["day"]] = (int(row["n"]), int(row["solved"]), int(row["ms"]))
+	reviews: dict[str, tuple[int, int, int]] = {}
+	if _has_table(connection, "review_attempts"):
+		for row in connection.execute(
+			"""
+			SELECT date(created_at, 'localtime') AS day, COUNT(*) AS n,
+			       COALESCE(SUM(solved = 1 AND mistakes = 0 AND hints_used = 0 AND revealed = 0), 0) AS clean,
+			       COALESCE(SUM(elapsed_ms), 0) AS ms
+			FROM review_attempts WHERE date(created_at, 'localtime') >= ? GROUP BY day
+			""",
+			(since,),
+		):
+			reviews[row["day"]] = (int(row["n"]), int(row["clean"]), int(row["ms"]))
 	endgames: dict[str, tuple[int, int, int]] = {}
 	if _has_table(connection, "endgame_attempts"):
 		for row in connection.execute(
@@ -95,9 +112,10 @@ def daily_summaries(connection, days: int, today: datetime.date | None = None) -
 		):
 			endgames[row["day"]] = (int(row["n"]), int(row["held"]), int(row["ms"]))
 	summaries = []
-	for day in sorted(set(tactics) | set(endgames), reverse=True):
+	for day in sorted(set(tactics) | set(endgames) | set(reviews), reverse=True):
 		t = tactics.get(day, (0, 0, 0))
 		e = endgames.get(day, (0, 0, 0))
+		r = reviews.get(day, (0, 0, 0))
 		summaries.append(
 			DaySummary(
 				day=datetime.date.fromisoformat(day),
@@ -107,9 +125,19 @@ def daily_summaries(connection, days: int, today: datetime.date | None = None) -
 				endgame_attempts=e[0],
 				endgame_held=e[1],
 				endgame_ms=e[2],
+				reviews=r[0],
+				reviews_clean=r[1],
+				reviews_ms=r[2],
 			),
 		)
 	return summaries
+
+
+def review_queue(connection) -> ReviewQueue:
+	"""The queue of missed puzzles, from the same history. Creates the tables an old history lacks."""
+	store = load_store()
+	store.prepare_history(connection)
+	return store.review_queue(connection)
 
 
 def lesson_progress(connection) -> list[LessonProgress]:
@@ -168,6 +196,15 @@ def render_days(summaries: list[DaySummary], days: int) -> list[str]:
 					minutes=_minutes(s.tactics_ms),
 				),
 			)
+		if s.reviews:
+			# Translators: One day's reviews of missed puzzles in the study log, e.g. "reviews: 3, 2 clean, 6 min".
+			parts.append(
+				_("reviews: {n}, {clean} clean, {minutes} min").format(
+					n=s.reviews,
+					clean=s.reviews_clean,
+					minutes=_minutes(s.reviews_ms),
+				),
+			)
 		if s.endgame_attempts:
 			# Translators: One day's endgame work in the study log, e.g. "endgames: 4 positions, 3 held, 18 min".
 			parts.append(
@@ -177,7 +214,7 @@ def render_days(summaries: list[DaySummary], days: int) -> list[str]:
 					minutes=_minutes(s.endgame_ms),
 				),
 			)
-		total_ms += s.tactics_ms + s.endgame_ms
+		total_ms += s.tactics_ms + s.endgame_ms + s.reviews_ms
 		# Translators: One day in the study log, e.g. "2026-09-19: tactics: ...; endgames: ... Total 43 min."
 		lines.append(
 			_("{day}: {parts}. Total {minutes} min.").format(
@@ -195,6 +232,25 @@ def render_days(summaries: list[DaySummary], days: int) -> list[str]:
 		),
 	)
 	return lines
+
+
+def render_reviews(queue: ReviewQueue, today: datetime.date) -> list[str]:
+	"""The review queue in two lines: where it stands, and what firm means."""
+	if not queue.items and not queue.firm:
+		# Translators: Shown in the study log when no puzzle was ever missed.
+		return [_("No missed puzzles to review.")]
+	return [
+		# Translators: The review queue in the study log, e.g. "In the queue: 3 due today, 5 waiting for their day. Firm: 2.".
+		_("In the queue: {due} due today, {waiting} waiting for their day. Firm: {firm}.").format(
+			due=len(queue.due(today)),
+			waiting=queue.waiting(today),
+			firm=queue.firm,
+		),
+		# Translators: Explains the review queue in the study log.
+		_(
+			"A missed puzzle comes back the next day; two clean reviews in a row, days apart, make it firm. Up to {count} reviews open each tactics session.",
+		).format(count=REVIEWS_PER_SESSION),
+	]
 
 
 def render_progress(progress: list[LessonProgress]) -> list[str]:

@@ -57,3 +57,20 @@ def run_modal(dialog: wx.Dialog, callback: Callable[[int], object] | None = None
 		dialog.Destroy()
 
 	wx.CallAfter(run)
+
+
+def ask_yes_no_from_script(
+	message: str,
+	caption: str,
+	callback: Callable[[bool], object],
+	*,
+	parent: wx.Window | None = None,
+) -> None:
+	"""A Yes/No question asked from a script, which cannot block: the answer goes to `callback`.
+
+	No is the focused button and the answer to Escape, so a question that
+	guards a shortcut never lets the same keystroke through by accident.
+	"""
+	dialog = MessageDialog(_parent(parent), message, caption, buttons=None)
+	dialog.addYesButton().addNoButton(defaultFocus=True, fallbackAction=True)
+	run_modal(dialog, lambda result: callback(result == ReturnCode.YES))

@@ -1,6 +1,7 @@
 # coding: utf-8
 # pyright: basic
 
+import datetime
 import functools
 import time
 
@@ -16,8 +17,9 @@ from scriptHandler import getLastScriptRepeatCount, script
 
 from ..sounds import GameSound
 from ..speaking import speak_next
-from ..i18n import _
+from ..i18n import _, ngettext
 from ..tactic.models import AttemptResult
+from ..tactic.review import ReviewOutcome
 from ..puzzle_attempt import AttemptState, SessionStats, player_move_progress
 from ..training_session import PuzzleInfo, TrainingSession
 from .actions_bar import ActionsBarMixin
@@ -59,6 +61,11 @@ class PuzzleCell(UserDrivenCell):
 		# throws away the puzzle on the board and its id with it (never
 		# reaches the database).
 		puzzle = self.parent.puzzle
+		if self.parent.review_in_progress:
+			# Skipping a review asks in a dialog instead of a second press: the
+			# point is to make skipping it a decision, not a reflex.
+			self.parent.ask_to_skip_reviews()
+			return
 		if puzzle is not None and self.parent.current_expected_move is not None:
 			if getLastScriptRepeatCount() == 0:
 				speak_next(
@@ -115,6 +122,10 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		# What the last write changed in the rating. Kept around because
 		# recording the attempt and announcing the result happen at different moments.
 		self._last_rating: AttemptResult | None = None
+		# Same, for a review: where the puzzle stands in the queue after it.
+		self._last_review: ReviewOutcome | None = None
+		# "Reviews done" is said once, when the first new puzzle follows the reviews.
+		self._announced_reviews_done = False
 		self.install_actions_bar(
 			# Translators: Name of the tactics actions bar, reached with Tab.
 			name=_("Training actions"),
@@ -141,6 +152,11 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 			None,
 		)
 		self.next_puzzle()
+
+	@property
+	def review_in_progress(self) -> bool:
+		"""A review puzzle is on the board and not finished yet."""
+		return self.puzzle is not None and self.puzzle.review and self.current_expected_move is not None
 
 	@property
 	def current_expected_move(self):
@@ -177,7 +193,46 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 
 	def next_puzzle_from_actions(self):
 		self._clear_action_focus()
+		if self.review_in_progress:
+			self.ask_to_skip_reviews()
+			return
 		self.next_puzzle()
+
+	# -- reviews ---------------------------------------------------------------
+
+	def ask_to_skip_reviews(self):
+		"""The nudge: skipping the reviews is allowed, but it takes a Yes in a dialog where No is the default."""
+		from ..graphical_interface.messages import ask_yes_no_from_script
+
+		left = self.session.reviews_left + 1
+		ask_yes_no_from_script(
+			ngettext(
+				# Translators: Asked when the player tries to skip a review of a puzzle they missed; {count} is how many reviews are left, the current one included.
+				"Skip the review? Come on, going back to what you missed is what makes the pattern stick. {count} puzzle left to review. Skip it anyway?",
+				"Skip the review? Come on, going back to what you missed is what makes the pattern stick. {count} puzzles left to review. Skip them anyway?",
+				left,
+			).format(count=left),
+			# Translators: Title of the dialog asked when the player tries to skip the reviews.
+			_("Skip review"),
+			self._on_skip_reviews_answer,
+			parent=self.dialog,
+		)
+
+	def _on_skip_reviews_answer(self, skip: bool):
+		if not self.dialog:
+			return
+		if skip:
+			log.info("chessmart: reviews skipped, %d left", self.session.reviews_left + 1)
+			self.session.skip_reviews()
+			# The current review closes as it stands: untouched, it is not
+			# counted and stays due; with a slip, it is recorded as one.
+			self._announced_reviews_done = True
+			self.next_puzzle()
+			return
+		# Translators: Spoken when the player chose not to skip the reviews.
+		message = _("Good choice. Back to the review.")
+		queueHandler.queueFunction(queueHandler.eventQueue, ui.message, message)
+		queueHandler.queueFunction(queueHandler.eventQueue, self.set_focus_to_cell, self._focused_cell)
 
 	# -- loading puzzles -----------------------------------------------------
 
@@ -225,7 +280,7 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		puzzle = self.puzzle
 		assert puzzle is not None, "load is only called right after a puzzle was drawn"
 		self._callback_token += 1
-		self._attempt = AttemptState()
+		self._attempt = AttemptState(is_review=puzzle.review)
 		if is_retry:
 			# The first attempt at this puzzle was already recorded (as a
 			# failure when the restart was requested, or on the first wrong
@@ -244,12 +299,29 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		if is_retry:
 			# Translators: Spoken when the puzzle starts again.
 			pre_speech = [_("Restarting puzzle.")]
+		elif puzzle.review:
+			pre_speech = [
+				# Translators: Spoken when a review puzzle loads, e.g. "Review 1 of 3: a puzzle you missed. Not rated.".
+				_("Review {number} of {total}: a puzzle you missed. Not rated.").format(
+					number=self.session.reviews_served,
+					total=self.session.reviews_total,
+				),
+			]
 		elif self._announced_puzzle_shortcuts:
 			# Translators: Spoken while the next puzzle loads.
 			pre_speech = [_("Loading next training puzzle.")]
 		else:
 			# Translators: Spoken while the first puzzle loads.
 			pre_speech = [_("Loading training puzzle.")]
+		if (
+			not puzzle.review
+			and not is_retry
+			and self.session.reviews_served
+			and not self._announced_reviews_done
+		):
+			self._announced_reviews_done = True
+			# Translators: Spoken when the first new puzzle follows the reviews.
+			pre_speech[:0] = [_("Reviews done. Now new puzzles."), speech.commands.BreakCommand(120)]
 		filters_text = self.session.describe_filters()
 		if filters_text and not self._announced_puzzle_shortcuts:
 			pre_speech.extend(
@@ -271,6 +343,15 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 			self.dialog.SetTitle(_("Chessboard Tactics"))
 			return
 		rating = self.puzzle.rating if self.puzzle.rating is not None else _("unknown")
+		if self.puzzle.review:
+			self.dialog.SetTitle(
+				# Translators: Window title during a review of a missed puzzle.
+				_("Review of tactic {puzzle_id} - rating {rating}").format(
+					puzzle_id=self.puzzle.puzzle_id,
+					rating=rating,
+				),
+			)
+			return
 		self.dialog.SetTitle(
 			# Translators: Window title during a puzzle.
 			_("Tactic {puzzle_id} - rating {rating}").format(
@@ -353,7 +434,17 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 				# Translators: Spoken after a wrong move in a puzzle.
 				_("That move does not solve the tactic."),
 			]
-			if self._attempt.mistakes == 1 and not self._attempt.recorded:
+			if self._attempt.mistakes == 1 and self._attempt.is_review and not self._attempt.recorded:
+				# Nothing to settle: a review is recorded once, when it ends.
+				self._attempt.settled_by_mistake = True
+				spoken.extend(
+					[
+						speech.commands.BreakCommand(120),
+						# Translators: Spoken after the first wrong move of a review: it will be reviewed again.
+						_("It comes back tomorrow. Keep going to learn the solution."),
+					],
+				)
+			elif self._attempt.mistakes == 1 and not self._attempt.recorded:
 				self._write_attempt(solved=False)
 				self._attempt.settled_by_mistake = True
 				spoken.extend(
@@ -468,6 +559,8 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		if self._attempt.is_retry:
 			# Translators: Spoken after solving a retried puzzle: retries do not change the rating.
 			return [_("Retry: not rated."), speech.commands.BreakCommand(120)]
+		if self._attempt.is_review:
+			return self._review_speech()
 		if self._attempt.settled_by_mistake:
 			return [
 				# Translators: Spoken when a puzzle is finished after a wrong move.
@@ -475,6 +568,38 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 				speech.commands.BreakCommand(120),
 			]
 		return self._rating_speech()
+
+	def _review_speech(self):
+		"""Where the reviewed puzzle stands now, and what comes next when it was the last review."""
+		outcome = self._last_review
+		spoken = []
+		if outcome is None:
+			pass
+		elif outcome.firm:
+			# Translators: Spoken after a clean review that makes the puzzle firm.
+			spoken.append(_("Clean review. This one is firm: it leaves the review queue."))
+		elif outcome.clean and outcome.due is not None:
+			days = max(1, (outcome.due - datetime.date.today()).days)
+			spoken.append(
+				ngettext(
+					# Translators: Spoken after a clean review; the puzzle returns once more before it is firm.
+					"Clean review. It comes back in {days} day for the last check.",
+					"Clean review. It comes back in {days} days for the last check.",
+					days,
+				).format(days=days),
+			)
+		elif self._attempt.settled_by_mistake:
+			# Translators: Spoken when a review is finished after a wrong move.
+			spoken.append(_("Solved after a mistake: it comes back tomorrow."))
+		else:
+			# Translators: Spoken after a review finished with a hint or Control+Enter.
+			spoken.append(_("Solved with help: it comes back tomorrow."))
+		if spoken:
+			spoken.append(speech.commands.BreakCommand(120))
+		if not self.session.reviews_left:
+			# Translators: Spoken after the last review of the session.
+			spoken.extend([_("That was the last review."), speech.commands.BreakCommand(120)])
+		return spoken
 
 	def _rating_speech(self):
 		"""The rating sentence for the announcement, or nothing when there's nothing to say.
@@ -770,6 +895,9 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		"""Writes to the database once per attempt. The caller decides when."""
 		if self.puzzle is None or not self._attempt.started or self._attempt.recorded:
 			return
+		if self._attempt.is_review:
+			self._write_review(solved)
+			return
 		try:
 			self._last_rating = self.session.record_attempt(
 				puzzle_id=self.puzzle.puzzle_id,
@@ -777,10 +905,28 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 				mistakes=self._attempt.mistakes,
 				hints_used=self._attempt.hints_used,
 				elapsed_ms=self._attempt.elapsed_ms(),
+				revealed=self._attempt.auto_solved,
 			)
 		except Exception:
 			# Losing the rating for one attempt is annoying; losing the solved
 			# puzzle because the database choked would be worse.
 			log.exception("chessmart: failed to record the attempt")
 			self._last_rating = None
+		self._attempt.recorded = True
+
+	def _write_review(self, solved: bool):
+		"""A review goes to its own table, once, and never touches the rating."""
+		assert self.puzzle is not None
+		try:
+			self._last_review = self.session.record_review(
+				puzzle_id=self.puzzle.puzzle_id,
+				solved=solved,
+				mistakes=self._attempt.mistakes,
+				hints_used=self._attempt.hints_used,
+				revealed=self._attempt.auto_solved,
+				elapsed_ms=self._attempt.elapsed_ms(),
+			)
+		except Exception:
+			log.exception("chessmart: failed to record the review")
+			self._last_review = None
 		self._attempt.recorded = True

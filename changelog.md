@@ -4,6 +4,7 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 
 ## Added
 
+- **Review of the puzzles you missed.** A puzzle you missed (a wrong move, a hint, or the solution played with Control+Enter) comes back the next day, before any new puzzle: up to 3 open each tactics session, oldest first, whatever the plan and level. A clean review (no wrong move, no hint) brings it back once more three days later; the second clean review in a row makes it firm and it leaves the queue; a slip starts it over. Reviews are never rated -- the solution was already seen -- but they count: the session status says how many were clean, and My Study shows the queue (due today, waiting, firm) and the reviews of each day. Skipping a review with Control+N or Next puzzle asks first, with No as the default. Puzzles missed before this version enter the queue too.
 - "Play from here against the computer..." in the analysis board's Tab bar opens New Game with the position filled in and its side to move as the player's, so the engine strength and clock are still chosen there.
 - E on the analysis board answers from the Syzygy tablebases, when installed and with five pieces or fewer: the exact result ("white wins: 12 moves to the next pawn move, capture or mate") and the moves that keep it, through the endgame judge already used by the drills.
 - X on the analysis board, as on Lichess: the threat, the move the other side would play if it were its turn, with its evaluation and line; worked out by handing the move over (engine_eval.threat_position), refused in check.

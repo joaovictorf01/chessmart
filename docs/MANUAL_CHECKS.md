@@ -22,6 +22,9 @@ What the unit tests cannot see. After a change, run the parts it touches, with t
 - Control+H three times: themes, origin, destination.
 - Control+N once mid-puzzle asks for a second press; twice skips.
 - Control+R restarts, and the retry is not rated. Tab opens the actions bar; Escape returns.
+- With a puzzle missed yesterday or before, Tactics opens with "Review 1 of N"; the title says "Review of tactic". A wrong move says it comes back tomorrow, with no rating sentence; a clean finish says when it comes back or that it is firm; Control+Shift+R shows the rating unchanged.
+- Control+N during a review opens the skip question with No focused; Escape or No returns to the board and says so; Yes loads a new puzzle. After the last review the next puzzle says "Reviews done".
+- My Study shows "Puzzles you missed" with the queue, and the day's reviews.
 
 ## Endgames
 

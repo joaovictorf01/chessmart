@@ -32,6 +32,14 @@ Every puzzle you attempt counts as a rated game against that puzzle, using the G
 
 The rating, the attempts and their history live in `tactic.db` in your NVDA configuration folder. Database updates never touch that file.
 
+### Reviewing the puzzles you missed
+
+A puzzle you missed -- a wrong move, a hint, or the solution played with Control+Enter -- comes back the next day. When a tactics session opens and reviews are due, they come first: up to 3, the oldest first, whatever the training plan and level. Each is announced as a review and is never rated: you have seen the solution once, so a rating for it would measure memory, not tactics.
+
+A clean review (every move found, no hint) brings the puzzle back once more, three days later. The second clean review in a row makes it firm and it leaves the queue. A review with a slip starts over: back the next day.
+
+Control+N or Next puzzle during a review asks whether to skip the reviews, with No as the default; Yes goes straight to new puzzles, and the skipped ones stay due. Control+F2 counts the session's clean reviews apart from the new puzzles, and My Study shows the queue.
+
 ### Keyboard commands on the puzzle board
 
 | Key | Action |
@@ -67,7 +75,7 @@ Every attempt is recorded in your history (`tactic.db`): the starting position a
 
 ### My study
 
-**My Study...** reads the same history and tells you how much and how you studied: by day, the tactics (puzzles, solved, minutes) and the endgames (positions, held, minutes) with the day's total, for today, the last 7 or the last 30 days; and how far the endgame lessons go, lesson by lesson: which positions are firm (held three times in a row, question right and result kept without a slip), which are pending, and where you are. **Copy to clipboard** puts the whole text in the clipboard. Games are not counted here on purpose: real games are played elsewhere.
+**My Study...** reads the same history and tells you how much and how you studied: by day, the tactics (puzzles, solved, minutes) and the endgames (positions, held, minutes) and the reviews of missed puzzles (how many, how many clean) with the day's total, for today, the last 7 or the last 30 days; and how far the endgame lessons go, lesson by lesson: which positions are firm (held three times in a row, question right and result kept without a slip), which are pending, and where you are; and the review queue: how many missed puzzles are due today, how many wait for their day, and how many are firm. **Copy to clipboard** puts the whole text in the clipboard. Games are not counted here on purpose: real games are played elsewhere.
 
 ### Keyboard commands on the endgame board
 

@@ -44,6 +44,8 @@ class AttemptState:
 	# session reports how many were finished this way. A trainer that hides
 	# this measures the will to finish, not the tactic.
 	auto_solved: bool = False
+	# A puzzle from the review queue: recorded as a review, never rated.
+	is_review: bool = False
 
 	@property
 	def started(self) -> bool:
@@ -65,6 +67,10 @@ class AttemptState:
 			return 0
 		return max(1, int((time.monotonic() - self.started_at) * 1000))
 
+	def clean(self, solved: bool) -> bool:
+		"""Solved with every move found alone: no wrong move, no hint, nothing revealed."""
+		return solved and not self.mistakes and not self.hints_used and not self.auto_solved
+
 
 @dataclasses.dataclass
 class SessionStats:
@@ -76,8 +82,16 @@ class SessionStats:
 	mistakes: int = 0
 	hints: int = 0
 	revealed: int = 0
+	reviews: int = 0
+	reviews_clean: int = 0
 
 	def count(self, attempt: AttemptState, solved: bool) -> None:
+		if attempt.is_review:
+			# Reviews have their own line: mixing them in would pad the session with puzzles already seen.
+			self.reviews += 1
+			if attempt.clean(solved):
+				self.reviews_clean += 1
+			return
 		self.attempts += 1
 		self.mistakes += attempt.mistakes
 		self.hints += attempt.hints_used
@@ -100,7 +114,17 @@ class SessionStats:
 		)
 
 	def summary(self) -> str:
+		details = []
+		if self.reviews:
+			details.append(
+				# Translators: Part of the session status: reviews of missed puzzles, e.g. "Reviews: 2 clean out of 3.".
+				_("Reviews: {clean} clean out of {reviews}.").format(
+					clean=self.reviews_clean, reviews=self.reviews
+				),
+			)
 		if not self.attempts:
+			if details:
+				return " ".join(details)
 			# Translators: Session status before any puzzle is finished.
 			return _("Session just started: no finished puzzle yet.")
 		# Translators: Start of the session status, e.g. "Session: 3 solved out of 4.".
@@ -108,7 +132,6 @@ class SessionStats:
 			solved=self.solved,
 			attempts=self.attempts,
 		)
-		details = []
 		if self.solved_after_mistake:
 			details.append(
 				# Translators: Part of the session status: puzzles finished after a first wrong move.

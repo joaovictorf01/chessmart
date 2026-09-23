@@ -4235,6 +4235,82 @@ msgstr ""
 "{file} no llegó completo (intento {attempt} de {attempts}: {reason}). "
 "Descargándolo de nuevo."
 
+msgid ""
+"A missed puzzle comes back the next day; two clean reviews in a row, days "
+"apart, make it firm. Up to {count} reviews open each tactics session."
+msgstr ""
+"Un problema fallado vuelve al día siguiente; dos repasos limpios seguidos, "
+"con días de por medio, lo dejan firme. Hasta {count} repasos abren cada "
+"sesión de táctica."
+
+msgid "Clean review. This one is firm: it leaves the review queue."
+msgstr "Repaso limpio. Este quedó firme: sale de la cola de repaso."
+
+msgid "Good choice. Back to the review."
+msgstr "Bien. De vuelta al repaso."
+
+msgid ""
+"In the queue: {due} due today, {waiting} waiting for their day. Firm: "
+"{firm}."
+msgstr ""
+"En la cola: {due} para hoy, {waiting} esperando su día. Firmes: {firm}."
+
+msgid "It comes back tomorrow. Keep going to learn the solution."
+msgstr "Vuelve mañana. Sigue para aprender la solución."
+
+msgid "No missed puzzles to review."
+msgstr "No hay problemas fallados para repasar."
+
+msgid "Puzzles you missed"
+msgstr "Problemas que fallaste"
+
+msgid "Review of tactic {puzzle_id} - rating {rating}"
+msgstr "Repaso de la táctica {puzzle_id} - puntuación {rating}"
+
+msgid "Review {number} of {total}: a puzzle you missed. Not rated."
+msgstr ""
+"Repaso {number} de {total}: un problema que fallaste. No cuenta para la "
+"puntuación."
+
+msgid "Reviews done. Now new puzzles."
+msgstr "Repaso terminado. Ahora, problemas nuevos."
+
+msgid "Reviews: {clean} clean out of {reviews}."
+msgstr "Repasos: {clean} limpios de {reviews}."
+
+msgid "reviews: {n}, {clean} clean, {minutes} min"
+msgstr "repasos: {n}, {clean} limpios, {minutes} min"
+
+msgid "Skip review"
+msgstr "Saltar el repaso"
+
+msgid "Solved after a mistake: it comes back tomorrow."
+msgstr "Resuelto después de un error: vuelve mañana."
+
+msgid "Solved with help: it comes back tomorrow."
+msgstr "Resuelto con ayuda: vuelve mañana."
+
+msgid "That was the last review."
+msgstr "Ese fue el último repaso."
+
+msgid "Clean review. It comes back in {days} day for the last check."
+msgid_plural "Clean review. It comes back in {days} days for the last check."
+msgstr[0] "Repaso limpio. Vuelve en {days} día para la última comprobación."
+msgstr[1] "Repaso limpio. Vuelve en {days} días para la última comprobación."
+
+msgid ""
+"Skip the review? Come on, going back to what you missed is what makes the "
+"pattern stick. {count} puzzle left to review. Skip it anyway?"
+msgid_plural ""
+"Skip the review? Come on, going back to what you missed is what makes the "
+"pattern stick. {count} puzzles left to review. Skip them anyway?"
+msgstr[0] ""
+"¿Saltar el repaso? Vamos, volver a lo que fallaste es lo que fija el patrón."
+" Queda {count} problema por repasar. ¿Saltarlo de todos modos?"
+msgstr[1] ""
+"¿Saltar el repaso? Vamos, volver a lo que fallaste es lo que fija el patrón."
+" Quedan {count} problemas por repasar. ¿Saltarlos de todos modos?"
+
 #~ msgid ""
 #~ "Tactics need a puzzle database, which is downloaded once (about 76 MB for "
 #~ "the light version). Download it now?"

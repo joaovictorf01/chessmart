@@ -20,7 +20,7 @@ import sqlite3
 from collections import Counter
 from pathlib import Path
 
-from . import glicko2
+from . import glicko2, review
 from .models import AttemptResult, AttemptStats, Puzzle, PuzzleFilters, RatingSummary
 
 
@@ -59,6 +59,21 @@ CREATE TABLE IF NOT EXISTS rating_history (
 );
 
 CREATE INDEX IF NOT EXISTS idx_rating_history_created_at ON rating_history(created_at);
+
+-- Reviews of puzzles the player missed (see review.py). Never rated: the
+-- solution was already seen once.
+CREATE TABLE IF NOT EXISTS review_attempts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  puzzle_id TEXT NOT NULL,
+  solved INTEGER NOT NULL,
+  mistakes INTEGER NOT NULL,
+  hints_used INTEGER NOT NULL,
+  revealed INTEGER NOT NULL DEFAULT 0,
+  elapsed_ms INTEGER NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_review_attempts_puzzle_id ON review_attempts(puzzle_id);
 """
 
 # Columns added to `attempts` after it already existed in real databases.
@@ -71,9 +86,12 @@ ATTEMPT_COLUMNS = (
 	("puzzle_deviation", "REAL"),
 	("rating_before", "REAL"),
 	("rating_after", "REAL"),
+	# Finished with Control+Enter. Counts as solved for the rating (as it always
+	# did), but the puzzle goes to the review queue: the player did not find it.
+	("revealed", "INTEGER NOT NULL DEFAULT 0"),
 )
 
-HISTORY_TABLES = ("attempts", "player_rating", "rating_history")
+HISTORY_TABLES = ("attempts", "player_rating", "rating_history", "review_attempts")
 
 
 # ---------------------------------------------------------------- connection
@@ -107,6 +125,12 @@ def _migrate_attempts(connection: sqlite3.Connection) -> None:
 			connection.execute(f"ALTER TABLE attempts ADD COLUMN {column} {column_type}")
 
 
+def prepare_history(connection: sqlite3.Connection) -> None:
+	"""Create the history tables that are missing and add the columns added since."""
+	connection.executescript(SCHEMA)
+	_migrate_attempts(connection)
+
+
 def has_puzzles_table(db_path: Path) -> bool:
 	"""Say whether the file has the Lichess `puzzles` table, i.e. whether it is a puzzle database."""
 	try:
@@ -135,8 +159,7 @@ def connect(puzzles_path: Path, history_path: Path) -> sqlite3.Connection:
 	history_path.parent.mkdir(parents=True, exist_ok=True)
 	connection = sqlite3.connect(file_uri(history_path, "rwc"), uri=True)
 	connection.row_factory = sqlite3.Row
-	connection.executescript(SCHEMA)
-	_migrate_attempts(connection)
+	prepare_history(connection)
 	try:
 		connection.execute("ATTACH DATABASE ? AS lichess", (read_only_uri(puzzles_path),))
 		connection.execute("SELECT 1 FROM lichess.puzzles LIMIT 1")
@@ -424,14 +447,15 @@ def record_attempt(
 	mistakes: int,
 	hints_used: int,
 	elapsed_ms: int,
+	revealed: bool = False,
 ) -> AttemptResult:
 	"""Record the attempt, update the player's rating, and return what changed."""
 	cursor = connection.execute(
 		"""
-        INSERT INTO attempts (puzzle_id, solved, mistakes, hints_used, elapsed_ms)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO attempts (puzzle_id, solved, mistakes, hints_used, elapsed_ms, revealed)
+        VALUES (?, ?, ?, ?, ?, ?)
         """,
-		(puzzle_id, int(solved), int(mistakes), int(hints_used), int(elapsed_ms)),
+		(puzzle_id, int(solved), int(mistakes), int(hints_used), int(elapsed_ms), int(revealed)),
 	)
 	attempt_id = int(cursor.lastrowid or 0)
 
@@ -513,3 +537,85 @@ def theme_counts(connection: sqlite3.Connection) -> list[tuple[str, int]]:
 		for slug in (themes or "").split():
 			counts[slug] += 1
 	return sorted(counts.items(), key=lambda item: item[0].casefold())
+
+
+# ---------------------------------------------------------------- review queue
+
+# An attempt is clean when the player found every move alone.
+_CLEAN = "(solved = 1 AND mistakes = 0 AND hints_used = 0 AND COALESCE(revealed, 0) = 0)"
+
+
+def review_events(connection: sqlite3.Connection) -> list[review.ReviewEvent]:
+	"""Every attempt, rated or review, in the order it happened, for `review.build_queue`.
+
+	The day is the local one, as in My Study: a puzzle missed late at night
+	comes back the next calendar day, not 24 hours later.
+	"""
+	rows = connection.execute(
+		f"""
+        SELECT puzzle_id, date(created_at, 'localtime') AS day, {_CLEAN} AS clean, 0 AS is_review,
+               created_at, id
+          FROM attempts
+        UNION ALL
+        SELECT puzzle_id, date(created_at, 'localtime') AS day, {_CLEAN} AS clean, 1 AS is_review,
+               created_at, id
+          FROM review_attempts
+        ORDER BY created_at, is_review, id
+        """,
+	)
+	return [
+		review.ReviewEvent(
+			puzzle_id=row["puzzle_id"],
+			day=datetime.date.fromisoformat(row["day"]),
+			clean=bool(row["clean"]),
+			is_review=bool(row["is_review"]),
+		)
+		for row in rows
+	]
+
+
+def review_queue(connection: sqlite3.Connection) -> review.ReviewQueue:
+	return review.build_queue(review_events(connection))
+
+
+def due_review_puzzles(
+	connection: sqlite3.Connection,
+	today: datetime.date,
+	limit: int,
+) -> list[Puzzle]:
+	"""The puzzles due for review today, oldest first, at most `limit`.
+
+	A puzzle missing from the installed database (missed with the complete one,
+	the light one installed now) is passed over; it stays in the queue for the
+	day the complete database is back.
+	"""
+	puzzles = []
+	for item in review_queue(connection).due(today):
+		puzzle = get(connection, item.puzzle_id)
+		if puzzle is not None:
+			puzzles.append(puzzle)
+			if len(puzzles) >= limit:
+				break
+	return puzzles
+
+
+def record_review(
+	connection: sqlite3.Connection,
+	puzzle_id: str,
+	solved: bool,
+	mistakes: int,
+	hints_used: int,
+	revealed: bool,
+	elapsed_ms: int,
+) -> review.ReviewOutcome:
+	"""Record a review (never rated) and say where the puzzle stands now."""
+	connection.execute(
+		"""
+        INSERT INTO review_attempts (puzzle_id, solved, mistakes, hints_used, revealed, elapsed_ms)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+		(puzzle_id, int(solved), int(mistakes), int(hints_used), int(revealed), int(elapsed_ms)),
+	)
+	connection.commit()
+	clean = solved and not mistakes and not hints_used and not revealed
+	return review.outcome_for(review_queue(connection), puzzle_id, clean)

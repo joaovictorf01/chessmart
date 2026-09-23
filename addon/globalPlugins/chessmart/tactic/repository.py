@@ -10,10 +10,12 @@ and it fits: calls are rare (a random draw, a recorded attempt) and never concur
 from __future__ import annotations
 
 import contextlib
+import datetime
 from pathlib import Path
 
 from .db import HISTORY_DB_PATH, load_store
 from .models import AttemptResult, AttemptStats, Puzzle, PuzzleFilters, RatingSummary
+from .review import ReviewOutcome, ReviewQueue
 
 
 class PuzzleRepository:
@@ -57,9 +59,34 @@ class PuzzleRepository:
 		mistakes: int,
 		hints_used: int,
 		elapsed_ms: int,
+		revealed: bool = False,
 	) -> AttemptResult:
 		with self._open() as (store, connection):
-			return store.record_attempt(connection, puzzle_id, solved, mistakes, hints_used, elapsed_ms)
+			return store.record_attempt(
+				connection, puzzle_id, solved, mistakes, hints_used, elapsed_ms, revealed
+			)
+
+	def due_review_puzzles(self, today: datetime.date, limit: int) -> list[Puzzle]:
+		with self._open() as (store, connection):
+			return store.due_review_puzzles(connection, today, limit)
+
+	def review_queue(self) -> ReviewQueue:
+		with self._open() as (store, connection):
+			return store.review_queue(connection)
+
+	def record_review(
+		self,
+		puzzle_id: str,
+		solved: bool,
+		mistakes: int,
+		hints_used: int,
+		revealed: bool,
+		elapsed_ms: int,
+	) -> ReviewOutcome:
+		with self._open() as (store, connection):
+			return store.record_review(
+				connection, puzzle_id, solved, mistakes, hints_used, revealed, elapsed_ms
+			)
 
 	def rating(self) -> RatingSummary:
 		with self._open() as (store, connection):
