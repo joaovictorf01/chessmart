@@ -18,6 +18,7 @@ import dataclasses
 import enum
 import typing as t
 
+from .accuracy import as_centipawns, game_accuracy
 from .engine_eval import Assessment, MoveReview, MoveVerdict
 from .openings import lookup
 from .paths import import_bundled
@@ -159,3 +160,25 @@ def critical_moments(moments: t.Sequence[Moment], options: ReviewOptions) -> lis
 		)
 		kept = kept[: options.max_moments]
 	return sorted(kept, key=lambda moment: moment.ply)
+
+
+def accuracy_by_color(
+	game: "chess.pgn.Game",
+	evaluations: t.Sequence[t.Optional[PositionEval]],
+) -> dict[bool, t.Optional[float]]:
+	"""Each player's accuracy over the main line, from the review's evaluations (Lichess's formula).
+
+	A finished position has no engine evaluation; it counts as its result
+	(mate for the winner, level for a draw).
+	"""
+	nodes = mainline_nodes(game)
+	centipawns: list[t.Optional[float]] = []
+	for node, evaluation in zip(nodes[1:], evaluations[1:]):
+		if evaluation is not None:
+			centipawns.append(as_centipawns(evaluation.assessment))
+		elif node.board().is_game_over():
+			centipawns.append(as_centipawns(_final_assessment(node.board())))
+		else:
+			centipawns.append(None)
+	start_color = nodes[0].board().turn
+	return game_accuracy(centipawns, start_color=start_color)

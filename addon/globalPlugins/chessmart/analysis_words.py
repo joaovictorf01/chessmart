@@ -154,3 +154,14 @@ def spoken_clock_summary(summary: ClockSummary) -> str:
 			),
 		)
 	return "; ".join(parts) + "."
+
+
+def spoken_accuracy(accuracy: dict, my_color: bool) -> str:
+	"""After a review: the player's accuracy and the opponent's, as Lichess computes them; empty when unknown."""
+	mine, theirs = accuracy.get(my_color), accuracy.get(not my_color)
+	if mine is None or theirs is None:
+		return ""
+	# Translators: After a game review, e.g. "Your accuracy 96 percent, opponent 87.".
+	return _("Your accuracy {mine} percent, opponent {theirs}.").format(
+		mine=round(mine), theirs=round(theirs)
+	)

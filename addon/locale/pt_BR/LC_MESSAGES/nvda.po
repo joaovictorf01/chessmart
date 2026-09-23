@@ -4776,7 +4776,7 @@ msgstr "Sinal sugerido: {mark}, Control+{key}."
 
 #. Spoken when the engine failed, followed by the error.
 #: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:239
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:119
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:126
 msgid "The engine could not answer. Details: {error}"
 msgstr "O motor não conseguiu responder. Detalhes: {error}"
 
@@ -4794,7 +4794,7 @@ msgstr "O motor ainda está pensando"
 #. better, plus 0.5.". The engine's move at a critical moment, e.g. "The
 #. engine preferred Nf3, equal, plus 0.1.".
 #: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:171
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:224
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:234
 msgid "The engine preferred {move}, {evaluation}."
 msgstr "O motor preferia {move}, {evaluation}."
 
@@ -5357,7 +5357,7 @@ msgid "All"
 msgstr "Todos"
 
 #. End of the review summary.
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:165
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:175
 msgid "Alt+Page Down goes to the first."
 msgstr "Alt+Page Down vai para o primeiro."
 
@@ -5392,7 +5392,7 @@ msgid "Game review (F7 on the analysis board)"
 msgstr "Revisão da partida (F7 no tabuleiro de análise)"
 
 #. Said when the engine's line was added at a critical moment.
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:236
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:246
 msgid "Its line is a variation here: Alt+Down lists it."
 msgstr "A linha dele virou variante aqui: Alt+Seta abaixo lista."
 
@@ -5407,12 +5407,12 @@ msgid "Its move, and its line as a variation"
 msgstr "O lance dele e a linha como variante"
 
 #. Said at a critical moment when the engine's move is kept hidden.
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:220
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:230
 msgid "Look for a better move: play it, and Shift+E judges it."
 msgstr "Procure um lance melhor: jogue, e o Shift+E avalia."
 
 #. Said at a critical moment that carries the mark, e.g. "Marked: mistake.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:240
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:250
 msgid "Marked: {mark}."
 msgstr "Marcado: {mark}."
 
@@ -5423,12 +5423,12 @@ msgstr "Erros e erros graves"
 
 #. Heading of a critical moment, e.g. "Moment 2 of 3, move 14, black to
 #. move.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:206
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:216
 msgid "Moment {index} of {count}, move {move}, {color} to move."
 msgstr "Momento {index} de {count}, lance {move}, {color} jogam."
 
 #. One critical moment in the review summary, e.g. "move 14, mistake".
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:151
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:161
 msgid "move {move}, {verdict}"
 msgstr "lance {move}, {verdict}"
 
@@ -5438,18 +5438,18 @@ msgid "Next critical moment, Alt+Page Down"
 msgstr "Próximo momento crítico, Alt+Page Down"
 
 #. Spoken when the review found nothing at the chosen level.
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:147
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:157
 msgid "No critical moments at this level. Settings choose what counts."
 msgstr ""
 "Nenhum momento crítico neste nível. As Configurações escolhem o que conta."
 
 #. Spoken by Alt+Page Down before a review, or when it found nothing.
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:190
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:200
 msgid "No critical moments. F7 reviews the game."
 msgstr "Nenhum momento crítico. F7 revisa a partida."
 
 #. Spoken past the last or before the first critical moment.
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:196
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:206
 msgid "No more critical moments that way."
 msgstr "Não há mais momentos críticos nessa direção."
 
@@ -5469,7 +5469,7 @@ msgid "Only where it went wrong: I look for the better move"
 msgstr "Só onde errei: eu procuro o lance melhor"
 
 #. What was played at a critical moment, e.g. "Played Bxe5: mistake.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:213
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:223
 msgid "Played {move}: {verdict}."
 msgstr "Jogado {move}: {verdict}."
 
@@ -5479,7 +5479,7 @@ msgid "Quick, half a second"
 msgstr "Rápido, meio segundo"
 
 #. Spoken when F7 stopped the game review.
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:116
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:123
 msgid "Review stopped."
 msgstr "Revisão interrompida."
 
@@ -5490,7 +5490,7 @@ msgstr "Revisar a partida, F7"
 
 #. Spoken when the game review starts, e.g. "Reviewing 70 positions, about 70
 #. seconds. F7 again stops.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:87
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:94
 msgid "Reviewing {count} positions, about {seconds} seconds. F7 again stops."
 msgstr ""
 "Revisando {count} posições, cerca de {seconds} segundos. F7 de novo "
@@ -5502,7 +5502,7 @@ msgid "Skip opening &theory"
 msgstr "Pular a &teoria de abertura"
 
 #. Spoken by F7 when the game has no moves to review.
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:75
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:82
 msgid "There are no moves to review."
 msgstr "Não há lances para revisar."
 
@@ -5512,14 +5512,14 @@ msgid "What the engine &reveals"
 msgstr "O que o motor &revela"
 
 #. Start of the review summary, e.g. "3 critical moments:".
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:159
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:169
 msgid "{count} critical moment:"
 msgid_plural "{count} critical moments:"
 msgstr[0] "{count} momento crítico:"
 msgstr[1] "{count} momentos críticos:"
 
 #. Game review progress, e.g. "50 percent reviewed".
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:108
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:115
 msgid "{percent} percent reviewed"
 msgstr "{percent} por cento revisado"
 
@@ -5534,7 +5534,7 @@ msgid "Previous critical moment, Alt+Page Up"
 msgstr "Momento crítico anterior, Alt+Page Up"
 
 #. Spoken after the review options were saved from the analysis board.
-#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:179
+#: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:189
 msgid "Review options saved. F7 reviews with them."
 msgstr "Opções da revisão salvas. O F7 revisa com elas."
 
@@ -5542,6 +5542,11 @@ msgstr "Opções da revisão salvas. O F7 revisa com elas."
 #: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:255
 msgid "Review options..."
 msgstr "Opções da revisão..."
+
+#. After a game review, e.g. "Your accuracy 96 percent, opponent 87.".
+#: addon/globalPlugins/chessmart/analysis_words.py:165
+msgid "Your accuracy {mine} percent, opponent {theirs}."
+msgstr "Sua precisão {mine} por cento, adversário {theirs}."
 
 #~ msgid "Provisional "
 #~ msgstr "Provisório "

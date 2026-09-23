@@ -7,6 +7,7 @@ import unittest
 
 from chessmart.analysis_words import (
 	MARK_KEYS,
+	spoken_accuracy,
 	spoken_assessment,
 	spoken_clock_summary,
 	spoken_mark,
@@ -53,6 +54,15 @@ class MarksTest(unittest.TestCase):
 	def test_marks_and_verdicts_are_words(self):
 		self.assertEqual(spoken_mark(chess.pgn.NAG_SPECULATIVE_MOVE), "interesting move")
 		self.assertEqual(spoken_verdict(MoveVerdict.BLUNDER), "blunder")
+
+
+class AccuracyWordsTest(unittest.TestCase):
+	def test_mine_first(self):
+		accuracy = {chess.WHITE: 86.6, chess.BLACK: 95.7}
+		self.assertEqual(spoken_accuracy(accuracy, chess.BLACK), "Your accuracy 96 percent, opponent 87.")
+
+	def test_unknown_says_nothing(self):
+		self.assertEqual(spoken_accuracy({chess.WHITE: None, chess.BLACK: 90.0}, chess.BLACK), "")
 
 
 class ClockTest(unittest.TestCase):

@@ -22,9 +22,16 @@ import ui
 import wx
 
 from ..addon_config import get_review_options
-from ..analysis_words import spoken_assessment, spoken_mark, spoken_verdict
+from ..analysis_words import spoken_accuracy, spoken_assessment, spoken_mark, spoken_verdict
 from ..game_tree import MOVE_MARKS
-from ..game_review import PositionEval, Reveal, critical_moments, mainline_nodes, review_moves
+from ..game_review import (
+	PositionEval,
+	Reveal,
+	accuracy_by_color,
+	critical_moments,
+	mainline_nodes,
+	review_moves,
+)
 from ..i18n import _, ngettext
 from ..paths import import_bundled
 from ..sounds import GameSound
@@ -139,7 +146,10 @@ class ReviewActionsMixin:
 		if marked:
 			self.unsaved = True
 			self._rebuild_score_sheet()
-		speak_next(self._summary(moments))
+		accuracy = spoken_accuracy(accuracy_by_color(game, position_evals), my_color)
+		speak_next(
+			([accuracy, speech.commands.BreakCommand(200)] if accuracy else []) + self._summary(moments)
+		)
 
 	def _summary(self, moments) -> list:
 		if not moments:

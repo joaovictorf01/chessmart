@@ -16,6 +16,7 @@ from chessmart.game_review import (
 	PositionEval,
 	ReviewOptions,
 	Side,
+	accuracy_by_color,
 	critical_moments,
 	mainline_nodes,
 	review_moves,
@@ -91,6 +92,23 @@ class ReviewTest(unittest.TestCase):
 		moments = review_moves(g, evaluations, ReviewOptions(side=Side.BOTH, skip_theory=False), chess.WHITE)
 		qh4 = next(moment for moment in moments if moment.node.san() == "Qh4#")
 		self.assertEqual(qh4.review.verdict, MoveVerdict.BEST)
+
+
+class AccuracyTest(unittest.TestCase):
+	def test_a_blunder_costs_its_side_accuracy(self):
+		g = game()
+		accuracy = accuracy_by_color(g, evals_for(g, SCORES))
+		assert accuracy[chess.WHITE] is not None and accuracy[chess.BLACK] is not None
+		# Black gave away 300 centipawns with 2... g6; White 150 and 60.
+		self.assertLess(accuracy[chess.BLACK], 100)
+		self.assertLess(accuracy[chess.WHITE], 100)
+
+	def test_a_finished_game_counts_its_result(self):
+		g = game("1. f3 e5 2. g4 Qh4# 0-1")
+		evaluations: list = evals_for(g, [0, 0, 0, -1000, 0])
+		evaluations[-1] = None
+		accuracy = accuracy_by_color(g, evaluations)
+		self.assertIsNotNone(accuracy[chess.WHITE])
 
 
 class CriticalMomentsTest(unittest.TestCase):

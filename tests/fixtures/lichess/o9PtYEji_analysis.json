@@ -1,0 +1,277 @@
+{
+ "source": "https://lichess.org/game/export/o9PtYEji?evals=true&accuracy=true (downloaded 2026-09-23)",
+ "accuracy": {
+  "white": 87,
+  "black": 96
+ },
+ "judgments": {
+  "white": {
+   "inaccuracy": 6,
+   "mistake": 0,
+   "blunder": 2
+  },
+  "black": {
+   "inaccuracy": 3,
+   "mistake": 0,
+   "blunder": 0
+  }
+ },
+ "evals": [
+  {
+   "eval": 18
+  },
+  {
+   "eval": 32
+  },
+  {
+   "eval": 20
+  },
+  {
+   "eval": 34
+  },
+  {
+   "eval": 30
+  },
+  {
+   "eval": 23
+  },
+  {
+   "eval": -68
+  },
+  {
+   "eval": -65
+  },
+  {
+   "eval": -380
+  },
+  {
+   "eval": -398
+  },
+  {
+   "eval": -387
+  },
+  {
+   "eval": -373
+  },
+  {
+   "eval": -372
+  },
+  {
+   "eval": -358
+  },
+  {
+   "eval": -484
+  },
+  {
+   "eval": -389
+  },
+  {
+   "eval": -373
+  },
+  {
+   "eval": -378
+  },
+  {
+   "eval": -427
+  },
+  {
+   "eval": -352
+  },
+  {
+   "eval": -496
+  },
+  {
+   "eval": -464
+  },
+  {
+   "eval": -551
+  },
+  {
+   "eval": -547
+  },
+  {
+   "eval": -590
+  },
+  {
+   "eval": -542
+  },
+  {
+   "eval": -721
+  },
+  {
+   "eval": -707
+  },
+  {
+   "eval": -702
+  },
+  {
+   "eval": -700
+  },
+  {
+   "eval": -747
+  },
+  {
+   "eval": -546
+  },
+  {
+   "eval": -559
+  },
+  {
+   "eval": -553
+  },
+  {
+   "eval": -556
+  },
+  {
+   "eval": -537
+  },
+  {
+   "eval": -591
+  },
+  {
+   "eval": -530
+  },
+  {
+   "eval": -564
+  },
+  {
+   "eval": -494
+  },
+  {
+   "eval": -569
+  },
+  {
+   "eval": -548
+  },
+  {
+   "eval": -529
+  },
+  {
+   "eval": -547
+  },
+  {
+   "eval": -533
+  },
+  {
+   "eval": -542
+  },
+  {
+   "eval": -570
+  },
+  {
+   "eval": -567
+  },
+  {
+   "eval": -614
+  },
+  {
+   "eval": -554
+  },
+  {
+   "eval": -604
+  },
+  {
+   "eval": -587
+  },
+  {
+   "eval": -571
+  },
+  {
+   "eval": -581
+  },
+  {
+   "eval": -744
+  },
+  {
+   "eval": -729
+  },
+  {
+   "eval": -764
+  },
+  {
+   "eval": -672
+  },
+  {
+   "mate": -6
+  },
+  {
+   "mate": -5
+  },
+  {
+   "mate": -5
+  },
+  {
+   "eval": -1086
+  },
+  {
+   "mate": -5
+  },
+  {
+   "eval": -1016
+  },
+  {
+   "eval": -970
+  },
+  {
+   "eval": -1096
+  },
+  {
+   "mate": -10
+  },
+  {
+   "mate": -9
+  },
+  {
+   "mate": -9
+  },
+  {
+   "mate": -8
+  }
+ ],
+ "lichess_judgments": [
+  [
+   6,
+   "Inaccuracy"
+  ],
+  [
+   8,
+   "Blunder"
+  ],
+  [
+   14,
+   "Inaccuracy"
+  ],
+  [
+   20,
+   "Inaccuracy"
+  ],
+  [
+   26,
+   "Inaccuracy"
+  ],
+  [
+   31,
+   "Inaccuracy"
+  ],
+  [
+   58,
+   "Blunder"
+  ],
+  [
+   61,
+   "Inaccuracy"
+  ],
+  [
+   62,
+   "Inaccuracy"
+  ],
+  [
+   63,
+   "Inaccuracy"
+  ],
+  [
+   66,
+   "Inaccuracy"
+  ]
+ ]
+}
