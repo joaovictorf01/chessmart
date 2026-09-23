@@ -246,6 +246,13 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 				(_("Review the game, F7"), self._from_actions(self.review_game)),
 				# Translators: Tab bar action on the analysis board, with its key.
 				(_("Next critical moment, Alt+Page Down"), self._from_actions(self.next_moment)),
+				(
+					# Translators: Tab bar action on the analysis board, with its key.
+					_("Previous critical moment, Alt+Page Up"),
+					self._from_actions(functools.partial(self.next_moment, -1)),
+				),
+				# Translators: Tab bar action on the analysis board: opens the game review options.
+				(_("Review options..."), self.open_review_options),
 				# Translators: Tab bar action on the analysis board, with its key.
 				(_("Clock of the game, T"), self._from_actions(self.announce_clock_summary)),
 				# Translators: Tab bar action on the analysis board, with its key.

@@ -48,6 +48,8 @@ class ReviewActionsMixin:
 	_rebuild_score_sheet: typing.Any
 	_show_position: typing.Any
 	_engine_name: typing.Any
+	dialog: typing.Any
+	focus_board_from_actions: typing.Any
 
 	_moments: tuple = ()
 	_moment_index: int = -1
@@ -162,6 +164,22 @@ class ReviewActionsMixin:
 			# Translators: End of the review summary.
 			_("Alt+Page Down goes to the first."),
 		]
+
+	def open_review_options(self):
+		"""The same options as in Settings, from the Tab bar; they apply to the next F7."""
+		from ..graphical_interface.messages import run_modal
+		from ..graphical_interface.review_dialog import ReviewOptionsDialog
+
+		dialog = ReviewOptionsDialog(self.dialog)
+
+		def done(result):
+			if result == wx.ID_OK:
+				dialog.save()
+				# Translators: Spoken after the review options were saved from the analysis board.
+				wx.CallAfter(ui.message, _("Review options saved. F7 reviews with them."))
+			wx.CallAfter(self.focus_board_from_actions)
+
+		run_modal(dialog, done)
 
 	# -- walking the moments ------------------------------------------------------------
 

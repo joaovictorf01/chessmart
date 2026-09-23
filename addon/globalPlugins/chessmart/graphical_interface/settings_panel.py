@@ -15,7 +15,6 @@ from gui import guiHelper
 from ..addon_config import (
 	TacticsDefaults,
 	get_games_folder,
-	get_review_options,
 	get_move_notation,
 	get_tactics_defaults,
 	save_games_folder,
@@ -23,12 +22,11 @@ from ..addon_config import (
 	save_move_notation,
 	save_tactics_defaults,
 )
-from ..engine_eval import MoveVerdict
-from ..game_review import Reveal, ReviewOptions, Side
 from ..notation import NOTATION_STYLES
 from ..i18n import _
 from ..theme_catalog import parse_theme_filter
 from ..trainer import uses_custom_themes
+from .review_dialog import build_review_controls, options_from
 from .tactics_setup import TacticsSetupMixin
 
 
@@ -97,80 +95,8 @@ class ChessboardSettingsDialog(TacticsSetupMixin, gui.SettingsDialog):
 		)
 		self.gamesFolderTextCtrl = gamesFolder.pathControl
 		self.gamesFolderTextCtrl.SetValue(get_games_folder())
-		self._build_review_group(helper)
+		self.reviewControls = build_review_controls(self, helper)
 		self._bind_shared_events()
-
-	def _build_review_group(self, helper):
-		review = get_review_options()
-		# Translators: Label of the group with the game review options.
-		groupSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label=_("Game review (F7 on the analysis board)"))
-		group = helper.addItem(guiHelper.BoxSizerHelper(self, sizer=groupSizer))
-		box = groupSizer.GetStaticBox()
-
-		def choice(label, options, current):
-			control = group.addLabeledControl(label, wx.Choice, choices=[text for _value, text in options])
-			values = [value for value, _text in options]
-			control.SetSelection(values.index(current) if current in values else 0)
-			return control, values
-
-		self.reviewSide, self._reviewSideValues = choice(
-			# Translators: Label of the review option: whose moves are reviewed.
-			_("&Moves reviewed"),
-			# Translators: Review option value.
-			[(Side.MINE, _("Only mine (the side at the bottom of the board)")), (Side.BOTH, _("Both sides"))],
-			review.side,
-		)
-		self.reviewThreshold, self._reviewThresholdValues = choice(
-			# Translators: Label of the review option: from which verdict a move is a critical moment.
-			_("&Critical moments"),
-			[
-				# Translators: Review option value.
-				(MoveVerdict.BLUNDER, _("Blunders only")),
-				# Translators: Review option value.
-				(MoveVerdict.MISTAKE, _("Mistakes and blunders")),
-				# Translators: Review option value.
-				(MoveVerdict.INACCURACY, _("Everything, inaccuracies too")),
-			],
-			review.threshold,
-		)
-		self.reviewMax, self._reviewMaxValues = choice(
-			# Translators: Label of the review option: how many critical moments at most.
-			_("At &most"),
-			# Translators: Review option value: every critical moment.
-			[(3, "3"), (5, "5"), (10, "10"), (None, _("All"))],
-			review.max_moments,
-		)
-		self.reviewReveal, self._reviewRevealValues = choice(
-			# Translators: Label of the review option: what the engine says at a critical moment.
-			_("What the engine &reveals"),
-			[
-				# Translators: Review option value: the engine says only where the move went wrong.
-				(Reveal.NOTHING, _("Only where it went wrong: I look for the better move")),
-				# Translators: Review option value.
-				(Reveal.MOVE, _("Its move too")),
-				# Translators: Review option value.
-				(Reveal.LINE, _("Its move, and its line as a variation")),
-			],
-			review.reveal,
-		)
-		self.reviewSeconds, self._reviewSecondsValues = choice(
-			# Translators: Label of the review option: engine time per position.
-			_("&Time per position"),
-			[
-				# Translators: Review option value.
-				(0.5, _("Quick, half a second")),
-				# Translators: Review option value.
-				(1.0, _("Normal, one second")),
-				# Translators: Review option value.
-				(3.0, _("Deep, three seconds")),
-			],
-			review.seconds,
-		)
-		self.reviewSkipTheory = group.addItem(
-			# Translators: Checkbox of the review options.
-			wx.CheckBox(box, label=_("Skip opening &theory")),
-		)
-		self.reviewSkipTheory.SetValue(review.skip_theory)
 
 	def postInit(self):
 		self._update_trainer_summary()
@@ -198,14 +124,5 @@ class ChessboardSettingsDialog(TacticsSetupMixin, gui.SettingsDialog):
 		)
 		save_move_notation(NOTATION_STYLES[self.notationChoice.GetSelection()][0])
 		save_games_folder(self.gamesFolderTextCtrl.GetValue())
-		save_review_options(
-			ReviewOptions(
-				side=self._reviewSideValues[self.reviewSide.GetSelection()],
-				threshold=self._reviewThresholdValues[self.reviewThreshold.GetSelection()],
-				max_moments=self._reviewMaxValues[self.reviewMax.GetSelection()],
-				reveal=self._reviewRevealValues[self.reviewReveal.GetSelection()],
-				seconds=self._reviewSecondsValues[self.reviewSeconds.GetSelection()],
-				skip_theory=self.reviewSkipTheory.GetValue(),
-			),
-		)
+		save_review_options(options_from(self.reviewControls))
 		super().onOk(event)
