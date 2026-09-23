@@ -29,7 +29,14 @@ from typing import Iterable
 
 from ..paths import import_bundled
 from ..tactic.db import ADDON_DATA_DIRECTORY
-from ..tactic.download import CHUNK, USER_AGENT, DownloadCancelled, DownloadError, ProgressCallback
+from ..tactic.download import (
+	CHUNK,
+	USER_AGENT,
+	DownloadCancelled,
+	DownloadError,
+	ProgressCallback,
+	close_http_error,
+)
 
 with import_bundled():
 	import chess
@@ -160,6 +167,7 @@ def download_tables(
 				_download_file(table, directory, done, total, progress, cancel, timeout)
 				break
 			except (_FileFailed, urllib.error.URLError, OSError) as error:
+				close_http_error(error)
 				if attempt == attempts_per_file:
 					raise DownloadError(f"download: {table.file}: {error}") from error
 				if cancel is not None and cancel.wait(retry_delay):

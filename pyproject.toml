@@ -36,7 +36,7 @@ build = [
 ]
 # Translations management
 l10n = [
-	# tools/i18n.py: extracao, atualizacao e compilacao dos catalogos sem o GNU gettext (Windows)
+	# tools/i18n.py: extracts, updates and compiles the catalogs without GNU gettext (Windows)
 	"polib==1.2.0",
 	"nh3==0.3.2",
 	"crowdin-api-client==1.24.1",
@@ -111,7 +111,9 @@ logger-objects = ["logHandler.log"]
 venvPath = ".venv"
 venv = "."
 pythonPlatform = "Windows"
-typeCheckingMode = "strict"
+# Every add-on file also opts into basic with a `# pyright: basic` comment; the
+# project setting says the same, so the two cannot be read as contradicting.
+typeCheckingMode = "basic"
 
 include = [
 	"**/*.py",
@@ -127,9 +129,8 @@ exclude = [
 	"tests",
 	# Bibliotecas embarcadas de terceiros: nunca.
 	"addon/globalPlugins/chessmart/lib",
-	# O add-on inteiro e checado em modo basic (comentario `# pyright: basic` em cada arquivo):
-	# o modo estrito do template fica para codigo novo. Os modulos do NVDA resolvem pelo
-	# `extraPaths` abaixo, que espera o repositorio nvaccess/nvda clonado ao lado deste.
+	# Tools run outside the add-on and are not type-checked. NVDA's own modules
+	# resolve through `extraPaths` below, which expects nvaccess/nvda cloned next to this repository.
 	"tools",
 	# When excluding concrete paths relative to a directory,
 	# not matching multiple folders by name e.g. `__pycache__`,

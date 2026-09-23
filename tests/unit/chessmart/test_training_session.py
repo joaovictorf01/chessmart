@@ -7,10 +7,10 @@ Uses the same small database from `test_store` and a history in a temporary
 directory. `chess` comes from `lib/` via `import_bundled`, as in the add-on.
 """
 
-import os
 import sqlite3
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 from chessmart.tactic.models import AttemptStats
@@ -103,12 +103,13 @@ class TestDrawing(TrainingSessionTestCase):
 			).ensure_ready()
 
 	def test_missing_database_is_file_not_found(self):
-		os.environ.pop("CHESSMART_PUZZLES_DB_PATH", None)
-		session = self.session(db_path=str(Path(self.tmp.name) / "nope.db"))
-		if session.repository is not None:
-			self.skipTest("a default database is installed on this machine")
-		with self.assertRaises(FileNotFoundError):
-			session.ensure_ready()
+		# No fallback either: the machine running the tests may have a real
+		# database installed, and the rule must be checked everywhere.
+		with mock.patch("chessmart.training_session.resolve_default_db_path", return_value=None):
+			session = self.session(db_path=str(Path(self.tmp.name) / "nope.db"))
+			self.assertIsNone(session.repository)
+			with self.assertRaises(FileNotFoundError):
+				session.ensure_ready()
 
 	def test_prefetch_gives_the_same_result_as_drawing_now(self):
 		session = self.session(

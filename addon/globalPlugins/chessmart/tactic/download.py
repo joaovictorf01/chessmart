@@ -53,6 +53,12 @@ RetryCallback = Callable[[str, int, int, str], None]
 """Called when a part has to be downloaded again: file, attempt, attempts, reason."""
 
 
+def close_http_error(error: BaseException) -> None:
+	"""An HTTPError holds the server's response open; close it once the error is handled."""
+	if isinstance(error, urllib.error.HTTPError):
+		error.close()
+
+
 class DownloadCancelled(Exception):
 	pass
 
@@ -126,6 +132,7 @@ def fetch_manifest(url: str | None = None, timeout: float = 30.0) -> Manifest:
 		with urllib.request.urlopen(request, timeout=timeout) as response:
 			payload = json.loads(response.read().decode("utf-8"))
 	except (urllib.error.URLError, OSError, ValueError) as error:
+		close_http_error(error)
 		raise DownloadError(f"manifest: {error}") from error
 	return parse_manifest(payload, base_url=url)
 
@@ -277,6 +284,7 @@ def download_tier(
 						)
 						break
 					except (_PartFailed, urllib.error.URLError, OSError, zlib.error) as error:
+						close_http_error(error)
 						if attempt == attempts_per_part:
 							raise DownloadError(f"download: {part.file}: {error}") from error
 						# Say what happened: a retry that says nothing looks like the

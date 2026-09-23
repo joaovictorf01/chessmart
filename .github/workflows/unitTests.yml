@@ -22,5 +22,7 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Run test suite via unittest
-        run: uv run python -m unittest discover -s tests -v
+      # The same command as locally (tools/check.py): tests, ruff lint and
+      # format, translation catalog. Pyright is skipped here: it needs NVDA's sources.
+      - name: Run all checks
+        run: uv run python tools/check.py

@@ -15,13 +15,13 @@ Chessmart is an NVDA add-on. The user-facing side is Python 3.13 (NVDA's runtime
 - `tools/` — `i18n.py` (extract/update/compile translations), `build_puzzles.py` (monthly puzzle database), `build_syzygy_manifest.py`.
 - `readme.md`, `changelog.md` (English) and `changelog.pt_BR.md` (Portuguese).
 
-## Running the tests
+## Checking a change
 
 ```
-py -3 -m unittest discover -s tests -t . -q
+uv run python tools/check.py
 ```
 
-Any Python 3.12+ works; the tests do not need NVDA.
+One command, the same CI runs: unit tests, ruff lint and format check, the translation catalog check, and pyright when NVDA's sources are cloned at `../nvda`. The tests do not need NVDA; `docs/MANUAL_CHECKS.md` lists what only NVDA can show. `AGENTS.md` has the rules for coding agents, `docs/ARCHITECTURE.md` the map.
 
 ## Code checks
 
