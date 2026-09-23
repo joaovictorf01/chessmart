@@ -86,13 +86,18 @@ class AnalysisEngine:
 		if self._engine is None:
 			startupinfo = subprocess.STARTUPINFO()
 			startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-			self._engine = chess.engine.SimpleEngine.popen_uci(
+			engine = chess.engine.SimpleEngine.popen_uci(
 				self.executable,
 				creationflags=subprocess.CREATE_NO_WINDOW | subprocess.CREATE_NEW_PROCESS_GROUP,
 				startupinfo=startupinfo,
 				close_fds=True,
 			)
-			self._engine.configure({"Threads": _threads(), "Hash": HASH_MB})
+			if self._closed:
+				# The board closed while the process was starting: stop it here, nobody else will.
+				engine.quit()
+				raise chess.engine.EngineTerminatedError("the board closed")
+			engine.configure({"Threads": _threads(), "Hash": HASH_MB})
+			self._engine = engine
 		return self._engine
 
 	def _analyse_lines(self, board: "chess.Board", seconds: float, lines: int) -> list[Evaluation]:

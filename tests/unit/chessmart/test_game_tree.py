@@ -225,7 +225,8 @@ class EditTest(unittest.TestCase):
 		self.assertEqual(e5.comment, "I expected this [%clk 0:14:52]")
 		assert first is not None
 		self.assertEqual(first.san(), "Nf3")
-		self.assertEqual(first.comment, "Stockfish 16: +0.3")
+		# The evaluation is of the position before 1... e5, not after it: it stays off Nf3.
+		self.assertEqual(first.comment, "")
 
 	def test_the_start_of_the_game_has_no_move_to_mark(self):
 		self.assertFalse(GameTree().set_move_mark(chess.pgn.NAG_GOOD_MOVE))

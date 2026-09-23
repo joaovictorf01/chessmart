@@ -329,13 +329,25 @@ class EngineActionsMixin:
 			return
 		self.unsaved = True
 		self._rebuild_score_sheet()
+		followed = first.ply() - self.tree.node.ply() - 1
+		added = len(line) - followed
+		if followed == 0:
+			ui.message(
+				# Translators: Spoken after Control+E, e.g. "Engine line added from 12. Nf3, 8 moves. Alt+Down lists it.".
+				ngettext(
+					"Engine line added from {move}, {count} move. Alt+Down lists it.",
+					"Engine line added from {move}, {count} moves. Alt+Down lists it.",
+					added,
+				).format(move=self._numbered_move(first), count=added),
+			)
+			return
 		ui.message(
-			# Translators: Spoken after Control+E, e.g. "Engine line added from 12. Nf3, 8 moves. Alt+Down lists it.".
+			# Translators: Spoken after Control+E when the engine agrees with recorded moves first, e.g. "The engine follows 2 recorded moves, then branches at 13. Bb5: 6 moves added.".
 			ngettext(
-				"Engine line added from {move}, {count} move. Alt+Down lists it.",
-				"Engine line added from {move}, {count} moves. Alt+Down lists it.",
-				len(line),
-			).format(move=self._numbered_move(first), count=len(line)),
+				"The engine follows {followed} recorded move, then branches at {move}: {count} moves added.",
+				"The engine follows {followed} recorded moves, then branches at {move}: {count} moves added.",
+				followed,
+			).format(followed=followed, move=self._numbered_move(first), count=added),
 		)
 
 	def _short_value(self, assessment, written=False):

@@ -226,7 +226,7 @@ msgstr "xeque"
 #. over. Spoken when a position on the analysis board is checkmate.
 #: addon/globalPlugins/chessmart/notation.py:147
 #: addon/globalPlugins/chessmart/spoken_messages.py:96
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:740
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:739
 msgid "checkmate"
 msgstr "mate"
 
@@ -1576,7 +1576,7 @@ msgid "Your puzzle database is up to date (Lichess base of {when})."
 msgstr "Sua base de puzzles está atualizada (base do Lichess de {when})."
 
 #. Spoken when a king is in check, e.g. "white is in check".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:748
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:747
 #: addon/globalPlugins/chessmart/virtual_chessboard/base.py:496
 msgid "{color} is in check"
 msgstr "{color} em xeque"
@@ -4317,7 +4317,7 @@ msgstr "regra dos setenta e cinco lances"
 #. How a game ended, spoken at game over. Spoken when a position on the
 #. analysis board is stalemate.
 #: addon/globalPlugins/chessmart/spoken_messages.py:98
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:743
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:742
 msgid "stalemate"
 msgstr "afogamento"
 
@@ -4659,7 +4659,7 @@ msgstr "melhor: {move}"
 
 #. Spoken after Control+E, e.g. "Engine line added from 12. Nf3, 8 moves.
 #. Alt+Down lists it.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:334
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:337
 msgid "Engine line added from {move}, {count} move. Alt+Down lists it."
 msgid_plural ""
 "Engine line added from {move}, {count} moves. Alt+Down lists it."
@@ -4727,7 +4727,7 @@ msgid "Mark {move}"
 msgstr "Marcar {move}"
 
 #. Short engine value for a forced mate, e.g. "mate in 3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:347
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:359
 msgid "mate in {moves}"
 msgstr "mate em {moves}"
 
@@ -4786,7 +4786,7 @@ msgstr "Sinal sugerido: {mark}, Control+{key}."
 
 #. Spoken when the engine failed, followed by the error. Spoken when the
 #. engine failed during the review, followed by the error.
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:355
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:367
 #: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:133
 msgid "The engine could not answer. Details: {error}"
 msgstr "O motor não conseguiu responder. Detalhes: {error}"
@@ -4869,7 +4869,7 @@ msgstr "{color} ganhando, {pawns}"
 
 #. Spoken when the position has variations recorded besides the main
 #. continuation.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:730
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:729
 msgid "{count} variation from here"
 msgid_plural "{count} variations from here"
 msgstr[0] "{count} variante daqui"
@@ -5636,6 +5636,23 @@ msgstr "{piece} em {square}"
 #: addon/globalPlugins/chessmart/virtual_chessboard/editor_board.py:182
 msgid "{piece}, {square}"
 msgstr "{piece}, {square}"
+
+#. Spoken after Control+E when the engine agrees with recorded moves first,
+#. e.g. "The engine follows 2 recorded moves, then branches at 13. Bb5: 6
+#. moves added.".
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:346
+msgid ""
+"The engine follows {followed} recorded move, then branches at {move}: "
+"{count} moves added."
+msgid_plural ""
+"The engine follows {followed} recorded moves, then branches at {move}: "
+"{count} moves added."
+msgstr[0] ""
+"O motor segue {followed} lance registrado e se separa em {move}: {count} "
+"lances acrescentados."
+msgstr[1] ""
+"O motor segue {followed} lances registrados e se separa em {move}: {count} "
+"lances acrescentados."
 
 #~ msgid "Provisional "
 #~ msgstr "Provisório "

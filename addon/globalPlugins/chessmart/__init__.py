@@ -666,12 +666,16 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		chessboard_menu = getattr(self, "chessboard_menu", None)
 		if chessboard_menu is not None and gui.mainFrame is not None:
 			gui.mainFrame.sysTrayIcon.toolsMenu.DestroyItem(chessboard_menu.itemHandle)
-		try:
-			# Close, not only destroy: closing fires the board's cleanup (a running
-			# review is cancelled, engines and tablebases are released) before the
-			# thread pool waits for its workers.
-			for cdlg in list(self._active_board_dialogs.values()):
+		# Close, not only destroy: closing fires the board's cleanup (a running
+		# review is cancelled, engines and tablebases are released) before the
+		# thread pool waits for its workers. One board failing must not keep the
+		# others, or the pool, from shutting down.
+		for cdlg in list(self._active_board_dialogs.values()):
+			try:
 				cdlg.Close(force=True)
+			except Exception:
+				log.exception("chessmart: could not close a board at exit")
+		try:
 			concurrency.terminate()
 		except Exception:
 			log.exception("Failed to terminate concurrency primitives")

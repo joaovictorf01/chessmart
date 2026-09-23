@@ -127,9 +127,11 @@ class GameTree:
 		"""Records a line of moves from the pointer without moving it; the engine's line, typically.
 
 		Moves already recorded are followed, and left as they are: their
-		comments, clocks and marks are the player's. The comment and the
-		evaluation go on the first move the line adds, where it leaves what was
-		recorded. Returns that move, or None when the whole line was already there.
+		comments, clocks and marks are the player's. Returns the first move the
+		line adds, or None when the whole line was already there. The comment
+		and evaluation describe the position at the pointer, so they go on that
+		first move only when the line branches right at the pointer; further
+		down they would describe another position.
 		"""
 		node = self.node
 		first_new = None
@@ -140,7 +142,7 @@ class GameTree:
 			node = node.add_variation(move)
 			if first_new is None:
 				first_new = node
-		if first_new is not None:
+		if first_new is not None and first_new.parent is self.node:
 			if comment:
 				first_new.comment = comment
 			if score is not None:
