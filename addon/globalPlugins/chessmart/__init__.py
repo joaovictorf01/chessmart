@@ -45,12 +45,15 @@ class ChessboardMenu(wx.Menu):
 		super().__init__()
 		self.global_plugin_object = global_plugin_object
 		# Append the menu items
+		# Translators: Menu item that opens the new game dialog, and its help text.
 		new_game_item = self.Append(wx.ID_ANY, _("&New Game..."), _("Start a new chess game"))
 		tactics_item = self.Append(
 			wx.ID_ANY,
+			# Translators: Menu item that opens the tactics trainer, and its help text.
 			_("&Tactics..."),
 			_("Open tactics from the Lichess tactics database"),
 		)
+		# Translators: Menu item that starts a puzzle with the saved training setup, and its help text.
 		random_puzzle_item = self.Append(wx.ID_ANY, _("&Random Puzzle"), _("Play a random puzzle"))
 		endgames_item = self.Append(
 			wx.ID_ANY,
@@ -66,6 +69,7 @@ class ChessboardMenu(wx.Menu):
 		)
 		replay_pgn_file_item = self.Append(
 			wx.ID_ANY,
+			# Translators: Menu item that replays a PGN file, and its help text.
 			_("&Replay PGN File..."),
 			_("Load an replay a portable game notation (.pgn) file"),
 		)
@@ -88,6 +92,7 @@ class ChessboardMenu(wx.Menu):
 		self.AppendSeparator()
 		settings_item = self.Append(
 			wx.ID_ANY,
+			# Translators: Menu item that opens the add-on settings, and its help text.
 			_("&Settings..."),
 			_("Open Chessboard settings"),
 		)
@@ -95,7 +100,9 @@ class ChessboardMenu(wx.Menu):
 		assert gui.mainFrame is not None
 		self.itemHandle = gui.mainFrame.sysTrayIcon.toolsMenu.AppendSubMenu(
 			self,
+			# Translators: Name of the add-on submenu under NVDA's Tools menu.
 			_("&Chessboard"),
+			# Translators: Help text of the add-on submenu.
 			_("Open a chess game, tactics session, replay, or settings"),
 		)
 		# Bind menu items to events
@@ -132,6 +139,7 @@ class ChessboardMenu(wx.Menu):
 	def open_tactics_session(self, options):
 		self._open_session(
 			options,
+			# Translators: Error when the tactics dialog finds no puzzle database. Keep "puzzles.db" as is.
 			_(
 				"The tactics database was not found. Use Browse in the tactics dialog to point at your puzzle database, or place it in the add-on's data folder as puzzles.db.",
 			),
@@ -143,9 +151,11 @@ class ChessboardMenu(wx.Menu):
 		try:
 			session.ensure_ready()
 		except FileNotFoundError:
+			# Translators: Title of the error shown when the puzzle database is missing.
 			show_error(missing_database_message, _("Tactics Database Not Found"))
 			return
 		except LookupError as error:
+			# Translators: Title of the warning shown when no puzzle matches the options.
 			show_warning(str(error), _("No Tactics Found"))
 			return
 		self.open_training_session(session)
@@ -176,6 +186,7 @@ class ChessboardMenu(wx.Menu):
 			return
 		self._open_session(
 			default_training_options(),
+			# Translators: Error when Random Puzzle finds no puzzle database.
 			_("The tactics database was not found. Choose a valid database in Chessboard settings first."),
 		)
 
@@ -340,7 +351,9 @@ class ChessboardMenu(wx.Menu):
 			return
 		choiceDg = wx.SingleChoiceDialog(
 			gui.mainFrame,
+			# Translators: Prompt of the list of games in a PGN file.
 			_("The file contains the following games"),
+			# Translators: Title of the list of games in a PGN file.
 			_("Select Game"),
 			choices=[g.description for g in games],
 		)
@@ -411,7 +424,9 @@ class ChessboardMenu(wx.Menu):
 		else:
 			choiceDg = wx.SingleChoiceDialog(
 				gui.mainFrame,
+				# Translators: Prompt of the list of games in a PGN file.
 				_("The file contains the following games"),
+				# Translators: Title of the list of games in a PGN file.
 				_("Select Game"),
 				choices=[g.description for g in games],
 			)

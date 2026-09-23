@@ -272,10 +272,12 @@ class UserDrivenChessboard(BaseVirtualChessboard):
 			speak_next(
 				[
 					speech.commands.WaveFileCommand(GameSound.invalid.filename),
+					# Translators: Spoken when a Crazyhouse pocket has no pieces.
 					_("{color}'s pocket is empty").format(color=color_name),
 				],
 			)
 			return
+		# Translators: Name of the list of captured pieces in Crazyhouse, e.g. "white's pocket".
 		pocket_list_name = _("{color}'s pocket").format(color=color_name)
 		pocket_list = SimpleList(parent=self, name=pocket_list_name, close_gesture="kb:f6")
 		pocket = self._crazyhouse_board().pockets[color].pieces

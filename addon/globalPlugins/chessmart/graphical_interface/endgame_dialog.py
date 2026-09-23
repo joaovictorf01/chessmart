@@ -149,9 +149,11 @@ class EndgameDialog(gui.SettingsDialog):
 				time_control = ChessTimeControl.from_time_control_notation(text)
 			except ValueError:
 				show_error(
+					# Translators: Error about an invalid time control. Keep the line break and the 10+5 notation.
 					_(
 						"Please enter a valid time control string.\nExample: 10+5 for a 10 minutes base time with 5 seconds increment after each move.",
 					),
+					# Translators: Title of the error about an invalid time control.
 					_("Invalid Time Control String"),
 				)
 				return

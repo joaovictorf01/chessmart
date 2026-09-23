@@ -63,6 +63,7 @@ class PuzzleCell(UserDrivenCell):
 			if getLastScriptRepeatCount() == 0:
 				speak_next(
 					[
+						# Translators: Spoken after the first Control+N during a puzzle: it asks for a second press.
 						_("Press Control+N twice to skip tactic {puzzle_id}.").format(
 							puzzle_id=puzzle.puzzle_id,
 						),
@@ -70,6 +71,7 @@ class PuzzleCell(UserDrivenCell):
 				)
 				return
 			log.info("chessmart: tactic %s skipped with Control+N", puzzle.puzzle_id)
+			# Translators: Spoken on the second Control+N: the puzzle is skipped.
 			speak_next([_("Skipping tactic {puzzle_id}.").format(puzzle_id=puzzle.puzzle_id)])
 		self.parent.next_puzzle()
 
@@ -84,6 +86,7 @@ class PuzzleCell(UserDrivenCell):
 			speak_next(
 				[
 					speech.commands.WaveFileCommand(GameSound.invalid.filename),
+					# Translators: Spoken by Control+Enter on a finished puzzle.
 					_("This tactic is already finished."),
 				],
 			)
@@ -91,6 +94,7 @@ class PuzzleCell(UserDrivenCell):
 		if getLastScriptRepeatCount() > 0:
 			self.parent.move_piece_and_check_game_status(solution_move, auto_solved=True)
 		else:
+			# Translators: Spoken after the first Control+Enter: it asks for a second press.
 			speak_next([_("Press Control+Enter twice to play the expected move.")])
 
 
@@ -112,14 +116,21 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		# recording the attempt and announcing the result happen at different moments.
 		self._last_rating: AttemptResult | None = None
 		self.install_actions_bar(
+			# Translators: Name of the tactics actions bar, reached with Tab.
 			name=_("Training actions"),
 			items=[
+				# Translators: Button of the tactics actions bar.
 				(_("Repeat instruction"), self.repeat_current_instruction),
+				# Translators: Button of the tactics actions bar.
 				(_("Puzzle goal"), self.announce_puzzle_goal),
+				# Translators: Button of the tactics actions bar.
 				(_("Hint"), self.speak_hint),
+				# Translators: Button of the tactics actions bar.
 				(_("Puzzle details"), self.announce_puzzle_info),
 				(_("Session status"), self.announce_training_status),
+				# Translators: Button of the tactics actions bar.
 				(_("Restart puzzle"), self.restart_puzzle_from_actions),
+				# Translators: Button of the tactics actions bar.
 				(_("Next puzzle"), self.next_puzzle_from_actions),
 				(_("Back to board"), self.focus_board_from_actions),
 			],
@@ -178,16 +189,20 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 				speak_next(
 					[
 						speech.commands.WaveFileCommand(GameSound.invalid.filename),
+						# Translators: Message shown when no puzzle matches the selection.
 						_("No tactics were found for the current selection."),
 					],
 				)
+				# Translators: Title of the message shown when no puzzle matches the selection.
 				self.game_over(_("No tactics available"))
 				return
 			speak_next(
 				[
 					speech.commands.WaveFileCommand(GameSound.invalid.filename),
+					# Translators: Spoken when the session has no puzzle left for its filters.
 					_("No more tactics in this session."),
 					speech.commands.BreakCommand(100),
+					# Translators: Spoken when the session has no puzzle left.
 					_("Press Control+R to retry the current puzzle."),
 				],
 			)
@@ -200,6 +215,7 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 
 	def retry_current_puzzle(self):
 		if self.puzzle is None:
+			# Translators: Spoken when a puzzle action is used before a puzzle is on the board.
 			ui.message(_("No puzzle loaded."))
 			return
 		self._finish_attempt(solved=False)
@@ -226,10 +242,13 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		self._update_dialog_title()
 		eventHandler.queueEvent("stateChange", api.getFocusObject())
 		if is_retry:
+			# Translators: Spoken when the puzzle starts again.
 			pre_speech = [_("Restarting puzzle.")]
 		elif self._announced_puzzle_shortcuts:
+			# Translators: Spoken while the next puzzle loads.
 			pre_speech = [_("Loading next training puzzle.")]
 		else:
+			# Translators: Spoken while the first puzzle loads.
 			pre_speech = [_("Loading training puzzle.")]
 		filters_text = self.session.describe_filters()
 		if filters_text and not self._announced_puzzle_shortcuts:
@@ -248,10 +267,12 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 
 	def _update_dialog_title(self):
 		if self.puzzle is None:
+			# Translators: Title of the tactics window before a puzzle is loaded.
 			self.dialog.SetTitle(_("Chessboard Tactics"))
 			return
 		rating = self.puzzle.rating if self.puzzle.rating is not None else _("unknown")
 		self.dialog.SetTitle(
+			# Translators: Window title during a puzzle.
 			_("Tactic {puzzle_id} - rating {rating}").format(
 				puzzle_id=self.puzzle.puzzle_id,
 				rating=rating,
@@ -267,22 +288,29 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		post_speech = [
 			"",
 			speech.commands.BreakCommand(250),
+			# Translators: Spoken when a puzzle starts; {color} is white or black.
 			_("{color} to move.").format(color=color_name),
 		]
 		if not self._announced_puzzle_shortcuts:
 			post_speech.extend(
 				[
 					speech.commands.BreakCommand(150),
+					# Translators: Part of the puzzle shortcuts announcement.
 					_("Control+H for a hint."),
 					speech.commands.BreakCommand(100),
+					# Translators: Part of the puzzle shortcuts announcement.
 					_("Control+N for the next puzzle."),
 					speech.commands.BreakCommand(100),
+					# Translators: Part of the puzzle shortcuts announcement.
 					_("Control+R to restart this puzzle."),
 					speech.commands.BreakCommand(100),
+					# Translators: Part of the puzzle shortcuts announcement.
 					_("Control+F1 for puzzle details."),
 					speech.commands.BreakCommand(100),
+					# Translators: Part of the puzzle shortcuts announcement.
 					_("Press Tab for training actions."),
 					speech.commands.BreakCommand(100),
+					# Translators: Part of the puzzle shortcuts announcement.
 					_("Control+Enter twice to play the expected move."),
 				],
 			)
@@ -312,6 +340,7 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 			speak_next(
 				[
 					speech.commands.WaveFileCommand(GameSound.invalid.filename),
+					# Translators: Spoken by Control+Enter on a finished puzzle.
 					_("This tactic is already finished."),
 				],
 			)
@@ -321,6 +350,7 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 			self._attempt.mistakes += 1
 			spoken = [
 				speech.commands.WaveFileCommand(GameSound.invalid.filename),
+				# Translators: Spoken after a wrong move in a puzzle.
 				_("That move does not solve the tactic."),
 			]
 			if self._attempt.mistakes == 1 and not self._attempt.recorded:
@@ -329,6 +359,7 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 				spoken.extend(
 					[
 						speech.commands.BreakCommand(120),
+						# Translators: Spoken after the first wrong move of a puzzle: the rating is settled, the puzzle goes on.
 						_("Counted as a failure. Keep going to learn the solution."),
 						speech.commands.BreakCommand(120),
 						*self._rating_speech(),
@@ -344,6 +375,7 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 			follow_up.extend(
 				[
 					speech.commands.BreakCommand(100),
+					# Translators: Spoken after a correct move in a puzzle that is not finished yet.
 					_("Good move."),
 				],
 			)
@@ -389,6 +421,7 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 			pre_speech=(),
 			post_speech=[
 				speech.commands.BreakCommand(150),
+				# Translators: Spoken when a puzzle starts; {color} is white or black.
 				_("{color} to move.").format(color=color_name),
 				speech.commands.BreakCommand(100),
 				speech.commands.CallbackCommand(focus_callback),
@@ -400,6 +433,7 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		if callback_token != self._callback_token or self.puzzle is None:
 			return
 		self.is_game_over = True
+		# Translators: Window title after a puzzle is solved.
 		self.dialog.SetTitle(_("Solved tactic {puzzle_id}").format(puzzle_id=self.puzzle.puzzle_id))
 		eventHandler.queueEvent("stateChange", api.getFocusObject())
 		speak_next(
@@ -407,13 +441,17 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 				speech.commands.BreakCommand(200),
 				speech.commands.WaveFileCommand(GameSound.puzzle_solved.filename),
 				speech.commands.BreakCommand(150),
+				# Translators: Spoken when a puzzle is solved.
 				_("Tactic solved."),
 				speech.commands.BreakCommand(120),
 				*self._solved_rating_speech(),
+				# Translators: Spoken after a puzzle ends: how to go on.
 				_("Control+N loads another puzzle."),
 				speech.commands.BreakCommand(100),
+				# Translators: Part of the puzzle shortcuts announcement.
 				_("Press Tab for training actions."),
 				speech.commands.BreakCommand(100),
+				# Translators: Spoken after a puzzle ends: how to try it again.
 				_("Control+R restarts this one."),
 			],
 		)
@@ -428,9 +466,11 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		repeating the loss's number right after "Tactic solved".
 		"""
 		if self._attempt.is_retry:
+			# Translators: Spoken after solving a retried puzzle: retries do not change the rating.
 			return [_("Retry: not rated."), speech.commands.BreakCommand(120)]
 		if self._attempt.settled_by_mistake:
 			return [
+				# Translators: Spoken when a puzzle is finished after a wrong move.
 				_("Solved after a mistake: already counted as a failure."),
 				speech.commands.BreakCommand(120),
 			]
@@ -446,17 +486,29 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		if result is None:
 			return []
 		delta = result.rating_delta
-		if delta > 0:
+		# While the deviation is high the number is still a guess, and saying
+		# so is more useful than announcing a precise value that will swing by
+		# hundreds of points over the next few attempts. Whole sentences, not
+		# a prefix: the word order changes with the language.
+		if result.provisional:
+			if delta > 0:
+				# Translators: Spoken after a rated puzzle while the rating is uncertain, e.g. "Provisional rating 1450, up 40.".
+				text = _("Provisional rating {rating}, up {delta}.")
+			elif delta < 0:
+				# Translators: Spoken after a rated puzzle while the rating is uncertain, e.g. "Provisional rating 1410, down 40.".
+				text = _("Provisional rating {rating}, down {delta}.")
+			else:
+				# Translators: Spoken after a rated puzzle while the rating is uncertain and did not change.
+				text = _("Provisional rating {rating}, unchanged.")
+		elif delta > 0:
+			# Translators: Spoken after a rated puzzle, e.g. "Rating 1450, up 13.".
 			text = _("Rating {rating}, up {delta}.")
 		elif delta < 0:
+			# Translators: Spoken after a rated puzzle, e.g. "Rating 1432, down 12.".
 			text = _("Rating {rating}, down {delta}.")
 		else:
+			# Translators: Spoken after a rated puzzle that did not change the rating.
 			text = _("Rating {rating}, unchanged.")
-		if result.provisional:
-			# While the deviation is high the number is still a guess, and
-			# saying so is more useful than announcing a precise value that
-			# will swing by hundreds of points over the next few attempts.
-			text = _("Provisional ") + text
 		return [
 			text.format(rating=result.rating, delta=abs(delta)),
 			speech.commands.BreakCommand(120),
@@ -475,14 +527,18 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 			log.exception("chessmart: failed to read the rating")
 			summary = None
 		if summary is None:
+			# Translators: Spoken by Control+Shift+R before any rated puzzle.
 			ui.message(_("No tactics rating yet."))
 			return
 		if summary.rated_attempts:
+			# Translators: Completes the rating report, e.g. "Rating 1450, from 40 rated attempts".
 			attempts_text = _("from {count} rated attempts").format(count=summary.rated_attempts)
 		else:
+			# Translators: Completes the rating report, e.g. "Provisional rating 1500, ..., no rated attempts yet".
 			attempts_text = _("no rated attempts yet")
 		if summary.provisional:
 			ui.message(
+				# Translators: Rating report while the rating is uncertain, e.g. "Provisional rating 1500, somewhere between 1200 and 1800, from 3 rated attempts".
 				_("Provisional rating {rating}, somewhere between {low} and {high}, {attempts}.").format(
 					rating=summary.rating,
 					low=summary.interval_low,
@@ -492,6 +548,7 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 			)
 		else:
 			ui.message(
+				# Translators: Rating report, e.g. "Rating 1450, from 40 rated attempts.".
 				_("Rating {rating}, {attempts}.").format(rating=summary.rating, attempts=attempts_text),
 			)
 
@@ -499,13 +556,16 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 
 	def repeat_current_instruction(self):
 		if self.puzzle is None:
+			# Translators: Spoken when a puzzle action is used before a puzzle is on the board.
 			ui.message(_("No puzzle loaded."))
 			return
 		if self.current_expected_move is None:
 			speak_next(
 				[
+					# Translators: Spoken when a puzzle is solved.
 					_("Puzzle solved."),
 					speech.commands.BreakCommand(100),
+					# Translators: Spoken after a puzzle ends.
 					_("Use Tab for next puzzle or restart."),
 				],
 			)
@@ -513,28 +573,35 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		color_name = self.game_announcer.color_name(self.prospective)
 		speak_next(
 			[
+				# Translators: Spoken when a puzzle starts; {color} is white or black.
 				_("{color} to move.").format(color=color_name),
 				speech.commands.BreakCommand(100),
+				# Translators: Part of the first-puzzle instructions.
 				_("Use the arrow keys to inspect the board."),
 				speech.commands.BreakCommand(100),
+				# Translators: Part of the first-puzzle instructions.
 				_("Use Enter to make a move on the virtual board."),
 				speech.commands.BreakCommand(100),
+				# Translators: Part of the first-puzzle instructions.
 				_("Use Tab for training actions."),
 			],
 		)
 
 	def announce_puzzle_goal(self):
 		if self.puzzle is None:
+			# Translators: Spoken when a puzzle action is used before a puzzle is on the board.
 			ui.message(_("No puzzle loaded."))
 			return
 		color_name = self.game_announcer.color_name(self.prospective)
 		messages = [
+			# Translators: The puzzle goal; {color} is white or black.
 			_("Goal: find the best continuation for {color}.").format(color=color_name),
 		]
 		if self.puzzle.themes:
 			messages.extend(
 				[
 					speech.commands.BreakCommand(100),
+					# Translators: Part of the puzzle goal: its tactical themes.
 					_("This puzzle trains {themes}.").format(
 						themes=", ".join(theme.label for theme in self.puzzle.themes[:3]),
 					),
@@ -545,28 +612,36 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 	def announce_puzzle_info(self):
 		puzzle = self.puzzle
 		if puzzle is None:
+			# Translators: Spoken when a puzzle action is used before a puzzle is on the board.
 			ui.message(_("No puzzle loaded."))
 			return
+		# Translators: Puzzle details when the puzzle has no themes.
 		theme_names = ", ".join(theme.label for theme in puzzle.themes) or _("No themes")
 		spoken_msgs = [
+			# Translators: Part of the puzzle details: the Lichess puzzle id.
 			_("Puzzle {puzzle_id}.").format(puzzle_id=puzzle.puzzle_id),
 			speech.commands.BreakCommand(100),
+			# Translators: Part of the puzzle details: the puzzle rating.
 			_("Rating: {rating}.").format(rating=puzzle.rating or _("unknown")),
 			speech.commands.BreakCommand(100),
+			# Translators: Part of the puzzle details: the Lichess popularity score.
 			_("Popularity: {popularity}.").format(
 				popularity=puzzle.popularity if puzzle.popularity is not None else _("unknown"),
 			),
 			speech.commands.BreakCommand(100),
+			# Translators: Part of the puzzle details: how many times it was played on Lichess.
 			_("Plays: {plays}.").format(
 				plays=puzzle.nb_plays if puzzle.nb_plays is not None else _("unknown"),
 			),
 			speech.commands.BreakCommand(100),
+			# Translators: Part of the puzzle details: its tactical themes.
 			_("Themes: {themes}.").format(themes=theme_names),
 		]
 		if puzzle.opening_tags:
 			spoken_msgs.extend(
 				[
 					speech.commands.BreakCommand(100),
+					# Translators: Part of the puzzle details: the opening of the source game.
 					_("Opening tags: {opening}.").format(opening=puzzle.opening_tags),
 				],
 			)
@@ -574,6 +649,7 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 			spoken_msgs.extend(
 				[
 					speech.commands.BreakCommand(100),
+					# Translators: Part of the puzzle details.
 					_("Source game available on Lichess."),
 				],
 			)
@@ -582,6 +658,7 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 	def speak_hint(self):
 		expected_move = self.current_expected_move
 		if expected_move is None:
+			# Translators: Spoken by Control+H when the puzzle is finished.
 			ui.message(_("There are no more hints for this puzzle."))
 			return
 
@@ -590,21 +667,25 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		hint_messages = []
 		if puzzle.themes:
 			hint_messages.append(
+				# Translators: First hint of a puzzle: its tactical themes.
 				_("Hint: themes include {themes}.").format(
 					themes=", ".join(theme.label for theme in puzzle.themes[:3]),
 				),
 			)
 		hint_messages.extend(
 			[
+				# Translators: Second hint of a puzzle: the square the piece moves from.
 				_("Hint: the move starts from {square}.").format(
 					square=self.spoken_square_name(expected_move.from_square),
 				),
+				# Translators: Third hint of a puzzle: the destination square.
 				_("Hint: the move ends on {square}.").format(
 					square=self.spoken_square_name(expected_move.to_square),
 				),
 			],
 		)
 		if self._attempt.hints_used >= len(hint_messages):
+			# Translators: Spoken when every hint of the puzzle was already given.
 			ui.message(_("No more hints for this puzzle."))
 			return
 		message = hint_messages[self._attempt.hints_used]
@@ -618,18 +699,23 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 
 	def _current_puzzle_summary(self):
 		if self.current_expected_move is None:
+			# Translators: Part of the puzzle details.
 			return _("This puzzle is already solved.")
 		current_move, total_moves = self._player_move_progress()
+		# Translators: Part of the puzzle details, e.g. "your move 2 of 3".
 		summary = _("This puzzle: your move {current} of {total}.").format(
 			current=current_move,
 			total=total_moves,
 		)
 		details = []
 		if self._attempt.mistakes:
+			# Translators: Part of the puzzle details: wrong moves in this puzzle.
 			details.append(_("Mistakes here: {count}.").format(count=self._attempt.mistakes))
 		if self._attempt.hints_used:
+			# Translators: Part of the puzzle details: hints used in this puzzle.
 			details.append(_("Hints here: {count}.").format(count=self._attempt.hints_used))
 		if not details:
+			# Translators: Part of the puzzle details.
 			details.append(_("No mistakes and no hints so far."))
 		return " ".join([summary, *details])
 
@@ -641,16 +727,19 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		change during training.
 		"""
 		if self.puzzle is None:
+			# Translators: Spoken when a puzzle action is used before a puzzle is on the board.
 			ui.message(_("No puzzle loaded."))
 			return
 		history = self.session.attempt_stats()
 		parts = [
 			self._stats.summary(),
 			self._current_puzzle_summary(),
+			# Translators: Part of the session status: all puzzles ever tried.
 			_("Database history: {solved} solved out of {total} attempts.").format(
 				solved=history.solved,
 				total=history.total,
 			),
+			# Translators: Part of the session status: the themes and levels in use; "none" when there are none.
 			_("Filters: {filters}.").format(filters=self.session.describe_filters() or _("none")),
 		]
 		spoken = []

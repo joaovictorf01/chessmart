@@ -39,7 +39,9 @@ class PlayMode(DisplayStringIntEnum):
 	@cached_property
 	def _displayStringLabels(self):
 		return {
+			# Translators: Play mode choice in the new game dialog: two people at the same keyboard.
 			PlayMode.HUMAN_VERSUS_HUMAN: _("Human versus human"),
+			# Translators: Play mode choice in the new game dialog.
 			PlayMode.HUMAN_VERSUS_COMPUTER: _("Human versus computer"),
 		}
 
@@ -69,13 +71,21 @@ class TimeControl(DisplayStringIntEnum):
 	def _displayStringLabels(self):
 		return {
 			TimeControl.NUL_TIME_CONTROL: _("No Time Control"),
+			# Translators: Time control choice: 90 minutes per player, 30 seconds added per move.
 			TimeControl.CLASSICAL: _("Classical  (90+30)"),
+			# Translators: Time control choice: 15 minutes per player, 10 seconds added per move.
 			TimeControl.RAPID_PLAY_1: _("Rapid Play (15+10)"),
+			# Translators: Time control choice: 10 minutes per player, 5 seconds added per move.
 			TimeControl.RAPID_PLAY_2: _("Rapid Play (10+5)"),
+			# Translators: Time control choice: 5 minutes per player, 5 seconds added per move.
 			TimeControl.BLITZ_1: _("Blitz (5+5)"),
+			# Translators: Time control choice: 3 minutes per player, 2 seconds added per move.
 			TimeControl.BLITZ_2: _("Blitz (3+2)"),
+			# Translators: Time control choice: 2 minutes per player, 2 seconds added per move.
 			TimeControl.BULLET_1: _("Bullet (2+2)"),
+			# Translators: Time control choice: 1 minute per player, no increment.
 			TimeControl.BULLET_2: _("Bullet (1+0)"),
+			# Translators: Time control choice: the user types their own, e.g. 10+5.
 			TimeControl.CUSTOM: _("Custom Time Control"),
 		}
 
@@ -125,14 +135,23 @@ class ChessVariant(DisplayStringIntEnum):
 	@cached_property
 	def _displayStringLabels(self):
 		return {
+			# Translators: Name of the standard chess variant.
 			ChessVariant.STANDARD: _("Standard"),
+			# Translators: Name of a chess variant (Fischer random chess).
 			ChessVariant.CHESS960: _("Chess 960"),
+			# Translators: Name of a chess variant (Antichess: whoever loses all pieces wins).
 			ChessVariant.ANTICHESS: _("Anti chess"),
+			# Translators: Name of a chess variant (captures explode).
 			ChessVariant.ATOMIC: _("Atomic"),
+			# Translators: Name of a chess variant (bring the king to the centre).
 			ChessVariant.KINGOFTHEHILL: _("King of the hill"),
+			# Translators: Name of a chess variant (race the king to the eighth rank).
 			ChessVariant.RACINGKINGS: _("Racing kings"),
+			# Translators: Name of a chess variant (white has a horde of pawns).
 			ChessVariant.HORDE: _("Horde"),
+			# Translators: Name of a chess variant (three checks win).
 			ChessVariant.THREECHECK: _("Three check"),
+			# Translators: Name of a chess variant (captured pieces can be dropped back).
 			ChessVariant.CRAZYHOUSE: _("Crazy house"),
 		}
 
@@ -145,8 +164,11 @@ class PlayerColor(DisplayStringIntEnum):
 	@cached_property
 	def _displayStringLabels(self):
 		return {
+			# Translators: Side choice in the new game dialog: white or black at random.
 			PlayerColor.RANDOM: _("Random"),
+			# Translators: Side choice in the new game dialog: play the white pieces.
 			PlayerColor.WHITE: _("White"),
+			# Translators: Side choice in the new game dialog: play the black pieces.
 			PlayerColor.BLACK: _("Black"),
 		}
 

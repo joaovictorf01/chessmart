@@ -18,6 +18,7 @@ with import_bundled():
 
 
 class NewGameOptionsDialog(gui.SettingsDialog):
+	# Translators: Title of the new game dialog.
 	title = _("New Game")
 
 	def __init__(self, *args, callback, **kwargs):
@@ -33,6 +34,7 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 		intro_label = wx.StaticText(
 			self,
 			-1,
+			# Translators: Intro text of the new game dialog.
 			_("Choose the play mode, starting position, and time control."),
 			style=wx.ST_ELLIPSIZE_MIDDLE,
 		)
@@ -42,6 +44,7 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 		self.playModeRadioBox = EnumRadioBox(
 			self,
 			wx.ID_ANY,
+			# Translators: Label of the play mode choice in the new game dialog.
 			label=_("Play Mode"),
 			choice_enum=PlayMode,
 			majorDimension=0,
@@ -49,6 +52,7 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 		)
 		primaryOptionsSizerHelper.addItem(self.playModeRadioBox)
 		# Starting position
+		# Translators: Label of the chess variant choice in the new game dialog.
 		chessVariantLabel = wx.StaticText(self, -1, _("Variant"))
 		self.chessVariantChoice = EnumChoice(
 			self,
@@ -58,6 +62,7 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 		primaryOptionsSizerHelper.addItem(chessVariantLabel)
 		primaryOptionsSizerHelper.addItem(self.chessVariantChoice)
 		# Time Control
+		# Translators: Label of the time control choice in the new game dialog.
 		timeControlLabel = wx.StaticText(self, -1, _("Time Control"))
 		self.timeControlRadioBox = EnumChoice(
 			self,
@@ -71,6 +76,7 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 		self.playerColorRadioBox = EnumRadioBox(
 			self,
 			wx.ID_ANY,
+			# Translators: Label of the side choice in the new game dialog.
 			label=_("Play As"),
 			choice_enum=PlayerColor,
 			majorDimension=1,
@@ -78,21 +84,25 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 		)
 		secondaryOptionsSizerHelper.addItem(self.playerColorRadioBox)
 		# Custom starting FEN
+		# Translators: Label of the starting position field (FEN notation) in the new game dialog.
 		customFENLabel = wx.StaticText(self, -1, _("Starting FEN"))
 		self.customStartingFEN = wx.TextCtrl(self, -1)
 		guiHelper.associateElements(customFENLabel, self.customStartingFEN)
 		secondaryOptionsSizerHelper.addItem(customFENLabel)
 		secondaryOptionsSizerHelper.addItem(self.customStartingFEN)
 		# Custom Time Control
+		# Translators: Time control choice: the user types their own, e.g. 10+5.
 		customTimeControlLable = wx.StaticText(self, -1, _("Custom Time Control"))
 		self.customTimeControlTextCtrl = wx.TextCtrl(self, -1)
 		guiHelper.associateElements(customTimeControlLable, self.customTimeControlTextCtrl)
 		secondaryOptionsSizerHelper.addItem(customTimeControlLable)
 		secondaryOptionsSizerHelper.addItem(self.customTimeControlTextCtrl)
 		# Engine options
+		# Translators: Button of the new game dialog that opens the engine options.
 		self.engineOptionsButton = wx.Button(self, -1, _("Engine &Options..."))
 		secondaryOptionsSizerHelper.addItem(self.engineOptionsButton)
 		# Use visuals
+		# Translators: Checkbox of the new game dialog: draw the focused square on the board picture.
 		self.useVisualsCheckbox = wx.CheckBox(self, -1, label=_("Visually highlight board interactions"))
 		secondaryOptionsSizerHelper.addItem(self.useVisualsCheckbox)
 		# Add sizers to the main sizer
@@ -114,9 +124,11 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 			time_control = self._get_time_control()
 		except ValueError:
 			show_error(
+				# Translators: Error about an invalid time control. Keep the line break and the 10+5 notation.
 				_(
 					"Please enter a valid time control string.\nExample: 10+5 for a 10 minutes base time with 5 seconds increment after each move.",
 				),
+				# Translators: Title of the error about an invalid time control.
 				_("Invalid Time Control String"),
 			)
 			return
@@ -124,9 +136,11 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 			pychess_board = self._get_pychess_board()
 		except ValueError:
 			show_error(
+				# Translators: Error about an invalid starting position; {fen} is an example. Keep the line breaks.
 				_("Please enter a valid starting FEN.\nExample:\n{fen}\nfor a standard starting FEN.").format(
 					fen=chess.STARTING_FEN,
 				),
+				# Translators: Title of the error about an invalid starting position.
 				_("Invalid FEN String"),
 			)
 			return
@@ -201,6 +215,7 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 
 
 class UCIEngineOptionsDialog(gui.SettingsDialog):
+	# Translators: Title of the engine options dialog.
 	title = _("Engine Options")
 
 	def __init__(self, *args, saved_options=None, **kwargs):
@@ -210,12 +225,14 @@ class UCIEngineOptionsDialog(gui.SettingsDialog):
 	def makeSettings(self, sizer):
 		mainSizerHelper = guiHelper.BoxSizerHelper(self, sizer=sizer)
 		primaryOptionsSizerHelper = guiHelper.BoxSizerHelper(self, orientation=wx.VERTICAL)
+		# Translators: Label of the engine strength field, in Elo points.
 		engineSkillLevelLabel = wx.StaticText(self, -1, _("Engine Strength (ELO Rating)"))
 		self.engineSkillLevel = wx.SpinCtrl(self, -1, min=1350, max=2850)
 		guiHelper.associateElements(engineSkillLevelLabel, self.engineSkillLevel)
 		primaryOptionsSizerHelper.addItem(engineSkillLevelLabel)
 		primaryOptionsSizerHelper.addItem(self.engineSkillLevel)
 		# Thinking time
+		# Translators: Label of the engine thinking time field.
 		thinkingLimitLabel = wx.StaticText(self, -1, _("Engine Thinking Time (in seconds)"))
 		self.thinkingLimitSpin = wx.SpinCtrl(self, -1, min=1, max=300)
 		guiHelper.associateElements(thinkingLimitLabel, self.thinkingLimitSpin)

@@ -24,7 +24,8 @@ msgstr "&Procurar..."
 msgid "&Cancel"
 msgstr "&Cancelar"
 
-#: addon/globalPlugins/chessmart/__init__.py:98
+#. Name of the add-on submenu under NVDA's Tools menu.
+#: addon/globalPlugins/chessmart/__init__.py:104
 msgid "&Chessboard"
 msgstr "&Chessmart"
 
@@ -36,15 +37,19 @@ msgstr "&Chessmart"
 msgid "&Download"
 msgstr "&Baixar"
 
-#: addon/globalPlugins/chessmart/__init__.py:48
+#. Menu item that opens the new game dialog, and its help text.
+#: addon/globalPlugins/chessmart/__init__.py:49
 msgid "&New Game..."
 msgstr "&Nova partida..."
 
-#: addon/globalPlugins/chessmart/__init__.py:54
+#. Menu item that starts a puzzle with the saved training setup, and its help
+#. text.
+#: addon/globalPlugins/chessmart/__init__.py:57
 msgid "&Random Puzzle"
 msgstr "Puzzle &aleatório"
 
-#: addon/globalPlugins/chessmart/__init__.py:69
+#. Menu item that replays a PGN file, and its help text.
+#: addon/globalPlugins/chessmart/__init__.py:73
 msgid "&Replay PGN File..."
 msgstr "&Reproduzir arquivo PGN..."
 
@@ -53,11 +58,13 @@ msgstr "&Reproduzir arquivo PGN..."
 msgid "&Save training setup as default"
 msgstr "&Salvar esta configuração de treino como padrão"
 
-#: addon/globalPlugins/chessmart/__init__.py:91
+#. Menu item that opens the add-on settings, and its help text.
+#: addon/globalPlugins/chessmart/__init__.py:96
 msgid "&Settings..."
 msgstr "&Configurações..."
 
-#: addon/globalPlugins/chessmart/__init__.py:51
+#. Menu item that opens the tactics trainer, and its help text.
+#: addon/globalPlugins/chessmart/__init__.py:53
 msgid "&Tactics..."
 msgstr "&Táticas..."
 
@@ -89,7 +96,8 @@ msgstr "Todos os temas"
 msgid "Anna: knight felix 3"
 msgstr "Anna: cavalo felix 3"
 
-#: addon/globalPlugins/chessmart/game_elements.py:130
+#. Name of a chess variant (Antichess: whoever loses all pieces wins).
+#: addon/globalPlugins/chessmart/game_elements.py:143
 msgid "Anti chess"
 msgstr "Antixadrez"
 
@@ -107,7 +115,8 @@ msgstr "em"
 msgid "at {square}"
 msgstr "em {square}"
 
-#: addon/globalPlugins/chessmart/game_elements.py:131
+#. Name of a chess variant (captures explode).
+#: addon/globalPlugins/chessmart/game_elements.py:145
 msgid "Atomic"
 msgstr "Atômico"
 
@@ -122,10 +131,11 @@ msgid "Available: Lichess base of {when}."
 msgstr "Disponível: base do Lichess de {when}."
 
 #. Tab bar action that returns to the board. Action in the endgame toolbar.
+#. Button of the tactics actions bar.
 #: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:329
 #: addon/globalPlugins/chessmart/virtual_chessboard/endgame_board.py:265
 #: addon/globalPlugins/chessmart/virtual_chessboard/endgame_board.py:462
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:124
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:135
 msgid "Back to board"
 msgstr "Voltar ao tabuleiro"
 
@@ -135,7 +145,8 @@ msgstr "Voltar ao tabuleiro"
 msgid "bishop"
 msgstr "bispo"
 
-#: addon/globalPlugins/chessmart/game_elements.py:150
+#. Side choice in the new game dialog: play the black pieces.
+#: addon/globalPlugins/chessmart/game_elements.py:172
 msgid "Black"
 msgstr "Pretas"
 
@@ -154,11 +165,13 @@ msgstr "Relógio das pretas"
 msgid "Black won"
 msgstr "Pretas venceram"
 
-#: addon/globalPlugins/chessmart/game_elements.py:76
+#. Time control choice: 3 minutes per player, 2 seconds added per move.
+#: addon/globalPlugins/chessmart/game_elements.py:83
 msgid "Blitz (3+2)"
 msgstr "Blitz (3+2)"
 
-#: addon/globalPlugins/chessmart/game_elements.py:75
+#. Time control choice: 5 minutes per player, 5 seconds added per move.
+#: addon/globalPlugins/chessmart/game_elements.py:81
 msgid "Blitz (5+5)"
 msgstr "Blitz (5+5)"
 
@@ -167,11 +180,13 @@ msgstr "Blitz (5+5)"
 msgid "Board"
 msgstr "Tabuleiro"
 
-#: addon/globalPlugins/chessmart/game_elements.py:78
+#. Time control choice: 1 minute per player, no increment.
+#: addon/globalPlugins/chessmart/game_elements.py:87
 msgid "Bullet (1+0)"
 msgstr "Bullet (1+0)"
 
-#: addon/globalPlugins/chessmart/game_elements.py:77
+#. Time control choice: 2 minutes per player, 2 seconds added per move.
+#: addon/globalPlugins/chessmart/game_elements.py:85
 msgid "Bullet (2+2)"
 msgstr "Bullet (2+2)"
 
@@ -210,7 +225,7 @@ msgstr "xeque"
 #. over.
 #: addon/globalPlugins/chessmart/notation.py:147
 #: addon/globalPlugins/chessmart/spoken_messages.py:96
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:939
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:941
 msgid "checkmate"
 msgstr "mate"
 
@@ -219,7 +234,8 @@ msgstr "mate"
 msgid "Chess"
 msgstr "Xadrez"
 
-#: addon/globalPlugins/chessmart/game_elements.py:129
+#. Name of a chess variant (Fischer random chess).
+#: addon/globalPlugins/chessmart/game_elements.py:141
 msgid "Chess 960"
 msgstr "Xadrez 960"
 
@@ -240,13 +256,14 @@ msgstr "Partida de xadrez *.pgn | *.pgn"
 msgid "Chessboard"
 msgstr "Chessmart"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:251
+#. Title of the tactics window before a puzzle is loaded.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:271
 msgid "Chessboard Tactics"
 msgstr "Táticas do Chessmart"
 
 #. Summary/title for this add-on Category of the add-on's scripts in the Input
 #. Gestures dialog.
-#: buildVars.py:25 addon/globalPlugins/chessmart/__init__.py:459
+#: buildVars.py:25 addon/globalPlugins/chessmart/__init__.py:474
 msgid "Chessmart"
 msgstr "Chessmart"
 
@@ -274,11 +291,13 @@ msgstr ""
 msgid "Choose the exact Lichess themes you want to include in the session."
 msgstr "Escolha exatamente os temas do Lichess que quer incluir na sessão."
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:36
+#. Intro text of the new game dialog.
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:38
 msgid "Choose the play mode, starting position, and time control."
 msgstr "Escolha o modo de jogo, a posição inicial e o controle de tempo."
 
-#: addon/globalPlugins/chessmart/game_elements.py:72
+#. Time control choice: 90 minutes per player, 30 seconds added per move.
+#: addon/globalPlugins/chessmart/game_elements.py:75
 msgid "Classical  (90+30)"
 msgstr "Clássica (90+30)"
 
@@ -294,31 +313,38 @@ msgid ""
 msgstr ""
 "Configure o plano de treino padrão usado ao abrir as táticas do Chessmart."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:286
+#. Part of the puzzle shortcuts announcement.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:314
 msgid "Control+Enter twice to play the expected move."
 msgstr "Control+Enter duas vezes joga o lance esperado."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:282
+#. Part of the puzzle shortcuts announcement.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:308
 msgid "Control+F1 for puzzle details."
 msgstr "Control+F1 para os detalhes do puzzle."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:276
+#. Part of the puzzle shortcuts announcement.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:299
 msgid "Control+H for a hint."
 msgstr "Control+H para uma dica."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:278
+#. Part of the puzzle shortcuts announcement.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:302
 msgid "Control+N for the next puzzle."
 msgstr "Control+N para o próximo puzzle."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:413
+#. Spoken after a puzzle ends: how to go on.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:449
 msgid "Control+N loads another puzzle."
 msgstr "Control+N carrega outro puzzle."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:417
+#. Spoken after a puzzle ends: how to try it again.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:455
 msgid "Control+R restarts this one."
 msgstr "Control+R reinicia este."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:280
+#. Part of the puzzle shortcuts announcement.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:305
 msgid "Control+R to restart this puzzle."
 msgstr "Control+R para reiniciar este puzzle."
 
@@ -333,20 +359,25 @@ msgstr "Não foi possível carregar os temas"
 msgid "Could not save game. NVDA running in secure mode."
 msgstr "Não foi possível salvar a partida. O NVDA está em modo seguro."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:332
+#. Spoken after the first wrong move of a puzzle: the rating is settled, the
+#. puzzle goes on.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:363
 msgid "Counted as a failure. Keep going to learn the solution."
 msgstr "Contado como erro. Continue para aprender a solução."
 
-#: addon/globalPlugins/chessmart/game_elements.py:136
+#. Name of a chess variant (captured pieces can be dropped back).
+#: addon/globalPlugins/chessmart/game_elements.py:155
 msgid "Crazy house"
 msgstr "Crazyhouse"
 
-#: addon/globalPlugins/chessmart/game_elements.py:79
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:87
+#. Time control choice: the user types their own, e.g. 10+5.
+#: addon/globalPlugins/chessmart/game_elements.py:89
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:95
 msgid "Custom Time Control"
 msgstr "Controle de tempo personalizado"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:650
+#. Part of the session status: all puzzles ever tried.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:738
 msgid "Database history: {solved} solved out of {total} attempts."
 msgstr "Histórico da base: {solved} resolvidos em {total} tentativas."
 
@@ -423,27 +454,34 @@ msgstr "colocaram {piece}"
 msgid "en passant"
 msgstr "en passant"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:93
+#. Button of the new game dialog that opens the engine options.
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:102
 msgid "Engine &Options..."
 msgstr "&Opções do motor..."
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:204
+#. Title of the engine options dialog.
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:219
 msgid "Engine Options"
 msgstr "Opções do motor"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:213
+#. Label of the engine strength field, in Elo points.
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:229
 msgid "Engine Strength (ELO Rating)"
 msgstr "Força do motor (rating Elo)"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:219
+#. Label of the engine thinking time field.
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:236
 msgid "Engine Thinking Time (in seconds)"
 msgstr "Tempo de reflexão do motor (em segundos)"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:654
+#. Part of the session status: the themes and levels in use; "none" when there
+#. are none.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:743
 msgid "Filters: {filters}."
 msgstr "Filtros: {filters}."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:481
+#. Completes the rating report, e.g. "Rating 1450, from 40 rated attempts".
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:535
 msgid "from {count} rated attempts"
 msgstr "em {count} tentativas valendo rating"
 
@@ -488,31 +526,38 @@ msgstr "Fim de partida: derrota por tempo - {color} venceram"
 msgid "Game terminated due to an error"
 msgstr "Partida encerrada por um erro"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:532
+#. The puzzle goal; {color} is white or black.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:598
 msgid "Goal: find the best continuation for {color}."
 msgstr "Objetivo: encontre a melhor continuação para as {color}."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:347
+#. Spoken after a correct move in a puzzle that is not finished yet.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:379
 msgid "Good move."
 msgstr "Bom lance."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:119
+#. Button of the tactics actions bar.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:127
 msgid "Hint"
 msgstr "Dica"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:602
+#. Third hint of a puzzle: the destination square.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:682
 msgid "Hint: the move ends on {square}."
 msgstr "Dica: o lance termina em {square}."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:599
+#. Second hint of a puzzle: the square the piece moves from.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:678
 msgid "Hint: the move starts from {square}."
 msgstr "Dica: o lance começa em {square}."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:593
+#. First hint of a puzzle: its tactical themes.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:671
 msgid "Hint: themes include {themes}."
 msgstr "Dica: os temas incluem {themes}."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:631
+#. Part of the puzzle details: hints used in this puzzle.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:716
 msgid "Hints here: {count}."
 msgstr "Dicas neste puzzle: {count}."
 
@@ -521,20 +566,23 @@ msgstr "Dicas neste puzzle: {count}."
 msgid "Hints in the session: {count}."
 msgstr "Dicas na sessão: {count}."
 
-#: addon/globalPlugins/chessmart/game_elements.py:134
+#. Name of a chess variant (white has a horde of pawns).
+#: addon/globalPlugins/chessmart/game_elements.py:151
 msgid "Horde"
 msgstr "Horda"
 
-#: addon/globalPlugins/chessmart/game_elements.py:43
+#. Play mode choice in the new game dialog.
+#: addon/globalPlugins/chessmart/game_elements.py:45
 msgid "Human versus computer"
 msgstr "Humano contra computador"
 
-#: addon/globalPlugins/chessmart/game_elements.py:42
+#. Play mode choice in the new game dialog: two people at the same keyboard.
+#: addon/globalPlugins/chessmart/game_elements.py:43
 msgid "Human versus human"
 msgstr "Humano contra humano"
 
 #. Spoken when the requested move is not legal.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:607
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:608
 #: addon/globalPlugins/chessmart/virtual_chessboard/base.py:521
 msgid "Illegal move"
 msgstr "Lance ilegal"
@@ -555,12 +603,14 @@ msgstr "Instalada: nenhuma. As táticas precisam de uma base de puzzles."
 msgid "Installed: {tier}, {count:,} puzzles, Lichess base of {when}."
 msgstr "Instalada: {tier}, {count:,} puzzles, base do Lichess de {when}."
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:130
+#. Title of the error about an invalid starting position.
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:144
 msgid "Invalid FEN String"
 msgstr "FEN inválido"
 
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:155
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:120
+#. Title of the error about an invalid time control.
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:157
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:132
 msgid "Invalid Time Control String"
 msgstr "Controle de tempo inválido"
 
@@ -570,7 +620,8 @@ msgstr "Controle de tempo inválido"
 msgid "king"
 msgstr "rei"
 
-#: addon/globalPlugins/chessmart/game_elements.py:132
+#. Name of a chess variant (bring the king to the centre).
+#: addon/globalPlugins/chessmart/game_elements.py:147
 msgid "King of the hill"
 msgstr "Rei da colina"
 
@@ -601,15 +652,18 @@ msgstr "Leve"
 msgid "Literate: knight f 3"
 msgstr "Por extenso: cavalo f 3"
 
-#: addon/globalPlugins/chessmart/__init__.py:70
+#. Menu item that replays a PGN file, and its help text.
+#: addon/globalPlugins/chessmart/__init__.py:74
 msgid "Load an replay a portable game notation (.pgn) file"
 msgstr "Carregar e reproduzir um arquivo PGN"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:231
+#. Spoken while the next puzzle loads.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:249
 msgid "Loading next training puzzle."
 msgstr "Carregando o próximo puzzle de treino."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:233
+#. Spoken while the first puzzle loads.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:252
 msgid "Loading training puzzle."
 msgstr "Carregando o puzzle de treino."
 
@@ -638,7 +692,8 @@ msgstr "Popularidade mínima: {popularity}"
 msgid "minor pieces"
 msgstr "peças menores"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:629
+#. Part of the puzzle details: wrong moves in this puzzle.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:713
 msgid "Mistakes here: {count}."
 msgstr "Erros neste puzzle: {count}."
 
@@ -657,11 +712,13 @@ msgstr "&Notação dos lances"
 msgid "NATO: knight foxtrot 3"
 msgstr "OTAN: cavalo foxtrot 3"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:21
+#. Title of the new game dialog.
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:22
 msgid "New Game"
 msgstr "Nova partida"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:123
+#. Button of the tactics actions bar.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:134
 msgid "Next puzzle"
 msgstr "Próximo puzzle"
 
@@ -670,23 +727,27 @@ msgstr "Próximo puzzle"
 msgid "No Database Selected"
 msgstr "Nenhuma base selecionada"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:633
+#. Part of the puzzle details.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:719
 msgid "No mistakes and no hints so far."
 msgstr "Nenhum erro e nenhuma dica até agora."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:608
+#. Spoken when every hint of the puzzle was already given.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:689
 msgid "No more hints for this puzzle."
 msgstr "Não há mais dicas para este puzzle."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:189
+#. Spoken when the session has no puzzle left for its filters.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:203
 msgid "No more tactics in this session."
 msgstr "Não há mais táticas nesta sessão."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:203
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:502
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:528
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:548
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:644
+#. Spoken when a puzzle action is used before a puzzle is on the board.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:219
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:560
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:593
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:616
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:731
 msgid "No puzzle loaded."
 msgstr "Nenhum puzzle carregado."
 
@@ -695,23 +756,29 @@ msgstr "Nenhum puzzle carregado."
 msgid "No puzzles found for the selected filters."
 msgstr "Nenhum puzzle encontrado para os filtros escolhidos."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:483
+#. Completes the rating report, e.g. "Provisional rating 1500, ..., no rated
+#. attempts yet".
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:538
 msgid "no rated attempts yet"
 msgstr "ainda sem tentativas valendo rating"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:184
+#. Title of the message shown when no puzzle matches the selection.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:197
 msgid "No tactics available"
 msgstr "Nenhuma tática disponível"
 
-#: addon/globalPlugins/chessmart/__init__.py:149
+#. Title of the warning shown when no puzzle matches the options.
+#: addon/globalPlugins/chessmart/__init__.py:159
 msgid "No Tactics Found"
 msgstr "Nenhuma tática encontrada"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:478
+#. Spoken by Control+Shift+R before any rated puzzle.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:531
 msgid "No tactics rating yet."
 msgstr "Ainda não há rating de táticas."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:181
+#. Message shown when no puzzle matches the selection.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:193
 msgid "No tactics were found for the current selection."
 msgstr "Nenhuma tática foi encontrada para a seleção atual."
 
@@ -720,7 +787,8 @@ msgstr "Nenhuma tática foi encontrada para a seleção atual."
 msgid "No theme filter at all: the whole puzzle database is in play."
 msgstr "Nenhum filtro de tema: a base inteira entra em jogo."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:550
+#. Puzzle details when the puzzle has no themes.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:619
 msgid "No themes"
 msgstr "Sem temas"
 
@@ -730,39 +798,45 @@ msgid "No themes were found in the selected database."
 msgstr "Nenhum tema foi encontrado na base selecionada."
 
 #. Spoken when the clock is asked for in a game without time control.
-#: addon/globalPlugins/chessmart/game_elements.py:71
+#: addon/globalPlugins/chessmart/game_elements.py:73
 #: addon/globalPlugins/chessmart/virtual_chessboard/base.py:269
 #: addon/globalPlugins/chessmart/virtual_chessboard/base.py:278
 msgid "No Time Control"
 msgstr "Sem controle de tempo"
 
 #. Option in the draw offer menu.
-#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:348
+#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:350
 msgid "No, decline offer and continue game"
 msgstr "Não, recusar a oferta e continuar a partida"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:654
+#. Part of the session status: the themes and levels in use; "none" when there
+#. are none.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:743
 msgid "none"
 msgstr "nenhum"
 
-#: addon/globalPlugins/chessmart/__init__.py:99
+#. Help text of the add-on submenu.
+#: addon/globalPlugins/chessmart/__init__.py:106
 msgid "Open a chess game, tactics session, replay, or settings"
 msgstr "Abrir uma partida, sessão de táticas, reprodução ou configurações"
 
-#: addon/globalPlugins/chessmart/__init__.py:92
+#. Menu item that opens the add-on settings, and its help text.
+#: addon/globalPlugins/chessmart/__init__.py:97
 msgid "Open Chessboard settings"
 msgstr "Abrir as configurações do Chessmart"
 
 #. Title of the dialog that opens a PGN file.
-#: addon/globalPlugins/chessmart/__init__.py:380
+#: addon/globalPlugins/chessmart/__init__.py:393
 msgid "Open PGN File"
 msgstr "Abrir arquivo PGN"
 
-#: addon/globalPlugins/chessmart/__init__.py:52
+#. Menu item that opens the tactics trainer, and its help text.
+#: addon/globalPlugins/chessmart/__init__.py:54
 msgid "Open tactics from the Lichess tactics database"
 msgstr "Abrir táticas da base de táticas do Lichess"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:570
+#. Part of the puzzle details: the opening of the source game.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:645
 msgid "Opening tags: {opening}."
 msgstr "Abertura: {opening}."
 
@@ -782,23 +856,30 @@ msgstr "peão"
 msgid "pawns"
 msgstr "peões"
 
-#: addon/globalPlugins/chessmart/__init__.py:54
+#. Menu item that starts a puzzle with the saved training setup, and its help
+#. text.
+#: addon/globalPlugins/chessmart/__init__.py:57
 msgid "Play a random puzzle"
 msgstr "Jogar um puzzle aleatório"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:74
+#. Label of the side choice in the new game dialog.
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:80
 msgid "Play As"
 msgstr "Jogar de"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:45
+#. Label of the play mode choice in the new game dialog.
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:48
 msgid "Play Mode"
 msgstr "Modo de jogo"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:560
+#. Part of the puzzle details: how many times it was played on Lichess.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:633
 msgid "Plays: {plays}."
 msgstr "Jogadas: {plays}."
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:127
+#. Error about an invalid starting position; {fen} is an example. Keep the
+#. line breaks.
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:140
 msgid ""
 "Please enter a valid starting FEN.\n"
 "Example:\n"
@@ -810,8 +891,10 @@ msgstr ""
 "{fen}\n"
 "para a posição inicial padrão."
 
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:152
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:117
+#. Error about an invalid time control. Keep the line break and the 10+5
+#. notation.
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:153
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:128
 msgid ""
 "Please enter a valid time control string.\n"
 "Example: 10+5 for a 10 minutes base time with 5 seconds increment after each move."
@@ -819,14 +902,15 @@ msgstr ""
 "Digite um controle de tempo válido.\n"
 "Exemplo: 10+5 para 10 minutos de base com 5 segundos de acréscimo por lance."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:556
+#. Part of the puzzle details: the Lichess popularity score.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:628
 msgid "Popularity: {popularity}."
 msgstr "Popularidade: {popularity}."
 
 #. Title of the dialog that opens a PGN file on the analysis board. File type
 #. filter of the PGN open dialog.
-#: addon/globalPlugins/chessmart/__init__.py:318
-#: addon/globalPlugins/chessmart/__init__.py:383
+#: addon/globalPlugins/chessmart/__init__.py:329
+#: addon/globalPlugins/chessmart/__init__.py:396
 msgid "Portable Game Notation *.pgn | *.pgn"
 msgstr "Portable Game Notation *.pgn | *.pgn"
 
@@ -845,16 +929,19 @@ msgstr ""
 "Preparando o catálogo de temas desta base. Pode levar até um minuto; você "
 "ouvirá um aviso quando estiver pronto."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:94
+#. Spoken after the first Control+Enter: it asks for a second press.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:98
 msgid "Press Control+Enter twice to play the expected move."
 msgstr "Pressione Control+Enter duas vezes para jogar o lance esperado."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:191
+#. Spoken when the session has no puzzle left.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:206
 msgid "Press Control+R to retry the current puzzle."
 msgstr "Pressione Control+R para tentar de novo o puzzle atual."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:284
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:415
+#. Part of the puzzle shortcuts announcement.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:311
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:452
 msgid "Press Tab for training actions."
 msgstr "Pressione Tab para as ações de treino."
 
@@ -874,11 +961,9 @@ msgstr "promoveram {pawn} de {origin} a {piece} em {target}"
 msgid "promotion"
 msgstr "promove a"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:459
-msgid "Provisional "
-msgstr "Provisório "
-
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:486
+#. Rating report while the rating is uncertain, e.g. "Provisional rating 1500,
+#. somewhere between 1200 and 1800, from 3 rated attempts".
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:542
 msgid ""
 "Provisional rating {rating}, somewhere between {low} and {high}, {attempts}."
 msgstr ""
@@ -886,18 +971,20 @@ msgstr ""
 
 #. Asked when tactics are opened and no puzzle database is installed yet.
 #. Title of the puzzle database download dialog.
-#: addon/globalPlugins/chessmart/__init__.py:162
+#: addon/globalPlugins/chessmart/__init__.py:172
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:49
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:329
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:352
 msgid "Puzzle Database"
 msgstr "Base de puzzles"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:120
+#. Button of the tactics actions bar.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:129
 msgid "Puzzle details"
 msgstr "Detalhes do puzzle"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:118
+#. Button of the tactics actions bar.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:125
 msgid "Puzzle goal"
 msgstr "Objetivo do puzzle"
 
@@ -921,11 +1008,13 @@ msgstr "Puzzle de ID {puzzle_id}"
 msgid "Puzzle not found: {puzzle_id}"
 msgstr "Puzzle não encontrado: {puzzle_id}"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:507
+#. Spoken when a puzzle is solved.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:566
 msgid "Puzzle solved."
 msgstr "Puzzle resolvido."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:552
+#. Part of the puzzle details: the Lichess puzzle id.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:622
 msgid "Puzzle {puzzle_id}."
 msgstr "Puzzle {puzzle_id}."
 
@@ -970,60 +1059,73 @@ msgstr "grande"
 msgid "queens"
 msgstr "damas"
 
-#: addon/globalPlugins/chessmart/game_elements.py:133
+#. Name of a chess variant (race the king to the eighth rank).
+#: addon/globalPlugins/chessmart/game_elements.py:149
 msgid "Racing kings"
 msgstr "Corrida de reis"
 
-#: addon/globalPlugins/chessmart/game_elements.py:148
+#. Side choice in the new game dialog: white or black at random.
+#: addon/globalPlugins/chessmart/game_elements.py:168
 msgid "Random"
 msgstr "Aleatória"
 
-#: addon/globalPlugins/chessmart/game_elements.py:74
+#. Time control choice: 10 minutes per player, 5 seconds added per move.
+#: addon/globalPlugins/chessmart/game_elements.py:79
 msgid "Rapid Play (10+5)"
 msgstr "Rápida (10+5)"
 
-#: addon/globalPlugins/chessmart/game_elements.py:73
+#. Time control choice: 15 minutes per player, 10 seconds added per move.
+#: addon/globalPlugins/chessmart/game_elements.py:77
 msgid "Rapid Play (15+10)"
 msgstr "Rápida (15+10)"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:452
+#. Spoken after a rated puzzle, e.g. "Rating 1432, down 12.".
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:508
 msgid "Rating {rating}, down {delta}."
 msgstr "Rating {rating}, caiu {delta}."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:454
+#. Spoken after a rated puzzle that did not change the rating.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:511
 msgid "Rating {rating}, unchanged."
 msgstr "Rating {rating}, sem mudança."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:450
+#. Spoken after a rated puzzle, e.g. "Rating 1450, up 13.".
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:505
 msgid "Rating {rating}, up {delta}."
 msgstr "Rating {rating}, subiu {delta}."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:495
+#. Rating report, e.g. "Rating 1450, from 40 rated attempts.".
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:552
 msgid "Rating {rating}, {attempts}."
 msgstr "Rating {rating}, {attempts}."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:554
+#. Part of the puzzle details: the puzzle rating.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:625
 msgid "Rating: {rating}."
 msgstr "Rating: {rating}."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:117
+#. Button of the tactics actions bar.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:123
 msgid "Repeat instruction"
 msgstr "Repetir a instrução"
 
 #. Input help message for the report tactics rating command.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:467
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:519
 msgid "Report your current tactics rating"
 msgstr "Anuncia o seu rating de táticas atual"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:122
+#. Button of the tactics actions bar.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:132
 msgid "Restart puzzle"
 msgstr "Reiniciar o puzzle"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:229
+#. Spoken when the puzzle starts again.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:246
 msgid "Restarting puzzle."
 msgstr "Reiniciando o puzzle."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:431
+#. Spoken after solving a retried puzzle: retries do not change the rating.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:470
 msgid "Retry: not rated."
 msgstr "Nova tentativa: não vale rating."
 
@@ -1068,8 +1170,9 @@ msgstr "A planilha de lances está vazia"
 msgid "Select &themes..."
 msgstr "Selecionar &temas..."
 
-#: addon/globalPlugins/chessmart/__init__.py:344
-#: addon/globalPlugins/chessmart/__init__.py:415
+#. Title of the list of games in a PGN file.
+#: addon/globalPlugins/chessmart/__init__.py:357
+#: addon/globalPlugins/chessmart/__init__.py:430
 msgid "Select Game"
 msgstr "Selecionar partida"
 
@@ -1088,9 +1191,10 @@ msgstr "Selecionar temas"
 msgid "Session just started: no finished puzzle yet."
 msgstr "Sessão recém-começada: nenhum puzzle terminado ainda."
 
-#. Button of the tactics actions bar, before any puzzle is finished.
+#. Button of the tactics actions bar, before any puzzle is finished. Button of
+#. the tactics actions bar.
 #: addon/globalPlugins/chessmart/puzzle_attempt.py:95
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:121
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:130
 msgid "Session status"
 msgstr "Estado da sessão"
 
@@ -1114,15 +1218,18 @@ msgstr "roque pequeno"
 msgid "Solved after a mistake, not rated: {count}."
 msgstr "Resolvidos depois de um erro, sem valer rating: {count}."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:434
+#. Spoken when a puzzle is finished after a wrong move.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:474
 msgid "Solved after a mistake: already counted as a failure."
 msgstr "Resolvido depois de um erro: já contado como falha."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:403
+#. Window title after a puzzle is solved.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:437
 msgid "Solved tactic {puzzle_id}"
 msgstr "Tática {puzzle_id} resolvida"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:577
+#. Part of the puzzle details.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:653
 msgid "Source game available on Lichess."
 msgstr "Partida de origem disponível no Lichess."
 
@@ -1147,7 +1254,8 @@ msgstr "Casa"
 msgid "square color: {color},"
 msgstr "cor da casa: {color},"
 
-#: addon/globalPlugins/chessmart/game_elements.py:128
+#. Name of the standard chess variant.
+#: addon/globalPlugins/chessmart/game_elements.py:139
 msgid "Standard"
 msgstr "Padrão"
 
@@ -1160,19 +1268,23 @@ msgstr ""
 "Comece uma sessão de treino guiada, ou digite o ID de um puzzle para abrir "
 "uma tática exata do Lichess."
 
-#: addon/globalPlugins/chessmart/__init__.py:48
+#. Menu item that opens the new game dialog, and its help text.
+#: addon/globalPlugins/chessmart/__init__.py:49
 msgid "Start a new chess game"
 msgstr "Começar uma nova partida"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:81
+#. Label of the starting position field (FEN notation) in the new game dialog.
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:88
 msgid "Starting FEN"
 msgstr "FEN inicial"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:410
+#. Spoken when a puzzle is solved.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:445
 msgid "Tactic solved."
 msgstr "Tática resolvida."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:255
+#. Window title during a puzzle.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:276
 msgid "Tactic {puzzle_id} - rating {rating}"
 msgstr "Tática {puzzle_id} - rating {rating}"
 
@@ -1186,7 +1298,8 @@ msgstr "Táticas"
 msgid "Tactics database"
 msgstr "Base de táticas"
 
-#: addon/globalPlugins/chessmart/__init__.py:146
+#. Title of the error shown when the puzzle database is missing.
+#: addon/globalPlugins/chessmart/__init__.py:155
 msgid "Tactics Database Not Found"
 msgstr "Base de táticas não encontrada"
 
@@ -1195,7 +1308,8 @@ msgstr "Base de táticas não encontrada"
 msgid "takes"
 msgstr "toma"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:324
+#. Spoken after a wrong move in a puzzle.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:354
 msgid "That move does not solve the tactic."
 msgstr "Esse lance não resolve a tática."
 
@@ -1207,13 +1321,14 @@ msgid "The download failed: {reason}"
 msgstr "O download falhou: {reason}"
 
 #. Spoken when the chosen PGN file has no games.
-#: addon/globalPlugins/chessmart/__init__.py:336
-#: addon/globalPlugins/chessmart/__init__.py:407
+#: addon/globalPlugins/chessmart/__init__.py:347
+#: addon/globalPlugins/chessmart/__init__.py:420
 msgid "The file contains no games"
 msgstr "O arquivo não contém partidas"
 
-#: addon/globalPlugins/chessmart/__init__.py:343
-#: addon/globalPlugins/chessmart/__init__.py:414
+#. Prompt of the list of games in a PGN file.
+#: addon/globalPlugins/chessmart/__init__.py:355
+#: addon/globalPlugins/chessmart/__init__.py:428
 msgid "The file contains the following games"
 msgstr "O arquivo contém as seguintes partidas"
 
@@ -1223,7 +1338,8 @@ msgstr "O arquivo contém as seguintes partidas"
 msgid "The game has been terminated because of: {reason}"
 msgstr "A partida foi encerrada por: {reason}"
 
-#: addon/globalPlugins/chessmart/__init__.py:179
+#. Error when Random Puzzle finds no puzzle database.
+#: addon/globalPlugins/chessmart/__init__.py:190
 msgid ""
 "The tactics database was not found. Choose a valid database in Chessboard "
 "settings first."
@@ -1231,7 +1347,9 @@ msgstr ""
 "A base de táticas não foi encontrada. Escolha uma base válida nas "
 "configurações do Chessmart primeiro."
 
-#: addon/globalPlugins/chessmart/__init__.py:135
+#. Error when the tactics dialog finds no puzzle database. Keep "puzzles.db"
+#. as is.
+#: addon/globalPlugins/chessmart/__init__.py:143
 msgid ""
 "The tactics database was not found. Use Browse in the tactics dialog to "
 "point at your puzzle database, or place it in the add-on's data folder as "
@@ -1283,23 +1401,28 @@ msgstr ""
 msgid "Themes: {themes}"
 msgstr "Temas: {themes}"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:564
+#. Part of the puzzle details: its tactical themes.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:638
 msgid "Themes: {themes}."
 msgstr "Temas: {themes}."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:585
+#. Spoken by Control+H when the puzzle is finished.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:662
 msgid "There are no more hints for this puzzle."
 msgstr "Não há mais dicas para este puzzle."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:621
+#. Part of the puzzle details.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:703
 msgid "This puzzle is already solved."
 msgstr "Este puzzle já foi resolvido."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:538
+#. Part of the puzzle goal: its tactical themes.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:605
 msgid "This puzzle trains {themes}."
 msgstr "Este puzzle treina {themes}."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:623
+#. Part of the puzzle details, e.g. "your move 2 of 3".
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:706
 msgid "This puzzle: your move {current} of {total}."
 msgstr "Este puzzle: seu lance {current} de {total}."
 
@@ -1308,16 +1431,19 @@ msgstr "Este puzzle: seu lance {current} de {total}."
 msgid "This square is not under attack"
 msgstr "Esta casa não está atacada"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:87
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:315
+#. Spoken by Control+Enter on a finished puzzle.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:90
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:344
 msgid "This tactic is already finished."
 msgstr "Esta tática já terminou."
 
-#: addon/globalPlugins/chessmart/game_elements.py:135
+#. Name of a chess variant (three checks win).
+#: addon/globalPlugins/chessmart/game_elements.py:153
 msgid "Three check"
 msgstr "Três xeques"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:61
+#. Label of the time control choice in the new game dialog.
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:66
 msgid "Time Control"
 msgstr "Controle de tempo"
 
@@ -1331,7 +1457,8 @@ msgstr "para {square}"
 msgid "Trainer summary"
 msgstr "Resumo do treino"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:115
+#. Name of the tactics actions bar, reached with Tab.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:120
 msgid "Training actions"
 msgstr "Ações de treino"
 
@@ -1351,36 +1478,45 @@ msgid "UCI: g1f3"
 msgstr "UCI: g1f3"
 
 #. Shown when the list of available puzzle databases could not be downloaded;
-#. {reason} is the technical error.
+#. {reason} is the technical error. Part of the puzzle details: the puzzle
+#. rating. Part of the puzzle details: the Lichess popularity score. Part of
+#. the puzzle details: how many times it was played on Lichess.
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:156
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:253
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:554
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:557
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:561
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:273
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:625
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:629
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:634
 msgid "unknown"
 msgstr "desconhecido"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:520
+#. Part of the first-puzzle instructions.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:583
 msgid "Use Enter to make a move on the virtual board."
 msgstr "Use Enter para fazer um lance no tabuleiro virtual."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:509
+#. Spoken after a puzzle ends.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:569
 msgid "Use Tab for next puzzle or restart."
 msgstr "Use Tab para o próximo puzzle ou para reiniciar."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:522
+#. Part of the first-puzzle instructions.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:586
 msgid "Use Tab for training actions."
 msgstr "Use Tab para as ações de treino."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:518
+#. Part of the first-puzzle instructions.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:580
 msgid "Use the arrow keys to inspect the board."
 msgstr "Use as setas para examinar o tabuleiro."
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:52
+#. Label of the chess variant choice in the new game dialog.
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:56
 msgid "Variant"
 msgstr "Variante"
 
-#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:96
+#. Checkbox of the new game dialog: draw the focused square on the board
+#. picture.
+#: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:106
 msgid "Visually highlight board interactions"
 msgstr "Destacar visualmente as interações no tabuleiro"
 
@@ -1389,7 +1525,8 @@ msgstr "Destacar visualmente as interações no tabuleiro"
 msgid "was at {square}"
 msgstr "estava em {square}"
 
-#: addon/globalPlugins/chessmart/game_elements.py:149
+#. Side choice in the new game dialog: play the white pieces.
+#: addon/globalPlugins/chessmart/game_elements.py:170
 msgid "White"
 msgstr "Brancas"
 
@@ -1409,7 +1546,7 @@ msgid "White won"
 msgstr "Brancas venceram"
 
 #. Option in the draw offer menu.
-#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:350
+#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:352
 msgid "Yes, accept offer and end game"
 msgstr "Sim, aceitar a oferta e encerrar a partida"
 
@@ -1434,7 +1571,7 @@ msgid "Your puzzle database is up to date (Lichess base of {when})."
 msgstr "Sua base de puzzles está atualizada (base do Lichess de {when})."
 
 #. Spoken when a king is in check, e.g. "white is in check".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:945
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:947
 #: addon/globalPlugins/chessmart/virtual_chessboard/base.py:542
 msgid "{color} is in check"
 msgstr "{color} em xeque"
@@ -1460,9 +1597,10 @@ msgstr "{color} desistiram"
 msgid "{color} resigned the game"
 msgstr "{color} desistiram da partida"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:270
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:392
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:516
+#. Spoken when a puzzle starts; {color} is white or black.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:292
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:425
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:577
 msgid "{color} to move."
 msgstr "{color} jogam."
 
@@ -1472,11 +1610,13 @@ msgstr "{color} jogam."
 msgid "{color} {piece}"
 msgstr "{piece} das {color}"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:279
+#. Name of the list of captured pieces in Crazyhouse, e.g. "white's pocket".
+#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:281
 msgid "{color}'s pocket"
 msgstr "reserva das {color}"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:275
+#. Spoken when a Crazyhouse pocket has no pieces.
+#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:276
 msgid "{color}'s pocket is empty"
 msgstr "a reserva das {color} está vazia"
 
@@ -1496,7 +1636,7 @@ msgid "{count} selected: {themes}"
 msgstr "{count} selecionados: {themes}"
 
 #. One entry of the Crazyhouse pocket, e.g. "1 knight" / "2 knights".
-#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:285
+#: addon/globalPlugins/chessmart/virtual_chessboard/user_driven.py:287
 msgid "{count} {piece}"
 msgid_plural "{count} {piece}s"
 msgstr[0] "{count} {piece}"
@@ -2526,12 +2666,12 @@ msgstr "Sair da partida? Os lances jogados até aqui serão perdidos."
 
 #. Asked when Escape is pressed during a puzzle the player has already started
 #. solving.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:147
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:158
 msgid "Leave training? The current puzzle will count as unsolved."
 msgstr "Sair do treino? O puzzle atual vai contar como não resolvido."
 
 #. Asked when Escape is pressed during tactics training.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:149
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:160
 msgid "Leave training? The session status will be lost."
 msgstr "Sair do treino? O status da sessão será perdido."
 
@@ -2546,7 +2686,7 @@ msgid "Yes, leave"
 msgstr "Sim, sair"
 
 #. Menu item that opens the endgame drills.
-#: addon/globalPlugins/chessmart/__init__.py:58
+#: addon/globalPlugins/chessmart/__init__.py:61
 msgid "&Endgames..."
 msgstr "&Finais..."
 
@@ -2601,7 +2741,7 @@ msgid "Leave the drill? The position will be lost."
 msgstr "Sair do treino? A posição será perdida."
 
 #. Menu item that opens the endgame drills.
-#: addon/globalPlugins/chessmart/__init__.py:59
+#: addon/globalPlugins/chessmart/__init__.py:62
 msgid "Practice elementary endgames against the engine"
 msgstr "Treinar finais elementares contra a engine"
 
@@ -3544,7 +3684,7 @@ msgid "&Copy to clipboard"
 msgstr "&Copiar para a área de transferência"
 
 #. Menu item that opens the study log.
-#: addon/globalPlugins/chessmart/__init__.py:64
+#: addon/globalPlugins/chessmart/__init__.py:67
 msgid "&My Study..."
 msgstr "&Meu estudo..."
 
@@ -3584,7 +3724,7 @@ msgstr ""
 " mantido sem escorregar."
 
 #. Menu item that opens the study log.
-#: addon/globalPlugins/chessmart/__init__.py:65
+#: addon/globalPlugins/chessmart/__init__.py:68
 msgid ""
 "How much and how you studied, by day, and how far the endgame lessons go"
 msgstr ""
@@ -3742,11 +3882,14 @@ msgid ""
 "With {hints} hints from the tablebase: it counts as practice, not as held."
 msgstr "Com {hints} ajudas da tablebase: vale como treino, não como mantida."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:66
+#. Spoken after the first Control+N during a puzzle: it asks for a second
+#. press.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:67
 msgid "Press Control+N twice to skip tactic {puzzle_id}."
 msgstr "Pressione Control+N duas vezes para pular a tática {puzzle_id}."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:73
+#. Spoken on the second Control+N: the puzzle is skipped.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:75
 msgid "Skipping tactic {puzzle_id}."
 msgstr "Pulando a tática {puzzle_id}."
 
@@ -4057,32 +4200,32 @@ msgstr ""
 "do Brasil."
 
 #. Spoken when a shortcut is used while NVDA runs in secure mode.
-#: addon/globalPlugins/chessmart/__init__.py:478
+#: addon/globalPlugins/chessmart/__init__.py:493
 msgid "Chessmart is not available in secure mode."
 msgstr "O Chessmart não está disponível no modo seguro."
 
 #. Description of the shortcut that opens the endgame lessons.
-#: addon/globalPlugins/chessmart/__init__.py:499
+#: addon/globalPlugins/chessmart/__init__.py:514
 msgid "Opens Chessmart endgames"
 msgstr "Abre os Finais do Chessmart"
 
 #. Description of the shortcut that opens the study log.
-#: addon/globalPlugins/chessmart/__init__.py:506
+#: addon/globalPlugins/chessmart/__init__.py:521
 msgid "Opens Chessmart My Study"
 msgstr "Abre o Meu estudo do Chessmart"
 
 #. Description of the shortcut that opens the tactics trainer.
-#: addon/globalPlugins/chessmart/__init__.py:484
+#: addon/globalPlugins/chessmart/__init__.py:499
 msgid "Opens Chessmart tactics"
 msgstr "Abre a Tática do Chessmart"
 
 #. Description of the shortcut that starts a new game.
-#: addon/globalPlugins/chessmart/__init__.py:513
+#: addon/globalPlugins/chessmart/__init__.py:528
 msgid "Starts a new Chessmart game"
 msgstr "Inicia uma nova partida do Chessmart"
 
 #. Description of the shortcut that starts a random puzzle.
-#: addon/globalPlugins/chessmart/__init__.py:492
+#: addon/globalPlugins/chessmart/__init__.py:507
 msgid "Starts a random Chessmart puzzle with the saved training setup"
 msgstr ""
 "Inicia um puzzle aleatório do Chessmart com a configuração de treino salva"
@@ -4115,13 +4258,13 @@ msgstr ""
 "a internet e tente de novo. Detalhe: {reason}"
 
 #. Spoken when the chosen PGN file cannot be read, followed by the error.
-#: addon/globalPlugins/chessmart/__init__.py:434
+#: addon/globalPlugins/chessmart/__init__.py:449
 msgid "Could not read the PGN file. Details: {error}"
 msgstr "Não foi possível ler o arquivo PGN. Detalhe: {error}"
 
 #. Spoken after Backspace removed a move, e.g. "took back e4". Spoken after
 #. Backspace took a move back in a PGN replay, e.g. "Took back Nf3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:713
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:714
 #: addon/globalPlugins/chessmart/virtual_chessboard/pgn_player.py:92
 msgid "Took back {move}"
 msgstr "Desfeito {move}"
@@ -4166,7 +4309,7 @@ msgstr "regra dos setenta e cinco lances"
 
 #. How a game ended, spoken at game over.
 #: addon/globalPlugins/chessmart/spoken_messages.py:98
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:941
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:943
 msgid "stalemate"
 msgstr "afogamento"
 
@@ -4187,7 +4330,7 @@ msgid "{white} versus {black}"
 msgstr "{white} contra {black}"
 
 #. Asked when tactics are opened and no puzzle database is installed yet.
-#: addon/globalPlugins/chessmart/__init__.py:159
+#: addon/globalPlugins/chessmart/__init__.py:169
 msgid ""
 "Tactics need a puzzle database, which is downloaded once. The next dialog "
 "gives the size of each. Download it now?"
@@ -4232,13 +4375,13 @@ msgid "&White"
 msgstr "&Brancas"
 
 #. Menu item that opens a PGN file on the analysis board.
-#: addon/globalPlugins/chessmart/__init__.py:84
+#: addon/globalPlugins/chessmart/__init__.py:88
 msgid "Analyse PGN &File..."
 msgstr "Analisar arquivo &PGN..."
 
 #. Spoken after leaving a variation; followed by the move the position comes
 #. after.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:677
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:678
 msgid "back from the variation"
 msgstr "de volta da variante"
 
@@ -4264,39 +4407,39 @@ msgid "Choose the folder for your games"
 msgstr "Escolha a pasta das suas partidas"
 
 #. Title of the dialog that writes the comment of a move.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:732
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:733
 msgid "Comment"
 msgstr "Comentário"
 
 #. Prompt of the dialog that writes the comment of a move, e.g. "Comment on
 #. 12. Nf3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:730
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:731
 msgid "Comment on {move}"
 msgstr "Comentário sobre {move}"
 
 #. Spoken after the comment dialog was confirmed.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:745
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:746
 msgid "Comment removed"
 msgstr "Comentário removido"
 
 #. Spoken after the comment dialog was confirmed.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:745
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:746
 msgid "Comment saved"
 msgstr "Comentário salvo"
 
 #. Spoken by Alt+Down: the only move recorded from this position.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:689
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:690
 msgid "Continues with {move}"
 msgstr "Continua com {move}"
 
 #. Spoken by Alt+Down: the main continuation, then the variations recorded
 #. here.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:693
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:694
 msgid "Continues with {move}; variations: {others}"
 msgstr "Continua com {move}; variantes: {others}"
 
 #. Spoken when the game could not be written, followed by the error.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:811
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:813
 msgid "Could not save the game. Details: {error}"
 msgstr "Não foi possível salvar a partida. Detalhes: {error}"
 
@@ -4311,12 +4454,12 @@ msgid "dubious move"
 msgstr "lance duvidoso"
 
 #. Spoken when going forward at the last move of a line.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:647
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:648
 msgid "End of the line"
 msgstr "Fim da linha"
 
 #. Help text of the menu item that opens an empty analysis board.
-#: addon/globalPlugins/chessmart/__init__.py:77
+#: addon/globalPlugins/chessmart/__init__.py:81
 msgid ""
 "Enter a game move by move, with variations, comments and marks, and save it "
 "in your games folder"
@@ -4345,14 +4488,14 @@ msgid "Invalid Date"
 msgstr "Data inválida"
 
 #. Asked when Escape is pressed on the analysis board with changes not saved.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:601
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:602
 msgid "Leave the analysis? The changes since the last save will be lost."
 msgstr ""
 "Sair da análise? O que mudou desde a última vez que você salvou será "
 "perdido."
 
 #. Spoken when Control+0 removed the mark of a move.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:766
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:768
 msgid "Mark removed"
 msgstr "Sinal removido"
 
@@ -4363,28 +4506,28 @@ msgid "mistake"
 msgstr "erro"
 
 #. Spoken before a move that starts a new variation.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:618
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:619
 msgid "new variation"
 msgstr "nova variante"
 
 #. Spoken by Shift+C when the current move has no comment.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:753
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:754
 msgid "No comment"
 msgstr "Sem comentário"
 
 #. Spoken by Alt+Down when no move was recorded from this position.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:683
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:684
 msgid "No moves recorded from here"
 msgstr "Nenhum lance registrado a partir daqui"
 
 #. Spoken when Alt+Up is pressed on the main line.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:673
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:773
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:674
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:775
 msgid "Not in a variation"
 msgstr "Você não está numa variante"
 
 #. Spoken when Backspace is pressed on a move that has moves after it.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:708
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:709
 msgid ""
 "Only the last move of a line can be taken back. Use Alt+Left to go back."
 msgstr ""
@@ -4392,7 +4535,7 @@ msgstr ""
 " voltar."
 
 #. Help text of the menu item that opens a PGN file on the analysis board.
-#: addon/globalPlugins/chessmart/__init__.py:86
+#: addon/globalPlugins/chessmart/__init__.py:90
 msgid ""
 "Open a saved game on the analysis board to go through it and add variations "
 "and comments"
@@ -4401,27 +4544,28 @@ msgstr ""
 "variantes e comentários"
 
 #. Title of the dialog that opens a PGN file on the analysis board.
-#: addon/globalPlugins/chessmart/__init__.py:316
+#: addon/globalPlugins/chessmart/__init__.py:327
 msgid "Open Game for Analysis"
 msgstr "Abrir partida para análise"
 
 #. Spoken when going back past the first move of a variation.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:639
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:640
 msgid "out of the variation"
 msgstr "fora da variante"
 
 #. Spoken when C is pressed before any move.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:723
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:724
 msgid "Play or go to a move first; the comment belongs to a move."
 msgstr "Jogue ou vá até um lance primeiro; o comentário pertence a um lance."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:349
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:760
+#. Spoken when a mark is set before any move on the analysis board.
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:350
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:762
 msgid "Play or go to a move first; the mark belongs to a move."
 msgstr "Jogue ou vá até um lance primeiro; o sinal pertence a um lance."
 
 #. Menu item that opens an empty analysis board to record a game.
-#: addon/globalPlugins/chessmart/__init__.py:75
+#: addon/globalPlugins/chessmart/__init__.py:79
 msgid "Record and &Analyse Game"
 msgstr "&Gravar e analisar partida"
 
@@ -4432,20 +4576,20 @@ msgstr "Salvar partida"
 
 #. Spoken after saving, with the file name, e.g. "Saved: 2026-09-23_Joao-vs-
 #. Ana.pgn".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:820
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:822
 msgid "Saved: {name}"
 msgstr "Salvo: {name}"
 
 #. Spoken when going back at the start of the game.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:633
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:661
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:702
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:914
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:634
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:662
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:703
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:916
 msgid "Start of the game"
 msgstr "Início da partida"
 
 #. Spoken after Control+P made the current variation the main line.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:778
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:780
 msgid "This variation is now the main line"
 msgstr "Esta variante agora é a linha principal"
 
@@ -4460,8 +4604,8 @@ msgid "Unfinished or unknown (*)"
 msgstr "Não terminada ou desconhecido (*)"
 
 #. Spoken before a move that enters a variation already recorded.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:621
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:652
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:622
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:653
 msgid "variation"
 msgstr "variante"
 
@@ -4482,12 +4626,12 @@ msgstr "Pôr a linha do motor como variante, Control+E"
 
 #. The evaluation after the move actually played, e.g. "After Nf3: equal, plus
 #. 0.1.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:508
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:509
 msgid "After {move}: {evaluation}."
 msgstr "Depois de {move}: {evaluation}."
 
 #. The engine's other candidate moves, after the best one.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:454
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:455
 msgid "Also: {moves}"
 msgstr "Também: {moves}"
 
@@ -4497,13 +4641,13 @@ msgid "Analysis actions"
 msgstr "Ações da análise"
 
 #. The engine's best move, e.g. "best: Nf3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:437
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:438
 msgid "best: {move}"
 msgstr "melhor: {move}"
 
 #. Spoken after Control+E, e.g. "Engine line added from Nf3, 8 moves. Alt+Down
 #. lists it.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:546
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:547
 msgid "Engine line added from {move}, {count} move. Alt+Down lists it."
 msgid_plural ""
 "Engine line added from {move}, {count} moves. Alt+Down lists it."
@@ -4526,7 +4670,7 @@ msgid "Evaluate the position, E"
 msgstr "Avaliar a posição, E"
 
 #. Spoken when Control+E is pressed before evaluating this position.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:529
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:530
 msgid ""
 "Evaluate this position first with E; then Control+E adds the engine's line."
 msgstr ""
@@ -4564,12 +4708,12 @@ msgid "Mark the move, Control+1 to 6"
 msgstr "Marcar o lance, Control+1 a 6"
 
 #. Name of the menu that marks the current move, e.g. "Mark 12. Nf3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:354
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:355
 msgid "Mark {move}"
 msgstr "Marcar {move}"
 
 #. Short engine value for a forced mate, e.g. "mate in 3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:559
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:560
 msgid "mate in {moves}"
 msgstr "mate em {moves}"
 
@@ -4589,7 +4733,7 @@ msgid "No mark, Control+0"
 msgstr "Sem sinal, Control+0"
 
 #. Spoken when Shift+E is pressed before any move.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:463
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:464
 msgid "Play or go to a move first; the engine reviews the move that led here."
 msgstr ""
 "Jogue ou vá até um lance primeiro; o motor avalia o lance que levou até "
@@ -4611,7 +4755,7 @@ msgid "Review the move played, Shift+E"
 msgstr "Avaliar o lance jogado, Shift+E"
 
 #. Spoken while the engine reviews the move, e.g. "Reviewing 12. Nf3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:479
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:480
 msgid "Reviewing {move}"
 msgstr "Avaliando {move}"
 
@@ -4622,28 +4766,28 @@ msgstr "Salvar, Control+S"
 
 #. The mark the engine's verdict suggests, e.g. "Suggested mark: dubious move,
 #. Control+6.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:516
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:517
 msgid "Suggested mark: {mark}, Control+{key}."
 msgstr "Sinal sugerido: {mark}, Control+{key}."
 
 #. Spoken when the engine failed, followed by the error.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:567
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:568
 msgid "The engine could not answer. Details: {error}"
 msgstr "O motor não conseguiu responder. Detalhes: {error}"
 
 #. Spoken when the engine returned no moves for the position.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:534
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:535
 msgid "The engine has no line for this position."
 msgstr "O motor não tem linha para esta posição."
 
 #. Spoken when an engine key is pressed while the engine is still thinking.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:384
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:385
 msgid "The engine is still thinking"
 msgstr "O motor ainda está pensando"
 
 #. What the engine preferred, e.g. "The engine preferred e4, white slightly
 #. better, plus 0.5.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:501
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:502
 msgid "The engine preferred {move}, {evaluation}."
 msgstr "O motor preferia {move}, {evaluation}."
 
@@ -4653,18 +4797,18 @@ msgid "the engine's move"
 msgstr "o lance do motor"
 
 #. The rest of the engine's line after its best move.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:442
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:443
 msgid "then {line}"
 msgstr "depois {line}"
 
 #. Spoken when E is pressed on a checkmate or stalemate.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:391
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:392
 msgid "There is nothing to evaluate: the game is over in this position."
 msgstr "Não há o que avaliar: a partida terminou nesta posição."
 
 #. Spoken when the engine starts the long think (E pressed twice).
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:396
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:403
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:397
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:404
 msgid "Thinking longer, {seconds} seconds"
 msgstr "Pensando mais, {seconds} segundos"
 
@@ -4674,7 +4818,7 @@ msgid "Write a comment, C"
 msgstr "Escrever comentário, C"
 
 #. Spoken after flipping the analysis board, e.g. "black at the bottom".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:372
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:373
 msgid "{color} at the bottom"
 msgstr "{color} embaixo"
 
@@ -4702,24 +4846,24 @@ msgstr "{color} ganhando, {pawns}"
 
 #. Spoken when the position has variations recorded besides the main
 #. continuation.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:930
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:932
 msgid "{count} variation from here"
 msgid_plural "{count} variations from here"
 msgstr[0] "{count} variante daqui"
 msgstr[1] "{count} variantes daqui"
 
 #. Start of an engine evaluation, e.g. "Stockfish 16, depth 20:".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:431
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:432
 msgid "{engine}, depth {depth}:"
 msgstr "{engine}, profundidade {depth}:"
 
 #. One of the engine's other candidate moves, e.g. "e4, plus 0.3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:445
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:446
 msgid "{move}, {pawns}"
 msgstr "{move}, {pawns}"
 
 #. Engine review of a move, e.g. "Nf3: inaccuracy.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:496
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:497
 msgid "{move}: {verdict}."
 msgstr "{move}: {verdict}."
 
@@ -4735,7 +4879,7 @@ msgid "{whole}.{tenth}"
 msgstr "{whole},{tenth}"
 
 #. Spoken by O when no position of the line has an opening name.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:848
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:850
 msgid "No named opening yet"
 msgstr "Nenhuma abertura com nome ainda"
 
@@ -4745,26 +4889,47 @@ msgid "Opening, O"
 msgstr "Abertura, O"
 
 #. Spoken after the first move that is not in the opening table.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:871
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:873
 msgid "out of theory"
 msgstr "fora da teoria"
 
 #. Shift+E on a move that is still opening theory, e.g. "Nf3: theory, Sicilian
 #. Defense, B50.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:469
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:470
 msgid "{move}: theory, {name}, {eco}."
 msgstr "{move}: teoria, {name}, {eco}."
 
 #. Spoken by O after the game left theory, e.g. "Sicilian Defense, B20, out of
 #. theory".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:856
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:858
 msgid "{name}, {eco}, out of theory"
 msgstr "{name}, {eco}, fora da teoria"
 
 #. Spoken by O, e.g. "Sicilian Defense: Najdorf Variation, B90, still theory".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:853
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:855
 msgid "{name}, {eco}, still theory"
 msgstr "{name}, {eco}, ainda teoria"
+
+#. Spoken after a rated puzzle while the rating is uncertain, e.g.
+#. "Provisional rating 1410, down 40.".
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:499
+msgid "Provisional rating {rating}, down {delta}."
+msgstr "Rating provisório {rating}, caiu {delta}."
+
+#. Spoken after a rated puzzle while the rating is uncertain and did not
+#. change.
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:502
+msgid "Provisional rating {rating}, unchanged."
+msgstr "Rating provisório {rating}, sem mudança."
+
+#. Spoken after a rated puzzle while the rating is uncertain, e.g.
+#. "Provisional rating 1450, up 40.".
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:496
+msgid "Provisional rating {rating}, up {delta}."
+msgstr "Rating provisório {rating}, subiu {delta}."
+
+#~ msgid "Provisional "
+#~ msgstr "Provisório "
 
 #~ msgid "1 variation from here"
 #~ msgstr "1 variante daqui"

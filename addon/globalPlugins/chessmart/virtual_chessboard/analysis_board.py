@@ -346,6 +346,7 @@ class AnalysisChessboard(ActionsBarMixin, UserDrivenChessboard):
 		if self.tree.at_start:
 			self.focus_board_from_actions()
 			GameSound.invalid.play()
+			# Translators: Spoken when a mark is set before any move on the analysis board.
 			ui.message(_("Play or go to a move first; the mark belongs to a move."))
 			return
 		menu = MarkMenu(
@@ -757,6 +758,7 @@ class AnalysisChessboard(ActionsBarMixin, UserDrivenChessboard):
 	def mark_move(self, nag):
 		if not self.tree.set_move_mark(nag):
 			GameSound.invalid.play()
+			# Translators: Spoken when a mark is set before any move on the analysis board.
 			ui.message(_("Play or go to a move first; the mark belongs to a move."))
 			return
 		self.unsaved = True
