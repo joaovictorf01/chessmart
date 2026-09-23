@@ -70,6 +70,7 @@ class TimeControl(DisplayStringIntEnum):
 	@cached_property
 	def _displayStringLabels(self):
 		return {
+			# Translators: Time control choice: no clock.
 			TimeControl.NUL_TIME_CONTROL: _("No Time Control"),
 			# Translators: Time control choice: 90 minutes per player, 30 seconds added per move.
 			TimeControl.CLASSICAL: _("Classical  (90+30)"),

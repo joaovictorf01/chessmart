@@ -207,8 +207,25 @@ class EditTest(unittest.TestCase):
 		self.assertEqual([child.san() for child in tree.alternatives()], ["Qh5", "Nf3"])
 		self.assertEqual(tree.alternatives()[1].comment, "Stockfish 16: +0.4")
 		# Asking again follows the recorded moves instead of duplicating them.
-		tree.add_line(line)
+		self.assertIsNone(tree.add_line(line))
 		self.assertEqual(len(tree.alternatives()), 2)
+
+	def test_an_engine_line_never_touches_a_recorded_move(self):
+		tree = GameTree()
+		play(tree, "e4", "e5")
+		tree.node.comment = "I expected this [%clk 0:14:52]"
+		tree.back()
+		board = tree.board()
+		# The engine agrees with the move played, then goes on: 1... e5 2. Nf3.
+		line = [board.parse_san("e5")]
+		board.push(line[0])
+		line.append(board.parse_san("Nf3"))
+		first = tree.add_line(line, comment="Stockfish 16: +0.3", score=None)
+		e5 = tree.alternatives()[0]
+		self.assertEqual(e5.comment, "I expected this [%clk 0:14:52]")
+		assert first is not None
+		self.assertEqual(first.san(), "Nf3")
+		self.assertEqual(first.comment, "Stockfish 16: +0.3")
 
 	def test_the_start_of_the_game_has_no_move_to_mark(self):
 		self.assertFalse(GameTree().set_move_mark(chess.pgn.NAG_GOOD_MOVE))

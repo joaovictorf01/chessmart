@@ -28,6 +28,7 @@ from .paths import import_bundled
 
 with import_bundled():
 	import chess
+	import chess.engine
 	import chess.pgn
 
 
@@ -117,23 +118,34 @@ class GameTree:
 		return PlayResult.NEW_VARIATION if had_continuation else PlayResult.EXTENDED
 
 	def add_line(
-		self, moves: t.Sequence["chess.Move"], comment: str = ""
+		self,
+		moves: t.Sequence["chess.Move"],
+		comment: str = "",
+		score: t.Optional["chess.engine.PovScore"] = None,
+		depth: t.Optional[int] = None,
 	) -> t.Optional["chess.pgn.ChildNode"]:
 		"""Records a line of moves from the pointer without moving it; the engine's line, typically.
 
-		Moves already recorded are followed, so asking twice does not duplicate
-		the line; the comment goes on the first move of the line. Returns that
-		first node, or None for an empty line.
+		Moves already recorded are followed, and left as they are: their
+		comments, clocks and marks are the player's. The comment and the
+		evaluation go on the first move the line adds, where it leaves what was
+		recorded. Returns that move, or None when the whole line was already there.
 		"""
 		node = self.node
-		first = None
+		first_new = None
 		for move in moves:
-			node = node.variation(move) if node.has_variation(move) else node.add_variation(move)
-			if first is None:
-				first = node
-		if first is not None and comment:
-			first.comment = comment
-		return first
+			if node.has_variation(move):
+				node = node.variation(move)
+				continue
+			node = node.add_variation(move)
+			if first_new is None:
+				first_new = node
+		if first_new is not None:
+			if comment:
+				first_new.comment = comment
+			if score is not None:
+				first_new.set_eval(score, depth)
+		return first_new
 
 	def back(self) -> bool:
 		if self.node.parent is None:

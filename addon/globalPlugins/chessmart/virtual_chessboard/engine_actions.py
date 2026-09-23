@@ -47,7 +47,10 @@ class EngineActionsMixin:
 	tree: typing.Any
 	unsaved: bool
 	_last_evaluation: typing.Any
-	_deep_pending: bool
+	_deep_pending: bool = False
+	# An E is thinking (not X, Shift+E or F7): only then does a second E wait for it.
+	_evaluating: bool = False
+	_is_open: typing.Any
 	_san_text: typing.Any
 	_numbered_move: typing.Any
 	_rebuild_score_sheet: typing.Any
@@ -71,7 +74,8 @@ class EngineActionsMixin:
 			return
 		if self._say_tablebase(board):
 			return
-		if deep and self.engine.busy:
+		if deep and self._evaluating:
+			# E pressed twice: the first press is thinking; the second turns into the long think after it.
 			self._deep_pending = True
 			# Translators: Spoken when the engine starts the long think (E pressed twice).
 			ui.message(_("Thinking longer, {seconds} seconds").format(seconds=int(DEEP_SECONDS)))
@@ -83,12 +87,17 @@ class EngineActionsMixin:
 			# Translators: Spoken when the engine starts the long think (E pressed twice).
 			ui.message(_("Thinking longer, {seconds} seconds").format(seconds=int(seconds)))
 		node = self.tree.node
+		self._evaluating = True
 		self.engine.evaluate(board, seconds).add_done_callback(
 			lambda future: wx.CallAfter(self._on_evaluation, node, future),
 		)
 
 	def _on_evaluation(self, node, future):
+		self._evaluating = False
+		deep_pending, self._deep_pending = self._deep_pending, False
 		evaluations, error = result_of(future)
+		if not self._is_open():
+			return
 		if error is not None:
 			self._say_engine_error(error)
 			return
@@ -98,11 +107,10 @@ class EngineActionsMixin:
 		self._last_evaluation = (node, best)
 		if node is not self.tree.node:
 			# The user moved on while the engine thought: the answer is about another position.
-			self._deep_pending = False
 			return
-		if self._deep_pending:
-			self._deep_pending = False
+		if deep_pending:
 			if self.engine.try_start():
+				self._evaluating = True
 				self.engine.evaluate(best.board, DEEP_SECONDS).add_done_callback(
 					lambda future: wx.CallAfter(self._on_evaluation, node, future),
 				)
@@ -202,6 +210,8 @@ class EngineActionsMixin:
 
 	def _on_threat(self, node, future):
 		evaluations, error = result_of(future)
+		if not self._is_open():
+			return
 		if error is not None:
 			self._say_engine_error(error)
 			return
@@ -221,6 +231,7 @@ class EngineActionsMixin:
 		]
 		line = self._spoken_line(threat.board, threat.line[1:SPOKEN_LINE_MOVES], after=threat.best_move)
 		if line:
+			# Translators: The rest of the engine's line after the threat.
 			spoken.append(_("then {line}").format(line=line))
 		speak_next(spoken)
 
@@ -252,6 +263,8 @@ class EngineActionsMixin:
 
 	def _on_review(self, node, future):
 		result, error = result_of(future)
+		if not self._is_open():
+			return
 		if error is not None:
 			self._say_engine_error(error)
 			return
@@ -306,19 +319,23 @@ class EngineActionsMixin:
 		first = self.tree.add_line(
 			line,
 			comment=f"{self._engine_name()}: {self._short_value(evaluation.assessment, written=True)}",
+			# Also as [%eval ...], the annotation Lichess and ChessBase read and chart.
+			score=evaluation.assessment.to_pov_score(),
+			depth=evaluation.depth,
 		)
-		assert first is not None
-		# Also as [%eval ...], the annotation Lichess and ChessBase read and chart.
-		first.set_eval(evaluation.assessment.to_pov_score(), evaluation.depth)
+		if first is None:
+			# Translators: Spoken by Control+E when every move of the engine's line is already recorded.
+			ui.message(_("The engine's line is already recorded here."))
+			return
 		self.unsaved = True
 		self._rebuild_score_sheet()
 		ui.message(
-			# Translators: Spoken after Control+E, e.g. "Engine line added from Nf3, 8 moves. Alt+Down lists it.".
+			# Translators: Spoken after Control+E, e.g. "Engine line added from 12. Nf3, 8 moves. Alt+Down lists it.".
 			ngettext(
 				"Engine line added from {move}, {count} move. Alt+Down lists it.",
 				"Engine line added from {move}, {count} moves. Alt+Down lists it.",
 				len(line),
-			).format(move=self._san_text(evaluation.board, first.move), count=len(line)),
+			).format(move=self._numbered_move(first), count=len(line)),
 		)
 
 	def _short_value(self, assessment, written=False):

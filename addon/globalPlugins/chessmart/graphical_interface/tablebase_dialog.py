@@ -82,6 +82,7 @@ class TablebaseDownloadDialog(DownloadDialogBase):
 		self.setRadio = wx.RadioBox(
 			self,
 			-1,
+			# Translators: Label of the list of tablebase sets to download.
 			_("Tables to download"),
 			choices=choices,
 			majorDimension=1,
@@ -162,6 +163,7 @@ class TablebaseDownloadDialog(DownloadDialogBase):
 		message = _("Tablebases up to {pieces} pieces installed. The judge is on.").format(
 			pieces=table_set.max_pieces,
 		)
+		# Translators: Title of the message about the tablebases.
 		show_message(message, _("Endgame Tablebases"), parent=self)
 		self.EndModal(wx.ID_OK)
 

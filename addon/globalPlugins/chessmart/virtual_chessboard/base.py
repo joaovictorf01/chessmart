@@ -225,6 +225,7 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 	def script_announce_time_for_other_turn(self, gesture):
 		if self.parent.time_control is NULL_TIME_CONTROL:
 			GameSound.invalid.play()
+			# Translators: Spoken by F2 when the game has no clock.
 			return ui.message(_("No Time Control"))
 		color = not self.parent.board.turn
 		remaining = self.get_remaining_time(color)
@@ -256,6 +257,7 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 	@script(gesture="kb:control+shift+s")
 	def script_save_board_image(self, gesture):
 		if globalVars.appArgs.secure:
+			# Translators: Spoken when saving the picture is refused because NVDA runs in secure mode.
 			return ui.message(_("Could not save game. NVDA running in secure mode."))
 		self.parent.save_board_image()
 
@@ -615,6 +617,7 @@ class BaseVirtualChessboard(
 		if game_winner:
 			yield from [
 				speech.commands.BreakCommand(250),
+				# Translators: Spoken at game over, e.g. "white is the winner".
 				_("{color} is the winner").format(color=game_winner),
 			]
 

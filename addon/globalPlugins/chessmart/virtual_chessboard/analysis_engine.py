@@ -73,12 +73,16 @@ class AnalysisEngine:
 		self._engine: t.Optional["chess.engine.SimpleEngine"] = None
 		self._lock = threading.Lock()
 		self._busy = False
+		# Set by quit(): a request still running must not start a new process nobody will stop.
+		self._closed = False
 
 	@property
 	def busy(self) -> bool:
 		return self._busy
 
 	def _ensure_engine(self) -> "chess.engine.SimpleEngine":
+		if self._closed:
+			raise chess.engine.EngineTerminatedError("the board closed")
 		if self._engine is None:
 			startupinfo = subprocess.STARTUPINFO()
 			startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
@@ -187,6 +191,7 @@ class AnalysisEngine:
 			self._release()
 
 	def quit(self) -> None:
+		self._closed = True
 		engine, self._engine = self._engine, None
 		if engine is None:
 			return
@@ -197,9 +202,17 @@ class AnalysisEngine:
 
 
 def result_of(future: Future):
-	"""The value, or the engine error to report; never raises."""
+	"""The value, or the error to report; never raises.
+
+	Anything a request raised is caught here, at the boundary with the board:
+	an engine that died, a position it could not read, a bug. It is logged
+	with its traceback and said, instead of escaping into NVDA.
+	"""
 	try:
 		return future.result(), None
 	except (chess.engine.EngineError, chess.engine.EngineTerminatedError, OSError) as error:
 		log.warning("chessmart: analysis engine failed: %s", error)
+		return None, error
+	except Exception as error:
+		log.exception("chessmart: analysis request failed")
 		return None, error

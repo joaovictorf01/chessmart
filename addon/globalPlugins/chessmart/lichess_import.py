@@ -14,6 +14,7 @@ on a worker thread.
 """
 
 import datetime
+import http.client
 import io
 import re
 import typing as t
@@ -102,7 +103,7 @@ def fetch_game(ref: GameRef, timeout: float = 30.0, base: str = BASE) -> "chess.
 		if error.code == 404:
 			raise DownloadError("not found") from error
 		raise DownloadError(f"HTTP {error.code}") from error
-	except (urllib.error.URLError, OSError) as error:
+	except (urllib.error.URLError, http.client.HTTPException, OSError) as error:
 		raise DownloadError(str(error)) from error
 	game = chess.pgn.read_game(io.StringIO(text))
 	if game is None or not text.strip():

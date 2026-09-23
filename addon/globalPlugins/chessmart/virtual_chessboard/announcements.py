@@ -30,6 +30,12 @@ with import_bundled():
 class AnnouncementsMixin:
 	board: typing.Any
 	prospective: typing.Any
+
+	@property
+	def material_side(self) -> bool:
+		"""Whose side M counts from: the player's, or White when no side is set. Boards may override."""
+		return self.prospective if self.prospective is not None else chess.WHITE
+
 	get_piece_name_at_square: typing.Any
 	spoken_square_name: typing.Any
 
@@ -56,17 +62,14 @@ class AnnouncementsMixin:
 			speech.commands.BreakCommand(250),
 		]
 		for attacking_square in attackers:
-			square_name = chess.square_name(attacking_square)
-			piece_name = self.get_piece_name_at_square(attacking_square)
 			spoken_commands += [
-				piece_name,
-				speech.commands.BreakCommand(250),
-				# Translators: Spoken between an attacking piece and its square, e.g. "knight, at, f3".
-				_("at"),
-				speech.commands.BreakCommand(250),
-				square_name,
+				# Translators: One attacker of a square, e.g. "knight at f3".
+				_("{piece} at {square}").format(
+					piece=self.get_piece_name_at_square(attacking_square),
+					square=chess.square_name(attacking_square),
+				),
+				speech.commands.BreakCommand(350),
 			]
-			spoken_commands.append(speech.commands.BreakCommand(350))
 		speak_next(spoken_commands)
 
 	def announce_material(self):
@@ -75,7 +78,7 @@ class AnnouncementsMixin:
 		No trade history: it's what's on the board right now, from the
 		perspective of whoever plays on this board (white when no side is set).
 		"""
-		me = self.prospective if self.prospective is not None else chess.WHITE
+		me = self.material_side
 		material = count_material(self.board, me)
 		lines = [
 			# Translators: Plural piece name in the material count.

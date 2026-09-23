@@ -196,6 +196,7 @@ class ChessboardMenu(wx.Menu):
 			_(
 				"Tactics need a puzzle database, which is downloaded once. The next dialog gives the size of each. Download it now?",
 			),
+			# Translators: Title of the message about the puzzle database.
 			_("Puzzle Database"),
 		)
 		if not answer:
@@ -371,6 +372,7 @@ class ChessboardMenu(wx.Menu):
 			self._say_pgn_unreadable(error)
 			return
 		if not games:
+			# Translators: Spoken when the chosen PGN file has no games.
 			queueHandler.queueFunction(queueHandler.eventQueue, ui.message, _("The file contains no games"))
 			return
 		if len(games) == 1:
@@ -486,7 +488,9 @@ class ChessboardMenu(wx.Menu):
 				write_pgn(GameTree(game), path)
 			except OSError as error:
 				show_error(
+					# Translators: Shown when the imported game could not be written, followed by the error.
 					_("Could not save the game. Details: {error}").format(error=error),
+					# Translators: Title of the Lichess import messages.
 					_("Import Lichess Game"),
 				)
 				return
@@ -663,9 +667,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if chessboard_menu is not None and gui.mainFrame is not None:
 			gui.mainFrame.sysTrayIcon.toolsMenu.DestroyItem(chessboard_menu.itemHandle)
 		try:
-			concurrency.terminate()
+			# Close, not only destroy: closing fires the board's cleanup (a running
+			# review is cancelled, engines and tablebases are released) before the
+			# thread pool waits for its workers.
 			for cdlg in list(self._active_board_dialogs.values()):
-				cdlg.Destroy()
+				cdlg.Close(force=True)
+			concurrency.terminate()
 		except Exception:
 			log.exception("Failed to terminate concurrency primitives")
 

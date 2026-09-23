@@ -150,6 +150,11 @@ class PositionEditorChessboard(ActionsBarMixin, BaseVirtualChessboard):
 	def is_board_flipped(self):
 		return self._flipped
 
+	@property
+	def material_side(self):
+		# M counts from the side at the bottom of the board, which does not change every move.
+		return chess.BLACK if self._flipped else chess.WHITE
+
 	def leave_prompt(self):
 		if not self.draft.board.occupied:
 			return None
@@ -163,7 +168,8 @@ class PositionEditorChessboard(ActionsBarMixin, BaseVirtualChessboard):
 			# Translators: Spoken by Enter on an empty square of the board editor, e.g. "e4 empty".
 			ui.message(_("{square} empty").format(square=square))
 		else:
-			ui.message(f"{spoken_piece(piece)}, {square}")
+			# Translators: A piece and its square in the board editor, e.g. "white king, e1".
+			ui.message(_("{piece}, {square}").format(piece=spoken_piece(piece), square=square))
 
 	# -- editing -------------------------------------------------------------------
 
@@ -171,7 +177,10 @@ class PositionEditorChessboard(ActionsBarMixin, BaseVirtualChessboard):
 		self.draft.place(index, piece)
 		self._sync()
 		GameSound.drop_piece.play()
-		ui.message(f"{spoken_piece(piece)}, {self.spoken_square_name(index)}")
+		# Translators: A piece and its square in the board editor, e.g. "white king, e1".
+		ui.message(
+			_("{piece}, {square}").format(piece=spoken_piece(piece), square=self.spoken_square_name(index))
+		)
 
 	def clear_square(self, index):
 		removed = self.draft.clear(index)

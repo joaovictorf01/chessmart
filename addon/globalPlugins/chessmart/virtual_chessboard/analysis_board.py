@@ -318,11 +318,17 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 		if nag is not False:
 			queueHandler.queueFunction(queueHandler.eventQueue, self.mark_move, nag)
 
+	def _is_open(self) -> bool:
+		"""False once the window closed: answers from the engine arriving later are not spoken."""
+		return bool(self.dialog)
+
 	def play_from_here(self):
 		"""The New Game dialog, with this position as the start and its side to move as the player's."""
 		self.focus_board_from_actions()
 		board = self.tree.board()
-		if board.is_game_over() or self.on_play_from is None:
+		if self.on_play_from is None:
+			return
+		if board.is_game_over():
 			GameSound.invalid.play()
 			# Translators: Spoken by "Play from here" on a checkmate or stalemate.
 			ui.message(_("The game is over in this position: there is nothing to play."))
@@ -350,6 +356,11 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 	def is_board_flipped(self):
 		return self._flipped
 
+	@property
+	def material_side(self):
+		# M counts from the side at the bottom of the board, which does not change every move.
+		return chess.BLACK if self._flipped else chess.WHITE
+
 	def is_busy(self, index):
 		return False
 
@@ -363,6 +374,7 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 
 	def move_piece_and_check_game_status(self, move, pre_speech=(), post_speech=()):
 		if move not in self.board.legal_moves:
+			# Translators: Spoken when the requested move is not legal.
 			speak_next([speech.commands.WaveFileCommand(GameSound.invalid.filename), _("Illegal move")])
 			return
 		played = PlayedMove.capture(self.board, move)
@@ -408,6 +420,7 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 		self._show_position(lastmove=self.tree.node.move)
 		spoken: list = []
 		if self.tree.starts_variation():
+			# Translators: Spoken before a move that enters a variation already recorded.
 			spoken.append(_("variation"))
 		spoken += self._current_move_text()
 		spoken += self._book_note()
@@ -417,6 +430,7 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 	def go_to_start(self):
 		self.tree.to_start()
 		self._show_position()
+		# Translators: Spoken when going back at the start of the game.
 		ui.message(_("Start of the game"))
 
 	def go_to_end(self):
@@ -458,6 +472,7 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 		node = self.tree.node
 		if node.parent is None:
 			GameSound.invalid.play()
+			# Translators: Spoken by Alt+Home: the start of the game.
 			ui.message(_("Start of the game"))
 			return
 		board_before = node.parent.board()
@@ -500,6 +515,7 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 			self.tree.set_comment(dialog.GetValue())
 			if self.tree.comment != old:
 				self.unsaved = True
+				self._rebuild_score_sheet()
 			# Translators: Spoken after the comment dialog was confirmed.
 			message = _("Comment saved") if self.tree.comment else _("Comment removed")
 			queueHandler.queueFunction(queueHandler.eventQueue, ui.message, message)
@@ -530,6 +546,7 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 	def promote_variation(self):
 		if not self.tree.promote_variation():
 			GameSound.invalid.play()
+			# Translators: Spoken by Control+P on the main line.
 			ui.message(_("Not in a variation"))
 			return
 		self.unsaved = True
@@ -564,6 +581,8 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 				write_pgn(self.tree, path)
 			except OSError as error:
 				log.warning("chessmart: could not save the analysed game: %s", error)
+				# The new headers are in the tree but not on disk: Escape must still ask.
+				self.unsaved = True
 				queueHandler.queueFunction(
 					queueHandler.eventQueue,
 					ui.message,
@@ -688,6 +707,7 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 	def _current_move_text(self) -> list:
 		"""Where the pointer is, said after a jump: the move just played there, its mark and comment."""
 		if self.tree.at_start:
+			# Translators: Where the pointer is, before any move.
 			return [_("Start of the game")]
 		spoken = [self._numbered_move()]
 		spoken += self._node_details()
@@ -704,7 +724,6 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 			details += [speech.commands.BreakCommand(150), spoken_move_clock(*clock)]
 		others = len(self.tree.alternatives()) - 1
 		if others > 0:
-			# Translators: Spoken when the position has variations recorded besides the main continuation.
 			details.append(
 				# Translators: Spoken when the position has variations recorded besides the main continuation.
 				ngettext("{count} variation from here", "{count} variations from here", others).format(
@@ -716,12 +735,15 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 	def _position_state(self) -> list:
 		board = self.board
 		if board.is_checkmate():
+			# Translators: Spoken when a position on the analysis board is checkmate.
 			return [speech.commands.WaveFileCommand(GameSound.game_over.filename), _("checkmate")]
 		if board.is_stalemate():
+			# Translators: Spoken when a position on the analysis board is stalemate.
 			return [speech.commands.WaveFileCommand(GameSound.game_over.filename), _("stalemate")]
 		if board.is_check():
 			return [
 				speech.commands.WaveFileCommand(GameSound.check.filename),
+				# Translators: Spoken when a king is in check, e.g. "white is in check".
 				_("{color} is in check").format(color=spoken_color_name(board.turn)),
 			]
 		return []

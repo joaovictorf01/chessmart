@@ -78,6 +78,7 @@ class PuzzleDownloadDialog(DownloadDialogBase):
 		self.tierRadio = wx.RadioBox(
 			self,
 			-1,
+			# Translators: Label of the list of puzzle databases to download.
 			_("Database to download"),
 			choices=[TIER_LABELS[tier] for tier in TIER_ORDER],
 			majorDimension=1,
@@ -153,6 +154,7 @@ class PuzzleDownloadDialog(DownloadDialogBase):
 			_(
 				"Could not reach the download server. Check your internet connection and try again. Details: {reason}",
 			).format(
+				# Translators: Stands in for the reason of a failed download when none is known.
 				reason=reason or _("unknown"),
 			),
 		)
@@ -326,6 +328,7 @@ class PuzzleDownloadDialog(DownloadDialogBase):
 			name=TIER_LABELS[info.tier],
 			count=info.puzzle_count,
 		)
+		# Translators: Title of the message about the puzzle database.
 		show_message(message, _("Puzzle Database"), parent=self)
 		if self.on_installed is not None:
 			self.on_installed(self.target_path)

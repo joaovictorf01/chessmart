@@ -20,6 +20,8 @@ from chessmart.game_review import (
 	critical_moments,
 	mainline_nodes,
 	review_moves,
+	same_line,
+	still_in_game,
 )
 from chessmart.paths import import_bundled
 
@@ -92,6 +94,32 @@ class ReviewTest(unittest.TestCase):
 		moments = review_moves(g, evaluations, ReviewOptions(side=Side.BOTH, skip_theory=False), chess.WHITE)
 		qh4 = next(moment for moment in moments if moment.node.san() == "Qh4#")
 		self.assertEqual(qh4.review.verdict, MoveVerdict.BEST)
+
+
+class ChangedGameTest(unittest.TestCase):
+	def test_a_move_played_after_the_review_started_is_noticed(self):
+		g = game()
+		nodes = mainline_nodes(g)
+		self.assertTrue(same_line(g, nodes))
+		g.end().add_main_variation(chess.Move.from_uci("h2h3"))
+		self.assertFalse(same_line(g, nodes))
+
+	def test_a_promoted_variation_of_the_same_length_is_noticed(self):
+		g = game()
+		nodes = mainline_nodes(g)
+		last = g.end()
+		sibling = last.parent.add_variation(chess.Move.from_uci("e7e5"))  # type: ignore[union-attr]
+		last.parent.promote_to_main(sibling)  # type: ignore[union-attr]
+		self.assertFalse(same_line(g, nodes))
+
+	def test_a_moment_taken_back_is_no_longer_in_the_game(self):
+		g = game()
+		options = ReviewOptions(side=Side.BOTH, skip_theory=False)
+		moments = critical_moments(review_moves(g, evals_for(g, SCORES), options, chess.WHITE), options)
+		g6 = next(moment for moment in moments if moment.node.san() == "g6")
+		self.assertTrue(still_in_game(g6))
+		g6.node.parent.remove_variation(g6.node)  # type: ignore[union-attr]
+		self.assertFalse(still_in_game(g6))
 
 
 class AccuracyTest(unittest.TestCase):

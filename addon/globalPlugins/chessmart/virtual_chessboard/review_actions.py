@@ -31,6 +31,8 @@ from ..game_review import (
 	critical_moments,
 	mainline_nodes,
 	review_moves,
+	same_line,
+	still_in_game,
 )
 from ..i18n import _, ngettext
 from ..paths import import_bundled
@@ -55,6 +57,7 @@ class ReviewActionsMixin:
 	_rebuild_score_sheet: typing.Any
 	_show_position: typing.Any
 	_engine_name: typing.Any
+	_is_open: typing.Any
 	dialog: typing.Any
 	focus_board_from_actions: typing.Any
 
@@ -96,36 +99,45 @@ class ReviewActionsMixin:
 				seconds=seconds_total,
 			),
 		)
-		game = self.tree.game
 		self.engine.evaluate_positions(
 			[node.board() for node in nodes],
 			options.seconds,
 			self._review_progress,
 			self._review_cancel,
 		).add_done_callback(
-			lambda future: wx.CallAfter(self._on_review_done, game, options, my_color, future),
+			lambda future: wx.CallAfter(self._on_review_done, nodes, options, my_color, future),
 		)
 
 	def _review_progress(self, done, total):
-		# Worker thread: speech goes through wx.CallAfter.
+		# Worker thread: speech goes through wx.CallAfter, and not after the board closed.
+		if self._review_cancel is None or self._review_cancel.is_set():
+			return
 		percent = done * 100 // total
 		if percent // 25 > self._announced_percent // 25 and percent < 100:
 			self._announced_percent = percent
 			# Translators: Game review progress, e.g. "50 percent reviewed".
 			wx.CallAfter(ui.message, _("{percent} percent reviewed").format(percent=percent - percent % 25))
 
-	def _on_review_done(self, game, options, my_color, future):
+	def _on_review_done(self, nodes, options, my_color, future):
 		cancel = self._review_cancel
 		self._review_cancel = None
 		evaluations, error = result_of(future)
+		if not self._is_open():
+			return
 		if cancel is not None and cancel.is_set():
 			# Translators: Spoken when F7 stopped the game review.
 			ui.message(_("Review stopped."))
 			return
 		if error is not None:
+			# Translators: Spoken when the engine failed during the review, followed by the error.
 			ui.message(_("The engine could not answer. Details: {error}").format(error=error))
 			return
-		if game is not self.tree.game or evaluations is None:
+		if evaluations is None:
+			return
+		game = self.tree.game
+		if not same_line(game, nodes):
+			# Translators: Spoken when moves were played, taken back or promoted while the review ran.
+			ui.message(_("The game changed during the review. F7 reviews it again."))
 			return
 		position_evals = [
 			None
@@ -205,8 +217,14 @@ class ReviewActionsMixin:
 			# Translators: Spoken past the last or before the first critical moment.
 			ui.message(_("No more critical moments that way."))
 			return
-		self._moment_index = index
 		moment = self._moments[index]
+		if not still_in_game(moment):
+			self._moments = ()
+			GameSound.invalid.play()
+			# Translators: Spoken by Alt+Page Down when the reviewed moves were changed since the review.
+			ui.message(_("The game changed since the review. F7 reviews it again."))
+			return
+		self._moment_index = index
 		self.tree.node = moment.node.parent
 		self._show_position()
 		board_before = moment.node.parent.board()
@@ -237,9 +255,13 @@ class ReviewActionsMixin:
 				),
 			)
 			if reveal is Reveal.LINE and moment.before.line:
-				first = self.tree.add_line(moment.before.line[:8], comment=f"{self._engine_name()}")
+				first = self.tree.add_line(
+					moment.before.line[:8],
+					comment=self._engine_name(),
+					score=moment.before.assessment.to_pov_score(),
+					depth=moment.before.depth or None,
+				)
 				if first is not None:
-					first.set_eval(moment.before.assessment.to_pov_score(), moment.before.depth or None)
 					self.unsaved = True
 					self._rebuild_score_sheet()
 					# Translators: Said when the engine's line was added at a critical moment.

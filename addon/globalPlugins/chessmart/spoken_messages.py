@@ -216,8 +216,10 @@ class IBCAGameAnnouncer(GameAnnouncer):
 	def capture_move(self, move: chess.Move, moved_piece: chess.Piece, captured: chess.Piece) -> list:
 		return [
 			self.describe_piece(moved_piece),
+			# Translators: Part of a spoken capture, e.g. "knight captured pawn at f7".
 			_("captured"),
 			self.describe_piece(captured),
+			# Translators: Part of a spoken move: the destination, e.g. "at f7".
 			_("at {square}").format(square=self.square_name(move.to_square)),
 		]
 
@@ -230,13 +232,16 @@ class IBCAGameAnnouncer(GameAnnouncer):
 	def drop_move(self, move_maker, move):
 		return (
 			self.color_name(move_maker),
+			# Translators: Part of a spoken Crazyhouse drop, e.g. "dropped a knight".
 			_("dropped a {piece}").format(piece=self.piece_name(move.drop or chess.PAWN)),
+			# Translators: Part of a spoken move: the destination, e.g. "at f7".
 			_("at {square}").format(square=self.square_name(move.to_square)),
 		)
 
 	def promotion_move(self, move, move_maker):
 		return [
 			self.color_name(move_maker),
+			# Translators: A spoken promotion, e.g. "promoted pawn at e7 to a queen at e8".
 			_("promoted {pawn} at {origin} to a {piece} at {target}").format(
 				pawn=self.piece_name(chess.PAWN),
 				origin=self.square_name(move.from_square),

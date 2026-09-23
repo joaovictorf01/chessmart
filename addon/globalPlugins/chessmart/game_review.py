@@ -94,6 +94,19 @@ def mainline_nodes(game: "chess.pgn.Game") -> list["chess.pgn.GameNode"]:
 	return [game, *game.mainline()]
 
 
+def same_line(game: "chess.pgn.Game", nodes: t.Sequence["chess.pgn.GameNode"]) -> bool:
+	"""Whether the main line is still exactly `nodes`: nothing played, taken back or promoted since."""
+	current = mainline_nodes(game)
+	return len(current) == len(nodes) and all(a is b for a, b in zip(current, nodes))
+
+
+def still_in_game(moment: "Moment") -> bool:
+	"""Whether the moment's move is still on the main line (a take-back or a promotion may have removed it)."""
+	node = moment.node
+	parent = node.parent
+	return parent is not None and any(child is node for child in parent.variations) and node.is_mainline()
+
+
 def _final_assessment(board: "chess.Board") -> Assessment:
 	"""A finished position: mate for the side that gave it, level for a draw."""
 	outcome = board.outcome()
