@@ -16,6 +16,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[3]
 
 PURE_MODULES = (
+	"analysis_words",
 	"board_geometry",
 	"concurrency",
 	"endgame.drills",
@@ -29,6 +30,7 @@ PURE_MODULES = (
 	"openings",
 	"paths",
 	"pgn",
+	"played_move",
 	"puzzle_attempt",
 	"study_log",
 	"tactic.download",

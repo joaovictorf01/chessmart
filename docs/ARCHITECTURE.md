@@ -13,7 +13,8 @@ virtual_chessboard/  the boards the          training_session.py, trainer.py, th
                  screen reader navigates     game_tree.py     analysis tree (variations, comments, marks)
 graphical_interface/  wx dialogs             engine_eval.py   what engine numbers mean
                                              openings/        opening names by position
-                                             puzzle_attempt.py, board_geometry.py, pgn.py,
+                                             analysis_words.py what the analysis board says
+                                             puzzle_attempt.py, board_geometry.py, pgn.py, played_move.py,
                                              notation.py, study_log.py, concurrency.py
 ```
 
@@ -23,7 +24,7 @@ The left side imports the right side, never the reverse (`test_boundaries.py`). 
 
 Menu item (`__init__.py`, `ChessboardMenu`) → dialog when there are options (`graphical_interface/`) → `GameInfo` (`game_elements.py`) → `ChessboardDialog.from_game_info(board class, game info)` → the window takes focus → `set_focus_to_board` builds the board (`virtual_chessboard/*`) with the keyword arguments of `GameInfo.vboard_kwargs`.
 
-Boards: `base.py` (squares, navigation, speech of moves) → `user_driven.py` (picking up and dropping pieces) → `user_user.py` (two people), `user_engine.py` (against Stockfish), `puzzle_board.py`, `endgame_board.py`, `analysis_board.py`; `pgn_player.py` replays. The Tab bar of the trainers and the analysis board is `actions_bar.py`.
+Boards: `base.py` (squares, navigation, speech of moves, the game's end; what A, M and F1 say is in `announcements.py`, Control+S in `board_files.py`) → `user_driven.py` (picking up and dropping pieces) → `user_user.py` (two people), `user_engine.py` (against Stockfish), `puzzle_board.py`, `endgame_board.py`, `analysis_board.py` (the engine keys in `engine_actions.py`, the engine process in `analysis_engine.py`); `pgn_player.py` replays. The Tab bar of the trainers and the analysis board is `actions_bar.py`.
 
 ## A move
 

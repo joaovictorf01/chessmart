@@ -20,7 +20,8 @@ with import_bundled():
 	import chess
 
 
-# Pawn units, the usual count.
+# Pawn units, the usual count. Bishop and knight are worth the same on purpose:
+# counting them together avoids getting lost when one was traded for the other.
 MATERIAL_VALUES = {
 	chess.QUEEN: 9,
 	chess.ROOK: 5,

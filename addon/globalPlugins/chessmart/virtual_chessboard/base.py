@@ -2,14 +2,12 @@
 # pyright: basic
 
 import bisect
-import dataclasses
 import enum
 import functools
 import itertools
 import math
 from typing import Iterable
 
-import wx
 import inputCore
 import globalVars
 import ui
@@ -20,6 +18,8 @@ import speech
 import speech.commands
 from NVDAObjects import NVDAObject
 from scriptHandler import script
+from .announcements import AnnouncementsMixin
+from .board_files import BoardFilesMixin
 from .ui_components import (
 	KeyboardNavigableNVDAObjectMixin,
 	MenuItemObject,
@@ -36,8 +36,9 @@ from ..spoken_messages import (
 from ..i18n import _
 from ..notation import DESCRIPTIVE, render_san, render_square
 from ..addon_config import get_move_notation
-from ..board_geometry import DOWN, LEFT, RIGHT, UP, count_material, neighbour, square_color
+from ..board_geometry import DOWN, LEFT, RIGHT, UP, neighbour, square_color
 from ..paths import import_bundled
+from ..played_move import PlayedMove
 from ..sounds import GameSound
 from ..speaking import intersperse, speak_next
 from ..signals import (
@@ -69,63 +70,6 @@ class Color(enum.Enum):
 	Purple = "#8e3fbf"
 	# The last move, drawn over its highlighted squares.
 	DarkGray = "#15781b"
-
-
-@dataclasses.dataclass(frozen=True)
-class PlayedMove:
-	"""Everything needed to describe a move out loud.
-
-	Captured BEFORE the move is applied to the board, because afterwards the
-	position has changed: the captured piece is gone, SAN can no longer be
-	computed (disambiguating "Ngf3" depends on which pieces could reach the
-	same square), and castling has already moved the rook.
-	"""
-
-	move: chess.Move
-	mover: chess.Color
-	moved_piece: chess.Piece | None
-	captured_piece: chess.Piece | None
-	is_castling: bool
-	is_kingside_castling: bool
-	is_en_passant: bool
-	san: str
-
-	@classmethod
-	def capture(cls, board: chess.Board, move: chess.Move) -> "PlayedMove":
-		is_castling = board.is_castling(move)
-		is_en_passant = board.is_en_passant(move)
-		if is_en_passant:
-			# The captured pawn is not on the destination square, but behind it.
-			captured = board.piece_at(move.to_square - 8)
-		else:
-			captured = board.piece_at(move.to_square)
-		return cls(
-			move=move,
-			mover=board.turn,
-			moved_piece=board.piece_at(move.from_square),
-			captured_piece=captured,
-			is_castling=is_castling,
-			is_kingside_castling=is_castling and board.is_kingside_castling(move),
-			is_en_passant=is_en_passant,
-			san=board.san(move),
-		)
-
-	@property
-	def is_capture(self) -> bool:
-		return self.captured_piece is not None
-
-	@property
-	def sound(self) -> GameSound:
-		"""The sound that announces the type of move."""
-		if self.move.promotion is not None:
-			return GameSound.promotion
-		if self.is_castling:
-			return GameSound.castling
-		if self.move.drop:
-			return GameSound.drop_move
-		if self.is_capture:
-			return GameSound.en_passant if self.is_en_passant else GameSound.capture
-		return GameSound.drop_piece
 
 
 class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
@@ -381,7 +325,9 @@ class LeaveGameMenu(MenuObject):
 		self.choice_callback(False)
 
 
-class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
+class BaseVirtualChessboard(
+	AnnouncementsMixin, BoardFilesMixin, KeyboardNavigableNVDAObjectMixin, NVDAObject
+):
 	role = controlTypes.Role.TABLE
 	# Translators: Role of the chessboard control, spoken by the screen reader.
 	roleText = _("Board")
@@ -582,7 +528,7 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 		if style != DESCRIPTIVE and played.san:
 			# Short style (SAN, UCI, anna...): the move-type sound still plays,
 			# and the text comes as a single chunk, the way Lichess announces it.
-			yield speech.commands.WaveFileCommand(played.sound.filename)
+			yield speech.commands.WaveFileCommand(GameSound(played.sound_name).filename)
 			yield speech.commands.BreakCommand(150)
 			yield render_san(played.san, move.uci(), style)
 			return
@@ -613,7 +559,7 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 			)
 			yield speech.commands.BreakCommand(300)
 		if played.captured_piece is not None:
-			yield speech.commands.WaveFileCommand(played.sound.filename)
+			yield speech.commands.WaveFileCommand(GameSound(played.sound_name).filename)
 			yield from intersperse(
 				self.game_announcer.capture_move(move, moved_piece, played.captured_piece),
 				speech.commands.BreakCommand(200),
@@ -671,97 +617,6 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 				speech.commands.BreakCommand(250),
 				_("{color} is the winner").format(color=game_winner),
 			]
-
-	def announce_attackers(self, cell_index, announce_piece_name=False):
-		piece = self.board.piece_at(cell_index)
-		if piece is not None:
-			attacking_color = not piece.color
-			attackers = list(self.board.attackers(attacking_color, cell_index))
-		else:
-			attackers = list(self.board.attackers(not self.board.turn, cell_index))
-		attackers.sort()
-		if not attackers:
-			# Translators: Spoken when the focused square has no attackers.
-			ui.message(_("This square is not under attack"))
-			return
-		spoken_commands = []
-		if announce_piece_name:
-			piece_name = self.get_piece_name_at_square(cell_index)
-			spoken_commands.append(f"{piece_name}")
-			spoken_commands.append(speech.commands.BreakCommand(250))
-		spoken_commands += [
-			# Translators: Spoken before the list of pieces attacking a square.
-			_("Attacked by"),
-			speech.commands.BreakCommand(250),
-		]
-		for attacking_square in attackers:
-			square_name = chess.square_name(attacking_square)
-			piece_name = self.get_piece_name_at_square(attacking_square)
-			spoken_commands += [
-				piece_name,
-				speech.commands.BreakCommand(250),
-				# Translators: Spoken between an attacking piece and its square, e.g. "knight, at, f3".
-				_("at"),
-				speech.commands.BreakCommand(250),
-				square_name,
-			]
-			spoken_commands.append(speech.commands.BreakCommand(350))
-		speak_next(spoken_commands)
-
-	# Classic values. Bishop and knight are intentionally worth the same:
-	# counting them together avoids getting lost when one was traded for the other.
-	def announce_material(self):
-		"""Counts material from a snapshot of the board, type by type, and gives the balance.
-
-		No trade history: it's what's on the board right now, from the
-		perspective of whoever plays on this board (white when no side is set).
-		"""
-		me = self.prospective if self.prospective is not None else chess.WHITE
-		material = count_material(self.board, me)
-		lines = [
-			# Translators: Plural piece name in the material count.
-			(_("queens"), *material.queens),
-			# Translators: Plural piece name in the material count.
-			(_("rooks"), *material.rooks),
-			# Translators: Bishops and knights together, in the material count.
-			(_("minor pieces"), *material.minor_pieces),
-			# Translators: Plural piece name in the material count.
-			(_("pawns"), *material.pawns),
-		]
-		balance = material.balance
-		# Translators: Heading of the material count announcement.
-		spoken_commands = [_("Material.")]
-		for label, mine, theirs in lines:
-			# Translators: One line of the material count, e.g. "rooks: 2 to 1.".
-			spoken_commands.append(
-				_("{pieces}: {mine} to {theirs}.").format(pieces=label, mine=mine, theirs=theirs),
-			)
-		if balance > 0:
-			# Translators: Material balance in the player's favor, in pawn units.
-			spoken_commands.append(_("You are up {points}.").format(points=balance))
-		elif balance < 0:
-			# Translators: Material balance against the player, in pawn units.
-			spoken_commands.append(_("You are down {points}.").format(points=abs(balance)))
-		else:
-			# Translators: Spoken when both sides have the same material.
-			spoken_commands.append(_("Material is even."))
-		if material.bishop_pair is True:
-			# Translators: Spoken in the material count.
-			spoken_commands.append(_("You have the bishop pair."))
-		elif material.bishop_pair is False:
-			# Translators: Spoken in the material count.
-			spoken_commands.append(_("Opponent has the bishop pair."))
-		speak_next(intersperse(spoken_commands, speech.commands.BreakCommand(150)))
-
-	def announce_player_overview(self, color):
-		square_set = itertools.chain(
-			*[self.board.pieces(piece_type, color) for piece_type in sorted(chess.PIECE_TYPES, reverse=True)],
-		)
-		spoken_commands = [
-			f"{self.get_piece_name_at_square(square)}, {self.spoken_square_name(square)}"
-			for square in square_set
-		]
-		speak_next(intersperse(spoken_commands, speech.commands.BreakCommand(250)))
 
 	def event_gainFocus(self):
 		if self._current_focused_object is not None:
@@ -831,50 +686,3 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 		"""
 		eventHandler.queueEvent("gainFocus", self.parent)
 		self.dialog.Close()
-
-	def save_game(self):
-		# wx dialogs must be created and shown on the GUI thread (NVDA developer
-		# guide); this runs from a script, which is already on that thread. The
-		# PGN write is small enough to stay here too.
-		saveFileDialog = wx.FileDialog(
-			parent=None,
-			# Translators: Title of the dialog that saves the game as a PGN file.
-			message=_("Save Game As"),
-			defaultDir=wx.GetUserHome(),
-			# Translators: File type filter of the PGN save dialog.
-			wildcard=_("Chess Game *.pgn | *.pgn"),
-			style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
-		)
-		try:
-			if saveFileDialog.ShowModal() != wx.ID_OK:
-				return
-			save_as_filename = saveFileDialog.GetPath().strip()
-		finally:
-			saveFileDialog.Destroy()
-		if not save_as_filename:
-			return
-		game = chess.pgn.Game.from_board(self.board)
-		with open(save_as_filename, "w", encoding="utf-8") as file:
-			exporter = chess.pgn.FileExporter(file)
-			game.accept(exporter)
-
-	def save_board_image(self):
-		# Same rule as `save_game`: dialog and bitmap access on the GUI thread.
-		saveFileDialog = wx.FileDialog(
-			parent=None,
-			# Translators: Title of the dialog that saves the board as an image.
-			message=_("Save Board To Image"),
-			defaultDir=wx.GetUserHome(),
-			# Translators: File type filter of the image save dialog.
-			wildcard=_("Portable Network Graphics *.png | *.png"),
-			style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
-		)
-		try:
-			if saveFileDialog.ShowModal() != wx.ID_OK:
-				return
-			save_as_filename = saveFileDialog.GetPath().strip()
-		finally:
-			saveFileDialog.Destroy()
-		if not save_as_filename:
-			return
-		self.dialog.bitmap_buffer.SaveFile(save_as_filename, wx.BITMAP_TYPE_PNG)
