@@ -5,12 +5,22 @@
 
 import unittest
 
-from chessmart.board_geometry import DOWN, LEFT, RIGHT, UP, count_material, neighbour, square_color
+from chessmart.board_geometry import (
+	DOWN,
+	LEFT,
+	RIGHT,
+	UP,
+	count_material,
+	neighbour,
+	pocket_contents,
+	square_color,
+)
 from chessmart.endgame import judge
 from chessmart.paths import import_bundled
 
 with import_bundled():
 	import chess
+	import chess.variant
 
 
 class SquareTest(unittest.TestCase):
@@ -52,6 +62,18 @@ class MaterialTest(unittest.TestCase):
 		self.assertIs(material.bishop_pair, True)
 		self.assertEqual(count_material(board, chess.BLACK).balance, -5)
 		self.assertIs(count_material(board, chess.BLACK).bishop_pair, False)
+
+
+class PocketTest(unittest.TestCase):
+	def test_captured_pieces_go_to_the_capturers_pocket(self):
+		board = chess.variant.CrazyhouseBoard()
+		for san in ("e4", "d5", "exd5", "Qxd5", "Nc3", "Qxg2"):
+			board.push_san(san)
+		self.assertEqual(pocket_contents(board, chess.WHITE), ((chess.PAWN, 1),))
+		self.assertEqual(pocket_contents(board, chess.BLACK), ((chess.PAWN, 2),))
+
+	def test_an_empty_pocket(self):
+		self.assertEqual(pocket_contents(chess.variant.CrazyhouseBoard(), chess.WHITE), ())
 
 
 class ResultTest(unittest.TestCase):

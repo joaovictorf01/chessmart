@@ -55,6 +55,20 @@ def neighbour(square: int, direction: str) -> t.Optional[int]:
 	raise ValueError(f"unknown direction: {direction}")
 
 
+def pocket_contents(board, color: bool) -> tuple[tuple[int, int], ...]:
+	"""Crazyhouse: the (piece type, count) pairs in `color`'s pocket, pawn first, empty types left out.
+
+	Read through `CrazyhousePocket.count`, the public API; python-chess 1.11
+	removed the `pieces` dictionary older code read directly.
+	"""
+	pocket = board.pockets[color]
+	return tuple(
+		(piece_type, pocket.count(piece_type))
+		for piece_type in (chess.PAWN, chess.KNIGHT, chess.BISHOP, chess.ROOK, chess.QUEEN)
+		if pocket.count(piece_type)
+	)
+
+
 @dataclasses.dataclass(frozen=True)
 class MaterialCount:
 	"""What M says, from `me`'s side: the pieces of each kind, the balance and the bishop pair."""

@@ -1,20 +1,3 @@
-# This file is part of the python-chess library.
-# Copyright (C) 2015 Jean-Noël Avila <jn.avila@free.fr>
-# Copyright (C) 2015-2021 Niklas Fiekas <niklas.fiekas@backscattering.de>
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 from __future__ import annotations
 
 import ctypes
@@ -82,54 +65,18 @@ NS_FLAG = 2
 NW_SE_FLAG = 4
 
 ITOSQ = [
-    chess.H7,
-    chess.G7,
-    chess.F7,
-    chess.E7,
-    chess.H6,
-    chess.G6,
-    chess.F6,
-    chess.E6,
-    chess.H5,
-    chess.G5,
-    chess.F5,
-    chess.E5,
-    chess.H4,
-    chess.G4,
-    chess.F4,
-    chess.E4,
-    chess.H3,
-    chess.G3,
-    chess.F3,
-    chess.E3,
-    chess.H2,
-    chess.G2,
-    chess.F2,
-    chess.E2,
-    chess.D7,
-    chess.C7,
-    chess.B7,
-    chess.A7,
-    chess.D6,
-    chess.C6,
-    chess.B6,
-    chess.A6,
-    chess.D5,
-    chess.C5,
-    chess.B5,
-    chess.A5,
-    chess.D4,
-    chess.C4,
-    chess.B4,
-    chess.A4,
-    chess.D3,
-    chess.C3,
-    chess.B3,
-    chess.A3,
-    chess.D2,
-    chess.C2,
-    chess.B2,
-    chess.A2,
+    chess.H7, chess.G7, chess.F7, chess.E7,
+    chess.H6, chess.G6, chess.F6, chess.E6,
+    chess.H5, chess.G5, chess.F5, chess.E5,
+    chess.H4, chess.G4, chess.F4, chess.E4,
+    chess.H3, chess.G3, chess.F3, chess.E3,
+    chess.H2, chess.G2, chess.F2, chess.E2,
+    chess.D7, chess.C7, chess.B7, chess.A7,
+    chess.D6, chess.C6, chess.B6, chess.A6,
+    chess.D5, chess.C5, chess.B5, chess.A5,
+    chess.D4, chess.C4, chess.B4, chess.A4,
+    chess.D3, chess.C3, chess.B3, chess.A3,
+    chess.D2, chess.C2, chess.B2, chess.A2,
 ]
 
 ENTRIES_PER_BLOCK = 16 * 1024
@@ -138,29 +85,23 @@ EGTB_MAXBLOCKSIZE = 65536
 
 
 def map24_b(s: int) -> int:
-    s = s - 8
+    s -= 8
     return ((s & 3) + s) >> 1
-
 
 def map88(x: int) -> int:
     return x + (x & 56)
 
-
 def in_queenside(x: int) -> int:
     return (x & (1 << 2)) == 0
-
 
 def flip_we(x: int) -> int:
     return x ^ 7
 
-
 def flip_ns(x: int) -> int:
     return x ^ 56
 
-
 def flip_nw_se(x: int) -> int:
     return ((x & 7) << 3) | (x >> 3)
-
 
 def idx_is_empty(x: int) -> int:
     return x == -1
@@ -196,19 +137,16 @@ def flip_type(x: chess.Square, y: chess.Square) -> int:
 
     return ret
 
-
 def init_flipt() -> List[List[int]]:
     return [[flip_type(j, i) for i in range(64)] for j in range(64)]
-
 
 FLIPT = init_flipt()
 
 
 def init_pp48_idx() -> Tuple[List[List[int]], List[int], List[int]]:
-    MAX_I = 48
-    MAX_J = 48
+    MAX_I = MAX_J = 48
     idx = 0
-    pp48_idx = [[-1] * MAX_J for i in range(MAX_I)]
+    pp48_idx = [[-1] * MAX_J for _ in range(MAX_I)]
     pp48_sq_x = [NOSQUARE] * MAX_PP48_INDEX
     pp48_sq_y = [NOSQUARE] * MAX_PP48_INDEX
 
@@ -227,15 +165,12 @@ def init_pp48_idx() -> Tuple[List[List[int]], List[int], List[int]]:
 
     return pp48_idx, pp48_sq_x, pp48_sq_y
 
-
 PP48_IDX, PP48_SQ_X, PP48_SQ_Y = init_pp48_idx()
 
 
 def init_ppp48_idx() -> Tuple[List[List[List[int]]], List[int], List[int], List[int]]:
-    MAX_I = 48
-    MAX_J = 48
-    MAX_K = 48
-    ppp48_idx = [[[-1] * MAX_I for j in range(MAX_J)] for k in range(MAX_K)]
+    MAX_I = MAX_J = MAX_K = 48
+    ppp48_idx = [[[-1] * MAX_I for _ in range(MAX_J)] for _ in range(MAX_K)]
     ppp48_sq_x = [NOSQUARE] * MAX_PPP48_INDEX
     ppp48_sq_y = [NOSQUARE] * MAX_PPP48_INDEX
     ppp48_sq_z = [NOSQUARE] * MAX_PPP48_INDEX
@@ -264,16 +199,15 @@ def init_ppp48_idx() -> Tuple[List[List[List[int]]], List[int], List[int], List[
                     ppp48_sq_x[idx] = i
                     ppp48_sq_y[idx] = j
                     ppp48_sq_z[idx] = k
-                    idx = idx + 1
+                    idx += 1
 
     return ppp48_idx, ppp48_sq_x, ppp48_sq_y, ppp48_sq_z
-
 
 PPP48_IDX, PPP48_SQ_X, PPP48_SQ_Y, PPP48_SQ_Z = init_ppp48_idx()
 
 
 def init_aaidx() -> Tuple[List[int], List[List[int]]]:
-    aaidx = [[-1] * 64 for y in range(64)]
+    aaidx = [[-1] * 64 for _ in range(64)]
     aabase = [0] * MAX_AAINDEX
 
     idx = 0
@@ -289,7 +223,6 @@ def init_aaidx() -> Tuple[List[int], List[List[int]]]:
 
     return aabase, aaidx
 
-
 AABASE, AAIDX = init_aaidx()
 
 
@@ -300,11 +233,11 @@ def init_aaa() -> Tuple[List[int], List[List[int]]]:
     accum = 0
     aaa_base = [0] * 64
     for a in range(64 - 1):
-        accum = accum + comb[a]
+        accum += comb[a]
         aaa_base[a + 1] = accum
 
     # Get aaa_xyz.
-    aaa_xyz = [[-1] * 3 for idx in range(MAX_AAAINDEX)]
+    aaa_xyz = [[-1] * 3 for _ in range(MAX_AAAINDEX)]
 
     idx = 0
     for z in range(64):
@@ -316,7 +249,6 @@ def init_aaa() -> Tuple[List[int], List[List[int]]]:
                 idx += 1
 
     return aaa_base, aaa_xyz
-
 
 AAA_BASE, AAA_XYZ = init_aaa()
 
@@ -337,14 +269,14 @@ def pp_putanchorfirst(a: int, b: int) -> Tuple[int, int]:
         col = x & 7
         inv = col ^ 7
         x = (1 << col) | (1 << inv)
-        x &= x - 1
+        x &= (x - 1)
         hi_a = x
 
         x = b
         col = x & 7
         inv = col ^ 7
         x = (1 << col) | (1 << inv)
-        x &= x - 1
+        x &= (x - 1)
         hi_b = x
 
         if hi_b > hi_a:
@@ -365,7 +297,6 @@ def pp_putanchorfirst(a: int, b: int) -> Tuple[int, int]:
 
     return anchor, loosen
 
-
 def wsq_to_pidx24(pawn: int) -> int:
     sq = pawn
 
@@ -374,7 +305,6 @@ def wsq_to_pidx24(pawn: int) -> int:
 
     idx24 = (sq + (sq & 3)) >> 1
     return idx24
-
 
 def wsq_to_pidx48(pawn: int) -> int:
     sq = pawn
@@ -385,9 +315,8 @@ def wsq_to_pidx48(pawn: int) -> int:
     idx48 = sq
     return idx48
 
-
 def init_ppidx() -> Tuple[List[List[int]], List[int], List[int]]:
-    ppidx = [[-1] * 48 for i in range(24)]
+    ppidx = [[-1] * 48 for _ in range(24)]
     pp_hi24 = [-1] * MAX_PPINDEX
     pp_lo48 = [-1] * MAX_PPINDEX
 
@@ -418,7 +347,6 @@ def init_ppidx() -> Tuple[List[List[int]], List[int], List[int]]:
 
     return ppidx, pp_hi24, pp_lo48
 
-
 PPIDX, PP_HI24, PP_LO48 = init_ppidx()
 
 
@@ -447,9 +375,8 @@ def norm_kkindex(x: chess.Square, y: chess.Square) -> Tuple[int, int]:
 
     return x, y
 
-
 def init_kkidx() -> Tuple[List[List[int]], List[int], List[int]]:
-    kkidx = [[-1] * 64 for x in range(64)]
+    kkidx = [[-1] * 64 for _ in range(64)]
     bksq = [-1] * MAX_KKINDEX
     wksq = [-1] * MAX_KKINDEX
     idx = 0
@@ -468,7 +395,6 @@ def init_kkidx() -> Tuple[List[List[int]], List[int], List[int]]:
                     idx += 1
 
     return kkidx, wksq, bksq
-
 
 KKIDX, WKSQ, BKSQ = init_kkidx()
 
@@ -500,7 +426,6 @@ def kxk_pctoindex(c: Request) -> int:
 
     return ki * BLOCK_Ax + ws[1]
 
-
 def kapkb_pctoindex(c: Request) -> int:
     BLOCK_A = 64 * 64 * 64 * 64
     BLOCK_B = 64 * 64 * 64
@@ -526,11 +451,10 @@ def kapkb_pctoindex(c: Request) -> int:
 
     sq = pawn
     sq ^= 56  # flip_ns
-    sq -= 8  # Down one row
+    sq -= 8   # Down one row
     pslice = (sq + (sq & 3)) >> 1
 
     return pslice * BLOCK_A + wk * BLOCK_B + bk * BLOCK_C + wa * BLOCK_D + ba
-
 
 def kabpk_pctoindex(c: Request) -> int:
     BLOCK_A = 64 * 64 * 64 * 64
@@ -555,7 +479,6 @@ def kabpk_pctoindex(c: Request) -> int:
     pslice = wsq_to_pidx24(pawn)
 
     return pslice * BLOCK_A + wk * BLOCK_B + bk * BLOCK_C + wa * BLOCK_D + wb
-
 
 def kabkp_pctoindex(c: Request) -> int:
     BLOCK_A = 64 * 64 * 64 * 64
@@ -586,7 +509,6 @@ def kabkp_pctoindex(c: Request) -> int:
 
     return pslice * BLOCK_A + wk * BLOCK_B + bk * BLOCK_C + wa * BLOCK_D + wb
 
-
 def kaapk_pctoindex(c: Request) -> int:
     BLOCK_C = MAX_AAINDEX
     BLOCK_B = 64 * BLOCK_C
@@ -614,7 +536,6 @@ def kaapk_pctoindex(c: Request) -> int:
         return NOINDEX
 
     return pslice * BLOCK_A + wk * BLOCK_B + bk * BLOCK_C + aa_combo
-
 
 def kaakp_pctoindex(c: Request) -> int:
     BLOCK_C = MAX_AAINDEX
@@ -644,7 +565,6 @@ def kaakp_pctoindex(c: Request) -> int:
         return NOINDEX
 
     return pslice * BLOCK_A + wk * BLOCK_B + bk * BLOCK_C + aa_combo
-
 
 def kapkp_pctoindex(c: Request) -> int:
     BLOCK_A = 64 * 64 * 64
@@ -677,7 +597,6 @@ def kapkp_pctoindex(c: Request) -> int:
 
     return pp_slice * BLOCK_A + wk * BLOCK_B + bk * BLOCK_C + wa
 
-
 def kappk_pctoindex(c: Request) -> int:
     BLOCK_A = 64 * 64 * 64
     BLOCK_B = 64 * 64
@@ -709,7 +628,6 @@ def kappk_pctoindex(c: Request) -> int:
 
     return pp_slice * BLOCK_A + wk * BLOCK_B + bk * BLOCK_C + wa
 
-
 def kppka_pctoindex(c: Request) -> int:
     BLOCK_A = 64 * 64 * 64
     BLOCK_B = 64 * 64
@@ -739,7 +657,6 @@ def kppka_pctoindex(c: Request) -> int:
         return NOINDEX
 
     return pp_slice * BLOCK_A + wk * BLOCK_B + bk * BLOCK_C + ba
-
 
 def kabck_pctoindex(c: Request) -> int:
     N_WHITE = 4
@@ -772,7 +689,6 @@ def kabck_pctoindex(c: Request) -> int:
 
     return ki * BLOCK_A + ws[1] * BLOCK_B + ws[2] * BLOCK_C + ws[3]
 
-
 def kabbk_pctoindex(c: Request) -> int:
     N_WHITE = 4
     N_BLACK = 1
@@ -803,7 +719,6 @@ def kabbk_pctoindex(c: Request) -> int:
         return NOINDEX
 
     return ki * BLOCK_Ax + ai * BLOCK_Bx + ws[1]
-
 
 def kaabk_pctoindex(c: Request) -> int:
     N_WHITE = 4
@@ -836,12 +751,10 @@ def kaabk_pctoindex(c: Request) -> int:
 
     return ki * BLOCK_Ax + ai * BLOCK_Bx + ws[3]
 
-
 def aaa_getsubi(x: int, y: int, z: int) -> int:
     bse = AAA_BASE[z]
     calc_idx = x + (y - 1) * y // 2 + bse
     return calc_idx
-
 
 def kaaak_pctoindex(c: Request) -> int:
     N_WHITE = 4
@@ -890,7 +803,6 @@ def kaaak_pctoindex(c: Request) -> int:
 
     return ki * BLOCK_Ax + ai
 
-
 def kppkp_pctoindex(c: Request) -> int:
     BLOCK_Ax = MAX_PP48_INDEX * 64 * 64
     BLOCK_Bx = 64 * 64
@@ -922,7 +834,6 @@ def kppkp_pctoindex(c: Request) -> int:
 
     return k * BLOCK_Ax + pp48_slice * BLOCK_Bx + wk * BLOCK_Cx + bk
 
-
 def kaakb_pctoindex(c: Request) -> int:
     N_WHITE = 3
     N_BLACK = 2
@@ -953,7 +864,6 @@ def kaakb_pctoindex(c: Request) -> int:
         return NOINDEX
 
     return ki * BLOCK_Ax + ai * BLOCK_Bx + bs[1]
-
 
 def kabkc_pctoindex(c: Request) -> int:
     N_WHITE = 3
@@ -987,7 +897,6 @@ def kabkc_pctoindex(c: Request) -> int:
 
     return ki * BLOCK_Ax + ws[1] * BLOCK_Bx + ws[2] * BLOCK_Cx + bs[1]
 
-
 def kpkp_pctoindex(c: Request) -> int:
     BLOCK_Ax = 64 * 64
     BLOCK_Bx = 64
@@ -1016,7 +925,6 @@ def kpkp_pctoindex(c: Request) -> int:
 
     return pp_slice * BLOCK_Ax + wk * BLOCK_Bx + bk
 
-
 def kppk_pctoindex(c: Request) -> int:
     BLOCK_Ax = 64 * 64
     BLOCK_Bx = 64
@@ -1043,7 +951,6 @@ def kppk_pctoindex(c: Request) -> int:
 
     return pp_slice * BLOCK_Ax + wk * BLOCK_Bx + bk
 
-
 def kapk_pctoindex(c: Request) -> int:
     BLOCK_Ax = 64 * 64 * 64
     BLOCK_Bx = 64 * 64
@@ -1065,11 +972,10 @@ def kapk_pctoindex(c: Request) -> int:
 
     sq = pawn
     sq ^= 56  # flip_ns
-    sq -= 8  # Down one row
-    pslice = (sq + (sq & 3)) >> 1
+    sq -= 8   # Down one row
+    pslice = ((sq + (sq & 3)) >> 1)
 
     return pslice * BLOCK_Ax + wk * BLOCK_Bx + bk * BLOCK_Cx + wa
-
 
 def kabk_pctoindex(c: Request) -> int:
     BLOCK_Ax = 64 * 64
@@ -1099,7 +1005,6 @@ def kabk_pctoindex(c: Request) -> int:
 
     return ki * BLOCK_Ax + ws[1] * BLOCK_Bx + ws[2]
 
-
 def kakp_pctoindex(c: Request) -> int:
     BLOCK_Ax = 64 * 64 * 64
     BLOCK_Bx = 64 * 64
@@ -1124,7 +1029,6 @@ def kakp_pctoindex(c: Request) -> int:
     pslice = (sq + (sq & 3)) >> 1
 
     return pslice * BLOCK_Ax + wk * BLOCK_Bx + bk * BLOCK_Cx + wa
-
 
 def kaak_pctoindex(c: Request) -> int:
     N_WHITE = 3
@@ -1155,7 +1059,6 @@ def kaak_pctoindex(c: Request) -> int:
         return NOINDEX
 
     return ki * BLOCK_Ax + ai
-
 
 def kakb_pctoindex(c: Request) -> int:
     BLOCK_Ax = 64 * 64
@@ -1191,7 +1094,6 @@ def kakb_pctoindex(c: Request) -> int:
 
     return ki * BLOCK_Ax + ws[1] * BLOCK_Bx + bs[1]
 
-
 def kpk_pctoindex(c: Request) -> int:
     BLOCK_A = 64 * 64
     BLOCK_B = 64
@@ -1210,12 +1112,11 @@ def kpk_pctoindex(c: Request) -> int:
 
     sq = pawn
     sq ^= 56  # flip_ns
-    sq -= 8  # Down one row
-    pslice = (sq + (sq & 3)) >> 1
+    sq -= 8   # Down one row
+    pslice = ((sq + (sq & 3)) >> 1)
 
     res = pslice * BLOCK_A + wk * BLOCK_B + bk
     return res
-
 
 def kpppk_pctoindex(c: Request) -> int:
     BLOCK_A = 64 * 64
@@ -1259,48 +1160,61 @@ class EndgameKey:
         self.slice_n = slice_n
         self.pctoi = pctoi
 
-
 EGKEY = {
     "kqk": EndgameKey(MAX_KXK, 1, kxk_pctoindex),
     "krk": EndgameKey(MAX_KXK, 1, kxk_pctoindex),
     "kbk": EndgameKey(MAX_KXK, 1, kxk_pctoindex),
     "knk": EndgameKey(MAX_KXK, 1, kxk_pctoindex),
     "kpk": EndgameKey(MAX_kpk, 24, kpk_pctoindex),
+
     "kqkq": EndgameKey(MAX_kakb, 1, kakb_pctoindex),
     "kqkr": EndgameKey(MAX_kakb, 1, kakb_pctoindex),
     "kqkb": EndgameKey(MAX_kakb, 1, kakb_pctoindex),
     "kqkn": EndgameKey(MAX_kakb, 1, kakb_pctoindex),
+
     "krkr": EndgameKey(MAX_kakb, 1, kakb_pctoindex),
     "krkb": EndgameKey(MAX_kakb, 1, kakb_pctoindex),
     "krkn": EndgameKey(MAX_kakb, 1, kakb_pctoindex),
+
     "kbkb": EndgameKey(MAX_kakb, 1, kakb_pctoindex),
     "kbkn": EndgameKey(MAX_kakb, 1, kakb_pctoindex),
+
     "knkn": EndgameKey(MAX_kakb, 1, kakb_pctoindex),
+
     "kqqk": EndgameKey(MAX_kaak, 1, kaak_pctoindex),
     "kqrk": EndgameKey(MAX_kabk, 1, kabk_pctoindex),
     "kqbk": EndgameKey(MAX_kabk, 1, kabk_pctoindex),
     "kqnk": EndgameKey(MAX_kabk, 1, kabk_pctoindex),
+
     "krrk": EndgameKey(MAX_kaak, 1, kaak_pctoindex),
     "krbk": EndgameKey(MAX_kabk, 1, kabk_pctoindex),
     "krnk": EndgameKey(MAX_kabk, 1, kabk_pctoindex),
+
     "kbbk": EndgameKey(MAX_kaak, 1, kaak_pctoindex),
     "kbnk": EndgameKey(MAX_kabk, 1, kabk_pctoindex),
+
     "knnk": EndgameKey(MAX_kaak, 1, kaak_pctoindex),
     "kqkp": EndgameKey(MAX_kakp, 24, kakp_pctoindex),
     "krkp": EndgameKey(MAX_kakp, 24, kakp_pctoindex),
     "kbkp": EndgameKey(MAX_kakp, 24, kakp_pctoindex),
     "knkp": EndgameKey(MAX_kakp, 24, kakp_pctoindex),
+
     "kqpk": EndgameKey(MAX_kapk, 24, kapk_pctoindex),
     "krpk": EndgameKey(MAX_kapk, 24, kapk_pctoindex),
     "kbpk": EndgameKey(MAX_kapk, 24, kapk_pctoindex),
     "knpk": EndgameKey(MAX_kapk, 24, kapk_pctoindex),
+
     "kppk": EndgameKey(MAX_kppk, MAX_PPINDEX, kppk_pctoindex),
+
     "kpkp": EndgameKey(MAX_kpkp, MAX_PpINDEX, kpkp_pctoindex),
+
     "kppkp": EndgameKey(MAX_kppkp, 24 * MAX_PP48_INDEX, kppkp_pctoindex),
+
     "kbbkr": EndgameKey(MAX_kaakb, 1, kaakb_pctoindex),
     "kbbkb": EndgameKey(MAX_kaakb, 1, kaakb_pctoindex),
     "knnkb": EndgameKey(MAX_kaakb, 1, kaakb_pctoindex),
     "knnkn": EndgameKey(MAX_kaakb, 1, kaakb_pctoindex),
+
     "kqqqk": EndgameKey(MAX_kaaak, 1, kaaak_pctoindex),
     "kqqrk": EndgameKey(MAX_kaabk, 1, kaabk_pctoindex),
     "kqqbk": EndgameKey(MAX_kaabk, 1, kaabk_pctoindex),
@@ -1357,6 +1271,7 @@ EGKEY = {
     "kbnkn": EndgameKey(MAX_kabkc, 1, kabkc_pctoindex),
     "knnkq": EndgameKey(MAX_kaakb, 1, kaakb_pctoindex),
     "knnkr": EndgameKey(MAX_kaakb, 1, kaakb_pctoindex),
+
     "kqqpk": EndgameKey(MAX_kaapk, 24, kaapk_pctoindex),
     "kqrpk": EndgameKey(MAX_kabpk, 24, kabpk_pctoindex),
     "kqbpk": EndgameKey(MAX_kabpk, 24, kabpk_pctoindex),
@@ -1367,10 +1282,12 @@ EGKEY = {
     "kbbpk": EndgameKey(MAX_kaapk, 24, kaapk_pctoindex),
     "kbnpk": EndgameKey(MAX_kabpk, 24, kabpk_pctoindex),
     "knnpk": EndgameKey(MAX_kaapk, 24, kaapk_pctoindex),
+
     "kqppk": EndgameKey(MAX_kappk, MAX_PPINDEX, kappk_pctoindex),
     "krppk": EndgameKey(MAX_kappk, MAX_PPINDEX, kappk_pctoindex),
     "kbppk": EndgameKey(MAX_kappk, MAX_PPINDEX, kappk_pctoindex),
     "knppk": EndgameKey(MAX_kappk, MAX_PPINDEX, kappk_pctoindex),
+
     "kqpkq": EndgameKey(MAX_kapkb, 24, kapkb_pctoindex),
     "kqpkr": EndgameKey(MAX_kapkb, 24, kapkb_pctoindex),
     "kqpkb": EndgameKey(MAX_kapkb, 24, kapkb_pctoindex),
@@ -1391,6 +1308,7 @@ EGKEY = {
     "kppkr": EndgameKey(MAX_kppka, MAX_PPINDEX, kppka_pctoindex),
     "kppkb": EndgameKey(MAX_kppka, MAX_PPINDEX, kppka_pctoindex),
     "kppkn": EndgameKey(MAX_kppka, MAX_PPINDEX, kppka_pctoindex),
+
     "kqqkp": EndgameKey(MAX_kaakp, 24, kaakp_pctoindex),
     "kqrkp": EndgameKey(MAX_kabkp, 24, kabkp_pctoindex),
     "kqbkp": EndgameKey(MAX_kabkp, 24, kabkp_pctoindex),
@@ -1401,10 +1319,12 @@ EGKEY = {
     "kbbkp": EndgameKey(MAX_kaakp, 24, kaakp_pctoindex),
     "kbnkp": EndgameKey(MAX_kabkp, 24, kabkp_pctoindex),
     "knnkp": EndgameKey(MAX_kaakp, 24, kaakp_pctoindex),
+
     "kqpkp": EndgameKey(MAX_kapkp, MAX_PpINDEX, kapkp_pctoindex),
     "krpkp": EndgameKey(MAX_kapkp, MAX_PpINDEX, kapkp_pctoindex),
     "kbpkp": EndgameKey(MAX_kapkp, MAX_PpINDEX, kapkp_pctoindex),
     "knpkp": EndgameKey(MAX_kapkp, MAX_PpINDEX, kapkp_pctoindex),
+
     "kpppk": EndgameKey(MAX_kpppk, MAX_PPP48_INDEX, kpppk_pctoindex),
 }
 
@@ -1414,10 +1334,8 @@ def sortlists(ws: List[int], wp: List[int]) -> Tuple[List[int], List[int]]:
     wp2, ws2 = zip(*z)
     return list(ws2), list(wp2)
 
-
 def egtb_block_unpack(side: int, n: int, bp: bytes) -> List[int]:
     return [dtm_unpack(side, i) for i in bp[:n]]
-
 
 def split_index(i: int) -> Tuple[int, int]:
     return divmod(i, ENTRIES_PER_BLOCK)
@@ -1438,58 +1356,11 @@ iWMATEt = tb_WMATE | 4
 iBMATEt = tb_BMATE | 4
 
 
-def removepiece(ys: List[int], yp: List[int], j: int) -> None:
-    del ys[j]
-    del yp[j]
-
-
 def opp(side: int) -> int:
     return 1 if side == 0 else 0
 
-
-def adjust_up(dist: int) -> int:
-    udist = dist
-    sw = udist & INFOMASK
-
-    if sw in [iWMATE, iWMATEt, iBMATE, iBMATEt]:
-        udist += 1 << PLYSHIFT
-
-    return udist
-
-
-def bestx(side: int, a: int, b: int) -> int:
-    # 0 = selectfirst
-    # 1 = selectlowest
-    # 2 = selecthighest
-    # 3 = selectsecond
-    comparison = [
-        # draw, wmate, bmate, forbid
-        [0, 3, 0, 0],  # draw
-        [0, 1, 0, 0],  # wmate
-        [3, 3, 2, 0],  # bmate
-        [3, 3, 3, 0],  # forbid
-    ]
-
-    xorkey = [0, 3]
-
-    if a == iFORBID:
-        return b
-    if b == iFORBID:
-        return a
-
-    retu = [a, a, b, b]
-
-    if b < a:
-        retu[1] = b
-        retu[2] = a
-
-    key = comparison[a & 3][b & 3] ^ xorkey[side]
-    return retu[key]
-
-
 def unpackdist(d: int) -> Tuple[int, int]:
     return d >> PLYSHIFT, d & INFOMASK
-
 
 def dtm_unpack(stm: int, packed: int) -> int:
     p = packed
@@ -1579,20 +1450,11 @@ class Request:
     black_piece_types: List[int]
     is_reversed: bool
 
-    def __init__(
-        self,
-        white_squares: List[int],
-        white_types: List[chess.PieceType],
-        black_squares: List[int],
-        black_types: List[chess.PieceType],
-        side: int,
-        epsq: int,
-    ):
+    def __init__(self, white_squares: List[int], white_types: List[chess.PieceType], black_squares: List[int], black_types: List[chess.PieceType], side: int):
         self.white_squares, self.white_types = sortlists(white_squares, white_types)
         self.black_squares, self.black_types = sortlists(black_squares, black_types)
         self.realside = side
         self.side = side
-        self.epsq = epsq
 
 
 @dataclasses.dataclass
@@ -1624,17 +1486,15 @@ class PythonTablebase:
             raise IOError(f"not a directory: {directory!r}")
 
         for tbfile in fnmatch.filter(os.listdir(directory), "*.gtb.cp4"):
-            self.available_tables[
-                os.path.basename(tbfile).replace(".gtb.cp4", "")
-            ] = os.path.join(directory, tbfile)
+            self.available_tables[os.path.basename(tbfile).replace(".gtb.cp4", "")] = os.path.join(directory, tbfile)
 
     def probe_dtm(self, board: chess.Board) -> int:
         """
         Probes for depth to mate information.
 
         The absolute value is the number of half-moves until forced mate
-        (or ``0`` in drawn positions). The value is positive if the
-        side to move is winning, otherwise it is negative.
+        (or ``0`` in drawn or checkmated positions). The value is positive if
+        the side to move is winning, otherwise it is negative or 0.
 
         In the example position, white to move will get mated in 10 half-moves:
 
@@ -1656,39 +1516,47 @@ class PythonTablebase:
         """
         # Can not probe positions with castling rights.
         if board.castling_rights:
-            raise KeyError(
-                f"gaviota tables do not contain positions with castling rights: {board.fen()}"
-            )
+            raise KeyError(f"gaviota tables do not contain positions with castling rights: {board.fen()}")
 
         # Supports only up to 5 pieces.
         if chess.popcount(board.occupied) > 5:
-            raise KeyError(
-                f"gaviota tables support up to 5 pieces, not {chess.popcount(board.occupied)}: {board.fen()}"
-            )
+            raise KeyError(f"gaviota tables support up to 5 pieces, not {chess.popcount(board.occupied)}: {board.fen()}")
 
         # KvK is a draw.
         if board.occupied == board.kings:
             return 0
 
+        # Resolve en passant.
+        dtm = self._probe_dtm_no_ep(board)
+        for move in board.generate_legal_ep():
+            try:
+                board.push(move)
+
+                if board.is_checkmate():
+                    child_dtm = 1
+                else:
+                    child_dtm = -self._probe_dtm_no_ep(board)
+                    if child_dtm > 0:
+                        child_dtm += 1
+                    elif child_dtm < 0:
+                        child_dtm -= 1
+
+                dtm = min(dtm, child_dtm) if dtm * child_dtm > 0 else max(dtm, child_dtm)
+            finally:
+                board.pop()
+        return dtm
+
+    def _probe_dtm_no_ep(self, board: chess.Board) -> int:
         # Prepare the tablebase request.
         white_squares = list(chess.SquareSet(board.occupied_co[chess.WHITE]))
-        white_types = [
-            typing.cast(chess.PieceType, board.piece_type_at(sq))
-            for sq in white_squares
-        ]
+        white_types = [typing.cast(chess.PieceType, board.piece_type_at(sq)) for sq in white_squares]
         black_squares = list(chess.SquareSet(board.occupied_co[chess.BLACK]))
-        black_types = [
-            typing.cast(chess.PieceType, board.piece_type_at(sq))
-            for sq in black_squares
-        ]
+        black_types = [typing.cast(chess.PieceType, board.piece_type_at(sq)) for sq in black_squares]
         side = 0 if (board.turn == chess.WHITE) else 1
-        epsq = board.ep_square if board.ep_square else NOSQUARE
-        req = Request(
-            white_squares, white_types, black_squares, black_types, side, epsq
-        )
+        req = Request(white_squares, white_types, black_squares, black_types, side)
 
         # Probe.
-        dtm = self.egtb_get_dtm(req)
+        dtm = self._tb_probe(req)
         ply, res = unpackdist(dtm)
 
         if res == iWMATE:
@@ -1719,9 +1587,7 @@ class PythonTablebase:
             # Draw.
             return 0
 
-    def get_dtm(
-        self, board: chess.Board, default: Optional[int] = None
-    ) -> Optional[int]:
+    def get_dtm(self, board: chess.Board, default: Optional[int] = None) -> Optional[int]:
         try:
             return self.probe_dtm(board)
         except KeyError:
@@ -1762,9 +1628,7 @@ class PythonTablebase:
         else:
             return -1
 
-    def get_wdl(
-        self, board: chess.Board, default: Optional[int] = None
-    ) -> Optional[int]:
+    def get_wdl(self, board: chess.Board, default: Optional[int] = None) -> Optional[int]:
         try:
             return self.probe_wdl(board)
         except KeyError:
@@ -1788,14 +1652,9 @@ class PythonTablebase:
             req.white_piece_types = req.black_types
             req.black_piece_squares = [flip_ns(s) for s in req.white_squares]
             req.black_piece_types = req.white_types
-
             req.side = opp(req.side)
-            if req.epsq != NOSQUARE:
-                req.epsq = flip_ns(req.epsq)
         else:
-            raise MissingTableError(
-                f"no gaviota table available for: {white_letters.upper()}v{black_letters.upper()}"
-            )
+            raise MissingTableError(f"no gaviota table available for: {white_letters.upper()}v{black_letters.upper()}")
 
         return self._open_tablebase(req)
 
@@ -1822,86 +1681,6 @@ class PythonTablebase:
         while self.streams:
             _, stream = self.streams.popitem()
             stream.close()
-
-    def egtb_get_dtm(self, req: Request) -> int:
-        dtm = self._tb_probe(req)
-
-        if req.epsq != NOSQUARE:
-            capturer_a = 0
-            capturer_b = 0
-            xed = 0
-
-            # Flip for move generation.
-            if req.side == 0:
-                xs = list(req.white_piece_squares)
-                xp = list(req.white_piece_types)
-                ys = list(req.black_piece_squares)
-                yp = list(req.black_piece_types)
-            else:
-                xs = list(req.black_piece_squares)
-                xp = list(req.black_piece_types)
-                ys = list(req.white_piece_squares)
-                yp = list(req.white_piece_types)
-
-            # Captured pawn trick: from ep square to captured.
-            xed = req.epsq ^ (1 << 3)
-
-            # Find captured index (j).
-            try:
-                j = ys.index(xed)
-            except ValueError:
-                j = -1
-
-            # Try first possible ep capture.
-            if 0 == (0x88 & (map88(xed) + 1)):
-                capturer_a = xed + 1
-
-            # Try second possible ep capture.
-            if 0 == (0x88 & (map88(xed) - 1)):
-                capturer_b = xed - 1
-
-            if (j > -1) and (ys[j] == xed):
-                # Find capturers (i).
-                for i in range(len(xs)):
-                    if xp[i] == chess.PAWN and (
-                        xs[i] == capturer_a or xs[i] == capturer_b
-                    ):
-                        epscore = iFORBID
-
-                        # Copy position.
-                        xs_after = xs[:]
-                        ys_after = ys[:]
-                        xp_after = xp[:]
-                        yp_after = yp[:]
-
-                        # Execute capture.
-                        xs_after[i] = req.epsq
-                        removepiece(ys_after, yp_after, j)
-
-                        # Flip back.
-                        if req.side == 1:
-                            xs_after, ys_after = ys_after, xs_after
-                            xp_after, yp_after = yp_after, xp_after
-
-                        # Make subrequest.
-                        subreq = Request(
-                            xs_after,
-                            xp_after,
-                            ys_after,
-                            yp_after,
-                            opp(req.side),
-                            NOSQUARE,
-                        )
-                        try:
-                            epscore = self._tb_probe(subreq)
-                            epscore = adjust_up(epscore)
-
-                            # Choose to ep or not.
-                            dtm = bestx(req.side, epscore, dtm)
-                        except IndexError:
-                            break
-
-        return dtm
 
     def egtb_block_getnumber(self, req: Request, idx: int) -> int:
         maxindex = EGKEY[req.egkey].maxindex
@@ -1949,9 +1728,7 @@ class PythonTablebase:
                 NUM_LITERAL_POS_STATE_BITS = 0
                 NUM_LITERAL_CONTEXT_BITS = 3
                 properties = bytearray(13)
-                properties[0] = (
-                    POS_STATE_BITS * 5 + NUM_LITERAL_POS_STATE_BITS
-                ) * 9 + NUM_LITERAL_CONTEXT_BITS
+                properties[0] = (POS_STATE_BITS * 5 + NUM_LITERAL_POS_STATE_BITS) * 9 + NUM_LITERAL_CONTEXT_BITS
                 for i in range(4):
                     properties[1 + i] = (DICTIONARY_SIZE >> (8 * i)) & 0xFF
                 for i in range(8):
@@ -1967,10 +1744,7 @@ class PythonTablebase:
             # Update LRU block cache.
             self.block_cache[(t.egkey, t.offset, t.side)] = t
             if len(self.block_cache) > 128:
-                lru_cache_key = min(
-                    self.block_cache,
-                    key=lambda cache_key: self.block_cache[cache_key].age,
-                )
+                lru_cache_key = min(self.block_cache, key=lambda cache_key: self.block_cache[cache_key].age)
                 del self.block_cache[lru_cache_key]
         else:
             t.age = self.block_age
@@ -2015,12 +1789,7 @@ class PythonTablebase:
     def __enter__(self) -> PythonTablebase:
         return self
 
-    def __exit__(
-        self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
-    ) -> None:
+    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_value: Optional[BaseException], traceback: Optional[TracebackType]) -> None:
         self.close()
 
 
@@ -2046,7 +1815,7 @@ class NativeTablebase:
             ctypes.POINTER(ctypes.c_ubyte),
             ctypes.POINTER(ctypes.c_ubyte),
             ctypes.POINTER(ctypes.c_uint),
-            ctypes.POINTER(ctypes.c_uint),
+            ctypes.POINTER(ctypes.c_uint)
         ]
 
         if self.libgtb.tb_is_initialized():
@@ -2072,10 +1841,7 @@ class NativeTablebase:
         if ret:
             LOGGER.debug(ret.decode("utf-8"))
 
-        LOGGER.debug(
-            "Main path has been set to %r",
-            self.libgtb.tbpaths_getmain().decode("utf-8"),
-        )
+        LOGGER.debug("Main path has been set to %r", self.libgtb.tbpaths_getmain().decode("utf-8"))
 
         av = self.libgtb.tb_availability()
         if av & 1:
@@ -2092,9 +1858,7 @@ class NativeTablebase:
             LOGGER.debug("All 5-piece tables complete")
 
     def _tbcache_restart(self, cache_mem: int, wdl_fraction: int) -> None:
-        self.libgtb.tbcache_restart(
-            ctypes.c_size_t(cache_mem), ctypes.c_int(wdl_fraction)
-        )
+        self.libgtb.tbcache_restart(ctypes.c_size_t(cache_mem), ctypes.c_int(wdl_fraction))
 
     def probe_dtm(self, board: chess.Board) -> int:
         return self._probe_hard(board)
@@ -2102,17 +1866,13 @@ class NativeTablebase:
     def probe_wdl(self, board: chess.Board) -> int:
         return self._probe_hard(board, wdl_only=True)
 
-    def get_dtm(
-        self, board: chess.Board, default: Optional[int] = None
-    ) -> Optional[int]:
+    def get_dtm(self, board: chess.Board, default: Optional[int] = None) -> Optional[int]:
         try:
             return self.probe_dtm(board)
         except KeyError:
             return default
 
-    def get_wdl(
-        self, board: chess.Board, default: Optional[int] = None
-    ) -> Optional[int]:
+    def get_wdl(self, board: chess.Board, default: Optional[int] = None) -> Optional[int]:
         try:
             return self.probe_wdl(board)
         except KeyError:
@@ -2123,14 +1883,10 @@ class NativeTablebase:
             return 0
 
         if board.castling_rights:
-            raise KeyError(
-                f"gaviota tables do not contain positions with castling rights: {board.fen()}"
-            )
+            raise KeyError(f"gaviota tables do not contain positions with castling rights: {board.fen()}")
 
         if chess.popcount(board.occupied) > 5:
-            raise KeyError(
-                f"gaviota tables support up to 5 pieces, not {chess.popcount(board.occupied)}: {board.fen()}"
-            )
+            raise KeyError(f"gaviota tables support up to 5 pieces, not {chess.popcount(board.occupied)}: {board.fen()}")
 
         stm = ctypes.c_uint(0 if board.turn == chess.WHITE else 1)
         ep_square = ctypes.c_uint(board.ep_square if board.ep_square else 64)
@@ -2162,22 +1918,10 @@ class NativeTablebase:
         info = ctypes.c_uint()
         pliestomate = ctypes.c_uint()
         if not wdl_only:
-            ret = self.libgtb.tb_probe_hard(
-                stm,
-                ep_square,
-                castling,
-                c_ws,
-                c_bs,
-                c_wp,
-                c_bp,
-                ctypes.byref(info),
-                ctypes.byref(pliestomate),
-            )
+            ret = self.libgtb.tb_probe_hard(stm, ep_square, castling, c_ws, c_bs, c_wp, c_bp, ctypes.byref(info), ctypes.byref(pliestomate))
             dtm = int(pliestomate.value)
         else:
-            ret = self.libgtb.tb_probe_WDL_hard(
-                stm, ep_square, castling, c_ws, c_bs, c_wp, c_bp, ctypes.byref(info)
-            )
+            ret = self.libgtb.tb_probe_WDL_hard(stm, ep_square, castling, c_ws, c_bs, c_wp, c_bp, ctypes.byref(info))
             dtm = 1
 
         # Probe forbidden.
@@ -2208,21 +1952,11 @@ class NativeTablebase:
     def __enter__(self) -> NativeTablebase:
         return self
 
-    def __exit__(
-        self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
-    ) -> None:
+    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_value: Optional[BaseException], traceback: Optional[TracebackType]) -> None:
         self.close()
 
 
-def open_tablebase_native(
-    directory: str,
-    *,
-    libgtb: Optional[str] = None,
-    LibraryLoader: ctypes.LibraryLoader[ctypes.CDLL] = ctypes.cdll,
-) -> NativeTablebase:
+def open_tablebase_native(directory: str, *, libgtb: Optional[str] = None, LibraryLoader: ctypes.LibraryLoader[ctypes.CDLL] = ctypes.cdll) -> NativeTablebase:
     """
     Opens a collection of tables for probing using libgtb.
 
@@ -2238,12 +1972,7 @@ def open_tablebase_native(
     return tables
 
 
-def open_tablebase(
-    directory: str,
-    *,
-    libgtb: Optional[str] = None,
-    LibraryLoader: ctypes.LibraryLoader[ctypes.CDLL] = ctypes.cdll,
-) -> Union[NativeTablebase, PythonTablebase]:
+def open_tablebase(directory: str, *, libgtb: Optional[str] = None, LibraryLoader: ctypes.LibraryLoader[ctypes.CDLL] = ctypes.cdll) -> Union[NativeTablebase, PythonTablebase]:
     """
     Opens a collection of tables for probing.
 
@@ -2256,9 +1985,7 @@ def open_tablebase(
     """
     try:
         if LibraryLoader:
-            return open_tablebase_native(
-                directory, libgtb=libgtb, LibraryLoader=LibraryLoader
-            )
+            return open_tablebase_native(directory, libgtb=libgtb, LibraryLoader=LibraryLoader)
     except (OSError, RuntimeError) as err:
         LOGGER.info("Falling back to pure Python tablebase: %r", err)
 

@@ -20,6 +20,7 @@ from ..paths import import_bundled
 from ..sounds import GameSound
 from ..speaking import speak_next
 from ..i18n import _, ngettext
+from ..board_geometry import pocket_contents
 from ..spoken_messages import spoken_piece_name
 from .base import BaseChessboardCell, BaseVirtualChessboard, Color
 from .ui_components import SimpleList
@@ -280,8 +281,7 @@ class UserDrivenChessboard(BaseVirtualChessboard):
 		# Translators: Name of the list of captured pieces in Crazyhouse, e.g. "white's pocket".
 		pocket_list_name = _("{color}'s pocket").format(color=color_name)
 		pocket_list = SimpleList(parent=self, name=pocket_list_name, close_gesture="kb:f6")
-		pocket = self._crazyhouse_board().pockets[color].pieces
-		for ptype, pcount in zip(pieces, (pocket[p] for p in pieces)):
+		for ptype, pcount in pocket_contents(self._crazyhouse_board(), color):
 			pocket_list.add_item(
 				# Translators: One entry of the Crazyhouse pocket, e.g. "1 knight" / "2 knights".
 				ngettext("{count} {piece}", "{count} {piece}s", pcount).format(
@@ -292,11 +292,7 @@ class UserDrivenChessboard(BaseVirtualChessboard):
 		eventHandler.queueEvent("gainFocus", pocket_list)
 
 	def get_available_droppable_pieces(self, color):
-		return tuple(
-			piece_type
-			for (piece_type, piece_count) in self._crazyhouse_board().pockets[color].pieces.items()
-			if piece_count
-		)
+		return tuple(piece_type for piece_type, _count in pocket_contents(self._crazyhouse_board(), color))
 
 
 class PieceSelectionMenu(MenuObject):

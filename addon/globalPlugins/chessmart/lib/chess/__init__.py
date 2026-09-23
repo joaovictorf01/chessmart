@@ -1,19 +1,3 @@
-# This file is part of the python-chess library.
-# Copyright (C) 2012-2021 Niklas Fiekas <niklas.fiekas@backscattering.de>
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 """
 A chess library with move generation and validation,
 Polyglot opening book probing, PGN reading and writing,
@@ -27,7 +11,7 @@ __author__ = "Niklas Fiekas"
 
 __email__ = "niklas.fiekas@backscattering.de"
 
-__version__ = "1.7.0"
+__version__ = "1.11.2"
 
 import collections
 import copy
@@ -38,65 +22,46 @@ import re
 import itertools
 import typing
 
-from typing import (
-    ClassVar,
-    Callable,
-    Counter,
-    Dict,
-    Generic,
-    Hashable,
-    Iterable,
-    Iterator,
-    List,
-    Mapping,
-    Optional,
-    SupportsInt,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-)
+from typing import ClassVar, Callable, Counter, Dict, Generic, Hashable, Iterable, Iterator, List, Literal, Mapping, Optional, SupportsInt, Tuple, Type, TypeVar, Union
 
-try:
-    from typing import Literal
-
-    _EnPassantSpec = Literal["legal", "fen", "xfen"]
-except ImportError:
-    # Before Python 3.8.
-    _EnPassantSpec = str  # type: ignore
+if typing.TYPE_CHECKING:
+    from typing_extensions import Self, TypeAlias
 
 
-Color = bool
-COLORS = [WHITE, BLACK] = [True, False]
-COLOR_NAMES = ["black", "white"]
+EnPassantSpec = Literal["legal", "fen", "xfen"]
 
-PieceType = int
-PIECE_TYPES = [PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING] = range(1, 7)
+
+Color: TypeAlias = bool
+WHITE: Color = True
+BLACK: Color = False
+COLORS: List[Color] = [WHITE, BLACK]
+ColorName = Literal["white", "black"]
+COLOR_NAMES: List[ColorName] = ["black", "white"]
+
+PieceType: TypeAlias = int
+PAWN: PieceType = 1
+KNIGHT: PieceType = 2
+BISHOP: PieceType = 3
+ROOK: PieceType = 4
+QUEEN: PieceType = 5
+KING: PieceType = 6
+PIECE_TYPES: List[PieceType] = [PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING]
 PIECE_SYMBOLS = [None, "p", "n", "b", "r", "q", "k"]
 PIECE_NAMES = [None, "pawn", "knight", "bishop", "rook", "queen", "king"]
-
 
 def piece_symbol(piece_type: PieceType) -> str:
     return typing.cast(str, PIECE_SYMBOLS[piece_type])
 
-
 def piece_name(piece_type: PieceType) -> str:
     return typing.cast(str, PIECE_NAMES[piece_type])
 
-
 UNICODE_PIECE_SYMBOLS = {
-    "R": "♖",
-    "r": "♜",
-    "N": "♘",
-    "n": "♞",
-    "B": "♗",
-    "b": "♝",
-    "Q": "♕",
-    "q": "♛",
-    "K": "♔",
-    "k": "♚",
-    "P": "♙",
-    "p": "♟",
+    "R": "♖", "r": "♜",
+    "N": "♘", "n": "♞",
+    "B": "♗", "b": "♝",
+    "Q": "♕", "q": "♛",
+    "K": "♔", "k": "♚",
+    "P": "♙", "p": "♟",
 }
 
 FILE_NAMES = ["a", "b", "c", "d", "e", "f", "g", "h"]
@@ -129,7 +94,6 @@ class Status(enum.IntFlag):
     RACE_MATERIAL = 1 << 14
     TOO_MANY_CHECKERS = 1 << 15
     IMPOSSIBLE_CHECK = 1 << 16
-
 
 STATUS_VALID = Status.VALID
 STATUS_NO_WHITE_KING = Status.NO_WHITE_KING
@@ -175,7 +139,6 @@ class Termination(enum.Enum):
     VARIANT_DRAW = enum.auto()
     """See :func:`chess.Board.is_variant_draw()`."""
 
-
 @dataclasses.dataclass
 class Outcome:
     """
@@ -194,76 +157,86 @@ class Outcome:
         return "1/2-1/2" if self.winner is None else ("1-0" if self.winner else "0-1")
 
 
-Square = int
-SQUARES = [
-    A1,
-    B1,
-    C1,
-    D1,
-    E1,
-    F1,
-    G1,
-    H1,
-    A2,
-    B2,
-    C2,
-    D2,
-    E2,
-    F2,
-    G2,
-    H2,
-    A3,
-    B3,
-    C3,
-    D3,
-    E3,
-    F3,
-    G3,
-    H3,
-    A4,
-    B4,
-    C4,
-    D4,
-    E4,
-    F4,
-    G4,
-    H4,
-    A5,
-    B5,
-    C5,
-    D5,
-    E5,
-    F5,
-    G5,
-    H5,
-    A6,
-    B6,
-    C6,
-    D6,
-    E6,
-    F6,
-    G6,
-    H6,
-    A7,
-    B7,
-    C7,
-    D7,
-    E7,
-    F7,
-    G7,
-    H7,
-    A8,
-    B8,
-    C8,
-    D8,
-    E8,
-    F8,
-    G8,
-    H8,
-] = range(64)
+class InvalidMoveError(ValueError):
+    """Raised when move notation is not syntactically valid"""
+
+
+class IllegalMoveError(ValueError):
+    """Raised when the attempted move is illegal in the current position"""
+
+
+class AmbiguousMoveError(ValueError):
+    """Raised when the attempted move is ambiguous in the current position"""
+
+
+Square: TypeAlias = int
+A1: Square = 0
+B1: Square = 1
+C1: Square = 2
+D1: Square = 3
+E1: Square = 4
+F1: Square = 5
+G1: Square = 6
+H1: Square = 7
+A2: Square = 8
+B2: Square = 9
+C2: Square = 10
+D2: Square = 11
+E2: Square = 12
+F2: Square = 13
+G2: Square = 14
+H2: Square = 15
+A3: Square = 16
+B3: Square = 17
+C3: Square = 18
+D3: Square = 19
+E3: Square = 20
+F3: Square = 21
+G3: Square = 22
+H3: Square = 23
+A4: Square = 24
+B4: Square = 25
+C4: Square = 26
+D4: Square = 27
+E4: Square = 28
+F4: Square = 29
+G4: Square = 30
+H4: Square = 31
+A5: Square = 32
+B5: Square = 33
+C5: Square = 34
+D5: Square = 35
+E5: Square = 36
+F5: Square = 37
+G5: Square = 38
+H5: Square = 39
+A6: Square = 40
+B6: Square = 41
+C6: Square = 42
+D6: Square = 43
+E6: Square = 44
+F6: Square = 45
+G6: Square = 46
+H6: Square = 47
+A7: Square = 48
+B7: Square = 49
+C7: Square = 50
+D7: Square = 51
+E7: Square = 52
+F7: Square = 53
+G7: Square = 54
+H7: Square = 55
+A8: Square = 56
+B8: Square = 57
+C8: Square = 58
+D8: Square = 59
+E8: Square = 60
+F8: Square = 61
+G8: Square = 62
+H8: Square = 63
+SQUARES: List[Square] = list(range(64))
 
 SQUARE_NAMES = [f + r for r in RANK_NAMES for f in FILE_NAMES]
-
 
 def parse_square(name: str) -> Square:
     """
@@ -274,149 +247,160 @@ def parse_square(name: str) -> Square:
     """
     return SQUARE_NAMES.index(name)
 
-
 def square_name(square: Square) -> str:
     """Gets the name of the square, like ``a3``."""
     return SQUARE_NAMES[square]
-
 
 def square(file_index: int, rank_index: int) -> Square:
     """Gets a square number by file and rank index."""
     return rank_index * 8 + file_index
 
-
 def square_file(square: Square) -> int:
     """Gets the file index of the square where ``0`` is the a-file."""
     return square & 7
-
 
 def square_rank(square: Square) -> int:
     """Gets the rank index of the square where ``0`` is the first rank."""
     return square >> 3
 
-
 def square_distance(a: Square, b: Square) -> int:
     """
-    Gets the distance (i.e., the number of king steps) from square *a* to *b*.
+    Gets the Chebyshev distance (i.e., the number of king steps) from square *a* to *b*.
     """
-    return max(
-        abs(square_file(a) - square_file(b)), abs(square_rank(a) - square_rank(b))
-    )
+    return max(abs(square_file(a) - square_file(b)), abs(square_rank(a) - square_rank(b)))
 
+def square_manhattan_distance(a: Square, b: Square) -> int:
+    """
+    Gets the Manhattan/Taxicab distance (i.e., the number of orthogonal king steps) from square *a* to *b*.
+    """
+    return abs(square_file(a) - square_file(b)) + abs(square_rank(a) - square_rank(b))
+
+def square_knight_distance(a: Square, b: Square) -> int:
+    """
+    Gets the Knight distance (i.e., the number of knight moves) from square *a* to *b*.
+    """
+    dx = abs(square_file(a) - square_file(b))
+    dy = abs(square_rank(a) - square_rank(b))
+
+    if dx + dy == 1:
+        return 3
+    elif dx == dy == 2:
+        return 4
+    elif dx == dy == 1:
+        if BB_SQUARES[a] & BB_CORNERS or BB_SQUARES[b] & BB_CORNERS:  # Special case only for corner squares
+            return 4
+
+    m = math.ceil(max(dx / 2, dy / 2, (dx + dy) / 3))
+    return m + ((m + dx + dy) % 2)
 
 def square_mirror(square: Square) -> Square:
     """Mirrors the square vertically."""
     return square ^ 0x38
 
+SQUARES_180: List[Square] = [square_mirror(sq) for sq in SQUARES]
 
-SQUARES_180 = [square_mirror(sq) for sq in SQUARES]
 
+Bitboard: TypeAlias = int
+BB_EMPTY: Bitboard = 0
+BB_ALL: Bitboard = 0xffff_ffff_ffff_ffff
 
-Bitboard = int
-BB_EMPTY = 0
-BB_ALL = 0xFFFF_FFFF_FFFF_FFFF
+BB_A1: Bitboard = 1 << A1
+BB_B1: Bitboard = 1 << B1
+BB_C1: Bitboard = 1 << C1
+BB_D1: Bitboard = 1 << D1
+BB_E1: Bitboard = 1 << E1
+BB_F1: Bitboard = 1 << F1
+BB_G1: Bitboard = 1 << G1
+BB_H1: Bitboard = 1 << H1
+BB_A2: Bitboard = 1 << A2
+BB_B2: Bitboard = 1 << B2
+BB_C2: Bitboard = 1 << C2
+BB_D2: Bitboard = 1 << D2
+BB_E2: Bitboard = 1 << E2
+BB_F2: Bitboard = 1 << F2
+BB_G2: Bitboard = 1 << G2
+BB_H2: Bitboard = 1 << H2
+BB_A3: Bitboard = 1 << A3
+BB_B3: Bitboard = 1 << B3
+BB_C3: Bitboard = 1 << C3
+BB_D3: Bitboard = 1 << D3
+BB_E3: Bitboard = 1 << E3
+BB_F3: Bitboard = 1 << F3
+BB_G3: Bitboard = 1 << G3
+BB_H3: Bitboard = 1 << H3
+BB_A4: Bitboard = 1 << A4
+BB_B4: Bitboard = 1 << B4
+BB_C4: Bitboard = 1 << C4
+BB_D4: Bitboard = 1 << D4
+BB_E4: Bitboard = 1 << E4
+BB_F4: Bitboard = 1 << F4
+BB_G4: Bitboard = 1 << G4
+BB_H4: Bitboard = 1 << H4
+BB_A5: Bitboard = 1 << A5
+BB_B5: Bitboard = 1 << B5
+BB_C5: Bitboard = 1 << C5
+BB_D5: Bitboard = 1 << D5
+BB_E5: Bitboard = 1 << E5
+BB_F5: Bitboard = 1 << F5
+BB_G5: Bitboard = 1 << G5
+BB_H5: Bitboard = 1 << H5
+BB_A6: Bitboard = 1 << A6
+BB_B6: Bitboard = 1 << B6
+BB_C6: Bitboard = 1 << C6
+BB_D6: Bitboard = 1 << D6
+BB_E6: Bitboard = 1 << E6
+BB_F6: Bitboard = 1 << F6
+BB_G6: Bitboard = 1 << G6
+BB_H6: Bitboard = 1 << H6
+BB_A7: Bitboard = 1 << A7
+BB_B7: Bitboard = 1 << B7
+BB_C7: Bitboard = 1 << C7
+BB_D7: Bitboard = 1 << D7
+BB_E7: Bitboard = 1 << E7
+BB_F7: Bitboard = 1 << F7
+BB_G7: Bitboard = 1 << G7
+BB_H7: Bitboard = 1 << H7
+BB_A8: Bitboard = 1 << A8
+BB_B8: Bitboard = 1 << B8
+BB_C8: Bitboard = 1 << C8
+BB_D8: Bitboard = 1 << D8
+BB_E8: Bitboard = 1 << E8
+BB_F8: Bitboard = 1 << F8
+BB_G8: Bitboard = 1 << G8
+BB_H8: Bitboard = 1 << H8
+BB_SQUARES: List[Bitboard] = [1 << sq for sq in SQUARES]
 
-BB_SQUARES = [
-    BB_A1,
-    BB_B1,
-    BB_C1,
-    BB_D1,
-    BB_E1,
-    BB_F1,
-    BB_G1,
-    BB_H1,
-    BB_A2,
-    BB_B2,
-    BB_C2,
-    BB_D2,
-    BB_E2,
-    BB_F2,
-    BB_G2,
-    BB_H2,
-    BB_A3,
-    BB_B3,
-    BB_C3,
-    BB_D3,
-    BB_E3,
-    BB_F3,
-    BB_G3,
-    BB_H3,
-    BB_A4,
-    BB_B4,
-    BB_C4,
-    BB_D4,
-    BB_E4,
-    BB_F4,
-    BB_G4,
-    BB_H4,
-    BB_A5,
-    BB_B5,
-    BB_C5,
-    BB_D5,
-    BB_E5,
-    BB_F5,
-    BB_G5,
-    BB_H5,
-    BB_A6,
-    BB_B6,
-    BB_C6,
-    BB_D6,
-    BB_E6,
-    BB_F6,
-    BB_G6,
-    BB_H6,
-    BB_A7,
-    BB_B7,
-    BB_C7,
-    BB_D7,
-    BB_E7,
-    BB_F7,
-    BB_G7,
-    BB_H7,
-    BB_A8,
-    BB_B8,
-    BB_C8,
-    BB_D8,
-    BB_E8,
-    BB_F8,
-    BB_G8,
-    BB_H8,
-] = [1 << sq for sq in SQUARES]
+BB_CORNERS: Bitboard = BB_A1 | BB_H1 | BB_A8 | BB_H8
+BB_CENTER: Bitboard = BB_D4 | BB_E4 | BB_D5 | BB_E5
 
-BB_CORNERS = BB_A1 | BB_H1 | BB_A8 | BB_H8
-BB_CENTER = BB_D4 | BB_E4 | BB_D5 | BB_E5
+BB_LIGHT_SQUARES: Bitboard = 0x55aa_55aa_55aa_55aa
+BB_DARK_SQUARES: Bitboard = 0xaa55_aa55_aa55_aa55
 
-BB_LIGHT_SQUARES = 0x55AA_55AA_55AA_55AA
-BB_DARK_SQUARES = 0xAA55_AA55_AA55_AA55
+BB_FILE_A: Bitboard = 0x0101_0101_0101_0101 << 0
+BB_FILE_B: Bitboard = 0x0101_0101_0101_0101 << 1
+BB_FILE_C: Bitboard = 0x0101_0101_0101_0101 << 2
+BB_FILE_D: Bitboard = 0x0101_0101_0101_0101 << 3
+BB_FILE_E: Bitboard = 0x0101_0101_0101_0101 << 4
+BB_FILE_F: Bitboard = 0x0101_0101_0101_0101 << 5
+BB_FILE_G: Bitboard = 0x0101_0101_0101_0101 << 6
+BB_FILE_H: Bitboard = 0x0101_0101_0101_0101 << 7
+BB_FILES: List[Bitboard] = [BB_FILE_A, BB_FILE_B, BB_FILE_C, BB_FILE_D, BB_FILE_E, BB_FILE_F, BB_FILE_G, BB_FILE_H]
 
-BB_FILES = [
-    BB_FILE_A,
-    BB_FILE_B,
-    BB_FILE_C,
-    BB_FILE_D,
-    BB_FILE_E,
-    BB_FILE_F,
-    BB_FILE_G,
-    BB_FILE_H,
-] = [0x0101_0101_0101_0101 << i for i in range(8)]
+BB_RANK_1: Bitboard = 0xff << (8 * 0)
+BB_RANK_2: Bitboard = 0xff << (8 * 1)
+BB_RANK_3: Bitboard = 0xff << (8 * 2)
+BB_RANK_4: Bitboard = 0xff << (8 * 3)
+BB_RANK_5: Bitboard = 0xff << (8 * 4)
+BB_RANK_6: Bitboard = 0xff << (8 * 5)
+BB_RANK_7: Bitboard = 0xff << (8 * 6)
+BB_RANK_8: Bitboard = 0xff << (8 * 7)
+BB_RANKS: List[Bitboard] = [BB_RANK_1, BB_RANK_2, BB_RANK_3, BB_RANK_4, BB_RANK_5, BB_RANK_6, BB_RANK_7, BB_RANK_8]
 
-BB_RANKS = [
-    BB_RANK_1,
-    BB_RANK_2,
-    BB_RANK_3,
-    BB_RANK_4,
-    BB_RANK_5,
-    BB_RANK_6,
-    BB_RANK_7,
-    BB_RANK_8,
-] = [0xFF << (8 * i) for i in range(8)]
-
-BB_BACKRANKS = BB_RANK_1 | BB_RANK_8
+BB_BACKRANKS: Bitboard = BB_RANK_1 | BB_RANK_8
 
 
 def lsb(bb: Bitboard) -> int:
     return (bb & -bb).bit_length() - 1
-
 
 def scan_forward(bb: Bitboard) -> Iterator[Square]:
     while bb:
@@ -424,10 +408,8 @@ def scan_forward(bb: Bitboard) -> Iterator[Square]:
         yield r.bit_length() - 1
         bb ^= r
 
-
 def msb(bb: Bitboard) -> int:
     return bb.bit_length() - 1
-
 
 def scan_reversed(bb: Bitboard) -> Iterator[Square]:
     while bb:
@@ -435,102 +417,82 @@ def scan_reversed(bb: Bitboard) -> Iterator[Square]:
         yield r
         bb ^= BB_SQUARES[r]
 
-
 # Python 3.10 or fallback.
-popcount: Callable[[Bitboard], int] = getattr(
-    int, "bit_count", lambda bb: bin(bb).count("1")
-)
-
+popcount: Callable[[Bitboard], int] = getattr(int, "bit_count", lambda bb: bin(bb).count("1"))
 
 def flip_vertical(bb: Bitboard) -> Bitboard:
     # https://www.chessprogramming.org/Flipping_Mirroring_and_Rotating#FlipVertically
-    bb = ((bb >> 8) & 0x00FF_00FF_00FF_00FF) | ((bb & 0x00FF_00FF_00FF_00FF) << 8)
-    bb = ((bb >> 16) & 0x0000_FFFF_0000_FFFF) | ((bb & 0x0000_FFFF_0000_FFFF) << 16)
-    bb = (bb >> 32) | ((bb & 0x0000_0000_FFFF_FFFF) << 32)
+    bb = ((bb >> 8) & 0x00ff_00ff_00ff_00ff) | ((bb & 0x00ff_00ff_00ff_00ff) << 8)
+    bb = ((bb >> 16) & 0x0000_ffff_0000_ffff) | ((bb & 0x0000_ffff_0000_ffff) << 16)
+    bb = (bb >> 32) | ((bb & 0x0000_0000_ffff_ffff) << 32)
     return bb
-
 
 def flip_horizontal(bb: Bitboard) -> Bitboard:
     # https://www.chessprogramming.org/Flipping_Mirroring_and_Rotating#MirrorHorizontally
     bb = ((bb >> 1) & 0x5555_5555_5555_5555) | ((bb & 0x5555_5555_5555_5555) << 1)
     bb = ((bb >> 2) & 0x3333_3333_3333_3333) | ((bb & 0x3333_3333_3333_3333) << 2)
-    bb = ((bb >> 4) & 0x0F0F_0F0F_0F0F_0F0F) | ((bb & 0x0F0F_0F0F_0F0F_0F0F) << 4)
+    bb = ((bb >> 4) & 0x0f0f_0f0f_0f0f_0f0f) | ((bb & 0x0f0f_0f0f_0f0f_0f0f) << 4)
     return bb
-
 
 def flip_diagonal(bb: Bitboard) -> Bitboard:
     # https://www.chessprogramming.org/Flipping_Mirroring_and_Rotating#FlipabouttheDiagonal
-    t = (bb ^ (bb << 28)) & 0x0F0F_0F0F_0000_0000
-    bb = bb ^ (t ^ (t >> 28))
+    t = (bb ^ (bb << 28)) & 0x0f0f_0f0f_0000_0000
+    bb = bb ^ t ^ (t >> 28)
     t = (bb ^ (bb << 14)) & 0x3333_0000_3333_0000
-    bb = bb ^ (t ^ (t >> 14))
+    bb = bb ^ t ^ (t >> 14)
     t = (bb ^ (bb << 7)) & 0x5500_5500_5500_5500
-    bb = bb ^ (t ^ (t >> 7))
+    bb = bb ^ t ^ (t >> 7)
     return bb
-
 
 def flip_anti_diagonal(bb: Bitboard) -> Bitboard:
     # https://www.chessprogramming.org/Flipping_Mirroring_and_Rotating#FlipabouttheAntidiagonal
     t = bb ^ (bb << 36)
-    bb = bb ^ ((t ^ (bb >> 36)) & 0xF0F0_F0F0_0F0F_0F0F)
-    t = (bb ^ (bb << 18)) & 0xCCCC_0000_CCCC_0000
-    bb = bb ^ (t ^ (t >> 18))
-    t = (bb ^ (bb << 9)) & 0xAA00_AA00_AA00_AA00
-    bb = bb ^ (t ^ (t >> 9))
+    bb = bb ^ ((t ^ (bb >> 36)) & 0xf0f0_f0f0_0f0f_0f0f)
+    t = (bb ^ (bb << 18)) & 0xcccc_0000_cccc_0000
+    bb = bb ^ t ^ (t >> 18)
+    t = (bb ^ (bb << 9)) & 0xaa00_aa00_aa00_aa00
+    bb = bb ^ t ^ (t >> 9)
     return bb
 
 
 def shift_down(b: Bitboard) -> Bitboard:
     return b >> 8
 
-
 def shift_2_down(b: Bitboard) -> Bitboard:
     return b >> 16
-
 
 def shift_up(b: Bitboard) -> Bitboard:
     return (b << 8) & BB_ALL
 
-
 def shift_2_up(b: Bitboard) -> Bitboard:
     return (b << 16) & BB_ALL
-
 
 def shift_right(b: Bitboard) -> Bitboard:
     return (b << 1) & ~BB_FILE_A & BB_ALL
 
-
 def shift_2_right(b: Bitboard) -> Bitboard:
     return (b << 2) & ~BB_FILE_A & ~BB_FILE_B & BB_ALL
-
 
 def shift_left(b: Bitboard) -> Bitboard:
     return (b >> 1) & ~BB_FILE_H
 
-
 def shift_2_left(b: Bitboard) -> Bitboard:
     return (b >> 2) & ~BB_FILE_G & ~BB_FILE_H
-
 
 def shift_up_left(b: Bitboard) -> Bitboard:
     return (b << 7) & ~BB_FILE_H & BB_ALL
 
-
 def shift_up_right(b: Bitboard) -> Bitboard:
     return (b << 9) & ~BB_FILE_A & BB_ALL
 
-
 def shift_down_left(b: Bitboard) -> Bitboard:
     return (b >> 9) & ~BB_FILE_H
-
 
 def shift_down_right(b: Bitboard) -> Bitboard:
     return (b >> 7) & ~BB_FILE_A
 
 
-def _sliding_attacks(
-    square: Square, occupied: Bitboard, deltas: Iterable[int]
-) -> Bitboard:
+def _sliding_attacks(square: Square, occupied: Bitboard, deltas: Iterable[int]) -> Bitboard:
     attacks = BB_EMPTY
 
     for delta in deltas:
@@ -548,25 +510,17 @@ def _sliding_attacks(
 
     return attacks
 
-
 def _step_attacks(square: Square, deltas: Iterable[int]) -> Bitboard:
     return _sliding_attacks(square, BB_ALL, deltas)
 
-
-BB_KNIGHT_ATTACKS = [
-    _step_attacks(sq, [17, 15, 10, 6, -17, -15, -10, -6]) for sq in SQUARES
-]
-BB_KING_ATTACKS = [_step_attacks(sq, [9, 8, 7, 1, -9, -8, -7, -1]) for sq in SQUARES]
-BB_PAWN_ATTACKS = [
-    [_step_attacks(sq, deltas) for sq in SQUARES] for deltas in [[-7, -9], [7, 9]]
-]
+BB_KNIGHT_ATTACKS: List[Bitboard] = [_step_attacks(sq, [17, 15, 10, 6, -17, -15, -10, -6]) for sq in SQUARES]
+BB_KING_ATTACKS: List[Bitboard] = [_step_attacks(sq, [9, 8, 7, 1, -9, -8, -7, -1]) for sq in SQUARES]
+BB_PAWN_ATTACKS: List[List[Bitboard]] = [[_step_attacks(sq, deltas) for sq in SQUARES] for deltas in [[-7, -9], [7, 9]]]
 
 
 def _edges(square: Square) -> Bitboard:
-    return ((BB_RANK_1 | BB_RANK_8) & ~BB_RANKS[square_rank(square)]) | (
-        (BB_FILE_A | BB_FILE_H) & ~BB_FILES[square_file(square)]
-    )
-
+    return (((BB_RANK_1 | BB_RANK_8) & ~BB_RANKS[square_rank(square)]) |
+            ((BB_FILE_A | BB_FILE_H) & ~BB_FILES[square_file(square)]))
 
 def _carry_rippler(mask: Bitboard) -> Iterator[Bitboard]:
     # Carry-Rippler trick to iterate subsets of mask.
@@ -577,12 +531,9 @@ def _carry_rippler(mask: Bitboard) -> Iterator[Bitboard]:
         if not subset:
             break
 
-
-def _attack_table(
-    deltas: List[int],
-) -> Tuple[List[Bitboard], List[Dict[Bitboard, Bitboard]]]:
-    mask_table = []
-    attack_table = []
+def _attack_table(deltas: List[int]) -> Tuple[List[Bitboard], List[Dict[Bitboard, Bitboard]]]:
+    mask_table: List[Bitboard] = []
+    attack_table: List[Dict[Bitboard, Bitboard]] = []
 
     for square in SQUARES:
         attacks = {}
@@ -596,21 +547,18 @@ def _attack_table(
 
     return mask_table, attack_table
 
-
 BB_DIAG_MASKS, BB_DIAG_ATTACKS = _attack_table([-9, -7, 7, 9])
 BB_FILE_MASKS, BB_FILE_ATTACKS = _attack_table([-8, 8])
 BB_RANK_MASKS, BB_RANK_ATTACKS = _attack_table([-1, 1])
 
 
 def _rays() -> List[List[Bitboard]]:
-    rays = []
+    rays: List[List[Bitboard]] = []
     for a, bb_a in enumerate(BB_SQUARES):
-        rays_row = []
+        rays_row: List[Bitboard] = []
         for b, bb_b in enumerate(BB_SQUARES):
             if BB_DIAG_ATTACKS[a][0] & bb_b:
-                rays_row.append(
-                    (BB_DIAG_ATTACKS[a][0] & BB_DIAG_ATTACKS[b][0]) | bb_a | bb_b
-                )
+                rays_row.append((BB_DIAG_ATTACKS[a][0] & BB_DIAG_ATTACKS[b][0]) | bb_a | bb_b)
             elif BB_RANK_ATTACKS[a][0] & bb_b:
                 rays_row.append(BB_RANK_ATTACKS[a][0] | bb_a)
             elif BB_FILE_ATTACKS[a][0] & bb_b:
@@ -620,22 +568,17 @@ def _rays() -> List[List[Bitboard]]:
         rays.append(rays_row)
     return rays
 
-
 BB_RAYS = _rays()
-
 
 def ray(a: Square, b: Square) -> Bitboard:
     return BB_RAYS[a][b]
-
 
 def between(a: Square, b: Square) -> Bitboard:
     bb = BB_RAYS[a][b] & ((BB_ALL << a) ^ (BB_ALL << b))
     return bb & (bb - 1)
 
 
-SAN_REGEX = re.compile(
-    r"^([NBKRQ])?([a-h])?([1-8])?[\-x]?([a-h][1-8])(=?[nbrqkNBRQK])?[\+#]?\Z"
-)
+SAN_REGEX = re.compile(r"^([NBKRQ])?([a-h])?([1-8])?[\-x]?([a-h][1-8])(=?[nbrqkNBRQK])?[\+#]?\Z")
 
 FEN_CASTLING_REGEX = re.compile(r"^(?:-|[KQABCDEFGH]{0,2}[kqabcdefgh]{0,2})\Z")
 
@@ -676,7 +619,6 @@ class Piece:
 
     def _repr_svg_(self) -> str:
         import chess.svg
-
         return chess.svg.piece(self, size=45)
 
     @classmethod
@@ -722,11 +664,7 @@ class Move:
         if self.drop:
             return piece_symbol(self.drop).upper() + "@" + SQUARE_NAMES[self.to_square]
         elif self.promotion:
-            return (
-                SQUARE_NAMES[self.from_square]
-                + SQUARE_NAMES[self.to_square]
-                + piece_symbol(self.promotion)
-            )
+            return SQUARE_NAMES[self.from_square] + SQUARE_NAMES[self.to_square] + piece_symbol(self.promotion)
         elif self:
             return SQUARE_NAMES[self.from_square] + SQUARE_NAMES[self.to_square]
         else:
@@ -749,23 +687,29 @@ class Move:
         """
         Parses a UCI string.
 
-        :raises: :exc:`ValueError` if the UCI string is invalid.
+        :raises: :exc:`InvalidMoveError` if the UCI string is invalid.
         """
         if uci == "0000":
             return cls.null()
         elif len(uci) == 4 and "@" == uci[1]:
-            drop = PIECE_SYMBOLS.index(uci[0].lower())
-            square = SQUARE_NAMES.index(uci[2:])
+            try:
+                drop = PIECE_SYMBOLS.index(uci[0].lower())
+                square = SQUARE_NAMES.index(uci[2:])
+            except ValueError:
+                raise InvalidMoveError(f"invalid uci: {uci!r}")
             return cls(square, square, drop=drop)
         elif 4 <= len(uci) <= 5:
-            from_square = SQUARE_NAMES.index(uci[0:2])
-            to_square = SQUARE_NAMES.index(uci[2:4])
-            promotion = PIECE_SYMBOLS.index(uci[4]) if len(uci) == 5 else None
+            try:
+                from_square = SQUARE_NAMES.index(uci[0:2])
+                to_square = SQUARE_NAMES.index(uci[2:4])
+                promotion = PIECE_SYMBOLS.index(uci[4]) if len(uci) == 5 else None
+            except ValueError:
+                raise InvalidMoveError(f"invalid uci: {uci!r}")
             if from_square == to_square:
-                raise ValueError(f"invalid uci (use 0000 for null moves): {uci!r}")
+                raise InvalidMoveError(f"invalid uci (use 0000 for null moves): {uci!r}")
             return cls(from_square, to_square, promotion=promotion)
         else:
-            raise ValueError(f"expected uci string to be of length 4 or 5: {uci!r}")
+            raise InvalidMoveError(f"expected uci string to be of length 4 or 5: {uci!r}")
 
     @classmethod
     def null(cls) -> Move:
@@ -785,7 +729,6 @@ class Move:
 
 
 BaseBoardT = TypeVar("BaseBoardT", bound="BaseBoard")
-
 
 class BaseBoard:
     """
@@ -822,7 +765,13 @@ class BaseBoard:
         self.occupied = BB_RANK_1 | BB_RANK_2 | BB_RANK_7 | BB_RANK_8
 
     def reset_board(self) -> None:
-        """Resets pieces to the starting position."""
+        """
+        Resets pieces to the starting position.
+
+        :class:`~chess.Board` also resets the move stack, but not turn,
+        castling rights and move counters. Use :func:`chess.Board.reset()` to
+        fully restore the starting position.
+        """
         self._reset_board()
 
     def _clear_board(self) -> None:
@@ -840,7 +789,11 @@ class BaseBoard:
         self.occupied = BB_EMPTY
 
     def clear_board(self) -> None:
-        """Clears the board."""
+        """
+        Clears the board.
+
+        :class:`~chess.Board` also clears the move stack.
+        """
         self._clear_board()
 
     def pieces_mask(self, piece_type: PieceType, color: Color) -> Bitboard:
@@ -934,10 +887,8 @@ class BaseBoard:
             if bb_square & self.bishops or bb_square & self.queens:
                 attacks = BB_DIAG_ATTACKS[square][BB_DIAG_MASKS[square] & self.occupied]
             if bb_square & self.rooks or bb_square & self.queens:
-                attacks |= (
-                    BB_RANK_ATTACKS[square][BB_RANK_MASKS[square] & self.occupied]
-                    | BB_FILE_ATTACKS[square][BB_FILE_MASKS[square] & self.occupied]
-                )
+                attacks |= (BB_RANK_ATTACKS[square][BB_RANK_MASKS[square] & self.occupied] |
+                            BB_FILE_ATTACKS[square][BB_FILE_MASKS[square] & self.occupied])
             return attacks
 
     def attacks(self, square: Square) -> SquareSet:
@@ -951,9 +902,9 @@ class BaseBoard:
         """
         return SquareSet(self.attacks_mask(square))
 
-    def _attackers_mask(
-        self, color: Color, square: Square, occupied: Bitboard
-    ) -> Bitboard:
+    def attackers_mask(self, color: Color, square: Square, occupied: Optional[Bitboard] = None) -> Bitboard:
+        occupied = self.occupied if occupied is None else occupied
+
         rank_pieces = BB_RANK_MASKS[square] & occupied
         file_pieces = BB_FILE_MASKS[square] & occupied
         diag_pieces = BB_DIAG_MASKS[square] & occupied
@@ -962,37 +913,47 @@ class BaseBoard:
         queens_and_bishops = self.queens | self.bishops
 
         attackers = (
-            (BB_KING_ATTACKS[square] & self.kings)
-            | (BB_KNIGHT_ATTACKS[square] & self.knights)
-            | (BB_RANK_ATTACKS[square][rank_pieces] & queens_and_rooks)
-            | (BB_FILE_ATTACKS[square][file_pieces] & queens_and_rooks)
-            | (BB_DIAG_ATTACKS[square][diag_pieces] & queens_and_bishops)
-            | (BB_PAWN_ATTACKS[not color][square] & self.pawns)
-        )
+            (BB_KING_ATTACKS[square] & self.kings) |
+            (BB_KNIGHT_ATTACKS[square] & self.knights) |
+            (BB_RANK_ATTACKS[square][rank_pieces] & queens_and_rooks) |
+            (BB_FILE_ATTACKS[square][file_pieces] & queens_and_rooks) |
+            (BB_DIAG_ATTACKS[square][diag_pieces] & queens_and_bishops) |
+            (BB_PAWN_ATTACKS[not color][square] & self.pawns))
 
         return attackers & self.occupied_co[color]
 
-    def attackers_mask(self, color: Color, square: Square) -> Bitboard:
-        return self._attackers_mask(color, square, self.occupied)
-
-    def is_attacked_by(self, color: Color, square: Square) -> bool:
+    def is_attacked_by(self, color: Color, square: Square, occupied: Optional[IntoSquareSet] = None) -> bool:
         """
         Checks if the given side attacks the given square.
 
         Pinned pieces still count as attackers. Pawns that can be captured
         en passant are **not** considered attacked.
-        """
-        return bool(self.attackers_mask(color, square))
 
-    def attackers(self, color: Color, square: Square) -> SquareSet:
+        *occupied* determines which squares are considered to block attacks.
+        For example,
+        ``board.occupied ^ board.pieces_mask(chess.KING, board.turn)`` can be
+        used to consider X-ray attacks through the king.
+        Defaults to ``board.occupied`` (all pieces including the king,
+        no X-ray attacks).
+        """
+        return bool(self.attackers_mask(color, square, None if occupied is None else SquareSet(occupied).mask))
+
+    def attackers(self, color: Color, square: Square, occupied: Optional[IntoSquareSet] = None) -> SquareSet:
         """
         Gets the set of attackers of the given color for the given square.
 
         Pinned pieces still count as attackers.
 
+        *occupied* determines which squares are considered to block attacks.
+        For example,
+        ``board.occupied ^ board.pieces_mask(chess.KING, board.turn)`` can be
+        used to consider X-ray attacks through the king.
+        Defaults to ``board.occupied`` (all pieces including the king,
+        no X-ray attacks).
+
         Returns a :class:`set of squares <chess.SquareSet>`.
         """
-        return SquareSet(self.attackers_mask(color, square))
+        return SquareSet(self.attackers_mask(color, square, None if occupied is None else SquareSet(occupied).mask))
 
     def pin_mask(self, color: Color, square: Square) -> Bitboard:
         king = self.king(color)
@@ -1001,19 +962,14 @@ class BaseBoard:
 
         square_mask = BB_SQUARES[square]
 
-        for attacks, sliders in [
-            (BB_FILE_ATTACKS, self.rooks | self.queens),
-            (BB_RANK_ATTACKS, self.rooks | self.queens),
-            (BB_DIAG_ATTACKS, self.bishops | self.queens),
-        ]:
+        for attacks, sliders in [(BB_FILE_ATTACKS, self.rooks | self.queens),
+                                 (BB_RANK_ATTACKS, self.rooks | self.queens),
+                                 (BB_DIAG_ATTACKS, self.bishops | self.queens)]:
             rays = attacks[king][0]
             if rays & square_mask:
                 snipers = rays & sliders & self.occupied_co[not color]
                 for sniper in scan_reversed(snipers):
-                    if (
-                        between(sniper, king) & (self.occupied | square_mask)
-                        == square_mask
-                    ):
+                    if between(sniper, king) & (self.occupied | square_mask) == square_mask:
                         return ray(king, sniper)
 
                 break
@@ -1086,18 +1042,14 @@ class BaseBoard:
         """
         Removes the piece from the given square. Returns the
         :class:`~chess.Piece` or ``None`` if the square was already empty.
+
+        :class:`~chess.Board` also clears the move stack.
         """
         color = bool(self.occupied_co[WHITE] & BB_SQUARES[square])
         piece_type = self._remove_piece_at(square)
         return Piece(piece_type, color) if piece_type else None
 
-    def _set_piece_at(
-        self,
-        square: Square,
-        piece_type: PieceType,
-        color: Color,
-        promoted: bool = False,
-    ) -> None:
+    def _set_piece_at(self, square: Square, piece_type: PieceType, color: Color, promoted: bool = False) -> None:
         self._remove_piece_at(square)
 
         mask = BB_SQUARES[square]
@@ -1123,14 +1075,14 @@ class BaseBoard:
         if promoted:
             self.promoted ^= mask
 
-    def set_piece_at(
-        self, square: Square, piece: Optional[Piece], promoted: bool = False
-    ) -> None:
+    def set_piece_at(self, square: Square, piece: Optional[Piece], promoted: bool = False) -> None:
         """
         Sets a piece at the given square.
 
         An existing piece is replaced. Setting *piece* to ``None`` is
         equivalent to :func:`~chess.Board.remove_piece_at()`.
+
+        :class:`~chess.Board` also clears the move stack.
         """
         if piece is None:
             self._remove_piece_at(square)
@@ -1142,7 +1094,7 @@ class BaseBoard:
         Gets the board FEN (e.g.,
         ``rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR``).
         """
-        builder = []
+        builder: List[str] = []
         empty = 0
 
         for square in SQUARES_180:
@@ -1172,9 +1124,7 @@ class BaseBoard:
         # Compatibility with set_fen().
         fen = fen.strip()
         if " " in fen:
-            raise ValueError(
-                f"expected position part of fen, got multiple parts: {fen!r}"
-            )
+            raise ValueError(f"expected position part of fen, got multiple parts: {fen!r}")
 
         # Ensure the FEN is valid.
         rows = fen.split("/")
@@ -1190,17 +1140,13 @@ class BaseBoard:
             for c in row:
                 if c in ["1", "2", "3", "4", "5", "6", "7", "8"]:
                     if previous_was_digit:
-                        raise ValueError(
-                            f"two subsequent digits in position part of fen: {fen!r}"
-                        )
+                        raise ValueError(f"two subsequent digits in position part of fen: {fen!r}")
                     field_sum += int(c)
                     previous_was_digit = True
                     previous_was_piece = False
                 elif c == "~":
                     if not previous_was_piece:
-                        raise ValueError(
-                            f"'~' not after piece in position part of fen: {fen!r}"
-                        )
+                        raise ValueError(f"'~' not after piece in position part of fen: {fen!r}")
                     previous_was_digit = False
                     previous_was_piece = False
                 elif c.lower() in PIECE_SYMBOLS:
@@ -1208,14 +1154,10 @@ class BaseBoard:
                     previous_was_digit = False
                     previous_was_piece = True
                 else:
-                    raise ValueError(
-                        f"invalid character in position part of fen: {fen!r}"
-                    )
+                    raise ValueError(f"invalid character in position part of fen: {fen!r}")
 
             if field_sum != 8:
-                raise ValueError(
-                    f"expected 8 columns per row in position part of fen: {fen!r}"
-                )
+                raise ValueError(f"expected 8 columns per row in position part of fen: {fen!r}")
 
         # Clear the board.
         self._clear_board()
@@ -1227,9 +1169,7 @@ class BaseBoard:
                 square_index += int(c)
             elif c.lower() in PIECE_SYMBOLS:
                 piece = Piece.from_symbol(c)
-                self._set_piece_at(
-                    SQUARES_180[square_index], piece.piece_type, piece.color
-                )
+                self._set_piece_at(SQUARES_180[square_index], piece.piece_type, piece.color)
                 square_index += 1
             elif c == "~":
                 self.promoted |= BB_SQUARES[SQUARES_180[square_index - 1]]
@@ -1239,6 +1179,8 @@ class BaseBoard:
         Parses *fen* and sets up the board, where *fen* is the board part of
         a FEN.
 
+        :class:`~chess.Board` also clears the move stack.
+
         :raises: :exc:`ValueError` if syntactically invalid.
         """
         self._set_board_fen(fen)
@@ -1247,7 +1189,7 @@ class BaseBoard:
         """
         Gets a dictionary of :class:`pieces <chess.Piece>` by square index.
         """
-        result = {}
+        result: Dict[Square, Piece] = {}
         for square in scan_reversed(self.occupied & mask):
             result[square] = typing.cast(Piece, self.piece_at(square))
         return result
@@ -1261,6 +1203,8 @@ class BaseBoard:
         """
         Sets up the board from a dictionary of :class:`pieces <chess.Piece>`
         by square index.
+
+        :class:`~chess.Board` also clears the move stack.
         """
         self._set_piece_map(pieces)
 
@@ -1414,7 +1358,7 @@ class BaseBoard:
         return f"{type(self).__name__}({self.board_fen()!r})"
 
     def __str__(self) -> str:
-        builder = []
+        builder: List[str] = []
 
         for square in SQUARES_180:
             piece = self.piece_at(square)
@@ -1432,13 +1376,7 @@ class BaseBoard:
 
         return "".join(builder)
 
-    def unicode(
-        self,
-        *,
-        invert_color: bool = False,
-        borders: bool = False,
-        empty_square: str = "⭘",
-    ) -> str:
+    def unicode(self, *, invert_color: bool = False, borders: bool = False, empty_square: str = "⭘", orientation: Color = WHITE) -> str:
         """
         Returns a string representation of the board with Unicode pieces.
         Useful for pretty-printing to a terminal.
@@ -1446,8 +1384,8 @@ class BaseBoard:
         :param invert_color: Invert color of the Unicode pieces.
         :param borders: Show borders and a coordinate margin.
         """
-        builder = []
-        for rank_index in range(7, -1, -1):
+        builder: List[str] = []
+        for rank_index in (range(7, -1, -1) if orientation else range(8)):
             if borders:
                 builder.append("  ")
                 builder.append("-" * 17)
@@ -1456,12 +1394,12 @@ class BaseBoard:
                 builder.append(RANK_NAMES[rank_index])
                 builder.append(" ")
 
-            for file_index in range(8):
+            for i, file_index in enumerate(range(8) if orientation else range(7, -1, -1)):
                 square_index = square(file_index, rank_index)
 
                 if borders:
                     builder.append("|")
-                elif file_index > 0:
+                elif i > 0:
                     builder.append(" ")
 
                 piece = self.piece_at(square_index)
@@ -1474,34 +1412,33 @@ class BaseBoard:
             if borders:
                 builder.append("|")
 
-            if borders or rank_index > 0:
+            if borders or (rank_index > 0 if orientation else rank_index < 7):
                 builder.append("\n")
 
         if borders:
             builder.append("  ")
             builder.append("-" * 17)
             builder.append("\n")
-            builder.append("   a b c d e f g h")
+            letters = "a b c d e f g h" if orientation else "h g f e d c b a"
+            builder.append("   " + letters)
 
         return "".join(builder)
 
     def _repr_svg_(self) -> str:
         import chess.svg
-
         return chess.svg.board(board=self, size=400)
 
     def __eq__(self, board: object) -> bool:
         if isinstance(board, BaseBoard):
             return (
-                self.occupied == board.occupied
-                and self.occupied_co[WHITE] == board.occupied_co[WHITE]
-                and self.pawns == board.pawns
-                and self.knights == board.knights
-                and self.bishops == board.bishops
-                and self.rooks == board.rooks
-                and self.queens == board.queens
-                and self.kings == board.kings
-            )
+                self.occupied == board.occupied and
+                self.occupied_co[WHITE] == board.occupied_co[WHITE] and
+                self.pawns == board.pawns and
+                self.knights == board.knights and
+                self.bishops == board.bishops and
+                self.rooks == board.rooks and
+                self.queens == board.queens and
+                self.kings == board.kings)
         else:
             return NotImplemented
 
@@ -1518,10 +1455,10 @@ class BaseBoard:
         self.occupied = f(self.occupied)
         self.promoted = f(self.promoted)
 
-    def transform(self: BaseBoardT, f: Callable[[Bitboard], Bitboard]) -> BaseBoardT:
+    def transform(self, f: Callable[[Bitboard], Bitboard]) -> Self:
         """
-        Returns a transformed copy of the board by applying a bitboard
-        transformation function.
+        Returns a transformed copy of the board (without move stack)
+        by applying a bitboard transformation function.
 
         Available transformations include :func:`chess.flip_vertical()`,
         :func:`chess.flip_horizontal()`, :func:`chess.flip_diagonal()`,
@@ -1536,16 +1473,13 @@ class BaseBoard:
         board.apply_transform(f)
         return board
 
-    def apply_mirror(self: BaseBoardT) -> None:
+    def apply_mirror(self) -> None:
         self.apply_transform(flip_vertical)
-        self.occupied_co[WHITE], self.occupied_co[BLACK] = (
-            self.occupied_co[BLACK],
-            self.occupied_co[WHITE],
-        )
+        self.occupied_co[WHITE], self.occupied_co[BLACK] = self.occupied_co[BLACK], self.occupied_co[WHITE]
 
-    def mirror(self: BaseBoardT) -> BaseBoardT:
+    def mirror(self) -> Self:
         """
-        Returns a mirrored copy of the board.
+        Returns a mirrored copy of the board (without move stack).
 
         The board is mirrored vertically and piece colors are swapped, so that
         the position is equivalent modulo color.
@@ -1557,7 +1491,7 @@ class BaseBoard:
         board.apply_mirror()
         return board
 
-    def copy(self: BaseBoardT) -> BaseBoardT:
+    def copy(self) -> Self:
         """Creates a copy of the board."""
         board = type(self)(None)
 
@@ -1575,10 +1509,10 @@ class BaseBoard:
 
         return board
 
-    def __copy__(self: BaseBoardT) -> BaseBoardT:
+    def __copy__(self) -> Self:
         return self.copy()
 
-    def __deepcopy__(self: BaseBoardT, memo: Dict[int, object]) -> BaseBoardT:
+    def __deepcopy__(self, memo: Dict[int, object]) -> Self:
         board = self.copy()
         memo[id(self)] = board
         return board
@@ -1599,7 +1533,7 @@ class BaseBoard:
         >>> import chess
         >>> import random
         >>>
-        >>> board = 
+        >>> board = chess.Board.from_chess960_pos(random.randint(0, 959))
         """
         board = cls.empty()
         board.set_chess960_pos(scharnagl)
@@ -1608,9 +1542,9 @@ class BaseBoard:
 
 BoardT = TypeVar("BoardT", bound="Board")
 
+class _BoardState:
 
-class _BoardState(Generic[BoardT]):
-    def __init__(self, board: BoardT) -> None:
+    def __init__(self, board: Board) -> None:
         self.pawns = board.pawns
         self.knights = board.knights
         self.bishops = board.bishops
@@ -1630,7 +1564,7 @@ class _BoardState(Generic[BoardT]):
         self.halfmove_clock = board.halfmove_clock
         self.fullmove_number = board.fullmove_number
 
-    def restore(self, board: BoardT) -> None:
+    def restore(self, board: Board) -> None:
         board.pawns = self.pawns
         board.knights = self.knights
         board.bishops = self.bishops
@@ -1649,7 +1583,6 @@ class _BoardState(Generic[BoardT]):
         board.ep_square = self.ep_square
         board.halfmove_clock = self.halfmove_clock
         board.fullmove_number = self.fullmove_number
-
 
 class Board(BaseBoard):
     """
@@ -1682,14 +1615,7 @@ class Board(BaseBoard):
         Use :func:`~chess.Board.is_valid()` to detect invalid positions.
     """
 
-    aliases: ClassVar[List[str]] = [
-        "Standard",
-        "Chess",
-        "Classical",
-        "Normal",
-        "Illegal",
-        "From Position",
-    ]
+    aliases: ClassVar[List[str]] = ["Standard", "Chess", "Classical", "Normal", "Illegal", "From Position"]
     uci_variant: ClassVar[Optional[str]] = "chess"
     xboard_variant: ClassVar[Optional[str]] = "normal"
     starting_fen: ClassVar[str] = STARTING_FEN
@@ -1768,16 +1694,14 @@ class Board(BaseBoard):
     manipulation.
     """
 
-    def __init__(
-        self: BoardT, fen: Optional[str] = STARTING_FEN, *, chess960: bool = False
-    ) -> None:
+    def __init__(self, fen: Optional[str] = STARTING_FEN, *, chess960: bool = False) -> None:
         BaseBoard.__init__(self, None)
 
         self.chess960 = chess960
 
         self.ep_square = None
         self.move_stack = []
-        self._stack: List[_BoardState[BoardT]] = []
+        self._stack: List[_BoardState] = []
 
         if fen is None:
             self.clear()
@@ -1832,11 +1756,6 @@ class Board(BaseBoard):
         self.reset_board()
 
     def reset_board(self) -> None:
-        """
-        Resets only pieces to the starting position. Use
-        :func:`~chess.Board.reset()` to fully restore the starting position
-        (including turn, castling rights, etc.).
-        """
         super().reset_board()
         self.clear_stack()
 
@@ -1867,7 +1786,7 @@ class Board(BaseBoard):
         self.move_stack.clear()
         self._stack.clear()
 
-    def root(self: BoardT) -> BoardT:
+    def root(self) -> Self:
         """Returns a copy of the root position."""
         if self._stack:
             board = type(self)(None, chess960=self.chess960)
@@ -1893,15 +1812,11 @@ class Board(BaseBoard):
         self.clear_stack()
         return piece
 
-    def set_piece_at(
-        self, square: Square, piece: Optional[Piece], promoted: bool = False
-    ) -> None:
+    def set_piece_at(self, square: Square, piece: Optional[Piece], promoted: bool = False) -> None:
         super().set_piece_at(square, piece, promoted=promoted)
         self.clear_stack()
 
-    def generate_pseudo_legal_moves(
-        self, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL
-    ) -> Iterator[Move]:
+    def generate_pseudo_legal_moves(self, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL) -> Iterator[Move]:
         our_pieces = self.occupied_co[self.turn]
 
         # Generate piece moves.
@@ -1924,10 +1839,8 @@ class Board(BaseBoard):
         capturers = pawns
         for from_square in scan_reversed(capturers):
             targets = (
-                BB_PAWN_ATTACKS[self.turn][from_square]
-                & self.occupied_co[not self.turn]
-                & to_mask
-            )
+                BB_PAWN_ATTACKS[self.turn][from_square] &
+                self.occupied_co[not self.turn] & to_mask)
 
             for to_square in scan_reversed(targets):
                 if square_rank(to_square) in [0, 7]:
@@ -1970,9 +1883,7 @@ class Board(BaseBoard):
         if self.ep_square:
             yield from self.generate_pseudo_legal_ep(from_mask, to_mask)
 
-    def generate_pseudo_legal_ep(
-        self, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL
-    ) -> Iterator[Move]:
+    def generate_pseudo_legal_ep(self, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL) -> Iterator[Move]:
         if not self.ep_square or not BB_SQUARES[self.ep_square] & to_mask:
             return
 
@@ -1980,25 +1891,17 @@ class Board(BaseBoard):
             return
 
         capturers = (
-            self.pawns
-            & self.occupied_co[self.turn]
-            & from_mask
-            & BB_PAWN_ATTACKS[not self.turn][self.ep_square]
-            & BB_RANKS[4 if self.turn else 3]
-        )
+            self.pawns & self.occupied_co[self.turn] & from_mask &
+            BB_PAWN_ATTACKS[not self.turn][self.ep_square] &
+            BB_RANKS[4 if self.turn else 3])
 
         for capturer in scan_reversed(capturers):
             yield Move(capturer, self.ep_square)
 
-    def generate_pseudo_legal_captures(
-        self, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL
-    ) -> Iterator[Move]:
+    def generate_pseudo_legal_captures(self, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL) -> Iterator[Move]:
         return itertools.chain(
-            self.generate_pseudo_legal_moves(
-                from_mask, to_mask & self.occupied_co[not self.turn]
-            ),
-            self.generate_pseudo_legal_ep(from_mask, to_mask),
-        )
+            self.generate_pseudo_legal_moves(from_mask, to_mask & self.occupied_co[not self.turn]),
+            self.generate_pseudo_legal_ep(from_mask, to_mask))
 
     def checkers_mask(self) -> Bitboard:
         king = self.king(self.turn)
@@ -2034,9 +1937,7 @@ class Board(BaseBoard):
 
         # If already in check, look if it is an evasion.
         checkers = self.attackers_mask(not self.turn, king)
-        if checkers and move not in self._generate_evasions(
-            king, checkers, BB_SQUARES[move.from_square], BB_SQUARES[move.to_square]
-        ):
+        if checkers and move not in self._generate_evasions(king, checkers, BB_SQUARES[move.from_square], BB_SQUARES[move.to_square]):
             return True
 
         return not self._is_safe(king, self._slider_blockers(king), move)
@@ -2095,11 +1996,7 @@ class Board(BaseBoard):
         return bool(self.attacks_mask(move.from_square) & to_mask)
 
     def is_legal(self, move: Move) -> bool:
-        return (
-            not self.is_variant_end()
-            and self.is_pseudo_legal(move)
-            and not self.is_into_check(move)
-        )
+        return not self.is_variant_end() and self.is_pseudo_legal(move) and not self.is_into_check(move)
 
     def is_variant_end(self) -> bool:
         """
@@ -2238,9 +2135,8 @@ class Board(BaseBoard):
         # (2) The opponent does not have pawns, knights, bishops or rooks.
         #     These would allow selfmate.
         if self.occupied_co[color] & self.knights:
-            return popcount(self.occupied_co[color]) <= 2 and not (
-                self.occupied_co[not color] & ~self.kings & ~self.queens
-            )
+            return (popcount(self.occupied_co[color]) <= 2 and
+                    not (self.occupied_co[not color] & ~self.kings & ~self.queens))
 
         # Bishops are only insufficient material if:
         # (1) We do not have any other pieces, including bishops of the
@@ -2248,9 +2144,7 @@ class Board(BaseBoard):
         # (2) The opponent does not have bishops of the opposite color,
         #     pawns or knights. These would allow selfmate.
         if self.occupied_co[color] & self.bishops:
-            same_color = (not self.bishops & BB_DARK_SQUARES) or (
-                not self.bishops & BB_LIGHT_SQUARES
-            )
+            same_color = (not self.bishops & BB_DARK_SQUARES) or (not self.bishops & BB_LIGHT_SQUARES)
             return same_color and not self.pawns and not self.knights
 
         return True
@@ -2286,16 +2180,20 @@ class Board(BaseBoard):
         return self.can_claim_fifty_moves() or self.can_claim_threefold_repetition()
 
     def is_fifty_moves(self) -> bool:
+        """
+        Checks that the clock of halfmoves since the last capture or pawn move
+        is greater or equal to 100, and that no other means of ending the game
+        (like checkmate) take precedence.
+        """
         return self._is_halfmoves(100)
 
     def can_claim_fifty_moves(self) -> bool:
         """
         Checks if the player to move can claim a draw by the fifty-move rule.
 
-        Draw by the fifty-move rule can be claimed once the clock of halfmoves
-        since the last capture or pawn move becomes equal or greater to 100,
-        or if there is a legal move that achieves this. Other means of ending
-        the game take precedence.
+        In addition to :func:`~chess.Board.is_fifty_moves()`, the fifty-move
+        rule can also be claimed if there is a legal move that achieves this
+        condition.
         """
         if self.is_fifty_moves():
             return True
@@ -2317,7 +2215,7 @@ class Board(BaseBoard):
         Checks if the player to move can claim a draw by threefold repetition.
 
         Draw by threefold repetition can be claimed if the position on the
-        board occured for the third time or if such a repetition is reached
+        board occurred for the third time or if such a repetition is reached
         with one of the possible legal moves.
 
         Note that checking this can be slow: In the worst case
@@ -2326,10 +2224,10 @@ class Board(BaseBoard):
         """
         transposition_key = self._transposition_key()
         transpositions: Counter[Hashable] = collections.Counter()
-        transpositions.update((transposition_key,))
+        transpositions.update((transposition_key, ))
 
         # Count positions.
-        switchyard = []
+        switchyard: List[Move] = []
         while self.move_stack:
             move = self.pop()
             switchyard.append(move)
@@ -2337,12 +2235,12 @@ class Board(BaseBoard):
             if self.is_irreversible(move):
                 break
 
-            transpositions.update((self._transposition_key(),))
+            transpositions.update((self._transposition_key(), ))
 
         while switchyard:
             self.push(switchyard.pop())
 
-        # Threefold repetition occured.
+        # Threefold repetition occurred.
         if transpositions[transposition_key] >= 3:
             return True
 
@@ -2382,7 +2280,7 @@ class Board(BaseBoard):
 
         # Check full replay.
         transposition_key = self._transposition_key()
-        switchyard = []
+        switchyard: List[Move] = []
 
         try:
             while True:
@@ -2406,19 +2304,10 @@ class Board(BaseBoard):
 
         return False
 
-    def _board_state(self: BoardT) -> _BoardState[BoardT]:
-        return _BoardState(self)
-
-    def _push_capture(
-        self,
-        move: Move,
-        capture_square: Square,
-        piece_type: PieceType,
-        was_promoted: bool,
-    ) -> None:
+    def _push_capture(self, move: Move, capture_square: Square, piece_type: PieceType, was_promoted: bool) -> None:
         pass
 
-    def push(self: BoardT, move: Move) -> None:
+    def push(self, move: Move) -> None:
         """
         Updates the position with the given *move* and puts it onto the
         move stack.
@@ -2443,17 +2332,9 @@ class Board(BaseBoard):
         """
         # Push move and remember board state.
         move = self._to_chess960(move)
-        board_state = self._board_state()
+        board_state = _BoardState(self)
         self.castling_rights = self.clean_castling_rights()  # Before pushing stack
-        self.move_stack.append(
-            self._from_chess960(
-                self.chess960,
-                move.from_square,
-                move.to_square,
-                move.promotion,
-                move.drop,
-            )
-        )
+        self.move_stack.append(self._from_chess960(self.chess960, move.from_square, move.to_square, move.promotion, move.drop))
         self._stack.append(board_state)
 
         # Reset en passant square.
@@ -2485,9 +2366,7 @@ class Board(BaseBoard):
 
         promoted = bool(self.promoted & from_bb)
         piece_type = self._remove_piece_at(move.from_square)
-        assert (
-            piece_type is not None
-        ), f"push() expects move to be pseudo-legal, but got {move} in {self.board_fen()}"
+        assert piece_type is not None, f"push() expects move to be pseudo-legal, but got {move} in {self.board_fen()}"
         capture_square = move.to_square
         captured_piece_type = self.piece_type_at(capture_square)
 
@@ -2512,11 +2391,7 @@ class Board(BaseBoard):
                 self.ep_square = move.from_square + 8
             elif diff == -16 and square_rank(move.from_square) == 6:
                 self.ep_square = move.from_square - 8
-            elif (
-                move.to_square == ep_square
-                and abs(diff) in [7, 9]
-                and not captured_piece_type
-            ):
+            elif move.to_square == ep_square and abs(diff) in [7, 9] and not captured_piece_type:
                 # Remove pawns captured en passant.
                 down = -8 if self.turn == WHITE else 8
                 capture_square = ep_square + down
@@ -2548,14 +2423,12 @@ class Board(BaseBoard):
             self._set_piece_at(move.to_square, piece_type, self.turn, promoted)
 
             if captured_piece_type:
-                self._push_capture(
-                    move, capture_square, captured_piece_type, was_promoted
-                )
+                self._push_capture(move, capture_square, captured_piece_type, was_promoted)
 
         # Swap turn.
         self.turn = not self.turn
 
-    def pop(self: BoardT) -> Move:
+    def pop(self) -> Move:
         """
         Restores the previous position and returns the last move from the stack.
 
@@ -2573,12 +2446,7 @@ class Board(BaseBoard):
         """
         return self.move_stack[-1]
 
-    def find_move(
-        self,
-        from_square: Square,
-        to_square: Square,
-        promotion: Optional[PieceType] = None,
-    ) -> Move:
+    def find_move(self, from_square: Square, to_square: Square, promotion: Optional[PieceType] = None) -> Move:
         """
         Finds a matching legal move for an origin square, a target square, and
         an optional promotion piece type.
@@ -2589,20 +2457,14 @@ class Board(BaseBoard):
         Castling moves are normalized to king moves by two steps, except in
         Chess960.
 
-        :raises: :exc:`ValueError` if no matching legal move is found.
+        :raises: :exc:`IllegalMoveError` if no matching legal move is found.
         """
-        if (
-            promotion is None
-            and self.pawns & BB_SQUARES[from_square]
-            and BB_SQUARES[to_square] & BB_BACKRANKS
-        ):
+        if promotion is None and self.pawns & BB_SQUARES[from_square] and BB_SQUARES[to_square] & BB_BACKRANKS:
             promotion = QUEEN
 
         move = self._from_chess960(self.chess960, from_square, to_square, promotion)
         if not self.is_legal(move):
-            raise ValueError(
-                f"no matching legal move for {move.uci()} ({SQUARE_NAMES[from_square]} -> {SQUARE_NAMES[to_square]}) in {self.fen()}"
-            )
+            raise IllegalMoveError(f"no matching legal move for {move.uci()} ({SQUARE_NAMES[from_square]} -> {SQUARE_NAMES[to_square]}) in {self.fen()}")
 
         return move
 
@@ -2611,7 +2473,7 @@ class Board(BaseBoard):
         if not castling_rights:
             return "-"
 
-        builder = []
+        builder: List[str] = []
 
         for square in scan_reversed(castling_rights & BB_RANK_1):
             builder.append(FILE_NAMES[square_file(square)].upper())
@@ -2622,7 +2484,7 @@ class Board(BaseBoard):
         return "".join(builder)
 
     def castling_xfen(self) -> str:
-        builder = []
+        builder: List[str] = []
 
         for color in COLORS:
             king = self.king(color)
@@ -2636,17 +2498,9 @@ class Board(BaseBoard):
                 rook_file = square_file(rook_square)
                 a_side = rook_file < king_file
 
-                other_rooks = (
-                    self.occupied_co[color]
-                    & self.rooks
-                    & backrank
-                    & ~BB_SQUARES[rook_square]
-                )
+                other_rooks = self.occupied_co[color] & self.rooks & backrank & ~BB_SQUARES[rook_square]
 
-                if any(
-                    (square_file(other) < rook_file) == a_side
-                    for other in scan_reversed(other_rooks)
-                ):
+                if any((square_file(other) < rook_file) == a_side for other in scan_reversed(other_rooks)):
                     ch = FILE_NAMES[rook_file]
                 else:
                     ch = "q" if a_side else "k"
@@ -2666,13 +2520,7 @@ class Board(BaseBoard):
         """Checks if there is a legal en passant capture."""
         return self.ep_square is not None and any(self.generate_legal_ep())
 
-    def fen(
-        self,
-        *,
-        shredder: bool = False,
-        en_passant: _EnPassantSpec = "legal",
-        promoted: Optional[bool] = None,
-    ) -> str:
+    def fen(self, *, shredder: bool = False, en_passant: EnPassantSpec = "legal", promoted: Optional[bool] = None) -> str:
         """
         Gets a FEN representation of the position.
 
@@ -2698,24 +2546,18 @@ class Board(BaseBoard):
         :param promoted: Mark promoted pieces like ``Q~``. By default, this is
             only enabled in chess variants where this is relevant.
         """
-        return " ".join(
-            [
-                self.epd(shredder=shredder, en_passant=en_passant, promoted=promoted),
-                str(self.halfmove_clock),
-                str(self.fullmove_number),
-            ]
-        )
+        return " ".join([
+            self.epd(shredder=shredder, en_passant=en_passant, promoted=promoted),
+            str(self.halfmove_clock),
+            str(self.fullmove_number)
+        ])
 
-    def shredder_fen(
-        self, *, en_passant: _EnPassantSpec = "legal", promoted: Optional[bool] = None
-    ) -> str:
-        return " ".join(
-            [
-                self.epd(shredder=True, en_passant=en_passant, promoted=promoted),
-                str(self.halfmove_clock),
-                str(self.fullmove_number),
-            ]
-        )
+    def shredder_fen(self, *, en_passant: EnPassantSpec = "legal", promoted: Optional[bool] = None) -> str:
+        return " ".join([
+            self.epd(shredder=True, en_passant=en_passant, promoted=promoted),
+            str(self.halfmove_clock),
+            str(self.fullmove_number)
+        ])
 
     def set_fen(self, fen: str) -> None:
         """
@@ -2848,6 +2690,8 @@ class Board(BaseBoard):
         """
         Sets castling rights from a string in FEN notation like ``Qqk``.
 
+        Also clears the move stack.
+
         :raises: :exc:`ValueError` if the castling FEN is syntactically
             invalid.
         """
@@ -2873,13 +2717,7 @@ class Board(BaseBoard):
 
         self.clear_stack()
 
-    def chess960_pos(
-        self,
-        *,
-        ignore_turn: bool = False,
-        ignore_castling: bool = False,
-        ignore_counters: bool = True,
-    ) -> Optional[int]:
+    def chess960_pos(self, *, ignore_turn: bool = False, ignore_castling: bool = False, ignore_counters: bool = True) -> Optional[int]:
         """
         Gets the Chess960 starting position index between 0 and 956,
         or ``None`` if the current position is not a Chess960 starting
@@ -2906,19 +2744,12 @@ class Board(BaseBoard):
 
         return super().chess960_pos()
 
-    def _epd_operations(
-        self,
-        operations: Mapping[str, Union[None, str, int, float, Move, Iterable[Move]]],
-    ) -> str:
-        epd = []
+    def _epd_operations(self, operations: Mapping[str, Union[None, str, int, float, Move, Iterable[Move]]]) -> str:
+        epd: List[str] = []
         first_op = True
 
         for opcode, operand in operations.items():
-            assert opcode != "-", "dash (-) is not a valid epd opcode"
-            for blacklisted in [" ", "\n", "\t", "\r"]:
-                assert (
-                    blacklisted not in opcode
-                ), f"invalid character {blacklisted!r} in epd opcode: {opcode!r}"
+            self._validate_epd_opcode(opcode)
 
             if not first_op:
                 epd.append(" ")
@@ -2934,52 +2765,28 @@ class Board(BaseBoard):
             elif isinstance(operand, int):
                 epd.append(f" {operand};")
             elif isinstance(operand, float):
-                assert math.isfinite(
-                    operand
-                ), f"expected numeric epd operand to be finite, got: {operand}"
+                assert math.isfinite(operand), f"expected numeric epd operand to be finite, got: {operand}"
                 epd.append(f" {operand};")
-            elif (
-                opcode == "pv"
-                and not isinstance(operand, str)
-                and hasattr(operand, "__iter__")
-            ):
+            elif opcode == "pv" and not isinstance(operand, str) and hasattr(operand, "__iter__"):
                 position = self.copy(stack=False)
                 for move in operand:
                     epd.append(" ")
                     epd.append(position.san_and_push(move))
                 epd.append(";")
-            elif (
-                opcode in ["am", "bm"]
-                and not isinstance(operand, str)
-                and hasattr(operand, "__iter__")
-            ):
+            elif opcode in ["am", "bm"] and not isinstance(operand, str) and hasattr(operand, "__iter__"):
                 for san in sorted(self.san(move) for move in operand):
                     epd.append(" ")
                     epd.append(san)
                 epd.append(";")
             else:
                 # Append as escaped string.
-                epd.append(' "')
-                epd.append(
-                    str(operand)
-                    .replace("\\", "\\\\")
-                    .replace("\t", "\\t")
-                    .replace("\r", "\\r")
-                    .replace("\n", "\\n")
-                    .replace('"', '\\"')
-                )
-                epd.append('";')
+                epd.append(" \"")
+                epd.append(str(operand).replace("\\", "\\\\").replace("\t", "\\t").replace("\r", "\\r").replace("\n", "\\n").replace("\"", "\\\""))
+                epd.append("\";")
 
         return "".join(epd)
 
-    def epd(
-        self,
-        *,
-        shredder: bool = False,
-        en_passant: _EnPassantSpec = "legal",
-        promoted: Optional[bool] = None,
-        **operations: Union[None, str, int, float, Move, Iterable[Move]],
-    ) -> str:
+    def epd(self, *, shredder: bool = False, en_passant: EnPassantSpec = "legal", promoted: Optional[bool] = None, **operations: Union[None, str, int, float, Move, Iterable[Move]]) -> str:
         """
         Gets an EPD representation of the current position.
 
@@ -3010,21 +2817,28 @@ class Board(BaseBoard):
         else:
             ep_square = self.ep_square if self.has_legal_en_passant() else None
 
-        epd = [
-            self.board_fen(promoted=promoted),
-            "w" if self.turn == WHITE else "b",
-            self.castling_shredder_fen() if shredder else self.castling_xfen(),
-            SQUARE_NAMES[ep_square] if ep_square is not None else "-",
-        ]
+        epd = [self.board_fen(promoted=promoted),
+               "w" if self.turn == WHITE else "b",
+               self.castling_shredder_fen() if shredder else self.castling_xfen(),
+               SQUARE_NAMES[ep_square] if ep_square is not None else "-"]
 
         if operations:
             epd.append(self._epd_operations(operations))
 
         return " ".join(epd)
 
-    def _parse_epd_ops(
-        self: BoardT, operation_part: str, make_board: Callable[[], BoardT]
-    ) -> Dict[str, Union[None, str, int, float, Move, List[Move]]]:
+    def _validate_epd_opcode(self, opcode: str) -> None:
+        if not opcode:
+            raise ValueError("empty string is not a valid epd opcode")
+        if opcode == "-":
+            raise ValueError("dash (-) is not a valid epd opcode")
+        if not opcode[0].isalpha():
+            raise ValueError(f"expected epd opcode to start with a letter, got: {opcode!r}")
+        for blacklisted in [" ", "\n", "\t", "\r"]:
+            if blacklisted in opcode:
+                raise ValueError(f"invalid character {blacklisted!r} in epd opcode: {opcode!r}")
+
+    def _parse_epd_ops(self, operation_part: str, make_board: Callable[[], Self]) -> Dict[str, Union[None, str, int, float, Move, List[Move]]]:
         operations: Dict[str, Union[None, str, int, float, Move, List[Move]]] = {}
         state = "opcode"
         opcode = ""
@@ -3037,27 +2851,24 @@ class Board(BaseBoard):
                     if opcode == "-":
                         opcode = ""
                     elif opcode:
+                        self._validate_epd_opcode(opcode)
                         state = "after_opcode"
                 elif ch is None or ch == ";":
                     if opcode == "-":
                         opcode = ""
                     elif opcode:
-                        operations[opcode] = (
-                            [] if opcode in ["pv", "am", "bm"] else None
-                        )
+                        operations[opcode] = [] if opcode in ["pv", "am", "bm"] else None
                         opcode = ""
                 else:
                     opcode += ch
             elif state == "after_opcode":
                 if ch in [" ", "\t", "\r", "\n"]:
                     pass
-                elif ch == '"':
+                elif ch == "\"":
                     state = "string"
                 elif ch is None or ch == ";":
                     if opcode:
-                        operations[opcode] = (
-                            [] if opcode in ["pv", "am", "bm"] else None
-                        )
+                        operations[opcode] = [] if opcode in ["pv", "am", "bm"] else None
                         opcode = ""
                     state = "opcode"
                 elif ch in "+-.0123456789":
@@ -3071,9 +2882,7 @@ class Board(BaseBoard):
                     if "." in operand or "e" in operand or "E" in operand:
                         parsed = float(operand)
                         if not math.isfinite(parsed):
-                            raise ValueError(
-                                f"invalid numeric operand for epd operation {opcode!r}: {operand!r}"
-                            )
+                            raise ValueError(f"invalid numeric operand for epd operation {opcode!r}: {operand!r}")
                         operations[opcode] = parsed
                     else:
                         operations[opcode] = int(operand)
@@ -3083,7 +2892,7 @@ class Board(BaseBoard):
                 else:
                     operand += ch
             elif state == "string":
-                if ch is None or ch == '"':
+                if ch is None or ch == "\"":
                     operations[opcode] = operand
                     opcode = ""
                     operand = ""
@@ -3117,7 +2926,7 @@ class Board(BaseBoard):
 
                     if opcode == "pv":
                         # A variation.
-                        variation = []
+                        variation: List[Move] = []
                         for token in operand.split():
                             move = position.parse_xboard(token)
                             variation.append(move)
@@ -3130,9 +2939,7 @@ class Board(BaseBoard):
                         operations[opcode] = variation
                     elif opcode in ["bm", "am"]:
                         # A set of moves.
-                        operations[opcode] = [
-                            position.parse_xboard(token) for token in operand.split()
-                        ]
+                        operations[opcode] = [position.parse_xboard(token) for token in operand.split()]
                     else:
                         # A single move.
                         operations[opcode] = position.parse_xboard(operand)
@@ -3146,9 +2953,7 @@ class Board(BaseBoard):
         assert state == "opcode"
         return operations
 
-    def set_epd(
-        self, epd: str
-    ) -> Dict[str, Union[None, str, int, float, Move, List[Move]]]:
+    def set_epd(self, epd: str) -> Dict[str, Union[None, str, int, float, Move, List[Move]]]:
         """
         Parses the given EPD string and uses it to set the position.
 
@@ -3164,9 +2969,7 @@ class Board(BaseBoard):
 
         # Parse ops.
         if len(parts) > 4:
-            operations = self._parse_epd_ops(
-                parts.pop(), lambda: type(self)(" ".join(parts) + " 0 1")
-            )
+            operations = self._parse_epd_ops(parts.pop(), lambda: type(self)(" ".join(parts) + " 0 1"))
             parts.append(str(operations["hmvc"]) if "hmvc" in operations else "0")
             parts.append(str(operations["fmvn"]) if "fmvn" in operations else "1")
             self.set_fen(" ".join(parts))
@@ -3203,11 +3006,7 @@ class Board(BaseBoard):
         # Look ahead for check or checkmate.
         self.push(move)
         is_check = self.is_check()
-        is_checkmate = (
-            (is_check and self.is_checkmate())
-            or self.is_variant_loss()
-            or self.is_variant_win()
-        )
+        is_checkmate = (is_check and self.is_checkmate()) or self.is_variant_loss() or self.is_variant_win()
 
         # Add check or checkmate suffix.
         if is_checkmate and move:
@@ -3238,9 +3037,7 @@ class Board(BaseBoard):
                 return "O-O"
 
         piece_type = self.piece_type_at(move.from_square)
-        assert (
-            piece_type
-        ), f"san() and lan() expect move to be legal or null, but got {move} in {self.fen()}"
+        assert piece_type, f"san() and lan() expect move to be legal or null, but got {move} in {self.fen()}"
         capture = self.is_capture(move)
 
         if piece_type == PAWN:
@@ -3303,14 +3100,14 @@ class Board(BaseBoard):
 
         The board will not be modified as a result of calling this.
 
-        :raises: :exc:`ValueError` if any moves in the sequence are illegal.
+        :raises: :exc:`IllegalMoveError` if any moves in the sequence are illegal.
         """
         board = self.copy(stack=False)
-        san = []
+        san: List[str] = []
 
         for move in variation:
             if not board.is_legal(move):
-                raise ValueError(f"illegal move {move} in position {board.fen()}")
+                raise IllegalMoveError(f"illegal move {move} in position {board.fen()}")
 
             if board.turn == WHITE:
                 san.append(f"{board.fullmove_number}. {board.san_and_push(move)}")
@@ -3327,28 +3124,26 @@ class Board(BaseBoard):
         algebraic notation and returns the corresponding move object.
 
         Ambiguous moves are rejected. Overspecified moves (including long
-        algebraic notation) are accepted.
+        algebraic notation) are accepted. Some common syntactical deviations
+        are also accepted.
 
         The returned move is guaranteed to be either legal or a null move.
 
-        :raises: :exc:`ValueError` if the SAN is invalid, illegal or ambiguous.
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if the SAN is invalid, illegal or ambiguous.
+
+            - :exc:`InvalidMoveError` if the SAN is syntactically invalid.
+            - :exc:`IllegalMoveError` if the SAN is illegal.
+            - :exc:`AmbiguousMoveError` if the SAN is ambiguous.
         """
         # Castling.
         try:
             if san in ["O-O", "O-O+", "O-O#", "0-0", "0-0+", "0-0#"]:
-                return next(
-                    move
-                    for move in self.generate_castling_moves()
-                    if self.is_kingside_castling(move)
-                )
+                return next(move for move in self.generate_castling_moves() if self.is_kingside_castling(move))
             elif san in ["O-O-O", "O-O-O+", "O-O-O#", "0-0-0", "0-0-0+", "0-0-0#"]:
-                return next(
-                    move
-                    for move in self.generate_castling_moves()
-                    if self.is_queenside_castling(move)
-                )
+                return next(move for move in self.generate_castling_moves() if self.is_queenside_castling(move))
         except StopIteration:
-            raise ValueError(f"illegal san: {san!r} in {self.fen()}")
+            raise IllegalMoveError(f"illegal san: {san!r} in {self.fen()}")
 
         # Match normal moves.
         match = SAN_REGEX.match(san)
@@ -3357,9 +3152,9 @@ class Board(BaseBoard):
             if san in ["--", "Z0", "0000", "@@@@"]:
                 return Move.null()
             elif "," in san:
-                raise ValueError(f"unsupported multi-leg move: {san!r}")
+                raise InvalidMoveError(f"unsupported multi-leg move: {san!r}")
             else:
-                raise ValueError(f"invalid san: {san!r}")
+                raise InvalidMoveError(f"invalid san: {san!r}")
 
         # Get target square. Mask our own pieces to exclude castling moves.
         to_square = SQUARE_NAMES.index(match.group(4))
@@ -3389,11 +3184,13 @@ class Board(BaseBoard):
             if move.promotion == promotion:
                 return move
             else:
-                raise ValueError(
-                    f"missing promotion piece type: {san!r} in {self.fen()}"
-                )
+                raise IllegalMoveError(f"missing promotion piece type: {san!r} in {self.fen()}")
         else:
             from_mask &= self.pawns
+
+            # Do not allow pawn captures if file is not specified.
+            if not match.group(2):
+                from_mask &= BB_FILES[square_file(to_square)]
 
         # Match legal moves.
         matched_move = None
@@ -3402,12 +3199,12 @@ class Board(BaseBoard):
                 continue
 
             if matched_move:
-                raise ValueError(f"ambiguous san: {san!r} in {self.fen()}")
+                raise AmbiguousMoveError(f"ambiguous san: {san!r} in {self.fen()}")
 
             matched_move = move
 
         if not matched_move:
-            raise ValueError(f"illegal san: {san!r} in {self.fen()}")
+            raise IllegalMoveError(f"illegal san: {san!r} in {self.fen()}")
 
         return matched_move
 
@@ -3418,7 +3215,12 @@ class Board(BaseBoard):
 
         Returns the move.
 
-        :raises: :exc:`ValueError` if neither legal nor a null move.
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if neither legal nor a null move.
+
+            - :exc:`InvalidMoveError` if the SAN is syntactically invalid.
+            - :exc:`IllegalMoveError` if the SAN is illegal.
+            - :exc:`AmbiguousMoveError` if the SAN is ambiguous.
         """
         move = self.parse_san(san)
         self.push(move)
@@ -3435,9 +3237,7 @@ class Board(BaseBoard):
             chess960 = self.chess960
 
         move = self._to_chess960(move)
-        move = self._from_chess960(
-            chess960, move.from_square, move.to_square, move.promotion, move.drop
-        )
+        move = self._from_chess960(chess960, move.from_square, move.to_square, move.promotion, move.drop)
         return move.uci()
 
     def parse_uci(self, uci: str) -> Move:
@@ -3448,8 +3248,12 @@ class Board(BaseBoard):
 
         The returned move is guaranteed to be either legal or a null move.
 
-        :raises: :exc:`ValueError` if the move is invalid or illegal in the
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if the move is invalid or illegal in the
             current position (but not a null move).
+
+            - :exc:`InvalidMoveError` if the UCI is syntactically invalid.
+            - :exc:`IllegalMoveError` if the UCI is illegal.
         """
         move = Move.from_uci(uci)
 
@@ -3457,12 +3261,10 @@ class Board(BaseBoard):
             return move
 
         move = self._to_chess960(move)
-        move = self._from_chess960(
-            self.chess960, move.from_square, move.to_square, move.promotion, move.drop
-        )
+        move = self._from_chess960(self.chess960, move.from_square, move.to_square, move.promotion, move.drop)
 
         if not self.is_legal(move):
-            raise ValueError(f"illegal uci: {uci!r} in {self.fen()}")
+            raise IllegalMoveError(f"illegal uci: {uci!r} in {self.fen()}")
 
         return move
 
@@ -3472,8 +3274,12 @@ class Board(BaseBoard):
 
         Returns the move.
 
-        :raises: :exc:`ValueError` if the move is invalid or illegal in the
+        :raises:
+            :exc:`ValueError` (specifically an exception specified below) if the move is invalid or illegal in the
             current position (but not a null move).
+
+            - :exc:`InvalidMoveError` if the UCI is syntactically invalid.
+            - :exc:`IllegalMoveError` if the UCI is illegal.
         """
         move = self.parse_uci(uci)
         self.push(move)
@@ -3497,39 +3303,27 @@ class Board(BaseBoard):
 
     def is_en_passant(self, move: Move) -> bool:
         """Checks if the given pseudo-legal move is an en passant capture."""
-        return (
-            self.ep_square == move.to_square
-            and bool(self.pawns & BB_SQUARES[move.from_square])
-            and abs(move.to_square - move.from_square) in [7, 9]
-            and not self.occupied & BB_SQUARES[move.to_square]
-        )
+        return (self.ep_square == move.to_square and
+                bool(self.pawns & BB_SQUARES[move.from_square]) and
+                abs(move.to_square - move.from_square) in [7, 9] and
+                not self.occupied & BB_SQUARES[move.to_square])
 
     def is_capture(self, move: Move) -> bool:
         """Checks if the given pseudo-legal move is a capture."""
         touched = BB_SQUARES[move.from_square] ^ BB_SQUARES[move.to_square]
-        return bool(touched & self.occupied_co[not self.turn]) or self.is_en_passant(
-            move
-        )
+        return bool(touched & self.occupied_co[not self.turn]) or self.is_en_passant(move)
 
     def is_zeroing(self, move: Move) -> bool:
         """Checks if the given pseudo-legal move is a capture or pawn move."""
         touched = BB_SQUARES[move.from_square] ^ BB_SQUARES[move.to_square]
-        return bool(
-            touched & self.pawns
-            or touched & self.occupied_co[not self.turn]
-            or move.drop == PAWN
-        )
+        return bool(touched & self.pawns or touched & self.occupied_co[not self.turn] or move.drop == PAWN)
 
     def _reduces_castling_rights(self, move: Move) -> bool:
         cr = self.clean_castling_rights()
         touched = BB_SQUARES[move.from_square] ^ BB_SQUARES[move.to_square]
-        return bool(
-            touched & cr
-            or cr & BB_RANK_1
-            and touched & self.kings & self.occupied_co[WHITE] & ~self.promoted
-            or cr & BB_RANK_8
-            and touched & self.kings & self.occupied_co[BLACK] & ~self.promoted
-        )
+        return bool(touched & cr or
+                    cr & BB_RANK_1 and touched & self.kings & self.occupied_co[WHITE] & ~self.promoted or
+                    cr & BB_RANK_8 and touched & self.kings & self.occupied_co[BLACK] & ~self.promoted)
 
     def is_irreversible(self, move: Move) -> bool:
         """
@@ -3542,36 +3336,26 @@ class Board(BaseBoard):
         that will force the king to lose castling rights is not considered
         irreversible. Only the actual king move is.
         """
-        return (
-            self.is_zeroing(move)
-            or self._reduces_castling_rights(move)
-            or self.has_legal_en_passant()
-        )
+        return self.is_zeroing(move) or self._reduces_castling_rights(move) or self.has_legal_en_passant()
 
     def is_castling(self, move: Move) -> bool:
         """Checks if the given pseudo-legal move is a castling move."""
         if self.kings & BB_SQUARES[move.from_square]:
             diff = square_file(move.from_square) - square_file(move.to_square)
-            return abs(diff) > 1 or bool(
-                self.rooks & self.occupied_co[self.turn] & BB_SQUARES[move.to_square]
-            )
+            return abs(diff) > 1 or bool(self.rooks & self.occupied_co[self.turn] & BB_SQUARES[move.to_square])
         return False
 
     def is_kingside_castling(self, move: Move) -> bool:
         """
         Checks if the given pseudo-legal move is a kingside castling move.
         """
-        return self.is_castling(move) and square_file(move.to_square) > square_file(
-            move.from_square
-        )
+        return self.is_castling(move) and square_file(move.to_square) > square_file(move.from_square)
 
     def is_queenside_castling(self, move: Move) -> bool:
         """
         Checks if the given pseudo-legal move is a queenside castling move.
         """
-        return self.is_castling(move) and square_file(move.to_square) < square_file(
-            move.from_square
-        )
+        return self.is_castling(move) and square_file(move.to_square) < square_file(move.from_square)
 
     def clean_castling_rights(self) -> Bitboard:
         """
@@ -3589,8 +3373,8 @@ class Board(BaseBoard):
 
         if not self.chess960:
             # The rooks must be on a1, h1, a8 or h8.
-            white_castling &= BB_A1 | BB_H1
-            black_castling &= BB_A8 | BB_H8
+            white_castling &= (BB_A1 | BB_H1)
+            black_castling &= (BB_A8 | BB_H8)
 
             # The kings must be on e1 or e8.
             if not self.occupied_co[WHITE] & self.kings & ~self.promoted & BB_E1:
@@ -3601,12 +3385,8 @@ class Board(BaseBoard):
             return white_castling | black_castling
         else:
             # The kings must be on the back rank.
-            white_king_mask = (
-                self.occupied_co[WHITE] & self.kings & BB_RANK_1 & ~self.promoted
-            )
-            black_king_mask = (
-                self.occupied_co[BLACK] & self.kings & BB_RANK_8 & ~self.promoted
-            )
+            white_king_mask = self.occupied_co[WHITE] & self.kings & BB_RANK_1 & ~self.promoted
+            black_king_mask = self.occupied_co[BLACK] & self.kings & BB_RANK_8 & ~self.promoted
             if not white_king_mask:
                 white_castling = 0
             if not black_king_mask:
@@ -3623,9 +3403,7 @@ class Board(BaseBoard):
                 white_h_side = 0
 
             black_a_side = black_castling & -black_castling
-            black_h_side = (
-                BB_SQUARES[msb(black_castling)] if black_castling else BB_EMPTY
-            )
+            black_h_side = BB_SQUARES[msb(black_castling)] if black_castling else BB_EMPTY
 
             if black_a_side and msb(black_a_side) > msb(black_king_mask):
                 black_a_side = 0
@@ -3657,7 +3435,7 @@ class Board(BaseBoard):
             if rook > king_mask:
                 return True
 
-            castling_rights = castling_rights & (castling_rights - 1)
+            castling_rights &= castling_rights - 1
 
         return False
 
@@ -3678,7 +3456,7 @@ class Board(BaseBoard):
             if rook < king_mask:
                 return True
 
-            castling_rights = castling_rights & (castling_rights - 1)
+            castling_rights &= castling_rights - 1
 
         return False
 
@@ -3699,15 +3477,9 @@ class Board(BaseBoard):
 
         # If there are any castling rights in standard chess, the king must be
         # on e1 or e8.
-        if (
-            castling_rights & BB_RANK_1
-            and not self.occupied_co[WHITE] & self.kings & BB_E1
-        ):
+        if castling_rights & BB_RANK_1 and not self.occupied_co[WHITE] & self.kings & BB_E1:
             return True
-        if (
-            castling_rights & BB_RANK_8
-            and not self.occupied_co[BLACK] & self.kings & BB_E8
-        ):
+        if castling_rights & BB_RANK_8 and not self.occupied_co[BLACK] & self.kings & BB_E8:
             return True
 
         return False
@@ -3785,15 +3557,21 @@ class Board(BaseBoard):
         # More than the maximum number of possible checkers in the variant.
         checkers = self.checkers_mask()
         our_kings = self.kings & self.occupied_co[self.turn] & ~self.promoted
-        if popcount(checkers) > 2:
-            errors |= STATUS_TOO_MANY_CHECKERS
-        elif popcount(checkers) == 2 and ray(lsb(checkers), msb(checkers)) & our_kings:
-            errors |= STATUS_IMPOSSIBLE_CHECK
-        elif valid_ep_square is not None and any(
-            ray(checker, valid_ep_square) & our_kings
-            for checker in scan_reversed(checkers)
-        ):
-            errors |= STATUS_IMPOSSIBLE_CHECK
+        if checkers:
+            if popcount(checkers) > 2:
+                errors |= STATUS_TOO_MANY_CHECKERS
+
+            if valid_ep_square is not None:
+                pushed_to = valid_ep_square ^ A2
+                pushed_from = valid_ep_square ^ A4
+                occupied_before = (self.occupied & ~BB_SQUARES[pushed_to]) | BB_SQUARES[pushed_from]
+                if popcount(checkers) > 1 or (
+                        msb(checkers) != pushed_to and
+                        self._attacked_for_king(our_kings, occupied_before)):
+                    errors |= STATUS_IMPOSSIBLE_CHECK
+            else:
+                if popcount(checkers) > 2 or (popcount(checkers) == 2 and ray(lsb(checkers), msb(checkers)) & our_kings):
+                    errors |= STATUS_IMPOSSIBLE_CHECK
 
         return errors
 
@@ -3847,27 +3625,18 @@ class Board(BaseBoard):
 
         last_double = self.ep_square + (-8 if self.turn == WHITE else 8)
 
-        occupancy = (
-            self.occupied & ~BB_SQUARES[last_double] & ~BB_SQUARES[capturer]
-            | BB_SQUARES[self.ep_square]
-        )
+        occupancy = (self.occupied & ~BB_SQUARES[last_double] &
+                     ~BB_SQUARES[capturer] | BB_SQUARES[self.ep_square])
 
         # Horizontal attack on the fifth or fourth rank.
-        horizontal_attackers = self.occupied_co[not self.turn] & (
-            self.rooks | self.queens
-        )
-        if (
-            BB_RANK_ATTACKS[king][BB_RANK_MASKS[king] & occupancy]
-            & horizontal_attackers
-        ):
+        horizontal_attackers = self.occupied_co[not self.turn] & (self.rooks | self.queens)
+        if BB_RANK_ATTACKS[king][BB_RANK_MASKS[king] & occupancy] & horizontal_attackers:
             return True
 
         # Diagonal skewers. These are not actually possible in a real game,
         # because if the latest double pawn move covers a diagonal attack,
         # then the other side would have been in check already.
-        diagonal_attackers = self.occupied_co[not self.turn] & (
-            self.bishops | self.queens
-        )
+        diagonal_attackers = self.occupied_co[not self.turn] & (self.bishops | self.queens)
         if BB_DIAG_ATTACKS[king][BB_DIAG_MASKS[king] & occupancy] & diagonal_attackers:
             return True
 
@@ -3877,11 +3646,9 @@ class Board(BaseBoard):
         rooks_and_queens = self.rooks | self.queens
         bishops_and_queens = self.bishops | self.queens
 
-        snipers = (
-            (BB_RANK_ATTACKS[king][0] & rooks_and_queens)
-            | (BB_FILE_ATTACKS[king][0] & rooks_and_queens)
-            | (BB_DIAG_ATTACKS[king][0] & bishops_and_queens)
-        )
+        snipers = ((BB_RANK_ATTACKS[king][0] & rooks_and_queens) |
+                   (BB_FILE_ATTACKS[king][0] & rooks_and_queens) |
+                   (BB_DIAG_ATTACKS[king][0] & bishops_and_queens))
 
         blockers = 0
 
@@ -3901,23 +3668,13 @@ class Board(BaseBoard):
             else:
                 return not self.is_attacked_by(not self.turn, move.to_square)
         elif self.is_en_passant(move):
-            return bool(
-                self.pin_mask(self.turn, move.from_square) & BB_SQUARES[move.to_square]
-                and not self._ep_skewered(king, move.from_square)
-            )
+            return bool(self.pin_mask(self.turn, move.from_square) & BB_SQUARES[move.to_square] and
+                        not self._ep_skewered(king, move.from_square))
         else:
-            return bool(
-                not blockers & BB_SQUARES[move.from_square]
-                or ray(move.from_square, move.to_square) & BB_SQUARES[king]
-            )
+            return bool(not blockers & BB_SQUARES[move.from_square] or
+                        ray(move.from_square, move.to_square) & BB_SQUARES[king])
 
-    def _generate_evasions(
-        self,
-        king: Square,
-        checkers: Bitboard,
-        from_mask: Bitboard = BB_ALL,
-        to_mask: Bitboard = BB_ALL,
-    ) -> Iterator[Move]:
+    def _generate_evasions(self, king: Square, checkers: Bitboard, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL) -> Iterator[Move]:
         sliders = checkers & (self.bishops | self.rooks | self.queens)
 
         attacked = 0
@@ -3925,12 +3682,7 @@ class Board(BaseBoard):
             attacked |= ray(king, checker) & ~BB_SQUARES[checker]
 
         if BB_SQUARES[king] & from_mask:
-            for to_square in scan_reversed(
-                BB_KING_ATTACKS[king]
-                & ~self.occupied_co[self.turn]
-                & ~attacked
-                & to_mask
-            ):
+            for to_square in scan_reversed(BB_KING_ATTACKS[king] & ~self.occupied_co[self.turn] & ~attacked & to_mask):
                 yield Move(king, to_square)
 
         checker = msb(checkers)
@@ -3938,9 +3690,7 @@ class Board(BaseBoard):
             # Capture or block a single checker.
             target = between(king, checker) | checkers
 
-            yield from self.generate_pseudo_legal_moves(
-                ~self.kings & from_mask, target & to_mask
-            )
+            yield from self.generate_pseudo_legal_moves(~self.kings & from_mask, target & to_mask)
 
             # Capture the checking pawn en passant (but avoid yielding
             # duplicate moves).
@@ -3949,9 +3699,7 @@ class Board(BaseBoard):
                 if last_double == checker:
                     yield from self.generate_pseudo_legal_ep(from_mask, to_mask)
 
-    def generate_legal_moves(
-        self, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL
-    ) -> Iterator[Move]:
+    def generate_legal_moves(self, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL) -> Iterator[Move]:
         if self.is_variant_end():
             return
 
@@ -3971,9 +3719,7 @@ class Board(BaseBoard):
         else:
             yield from self.generate_pseudo_legal_moves(from_mask, to_mask)
 
-    def generate_legal_ep(
-        self, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL
-    ) -> Iterator[Move]:
+    def generate_legal_ep(self, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL) -> Iterator[Move]:
         if self.is_variant_end():
             return
 
@@ -3981,37 +3727,21 @@ class Board(BaseBoard):
             if not self.is_into_check(move):
                 yield move
 
-    def generate_legal_captures(
-        self, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL
-    ) -> Iterator[Move]:
+    def generate_legal_captures(self, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL) -> Iterator[Move]:
         return itertools.chain(
-            self.generate_legal_moves(
-                from_mask, to_mask & self.occupied_co[not self.turn]
-            ),
-            self.generate_legal_ep(from_mask, to_mask),
-        )
+            self.generate_legal_moves(from_mask, to_mask & self.occupied_co[not self.turn]),
+            self.generate_legal_ep(from_mask, to_mask))
 
     def _attacked_for_king(self, path: Bitboard, occupied: Bitboard) -> bool:
-        return any(
-            self._attackers_mask(not self.turn, sq, occupied)
-            for sq in scan_reversed(path)
-        )
+        return any(self.attackers_mask(not self.turn, sq, occupied) for sq in scan_reversed(path))
 
-    def generate_castling_moves(
-        self, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL
-    ) -> Iterator[Move]:
+    def generate_castling_moves(self, from_mask: Bitboard = BB_ALL, to_mask: Bitboard = BB_ALL) -> Iterator[Move]:
         if self.is_variant_end():
             return
 
         backrank = BB_RANK_1 if self.turn == WHITE else BB_RANK_8
-        king = (
-            self.occupied_co[self.turn]
-            & self.kings
-            & ~self.promoted
-            & backrank
-            & from_mask
-        )
-        king = king & -king
+        king = self.occupied_co[self.turn] & self.kings & ~self.promoted & backrank & from_mask
+        king &= -king
         if not king:
             return
 
@@ -4020,9 +3750,7 @@ class Board(BaseBoard):
         bb_f = BB_FILE_F & backrank
         bb_g = BB_FILE_G & backrank
 
-        for candidate in scan_reversed(
-            self.clean_castling_rights() & backrank & to_mask
-        ):
+        for candidate in scan_reversed(self.clean_castling_rights() & backrank & to_mask):
             rook = BB_SQUARES[candidate]
 
             a_side = rook < king
@@ -4032,24 +3760,12 @@ class Board(BaseBoard):
             king_path = between(msb(king), msb(king_to))
             rook_path = between(candidate, msb(rook_to))
 
-            if not (
-                (self.occupied ^ king ^ rook)
-                & (king_path | rook_path | king_to | rook_to)
-                or self._attacked_for_king(king_path | king, self.occupied ^ king)
-                or self._attacked_for_king(
-                    king_to, self.occupied ^ king ^ rook ^ rook_to
-                )
-            ):
+            if not ((self.occupied ^ king ^ rook) & (king_path | rook_path | king_to | rook_to) or
+                    self._attacked_for_king(king_path | king, self.occupied ^ king) or
+                    self._attacked_for_king(king_to, self.occupied ^ king ^ rook ^ rook_to)):
                 yield self._from_chess960(self.chess960, msb(king), candidate)
 
-    def _from_chess960(
-        self,
-        chess960: bool,
-        from_square: Square,
-        to_square: Square,
-        promotion: Optional[PieceType] = None,
-        drop: Optional[PieceType] = None,
-    ) -> Move:
+    def _from_chess960(self, chess960: bool, from_square: Square, to_square: Square, promotion: Optional[PieceType] = None, drop: Optional[PieceType] = None) -> Move:
         if not chess960 and promotion is None and drop is None:
             if from_square == E1 and self.kings & BB_E1:
                 if to_square == H1:
@@ -4079,19 +3795,11 @@ class Board(BaseBoard):
         return move
 
     def _transposition_key(self) -> Hashable:
-        return (
-            self.pawns,
-            self.knights,
-            self.bishops,
-            self.rooks,
-            self.queens,
-            self.kings,
-            self.occupied_co[WHITE],
-            self.occupied_co[BLACK],
-            self.turn,
-            self.clean_castling_rights(),
-            self.ep_square if self.has_legal_en_passant() else None,
-        )
+        return (self.pawns, self.knights, self.bishops, self.rooks,
+                self.queens, self.kings,
+                self.occupied_co[WHITE], self.occupied_co[BLACK],
+                self.turn, self.clean_castling_rights(),
+                self.ep_square if self.has_legal_en_passant() else None)
 
     def __repr__(self) -> str:
         if not self.chess960:
@@ -4101,43 +3809,38 @@ class Board(BaseBoard):
 
     def _repr_svg_(self) -> str:
         import chess.svg
-
         return chess.svg.board(
             board=self,
             size=390,
             lastmove=self.peek() if self.move_stack else None,
-            check=self.king(self.turn) if self.is_check() else None,
-        )
+            check=self.king(self.turn) if self.is_check() else None)
 
     def __eq__(self, board: object) -> bool:
         if isinstance(board, Board):
             return (
-                self.halfmove_clock == board.halfmove_clock
-                and self.fullmove_number == board.fullmove_number
-                and type(self).uci_variant == type(board).uci_variant
-                and self._transposition_key() == board._transposition_key()
-            )
+                self.halfmove_clock == board.halfmove_clock and
+                self.fullmove_number == board.fullmove_number and
+                type(self).uci_variant == type(board).uci_variant and
+                self._transposition_key() == board._transposition_key())
         else:
             return NotImplemented
 
     def apply_transform(self, f: Callable[[Bitboard], Bitboard]) -> None:
         super().apply_transform(f)
         self.clear_stack()
-        self.ep_square = (
-            None if self.ep_square is None else msb(f(BB_SQUARES[self.ep_square]))
-        )
+        self.ep_square = None if self.ep_square is None else msb(f(BB_SQUARES[self.ep_square]))
         self.castling_rights = f(self.castling_rights)
 
-    def transform(self: BoardT, f: Callable[[Bitboard], Bitboard]) -> BoardT:
+    def transform(self, f: Callable[[Bitboard], Bitboard]) -> Self:
         board = self.copy(stack=False)
         board.apply_transform(f)
         return board
 
-    def apply_mirror(self: BoardT) -> None:
+    def apply_mirror(self) -> None:
         super().apply_mirror()
         self.turn = not self.turn
 
-    def mirror(self: BoardT) -> BoardT:
+    def mirror(self) -> Self:
         """
         Returns a mirrored copy of the board.
 
@@ -4152,7 +3855,7 @@ class Board(BaseBoard):
         board.apply_mirror()
         return board
 
-    def copy(self: BoardT, *, stack: Union[bool, int] = True) -> BoardT:
+    def copy(self, *, stack: Union[bool, int] = True) -> Self:
         """
         Creates a copy of the board.
 
@@ -4182,9 +3885,7 @@ class Board(BaseBoard):
         return cls(None, chess960=chess960)
 
     @classmethod
-    def from_epd(
-        cls: Type[BoardT], epd: str, *, chess960: bool = False
-    ) -> Tuple[BoardT, Dict[str, Union[None, str, int, float, Move, List[Move]]]]:
+    def from_epd(cls: Type[BoardT], epd: str, *, chess960: bool = False) -> Tuple[BoardT, Dict[str, Union[None, str, int, float, Move, List[Move]]]]:
         """
         Creates a new board from an EPD string. See
         :func:`~chess.Board.set_epd()`.
@@ -4202,6 +3903,7 @@ class Board(BaseBoard):
 
 
 class PseudoLegalMoveGenerator:
+
     def __init__(self, board: Board) -> None:
         self.board = board
 
@@ -4219,7 +3921,7 @@ class PseudoLegalMoveGenerator:
         return self.board.is_pseudo_legal(move)
 
     def __repr__(self) -> str:
-        builder = []
+        builder: List[str] = []
 
         for move in self:
             if self.board.is_legal(move):
@@ -4232,6 +3934,7 @@ class PseudoLegalMoveGenerator:
 
 
 class LegalMoveGenerator:
+
     def __init__(self, board: Board) -> None:
         self.board = board
 
@@ -4253,8 +3956,7 @@ class LegalMoveGenerator:
         return f"<LegalMoveGenerator at {id(self):#x} ({sans})>"
 
 
-IntoSquareSet = Union[SupportsInt, Iterable[Square]]
-
+IntoSquareSet: TypeAlias = Union[SupportsInt, Iterable[Square]]
 
 class SquareSet:
     """
@@ -4336,7 +4038,7 @@ class SquareSet:
 
     def __init__(self, squares: IntoSquareSet = BB_EMPTY) -> None:
         try:
-            self.mask = squares.__int__() & BB_ALL  # type: ignore
+            self.mask: Bitboard = squares.__int__() & BB_ALL  # type: ignore
             return
         except AttributeError:
             self.mask = 0
@@ -4378,11 +4080,11 @@ class SquareSet:
 
     def issubset(self, other: IntoSquareSet) -> bool:
         """Tests if this square set is a subset of another."""
-        return not bool(~self & other)
+        return not bool(self & ~SquareSet(other))
 
     def issuperset(self, other: IntoSquareSet) -> bool:
         """Tests if this square set is a superset of another."""
-        return not bool(self & ~SquareSet(other))
+        return not bool(~self & other)
 
     def union(self, other: IntoSquareSet) -> SquareSet:
         return self | other
@@ -4473,7 +4175,7 @@ class SquareSet:
             raise KeyError("pop from empty SquareSet")
 
         square = lsb(self.mask)
-        self.mask &= self.mask - 1
+        self.mask &= (self.mask - 1)
         return square
 
     def clear(self) -> None:
@@ -4533,7 +4235,7 @@ class SquareSet:
         return f"SquareSet({self.mask:#021_x})"
 
     def __str__(self) -> str:
-        builder = []
+        builder: List[str] = []
 
         for square in SQUARES_180:
             mask = BB_SQUARES[square]
@@ -4548,7 +4250,6 @@ class SquareSet:
 
     def _repr_svg_(self) -> str:
         import chess.svg
-
         return chess.svg.board(squares=self, size=390)
 
     @classmethod

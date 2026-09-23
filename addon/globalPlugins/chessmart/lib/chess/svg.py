@@ -1,23 +1,3 @@
-# This file is part of the python-chess library.
-# Copyright (C) 2016-2021 Niklas Fiekas <niklas.fiekas@backscattering.de>
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-# Piece vector graphics are copyright (C) Colin M.L. Burnett
-# <https://en.wikipedia.org/wiki/User:Cburnett> and also licensed under the
-# GNU General Public License.
-
 from __future__ import annotations
 
 import math
@@ -36,7 +16,7 @@ PIECES = {
     "b": """<g id="black-bishop" class="black bishop" fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2 0 0 1.65.54 3 2-.68.97-1.65.99-3 .5-3.39-.97-10.11.46-13.5-1-3.39 1.46-10.11.03-13.5 1-1.354.49-2.323.47-3-.5 1.354-1.94 3-2 3-2zm6-4c2.5 2.5 12.5 2.5 15 0 .5-1.5 0-2 0-2 0-2.5-2.5-4-2.5-4 5.5-1.5 6-11.5-5-15.5-11 4-10.5 14-5 15.5 0 0-2.5 1.5-2.5 4 0 0-.5.5 0 2zM25 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 1 1 5 0z" fill="#000" stroke-linecap="butt"/><path d="M17.5 26h10M15 30h15m-7.5-14.5v5M20 18h5" stroke="#fff" stroke-linejoin="miter"/></g>""",  # noqa: E501
     "k": """<g id="black-king" class="black king" fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 11.63V6" stroke-linejoin="miter"/><path d="M22.5 25s4.5-7.5 3-10.5c0 0-1-2.5-3-2.5s-3 2.5-3 2.5c-1.5 3 3 10.5 3 10.5" fill="#000" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M11.5 37c5.5 3.5 15.5 3.5 21 0v-7s9-4.5 6-10.5c-4-6.5-13.5-3.5-16 4V27v-3.5c-3.5-7.5-13-10.5-16-4-3 6 5 10 5 10V37z" fill="#000"/><path d="M20 8h5" stroke-linejoin="miter"/><path d="M32 29.5s8.5-4 6.03-9.65C34.15 14 25 18 22.5 24.5l.01 2.1-.01-2.1C20 18 9.906 14 6.997 19.85c-2.497 5.65 4.853 9 4.853 9M11.5 30c5.5-3 15.5-3 21 0m-21 3.5c5.5-3 15.5-3 21 0m-21 3.5c5.5-3 15.5-3 21 0" stroke="#fff"/></g>""",  # noqa: E501
     "n": """<g id="black-knight" class="black knight" fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M 22,10 C 32.5,11 38.5,18 38,39 L 15,39 C 15,30 25,32.5 23,18" style="fill:#000000; stroke:#000000;"/><path d="M 24,18 C 24.38,20.91 18.45,25.37 16,27 C 13,29 13.18,31.34 11,31 C 9.958,30.06 12.41,27.96 11,28 C 10,28 11.19,29.23 10,30 C 9,30 5.997,31 6,26 C 6,24 12,14 12,14 C 12,14 13.89,12.1 14,10.5 C 13.27,9.506 13.5,8.5 13.5,7.5 C 14.5,6.5 16.5,10 16.5,10 L 18.5,10 C 18.5,10 19.28,8.008 21,7 C 22,7 22,10 22,10" style="fill:#000000; stroke:#000000;"/><path d="M 9.5 25.5 A 0.5 0.5 0 1 1 8.5,25.5 A 0.5 0.5 0 1 1 9.5 25.5 z" style="fill:#ececec; stroke:#ececec;"/><path d="M 15 15.5 A 0.5 1.5 0 1 1 14,15.5 A 0.5 1.5 0 1 1 15 15.5 z" transform="matrix(0.866,0.5,-0.5,0.866,9.693,-5.173)" style="fill:#ececec; stroke:#ececec;"/><path d="M 24.55,10.4 L 24.1,11.85 L 24.6,12 C 27.75,13 30.25,14.49 32.5,18.75 C 34.75,23.01 35.75,29.06 35.25,39 L 35.2,39.5 L 37.45,39.5 L 37.5,39 C 38,28.94 36.62,22.15 34.25,17.66 C 31.88,13.17 28.46,11.02 25.06,10.5 L 24.55,10.4 z " style="fill:#ececec; stroke:none;"/></g>""",  # noqa: E501
-    "p": """<g id="black-pawn" class="black pawn"><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03-3 1.06-7.41 5.55-7.41 13.47h23c0-7.92-4.41-12.41-7.41-13.47 1.47-1.19 2.41-3 2.41-5.03 0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></g>""",  # noqa: E501
+    "p": """<g id="black-pawn" class="black pawn"><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03-3 1.06-7.41 5.55-7.41 13.47h23c0-7.92-4.41-12.41-7.41-13.47 1.47-1.19 2.41-3 2.41-5.03 0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z" fill="#000" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></g>""",  # noqa: E501
     "q": """<g id="black-queen" class="black queen" fill="#000" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g fill="#000" stroke="none"><circle cx="6" cy="12" r="2.75"/><circle cx="14" cy="9" r="2.75"/><circle cx="22.5" cy="8" r="2.75"/><circle cx="31" cy="9" r="2.75"/><circle cx="39" cy="12" r="2.75"/></g><path d="M9 26c8.5-1.5 21-1.5 27 0l2.5-12.5L31 25l-.3-14.1-5.2 13.6-3-14.5-3 14.5-5.2-13.6L14 25 6.5 13.5 9 26zM9 26c0 2 1.5 2 2.5 4 1 1.5 1 1 .5 3.5-1.5 1-1.5 2.5-1.5 2.5-1.5 1.5.5 2.5.5 2.5 6.5 1 16.5 1 23 0 0 0 1.5-1 0-2.5 0 0 .5-1.5-1-2.5-.5-2.5-.5-2 .5-3.5 1-2 2.5-2 2.5-4-8.5-1.5-18.5-1.5-27 0z" stroke-linecap="butt"/><path d="M11 38.5a35 35 1 0 0 23 0" fill="none" stroke-linecap="butt"/><path d="M11 29a35 35 1 0 1 23 0M12.5 31.5h20M11.5 34.5a35 35 1 0 0 22 0M10.5 37.5a35 35 1 0 0 24 0" fill="none" stroke="#fff"/></g>""",  # noqa: E501
     "r": """<g id="black-rook" class="black rook" fill="#000" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 39h27v-3H9v3zM12.5 32l1.5-2.5h17l1.5 2.5h-20zM12 36v-4h21v4H12z" stroke-linecap="butt"/><path d="M14 29.5v-13h17v13H14z" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M14 16.5L11 14h23l-3 2.5H14zM11 14V9h4v2h5V9h5v2h5V9h4v5H11z" stroke-linecap="butt"/><path d="M12 35.5h21M13 31.5h19M14 29.5h17M14 16.5h17M11 14h23" fill="none" stroke="#fff" stroke-width="1" stroke-linejoin="miter"/></g>""",  # noqa: E501
     "B": """<g id="white-bishop" class="white bishop" fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g fill="#fff" stroke-linecap="butt"><path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2 0 0 1.65.54 3 2-.68.97-1.65.99-3 .5-3.39-.97-10.11.46-13.5-1-3.39 1.46-10.11.03-13.5 1-1.354.49-2.323.47-3-.5 1.354-1.94 3-2 3-2zM15 32c2.5 2.5 12.5 2.5 15 0 .5-1.5 0-2 0-2 0-2.5-2.5-4-2.5-4 5.5-1.5 6-11.5-5-15.5-11 4-10.5 14-5 15.5 0 0-2.5 1.5-2.5 4 0 0-.5.5 0 2zM25 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 1 1 5 0z"/></g><path d="M17.5 26h10M15 30h15m-7.5-14.5v5M20 18h5" stroke-linejoin="miter"/></g>""",  # noqa: E501
@@ -76,6 +56,8 @@ DEFAULT_COLORS = {
     "square dark lastmove": "#aaa23b",
     "square light lastmove": "#cdd16a",
     "margin": "#212121",
+    "inner border": "#111",
+    "outer border": "#111",
     "coord": "#e5e5e5",
     "arrow green": "#15781B80",
     "arrow red": "#88202080",
@@ -120,9 +102,7 @@ class Arrow:
         if self.tail == self.head:
             return f"{color}{chess.SQUARE_NAMES[self.tail]}"
         else:
-            return (
-                f"{color}{chess.SQUARE_NAMES[self.tail]}{chess.SQUARE_NAMES[self.head]}"
-            )
+            return f"{color}{chess.SQUARE_NAMES[self.tail]}{chess.SQUARE_NAMES[self.head]}"
 
     def __str__(self) -> str:
         return self.pgn()
@@ -164,18 +144,16 @@ class SvgWrapper(str):
     def _repr_svg_(self) -> SvgWrapper:
         return self
 
+    def _repr_html_(self) -> SvgWrapper:
+        return self
+
 
 def _svg(viewbox: int, size: Optional[int]) -> ET.Element:
-    svg = ET.Element(
-        "svg",
-        {
-            "xmlns": "http://www.w3.org/2000/svg",
-            "xmlns:xlink": "http://www.w3.org/1999/xlink",
-            "version": "1.2",
-            "baseProfile": "tiny",
-            "viewBox": f"0 0 {viewbox:d} {viewbox:d}",
-        },
-    )
+    svg = ET.Element("svg", {
+        "xmlns": "http://www.w3.org/2000/svg",
+        "xmlns:xlink": "http://www.w3.org/1999/xlink",
+        "viewBox": f"0 0 {viewbox:d} {viewbox:d}",
+    })
 
     if size is not None:
         svg.set("width", str(size))
@@ -188,31 +166,23 @@ def _attrs(attrs: Dict[str, Union[str, int, float, None]]) -> Dict[str, str]:
     return {k: str(v) for k, v in attrs.items() if v is not None}
 
 
-def _color(colors: Dict[str, str], color: str) -> Tuple[str, float]:
-    color = colors.get(color, DEFAULT_COLORS[color])
+def _select_color(colors: Dict[str, str], color: str) -> Tuple[str, float]:
+    return _color(colors.get(color, DEFAULT_COLORS[color]))
+
+
+def _color(color: str) -> Tuple[str, float]:
     if color.startswith("#"):
         try:
             if len(color) == 5:
-                return color[:4], int(color[4], 16) / 0xF
+                return color[:4], int(color[4], 16) / 0xf
             elif len(color) == 9:
-                return color[:7], int(color[7:], 16) / 0xFF
+                return color[:7], int(color[7:], 16) / 0xff
         except ValueError:
             pass  # Ignore invalid hex value
     return color, 1.0
 
 
-def _coord(
-    text: str,
-    x: int,
-    y: int,
-    width: int,
-    height: int,
-    horizontal: bool,
-    margin: int,
-    *,
-    color: str,
-    opacity: float,
-) -> ET.Element:
+def _coord(text: str, x: int, y: int, width: int, height: int, horizontal: bool, margin: int, *, color: str, opacity: float) -> ET.Element:
     scale = margin / MARGIN
 
     if horizontal:
@@ -220,17 +190,12 @@ def _coord(
     else:
         y += int(height - scale * height) // 2
 
-    t = ET.Element(
-        "g",
-        _attrs(
-            {
-                "transform": f"translate({x}, {y}) scale({scale}, {scale})",
-                "fill": color,
-                "stroke": color,
-                "opacity": opacity if opacity < 1.0 else None,
-            }
-        ),
-    )
+    t = ET.Element("g", _attrs({
+        "transform": f"translate({x}, {y}) scale({scale}, {scale})",
+        "fill": color,
+        "stroke": color,
+        "opacity": opacity if opacity < 1.0 else None,
+    }))
     t.append(ET.fromstring(COORDS[text]))
     return t
 
@@ -252,20 +217,19 @@ def piece(piece: chess.Piece, size: Optional[int] = None) -> str:
     return SvgWrapper(ET.tostring(svg).decode("utf-8"))
 
 
-def board(
-    board: Optional[chess.BaseBoard] = None,
-    *,
-    orientation: Color = chess.WHITE,
-    lastmove: Optional[chess.Move] = None,
-    check: Optional[Square] = None,
-    arrows: Iterable[Union[Arrow, Tuple[Square, Square]]] = [],
-    squares: Optional[IntoSquareSet] = None,
-    size: Optional[int] = None,
-    coordinates: bool = True,
-    colors: Dict[str, str] = {},
-    flipped: bool = False,
-    style: Optional[str] = None,
-) -> str:
+def board(board: Optional[chess.BaseBoard] = None, *,
+          orientation: Color = chess.WHITE,
+          lastmove: Optional[chess.Move] = None,
+          check: Optional[Square] = None,
+          arrows: Iterable[Union[Arrow, Tuple[Square, Square]]] = [],
+          fill: Dict[Square, str] = {},
+          squares: Optional[IntoSquareSet] = None,
+          size: Optional[int] = None,
+          coordinates: bool = True,
+          colors: Dict[str, str] = {},
+          flipped: bool = False,
+          borders: bool = False,
+          style: Optional[str] = None) -> str:
     """
     Renders a board with pieces and/or selected squares as an SVG image.
 
@@ -278,24 +242,36 @@ def board(
         ``[chess.svg.Arrow(chess.E2, chess.E4)]``, or a list of tuples, like
         ``[(chess.E2, chess.E4)]``. An arrow from a square pointing to the same
         square is drawn as a circle, like ``[(chess.E2, chess.E2)]``.
-    :param squares: A :class:`chess.SquareSet` with selected squares.
+    :param fill: A dictionary mapping squares to a colors that they should be
+        filled with.
+    :param squares: A :class:`chess.SquareSet` with selected squares to mark
+        with an X.
     :param size: The size of the image in pixels (e.g., ``400`` for a 400 by
         400 board), or ``None`` (the default) for no size limit.
     :param coordinates: Pass ``False`` to disable the coordinate margin.
     :param colors: A dictionary to override default colors. Possible keys are
         ``square light``, ``square dark``, ``square light lastmove``,
-        ``square dark lastmove``, ``margin``, ``coord``, ``arrow green``,
-        ``arrow blue``, ``arrow red``, and ``arrow yellow``. Values should look
-        like ``#ffce9e`` (opaque), or ``#15781B80`` (transparent).
+        ``square dark lastmove``, ``margin``, ``coord``, ``inner border``,
+        ``outer border``, ``arrow green``, ``arrow blue``, ``arrow red``,
+        and ``arrow yellow``. Values should look like ``#ffce9e`` (opaque),
+        or ``#15781B80`` (transparent).
     :param flipped: Pass ``True`` to flip the board.
+    :param borders: Pass ``True`` to enable a border around the board and,
+       (if *coordinates* is enabled) the coordinate margin.
     :param style: A CSS stylesheet to include in the SVG image.
 
     >>> import chess
     >>> import chess.svg
     >>>
     >>> board = chess.Board("8/8/8/8/4N3/8/8/8 w - - 0 1")
-    >>> squares = board.attacks(chess.E4)
-    >>> chess.svg.board(board, squares=squares, size=350)  # doctest: +SKIP
+    >>>
+    >>> chess.svg.board(
+    ...     board,
+    ...     fill=dict.fromkeys(board.attacks(chess.E4), "#cc0000cc"),
+    ...     arrows=[chess.svg.Arrow(chess.E4, chess.F6, color="#0000cccc")],
+    ...     squares=chess.SquareSet(chess.BB_DARK_SQUARES & chess.BB_FILE_B),
+    ...     size=350,
+    ... )  # doctest: +SKIP
 
     .. image:: ../docs/Ne4.svg
         :alt: 8/8/8/8/4N3/8/8/8
@@ -304,22 +280,27 @@ def board(
         Use *orientation* with a color instead of the *flipped* toggle.
     """
     orientation ^= flipped
+    inner_border = 1 if borders and coordinates else 0
+    outer_border = 1 if borders else 0
     margin = 15 if coordinates else 0
-    svg = _svg(8 * SQUARE_SIZE + 2 * margin, size)
+    board_offset = inner_border + margin + outer_border
+    full_size = 2 * outer_border + 2 * margin + 2 * inner_border + 8 * SQUARE_SIZE
+    svg = _svg(full_size, size)
 
     if style:
         ET.SubElement(svg, "style").text = style
+
+    if board:
+        desc = ET.SubElement(svg, "desc")
+        asciiboard = ET.SubElement(desc, "pre")
+        asciiboard.text = str(board)
 
     defs = ET.SubElement(svg, "defs")
     if board:
         for piece_color in chess.COLORS:
             for piece_type in chess.PIECE_TYPES:
                 if board.pieces_mask(piece_type, piece_color):
-                    defs.append(
-                        ET.fromstring(
-                            PIECES[chess.Piece(piece_type, piece_color).symbol()]
-                        )
-                    )
+                    defs.append(ET.fromstring(PIECES[chess.Piece(piece_type, piece_color).symbol()]))
 
     squares = chess.SquareSet(squares) if squares else chess.SquareSet()
     if squares:
@@ -328,172 +309,142 @@ def board(
     if check is not None:
         defs.append(ET.fromstring(CHECK_GRADIENT))
 
+    if outer_border:
+        outer_border_color, outer_border_opacity = _select_color(colors, "outer border")
+        ET.SubElement(svg, "rect", _attrs({
+            "x": outer_border / 2,
+            "y": outer_border / 2,
+            "width": full_size - outer_border,
+            "height": full_size - outer_border,
+            "fill": "none",
+            "stroke": outer_border_color,
+            "stroke-width": outer_border,
+            "opacity": outer_border_opacity if outer_border_opacity < 1.0 else None,
+        }))
+
+    if margin:
+        margin_color, margin_opacity = _select_color(colors, "margin")
+        ET.SubElement(svg, "rect", _attrs({
+            "x": outer_border + margin / 2,
+            "y": outer_border + margin / 2,
+            "width": full_size - 2 * outer_border - margin,
+            "height": full_size - 2 * outer_border - margin,
+            "fill": "none",
+            "stroke": margin_color,
+            "stroke-width": margin,
+            "opacity": margin_opacity if margin_opacity < 1.0 else None,
+        }))
+
+    if inner_border:
+        inner_border_color, inner_border_opacity = _select_color(colors, "inner border")
+        ET.SubElement(svg, "rect", _attrs({
+            "x": outer_border + margin + inner_border / 2,
+            "y": outer_border + margin + inner_border / 2,
+            "width": full_size - 2 * outer_border - 2 * margin - inner_border,
+            "height": full_size - 2 * outer_border - 2 * margin - inner_border,
+            "fill": "none",
+            "stroke": inner_border_color,
+            "stroke-width": inner_border,
+            "opacity": inner_border_opacity if inner_border_opacity < 1.0 else None,
+        }))
+
     # Render coordinates.
     if coordinates:
-        margin_color, margin_opacity = _color(colors, "margin")
-        ET.SubElement(
-            svg,
-            "rect",
-            _attrs(
-                {
-                    "x": 0,
-                    "y": 0,
-                    "width": 2 * margin + 8 * SQUARE_SIZE,
-                    "height": 2 * margin + 8 * SQUARE_SIZE,
-                    "fill": margin_color,
-                    "opacity": margin_opacity if margin_opacity < 1.0 else None,
-                }
-            ),
-        )
-        coord_color, coord_opacity = _color(colors, "coord")
+        coord_color, coord_opacity = _select_color(colors, "coord")
         for file_index, file_name in enumerate(chess.FILE_NAMES):
-            x = (file_index if orientation else 7 - file_index) * SQUARE_SIZE + margin
-            svg.append(
-                _coord(
-                    file_name,
-                    x,
-                    0,
-                    SQUARE_SIZE,
-                    margin,
-                    True,
-                    margin,
-                    color=coord_color,
-                    opacity=coord_opacity,
-                )
-            )
-            svg.append(
-                _coord(
-                    file_name,
-                    x,
-                    margin + 8 * SQUARE_SIZE,
-                    SQUARE_SIZE,
-                    margin,
-                    True,
-                    margin,
-                    color=coord_color,
-                    opacity=coord_opacity,
-                )
-            )
+            x = (file_index if orientation else 7 - file_index) * SQUARE_SIZE + board_offset
+            # Keep some padding here to separate the ascender from the border
+            svg.append(_coord(file_name, x, 1, SQUARE_SIZE, margin, True, margin, color=coord_color, opacity=coord_opacity))
+            svg.append(_coord(file_name, x, full_size - outer_border - margin, SQUARE_SIZE, margin, True, margin, color=coord_color, opacity=coord_opacity))
         for rank_index, rank_name in enumerate(chess.RANK_NAMES):
-            y = (7 - rank_index if orientation else rank_index) * SQUARE_SIZE + margin
-            svg.append(
-                _coord(
-                    rank_name,
-                    0,
-                    y,
-                    margin,
-                    SQUARE_SIZE,
-                    False,
-                    margin,
-                    color=coord_color,
-                    opacity=coord_opacity,
-                )
-            )
-            svg.append(
-                _coord(
-                    rank_name,
-                    margin + 8 * SQUARE_SIZE,
-                    y,
-                    margin,
-                    SQUARE_SIZE,
-                    False,
-                    margin,
-                    color=coord_color,
-                    opacity=coord_opacity,
-                )
-            )
+            y = (7 - rank_index if orientation else rank_index) * SQUARE_SIZE + board_offset
+            svg.append(_coord(rank_name, 0, y, margin, SQUARE_SIZE, False, margin, color=coord_color, opacity=coord_opacity))
+            svg.append(_coord(rank_name, full_size - outer_border - margin, y, margin, SQUARE_SIZE, False, margin, color=coord_color, opacity=coord_opacity))
 
     # Render board.
     for square, bb in enumerate(chess.BB_SQUARES):
         file_index = chess.square_file(square)
         rank_index = chess.square_rank(square)
 
-        x = (file_index if orientation else 7 - file_index) * SQUARE_SIZE + margin
-        y = (7 - rank_index if orientation else rank_index) * SQUARE_SIZE + margin
+        x = (file_index if orientation else 7 - file_index) * SQUARE_SIZE + board_offset
+        y = (7 - rank_index if orientation else rank_index) * SQUARE_SIZE + board_offset
 
         cls = ["square", "light" if chess.BB_LIGHT_SQUARES & bb else "dark"]
         if lastmove and square in [lastmove.from_square, lastmove.to_square]:
             cls.append("lastmove")
-        fill_color, fill_opacity = _color(colors, " ".join(cls))
+        square_color, square_opacity = _select_color(colors, " ".join(cls))
 
         cls.append(chess.SQUARE_NAMES[square])
 
-        ET.SubElement(
-            svg,
-            "rect",
-            _attrs(
-                {
-                    "x": x,
-                    "y": y,
-                    "width": SQUARE_SIZE,
-                    "height": SQUARE_SIZE,
-                    "class": " ".join(cls),
-                    "stroke": "none",
-                    "fill": fill_color,
-                    "opacity": fill_opacity if fill_opacity < 1.0 else None,
-                }
-            ),
-        )
+        ET.SubElement(svg, "rect", _attrs({
+            "x": x,
+            "y": y,
+            "width": SQUARE_SIZE,
+            "height": SQUARE_SIZE,
+            "class": " ".join(cls),
+            "stroke": "none",
+            "fill": square_color,
+            "opacity": square_opacity if square_opacity < 1.0 else None,
+        }))
+
+        try:
+            fill_color, fill_opacity = _color(fill[square])
+        except KeyError:
+            pass
+        else:
+            ET.SubElement(svg, "rect", _attrs({
+                "x": x,
+                "y": y,
+                "width": SQUARE_SIZE,
+                "height": SQUARE_SIZE,
+                "stroke": "none",
+                "fill": fill_color,
+                "opacity": fill_opacity if fill_opacity < 1.0 else None,
+            }))
 
     # Render check mark.
     if check is not None:
         file_index = chess.square_file(check)
         rank_index = chess.square_rank(check)
 
-        x = (file_index if orientation else 7 - file_index) * SQUARE_SIZE + margin
-        y = (7 - rank_index if orientation else rank_index) * SQUARE_SIZE + margin
+        x = (file_index if orientation else 7 - file_index) * SQUARE_SIZE + board_offset
+        y = (7 - rank_index if orientation else rank_index) * SQUARE_SIZE + board_offset
 
-        ET.SubElement(
-            svg,
-            "rect",
-            _attrs(
-                {
-                    "x": x,
-                    "y": y,
-                    "width": SQUARE_SIZE,
-                    "height": SQUARE_SIZE,
-                    "class": "check",
-                    "fill": "url(#check_gradient)",
-                }
-            ),
-        )
+        ET.SubElement(svg, "rect", _attrs({
+            "x": x,
+            "y": y,
+            "width": SQUARE_SIZE,
+            "height": SQUARE_SIZE,
+            "class": "check",
+            "fill": "url(#check_gradient)",
+        }))
 
     # Render pieces and selected squares.
     for square, bb in enumerate(chess.BB_SQUARES):
         file_index = chess.square_file(square)
         rank_index = chess.square_rank(square)
 
-        x = (file_index if orientation else 7 - file_index) * SQUARE_SIZE + margin
-        y = (7 - rank_index if orientation else rank_index) * SQUARE_SIZE + margin
+        x = (file_index if orientation else 7 - file_index) * SQUARE_SIZE + board_offset
+        y = (7 - rank_index if orientation else rank_index) * SQUARE_SIZE + board_offset
 
         if board is not None:
             piece = board.piece_at(square)
             if piece:
                 href = f"#{chess.COLOR_NAMES[piece.color]}-{chess.PIECE_NAMES[piece.piece_type]}"
-                ET.SubElement(
-                    svg,
-                    "use",
-                    {
-                        "href": href,
-                        "xlink:href": href,
-                        "transform": f"translate({x:d}, {y:d})",
-                    },
-                )
+                ET.SubElement(svg, "use", {
+                    "href": href,
+                    "xlink:href": href,
+                    "transform": f"translate({x:d}, {y:d})",
+                })
 
         # Render selected squares.
-        if squares is not None and square in squares:
-            ET.SubElement(
-                svg,
-                "use",
-                _attrs(
-                    {
-                        "href": "#xx",
-                        "xlink:href": "#xx",
-                        "x": x,
-                        "y": y,
-                    }
-                ),
-            )
+        if square in squares:
+            ET.SubElement(svg, "use", _attrs({
+                "href": "#xx",
+                "xlink:href": "#xx",
+                "x": x,
+                "y": y,
+            }))
 
     # Render arrows.
     for arrow in arrows:
@@ -504,7 +455,7 @@ def board(
             color = "green"
 
         try:
-            color, opacity = _color(colors, " ".join(["arrow", color]))
+            color, opacity = _select_color(colors, " ".join(["arrow", color]))
         except KeyError:
             opacity = 1.0
 
@@ -513,36 +464,22 @@ def board(
         head_file = chess.square_file(head)
         head_rank = chess.square_rank(head)
 
-        xtail = (
-            margin + (tail_file + 0.5 if orientation else 7.5 - tail_file) * SQUARE_SIZE
-        )
-        ytail = (
-            margin + (7.5 - tail_rank if orientation else tail_rank + 0.5) * SQUARE_SIZE
-        )
-        xhead = (
-            margin + (head_file + 0.5 if orientation else 7.5 - head_file) * SQUARE_SIZE
-        )
-        yhead = (
-            margin + (7.5 - head_rank if orientation else head_rank + 0.5) * SQUARE_SIZE
-        )
+        xtail = board_offset + (tail_file + 0.5 if orientation else 7.5 - tail_file) * SQUARE_SIZE
+        ytail = board_offset + (7.5 - tail_rank if orientation else tail_rank + 0.5) * SQUARE_SIZE
+        xhead = board_offset + (head_file + 0.5 if orientation else 7.5 - head_file) * SQUARE_SIZE
+        yhead = board_offset + (7.5 - head_rank if orientation else head_rank + 0.5) * SQUARE_SIZE
 
         if (head_file, head_rank) == (tail_file, tail_rank):
-            ET.SubElement(
-                svg,
-                "circle",
-                _attrs(
-                    {
-                        "cx": xhead,
-                        "cy": yhead,
-                        "r": SQUARE_SIZE * 0.9 / 2,
-                        "stroke-width": SQUARE_SIZE * 0.1,
-                        "stroke": color,
-                        "opacity": opacity if opacity < 1.0 else None,
-                        "fill": "none",
-                        "class": "circle",
-                    }
-                ),
-            )
+            ET.SubElement(svg, "circle", _attrs({
+                "cx": xhead,
+                "cy": yhead,
+                "r": SQUARE_SIZE * 0.9 / 2,
+                "stroke-width": SQUARE_SIZE * 0.1,
+                "stroke": color,
+                "opacity": opacity if opacity < 1.0 else None,
+                "fill": "none",
+                "class": "circle",
+            }))
         else:
             marker_size = 0.75 * SQUARE_SIZE
             marker_margin = 0.1 * SQUARE_SIZE
@@ -556,47 +493,29 @@ def board(
             xtip = xhead - dx * marker_margin / hypot
             ytip = yhead - dy * marker_margin / hypot
 
-            ET.SubElement(
-                svg,
-                "line",
-                _attrs(
-                    {
-                        "x1": xtail,
-                        "y1": ytail,
-                        "x2": shaft_x,
-                        "y2": shaft_y,
-                        "stroke": color,
-                        "opacity": opacity if opacity < 1.0 else None,
-                        "stroke-width": SQUARE_SIZE * 0.2,
-                        "stroke-linecap": "butt",
-                        "class": "arrow",
-                    }
-                ),
-            )
+            ET.SubElement(svg, "line", _attrs({
+                "x1": xtail,
+                "y1": ytail,
+                "x2": shaft_x,
+                "y2": shaft_y,
+                "stroke": color,
+                "opacity": opacity if opacity < 1.0 else None,
+                "stroke-width": SQUARE_SIZE * 0.2,
+                "stroke-linecap": "butt",
+                "class": "arrow",
+            }))
 
-            marker = [
-                (xtip, ytip),
-                (
-                    shaft_x + dy * 0.5 * marker_size / hypot,
-                    shaft_y - dx * 0.5 * marker_size / hypot,
-                ),
-                (
-                    shaft_x - dy * 0.5 * marker_size / hypot,
-                    shaft_y + dx * 0.5 * marker_size / hypot,
-                ),
-            ]
+            marker = [(xtip, ytip),
+                      (shaft_x + dy * 0.5 * marker_size / hypot,
+                       shaft_y - dx * 0.5 * marker_size / hypot),
+                      (shaft_x - dy * 0.5 * marker_size / hypot,
+                       shaft_y + dx * 0.5 * marker_size / hypot)]
 
-            ET.SubElement(
-                svg,
-                "polygon",
-                _attrs(
-                    {
-                        "points": " ".join(f"{x},{y}" for x, y in marker),
-                        "fill": color,
-                        "opacity": opacity if opacity < 1.0 else None,
-                        "class": "arrow",
-                    }
-                ),
-            )
+            ET.SubElement(svg, "polygon", _attrs({
+                "points": " ".join(f"{x},{y}" for x, y in marker),
+                "fill": color,
+                "opacity": opacity if opacity < 1.0 else None,
+                "class": "arrow",
+            }))
 
     return SvgWrapper(ET.tostring(svg).decode("utf-8"))
