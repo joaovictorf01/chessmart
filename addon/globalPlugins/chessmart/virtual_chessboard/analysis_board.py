@@ -66,6 +66,7 @@ from .analysis_engine import AnalysisEngine
 from ..played_move import PlayedMove
 from .actions_bar import ActionsBarMixin
 from .engine_actions import EngineActionsMixin
+from .review_actions import ReviewActionsMixin
 from .ui_components import MenuItemObject, MenuObject
 from .user_driven import UserDrivenCell, UserDrivenChessboard
 
@@ -182,6 +183,18 @@ class AnalysisCell(UserDrivenCell):
 	def script_opening(self, gesture):
 		self.parent.announce_opening()
 
+	@script(gesture="kb:f7")
+	def script_review_game(self, gesture):
+		self.parent.review_game()
+
+	@script(gesture="kb:alt+pagedown")
+	def script_next_moment(self, gesture):
+		self.parent.next_moment(1)
+
+	@script(gesture="kb:alt+pageup")
+	def script_previous_moment(self, gesture):
+		self.parent.next_moment(-1)
+
 	@script(gesture="kb:t")
 	def script_clock(self, gesture):
 		self.parent.announce_clock_summary()
@@ -195,7 +208,7 @@ class AnalysisCell(UserDrivenCell):
 		self.parent.focus_action_bar(reverse=True)
 
 
-class AnalysisChessboard(EngineActionsMixin, ActionsBarMixin, UserDrivenChessboard):
+class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin, UserDrivenChessboard):
 	cell_class = AnalysisCell
 	can_draw = False
 
@@ -213,7 +226,7 @@ class AnalysisChessboard(EngineActionsMixin, ActionsBarMixin, UserDrivenChessboa
 		# E pressed twice: the first press already started the quick think; the
 		# second is remembered and turns into the long one when the quick one ends.
 		self._deep_pending = False
-		chessboard_closed_signal.connect(lambda sender: self.engine.quit(), sender=self)
+		chessboard_closed_signal.connect(lambda sender: (self.stop_review(), self.engine.quit()), sender=self)
 		self.install_actions_bar(
 			# Translators: Name of the Tab bar on the analysis board.
 			name=_("Analysis actions"),
@@ -229,6 +242,10 @@ class AnalysisChessboard(EngineActionsMixin, ActionsBarMixin, UserDrivenChessboa
 				),
 				# Translators: Tab bar action on the analysis board, with its key.
 				(_("Opening, O"), self._from_actions(self.announce_opening)),
+				# Translators: Tab bar action on the analysis board, with its key.
+				(_("Review the game, F7"), self._from_actions(self.review_game)),
+				# Translators: Tab bar action on the analysis board, with its key.
+				(_("Next critical moment, Alt+Page Down"), self._from_actions(self.next_moment)),
 				# Translators: Tab bar action on the analysis board, with its key.
 				(_("Clock of the game, T"), self._from_actions(self.announce_clock_summary)),
 				# Translators: Tab bar action on the analysis board, with its key.

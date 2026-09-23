@@ -162,6 +162,30 @@ class AnalysisEngine:
 		finally:
 			self._release()
 
+	@call_threaded
+	def evaluate_positions(
+		self,
+		boards: t.Sequence["chess.Board"],
+		seconds: float,
+		progress: t.Callable[[int, int], None],
+		cancel: threading.Event,
+	) -> list[t.Optional[Evaluation]]:
+		"""One evaluation per board, in order; None for a finished position. Call after `try_start()`.
+
+		`progress(done, total)` is called from this worker thread after each
+		board; setting `cancel` stops before the next one and returns what is done.
+		"""
+		try:
+			results: list[t.Optional[Evaluation]] = []
+			for done, board in enumerate(boards, start=1):
+				if cancel.is_set():
+					break
+				results.append(None if board.is_game_over() else self._analyse(board.copy(), seconds))
+				progress(done, len(boards))
+			return results
+		finally:
+			self._release()
+
 	def quit(self) -> None:
 		engine, self._engine = self._engine, None
 		if engine is None:

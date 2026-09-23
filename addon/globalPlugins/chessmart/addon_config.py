@@ -32,6 +32,14 @@ CONFIG_SPEC = {
 	"gamesFolder": 'string(default="")',
 	# The Lichess username last imported from, offered again in the import dialog.
 	"lichessUser": 'string(default="")',
+	# Game review: whose moves, from which verdict, how many, what the engine
+	# reveals, seconds per position, whether opening theory is skipped.
+	"reviewSide": 'string(default="mine")',
+	"reviewThreshold": 'string(default="mistake")',
+	"reviewMaxMoments": "integer(default=5)",
+	"reviewReveal": 'string(default="nothing")',
+	"reviewSeconds": "float(default=1.0)",
+	"reviewSkipTheory": "boolean(default=True)",
 }
 
 
@@ -108,3 +116,39 @@ def get_lichess_user() -> str:
 
 def save_lichess_user(user: str) -> None:
 	_section()["lichessUser"] = user.strip()
+
+
+def get_review_options():
+	"""The saved review options; an unknown stored value falls back to the default."""
+	from .engine_eval import MoveVerdict
+	from .game_review import Reveal, ReviewOptions, Side
+
+	section = _section()
+	defaults = ReviewOptions()
+
+	def choose(enum_class, value, fallback):
+		try:
+			return enum_class(str(value))
+		except ValueError:
+			return fallback
+
+	max_moments = int(section["reviewMaxMoments"])
+	return ReviewOptions(
+		side=choose(Side, section["reviewSide"], defaults.side),
+		threshold=choose(MoveVerdict, section["reviewThreshold"], defaults.threshold),
+		# 0 in the configuration means every critical moment.
+		max_moments=max_moments if max_moments > 0 else None,
+		reveal=choose(Reveal, section["reviewReveal"], defaults.reveal),
+		seconds=float(section["reviewSeconds"]) or defaults.seconds,
+		skip_theory=bool(section["reviewSkipTheory"]),
+	)
+
+
+def save_review_options(options) -> None:
+	section = _section()
+	section["reviewSide"] = options.side.value
+	section["reviewThreshold"] = options.threshold.value
+	section["reviewMaxMoments"] = options.max_moments or 0
+	section["reviewReveal"] = options.reveal.value
+	section["reviewSeconds"] = options.seconds
+	section["reviewSkipTheory"] = options.skip_theory

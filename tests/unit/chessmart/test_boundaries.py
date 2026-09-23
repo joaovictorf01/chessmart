@@ -25,6 +25,7 @@ PURE_MODULES = (
 	"endgame.tablebase",
 	"engine_eval",
 	"game_clock",
+	"game_review",
 	"game_tree",
 	"i18n",
 	"lichess_import",

@@ -124,6 +124,12 @@ Nothing ends the session: a checkmate inside a variation is only a position. Whe
 
 **Control+S** asks for the players, the event, the date and the result, and saves the game in your **games folder** (Settings; by default `Documents\Chessmart`) as `year-month-day_White-vs-Black.pgn`. A game opened from a file with a single game is saved back to that file.
 
+### Game review
+
+**F7** on the analysis board reviews the whole game: the engine evaluates every position of the main line (about a second each; F7 again stops), judges each move with Lichess's rules, and says the critical moments: "3 critical moments: move 14, mistake; move 22, inaccuracy; move 31, blunder." **Alt+Page Down** and **Alt+Page Up** go from one to the next. Each opens on the position before the move, so the better move is looked for there: play a candidate and Shift+E judges it.
+
+Settings, "Game review", decide how much the engine says: whose moves (only yours, the side at the bottom of the board, or both); what counts (blunders only; mistakes and blunders; everything); how many moments at most (3, 5, 10 or all, keeping the worst); what the engine reveals (by default only where the move went wrong; or also its move; or its move and its line as a variation); the time per position; and whether opening theory is skipped. The review marks a critical move with its verdict only when you left the move unmarked: your own marks are never changed.
+
 ### Import a Lichess game
 
 **Import Lichess Game...** offers the Lichess link on the clipboard, if there is one (in the browser, Control+L then Control+C copies it), and otherwise asks for a game link, a game code, or a Lichess username (that player's last game; the name is remembered for next time). The game is saved in the games folder as `year-month-day_White-vs-Black_lichess-code.pgn` and opens on the analysis board, from Black's side when the remembered user played Black. Importing the same game again opens your saved copy, with your notes, instead of downloading over it. Lichess's own evaluations are left out: the engine answers you, it does not speak first.
@@ -162,6 +168,8 @@ The commands of the game board work here too (arrows, Enter, A, M, F1, F4...). O
 | E | Engine evaluation: who is better and by how much, the best move with its line, and two other candidates. Press twice to let the engine think 8 seconds instead of 2 |
 | Shift+E | Review the move that led here against the engine's best: the engine's move, good, inaccuracy, mistake or blunder, and the mark that suggests |
 | Control+E | After E, add the engine's line (up to 8 half-moves) as a variation, with the evaluation as its comment |
+| F7 | Review the whole game; F7 again stops |
+| Alt+Page Down / Alt+Page Up | Next / previous critical moment of the review |
 | T | The clock of the game, for both sides (imported games) |
 | T | The clock of the game, for both sides (imported games) |
 | O | The opening the line is in, with its ECO code, and whether the position is still theory |
