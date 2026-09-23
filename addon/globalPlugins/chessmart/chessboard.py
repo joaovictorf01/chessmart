@@ -29,13 +29,16 @@ with import_bundled():
 TIME_CHECK_INTERVAL = 1000
 TIME_NOTIFICATION_MINUTES = 7
 RSVG_CONVERT_EXECUTABLE = os.path.join(BIN_DIRECTORY, "rsvg_convert", "rsvg_convert.exe")
+# Lichess's brown board: cream and brown squares, the last move in yellow-green,
+# and the file letters and rank numbers on a dark margin, so someone watching
+# the screen can follow along ("the knight on f3").
 BOARD_COLOR_MAP = {
-	"square light": "#ff7187fe",
-	"square dark": "#cd3721ff",
-	"square light lastmove": "#c88771ff",
-	"square dark lastmove": "#e63721ff",
-	"margin": "",
-	"coord": "",
+	"square light": "#f0d9b5",
+	"square dark": "#b58863",
+	"square light lastmove": "#cdd26a",
+	"square dark lastmove": "#aaa23a",
+	"margin": "#262421",
+	"coord": "#e8e6e3",
 }
 
 
@@ -99,8 +102,12 @@ class ChessboardDialog(wx.Frame):
 		assert self.chessboard is not None, "the board is drawn only after it exists"
 		if "flipped" not in chess_svg_kwargs:
 			chess_svg_kwargs["flipped"] = self.chessboard.is_board_visually_flipped
+		board = board or self.chessboard.board
+		if "check" not in chess_svg_kwargs and board.is_check():
+			# The king in check glows red, as on Lichess.
+			chess_svg_kwargs["check"] = board.king(board.turn)
 		return chess.svg.board(
-			board or self.chessboard.board,
+			board,
 			colors=BOARD_COLOR_MAP,
 			**chess_svg_kwargs,
 		).encode("utf-8")

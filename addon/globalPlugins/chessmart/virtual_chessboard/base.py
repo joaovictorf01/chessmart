@@ -55,14 +55,20 @@ with import_bundled():
 
 
 class Color(enum.Enum):
-	"""Colors for the highlight drawn on the board (the arrow over the focused square)."""
+	"""Colors of the ring drawn on the focused square, and of the last-move arrow.
 
-	Red = "#96D454"
-	Blue = "#0000FF"
-	Green = "#00B050"
-	Yellow = "#FFFF00"
-	Purple = "#953553"
-	DarkGray = "#3C3C3C"
+	Chosen to stand out on the cream and brown squares for whoever watches the
+	screen: the focus ring is blue, a legal destination green, a square the
+	dragged piece cannot go to red, the picked-up piece purple.
+	"""
+
+	Red = "#d93025"
+	Blue = "#1e6fd9"
+	Green = "#15a34a"
+	Yellow = "#f2c200"
+	Purple = "#8e3fbf"
+	# The last move, drawn over its highlighted squares.
+	DarkGray = "#15781b"
 
 
 @dataclasses.dataclass(frozen=True)
