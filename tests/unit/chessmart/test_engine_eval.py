@@ -14,6 +14,7 @@ from chessmart.engine_eval import (
 	Assessment,
 	MoveReview,
 	MoveVerdict,
+	threat_position,
 )
 from chessmart.paths import import_bundled
 
@@ -175,6 +176,29 @@ class MoveReviewTest(unittest.TestCase):
 
 	def test_a_better_than_expected_move_loses_nothing(self):
 		self.assertEqual(self.review(0, 40).lost_chance, 0.0)
+
+
+class ThreatTest(unittest.TestCase):
+	def test_the_other_side_gets_the_move(self):
+		board = chess.Board()
+		board.push_san("e4")
+		passed = threat_position(board)
+		assert passed is not None
+		self.assertEqual(passed.turn, chess.WHITE)
+		self.assertIsNone(passed.ep_square)
+		self.assertEqual(passed.board_fen(), board.board_fen())
+
+	def test_scholars_mate_threat_is_found_in_the_passed_position(self):
+		board = chess.Board("r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 3 3")
+		passed = threat_position(board)
+		assert passed is not None
+		self.assertIn(chess.Move.from_uci("h5f7"), passed.legal_moves)
+		passed.push(chess.Move.from_uci("h5f7"))
+		self.assertTrue(passed.is_checkmate())
+
+	def test_no_threat_question_in_check(self):
+		board = chess.Board("4k3/8/8/8/8/8/4q3/4K3 w - - 0 1")
+		self.assertIsNone(threat_position(board))
 
 
 if __name__ == "__main__":

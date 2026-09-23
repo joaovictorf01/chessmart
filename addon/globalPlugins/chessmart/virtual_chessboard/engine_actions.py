@@ -20,6 +20,7 @@ import wx
 
 from ..analysis_words import MARK_KEYS, spoken_assessment, spoken_mark, spoken_pawns, spoken_verdict
 from ..i18n import _, ngettext
+from ..engine_eval import threat_position
 from ..openings import lookup
 from ..sounds import GameSound
 from ..speaking import speak_next
@@ -124,6 +125,49 @@ class EngineActionsMixin:
 			spoken.append(_("Also: {moves}").format(moves="; ".join(others)))
 		sequence: list = [speech.commands.BreakCommand(100), *spoken]
 		speak_next(sequence)
+
+	def show_threat(self):
+		"""X, as on Lichess: what the other side would play if it were its move."""
+		board = self.tree.board()
+		passed = threat_position(board)
+		if passed is None:
+			GameSound.invalid.play()
+			if board.is_check():
+				# Translators: Spoken by X when the side to move is in check.
+				ui.message(_("In check: the threat is already on the board."))
+			else:
+				ui.message(_("There is nothing to evaluate: the game is over in this position."))
+			return
+		if not self._claim_engine():
+			return
+		node = self.tree.node
+		self.engine.evaluate(passed, QUICK_SECONDS).add_done_callback(
+			lambda future: wx.CallAfter(self._on_threat, node, future),
+		)
+
+	def _on_threat(self, node, future):
+		evaluations, error = result_of(future)
+		if error is not None:
+			self._say_engine_error(error)
+			return
+		if node is not self.tree.node or not evaluations:
+			return
+		threat = evaluations[0]
+		if threat.best_move is None:
+			# Translators: Spoken by X when the engine finds no move for the other side.
+			ui.message(_("No threat found."))
+			return
+		spoken: list = [
+			# Translators: The threat found by X, e.g. "Threat: Qxf7, white mates in 1.".
+			_("Threat: {move}, {evaluation}.").format(
+				move=self._san_text(threat.board, threat.best_move),
+				evaluation=spoken_assessment(threat.assessment),
+			),
+		]
+		line = self._spoken_line(threat.board, threat.line[1:SPOKEN_LINE_MOVES], after=threat.best_move)
+		if line:
+			spoken.append(_("then {line}").format(line=line))
+		speak_next(spoken)
 
 	def review_move(self):
 		node = self.tree.node

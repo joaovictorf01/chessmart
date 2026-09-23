@@ -183,6 +183,10 @@ class AnalysisCell(UserDrivenCell):
 	def script_opening(self, gesture):
 		self.parent.announce_opening()
 
+	@script(gesture="kb:x")
+	def script_threat(self, gesture):
+		self.parent.show_threat()
+
 	@script(gesture="kb:f7")
 	def script_review_game(self, gesture):
 		self.parent.review_game()
@@ -233,6 +237,8 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 			items=[
 				# Translators: Tab bar action on the analysis board, with its key.
 				(_("Evaluate the position, E"), self._from_actions(self.evaluate_position)),
+				# Translators: Tab bar action on the analysis board, with its key.
+				(_("Threat: what the other side would play, X"), self._from_actions(self.show_threat)),
 				# Translators: Tab bar action on the analysis board, with its key.
 				(_("Review the move played, Shift+E"), self._from_actions(self.review_move)),
 				# Translators: Tab bar action on the analysis board, with its key.

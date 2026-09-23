@@ -4,6 +4,7 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 
 ## Added
 
+- X on the analysis board, as on Lichess: the threat, the move the other side would play if it were its turn, with its evaluation and line; worked out by handing the move over (engine_eval.threat_position), refused in check.
 - The game review says each player's accuracy, with Lichess's formula (AccuracyPercent.scala). Checked against a real Lichess game: the same accuracy (87 and 96) and the same eleven move judgments from the same evaluations.
 - **Game review** (F7 on the analysis board): the engine evaluates every main-line position once, judges each move with Lichess's rules and says the critical moments; Alt+Page Down / Up walk them, each on the position before the move. Settings choose whose moves, from which verdict, how many at most, what the engine reveals (by default only where the move went wrong), the time per position and whether theory is skipped. Suggested marks go only on moves left unmarked.
 - **Board Editor**: set up a position with the piece letters (Shift for White), Delete to empty a square, Control+C and Control+V for FEN; Tab switches whose move and each castling right (which follow the kings and rooks), checks the position and says what is wrong in words, and opens it on the analysis board. Import Lichess Game offers a Lichess link found on the clipboard.
