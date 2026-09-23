@@ -612,14 +612,7 @@ class EndgameLessonChessboard(TablebaseJudgeMixin, UserEngineChessboard):
 		yield _("Control+N goes to the next position.")
 
 	def _kept_result(self) -> bool:
-		outcome = self.board.outcome()
-		if outcome is None:
-			return False
-		if outcome.winner is None:
-			actual = judge.DRAW
-		else:
-			actual = judge.WIN if outcome.winner is self.prospective else judge.LOSS
-		return actual == self.position.expected
+		return judge.result_for(self.board.outcome(), self.prospective) == self.position.expected
 
 	def game_over(self, dialog_title=None):
 		was_over = self.is_game_over

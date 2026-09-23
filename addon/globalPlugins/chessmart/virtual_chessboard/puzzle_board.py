@@ -1,7 +1,6 @@
 # coding: utf-8
 # pyright: basic
 
-import dataclasses
 import functools
 import time
 
@@ -19,6 +18,7 @@ from ..sounds import GameSound
 from ..speaking import speak_next
 from ..i18n import _
 from ..tactic.models import AttemptResult
+from ..puzzle_attempt import AttemptState, SessionStats, player_move_progress
 from ..training_session import PuzzleInfo, TrainingSession
 from .actions_bar import ActionsBarMixin
 from .user_driven import UserDrivenCell, UserDrivenChessboard
@@ -27,107 +27,6 @@ from .user_driven import UserDrivenCell, UserDrivenChessboard
 PUZZLE_FIRST_MOVE_DELAY_MS = 1200
 PUZZLE_REPLY_DELAY_MS = 900
 PUZZLE_SOLVED_DELAY_MS = 250
-
-
-@dataclasses.dataclass
-class AttemptState:
-	"""Everything the current puzzle attempt needs to remember. Starts zeroed for each puzzle."""
-
-	# When the player's turn started, i.e. after the automatic move.
-	# None means the attempt hasn't started yet.
-	started_at: float | None = None
-	mistakes: int = 0
-	hints_used: int = 0
-	# Index in `solution_moves` of the next expected move (the player's or the opponent's).
-	solution_index: int = 0
-	# Already written to the database. Recording can happen partway through the
-	# puzzle (on the first mistake) or at the end, but never twice.
-	recorded: bool = False
-	# Lichess rule: the first wrong move already settles the rating as a
-	# loss. Finishing the puzzle after that is for learning and no longer
-	# affects the number.
-	settled_by_mistake: bool = False
-	# Retry with Control+R: with the solution already known, it measures nothing.
-	is_retry: bool = False
-	# Already counted in the session numbers. Separate from `recorded` because
-	# the session counts the puzzle once, at the end, and the database write may have happened earlier.
-	counted_in_session: bool = False
-	# Finished with Control+Enter: counts as solved in the database, but the
-	# session reports how many were finished this way. A trainer that hides
-	# this measures the will to finish, not the tactic.
-	auto_solved: bool = False
-
-	@property
-	def started(self) -> bool:
-		return self.started_at is not None
-
-	@property
-	def touched(self) -> bool:
-		"""The player did something in this puzzle: a move, a mistake, or a hint.
-
-		This separates "gave up" from "never looked at it": a puzzle that was
-		loaded and abandoned (immediate Control+N, accidental Escape) is not a
-		loss, and doesn't go into the database or the session numbers. A hint
-		counts as touched so it can't be used to peek at the solution for free.
-		"""
-		return self.solution_index > 0 or self.mistakes > 0 or self.hints_used > 0
-
-	def elapsed_ms(self) -> int:
-		if self.started_at is None:
-			return 0
-		return max(1, int((time.monotonic() - self.started_at) * 1000))
-
-
-@dataclasses.dataclass
-class SessionStats:
-	"""The session's numbers, in memory. Each puzzle is counted once, when it finishes."""
-
-	attempts: int = 0
-	solved: int = 0
-	solved_after_mistake: int = 0
-	mistakes: int = 0
-	hints: int = 0
-	revealed: int = 0
-
-	def count(self, attempt: AttemptState, solved: bool) -> None:
-		self.attempts += 1
-		self.mistakes += attempt.mistakes
-		self.hints += attempt.hints_used
-		if solved and attempt.settled_by_mistake:
-			self.solved_after_mistake += 1
-		elif solved:
-			self.solved += 1
-			if attempt.auto_solved:
-				self.revealed += 1
-
-	def status_label(self) -> str:
-		"""Label for the actions bar button. Memory only: read on every Tab."""
-		if not self.attempts:
-			return _("Session status")
-		return _("Session status: {solved} of {attempts} solved").format(
-			solved=self.solved,
-			attempts=self.attempts,
-		)
-
-	def summary(self) -> str:
-		if not self.attempts:
-			return _("Session just started: no finished puzzle yet.")
-		summary = _("Session: {solved} solved out of {attempts}.").format(
-			solved=self.solved,
-			attempts=self.attempts,
-		)
-		details = []
-		if self.solved_after_mistake:
-			details.append(
-				_("Solved after a mistake, not rated: {count}.").format(count=self.solved_after_mistake),
-			)
-		if self.revealed:
-			details.append(_("{count} of them revealed with Control+Enter.").format(count=self.revealed))
-		if self.mistakes:
-			details.append(_("Mistakes in the session: {count}.").format(count=self.mistakes))
-		if self.hints:
-			details.append(_("Hints in the session: {count}.").format(count=self.hints))
-		return " ".join([summary, *details])
 
 
 class PuzzleCell(UserDrivenCell):
@@ -713,17 +612,9 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 		speak_next([message])
 
 	def _player_move_progress(self):
-		"""Which player move the puzzle is on, as (current, total).
-
-		`solution_moves` alternates starting with the player: an even index is
-		their move, odd is the opponent's reply. The move that sets up the
-		position doesn't count -- it's the `auto_performed_move`, played before anything else.
-		"""
+		"""Which player move the puzzle is on, as (current, total); see `player_move_progress`."""
 		assert self.puzzle is not None
-		moves = self.puzzle.solution_moves
-		total = (len(moves) + 1) // 2
-		played = (self._attempt.solution_index + 1) // 2
-		return min(played + 1, total), total
+		return player_move_progress(len(self.puzzle.solution_moves), self._attempt.solution_index)
 
 	def _current_puzzle_summary(self):
 		if self.current_expected_move is None:

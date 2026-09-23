@@ -36,6 +36,7 @@ from ..spoken_messages import (
 from ..i18n import _
 from ..notation import DESCRIPTIVE, render_san, render_square
 from ..addon_config import get_move_notation
+from ..board_geometry import DOWN, LEFT, RIGHT, UP, count_material, neighbour, square_color
 from ..paths import import_bundled
 from ..sounds import GameSound
 from ..speaking import intersperse, speak_next
@@ -177,14 +178,7 @@ class BaseChessboardCell(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 
 	@property
 	def square_color(self):
-		square_number = self.index
-		file_index, rank_index = (
-			chess.square_file(square_number) + 1,
-			chess.square_rank(square_number) + 1,
-		)
-		is_row_even = (file_index % 2) == 0
-		is_cell_even = (rank_index % 2) == 0
-		return chess.WHITE if (is_row_even != is_cell_even) else chess.BLACK
+		return square_color(self.index)
 
 	def get_remaining_time(self, color: chess.Color):
 		color_name = spoken_color_name(color)
@@ -387,9 +381,6 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 	roleText = _("Board")
 	# Translators: Name of the chessboard control, spoken by the screen reader.
 	name = _("Chess")
-	row_ranges = tuple(
-		range(i, j) for (i, j) in zip([i * 8 for i in range(0, 8)], [j * 8 for j in range(1, 9)])
-	)
 	cell_class = BaseChessboardCell
 	can_draw = True
 
@@ -440,11 +431,6 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 	@property
 	def is_board_visually_flipped(self):
 		return self.is_board_flipped
-
-	def get_containing_row(self, index):
-		for rng in self.row_ranges:
-			if index in rng:
-				return rng
 
 	def game_over(self, dialog_title=None):
 		was_over = self.is_game_over
@@ -718,14 +704,6 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 
 	# Classic values. Bishop and knight are intentionally worth the same:
 	# counting them together avoids getting lost when one was traded for the other.
-	MATERIAL_VALUES = {
-		chess.QUEEN: 9,
-		chess.ROOK: 5,
-		chess.BISHOP: 3,
-		chess.KNIGHT: 3,
-		chess.PAWN: 1,
-	}
-
 	def announce_material(self):
 		"""Counts material from a snapshot of the board, type by type, and gives the balance.
 
@@ -733,29 +711,18 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 		perspective of whoever plays on this board (white when no side is set).
 		"""
 		me = self.prospective if self.prospective is not None else chess.WHITE
-		them = not me
-
-		def count(piece_type, color):
-			return len(self.board.pieces(piece_type, color))
-
+		material = count_material(self.board, me)
 		lines = [
 			# Translators: Plural piece name in the material count.
-			(_("queens"), count(chess.QUEEN, me), count(chess.QUEEN, them)),
+			(_("queens"), *material.queens),
 			# Translators: Plural piece name in the material count.
-			(_("rooks"), count(chess.ROOK, me), count(chess.ROOK, them)),
-			(
-				# Translators: Bishops and knights together, in the material count.
-				_("minor pieces"),
-				count(chess.BISHOP, me) + count(chess.KNIGHT, me),
-				count(chess.BISHOP, them) + count(chess.KNIGHT, them),
-			),
+			(_("rooks"), *material.rooks),
+			# Translators: Bishops and knights together, in the material count.
+			(_("minor pieces"), *material.minor_pieces),
 			# Translators: Plural piece name in the material count.
-			(_("pawns"), count(chess.PAWN, me), count(chess.PAWN, them)),
+			(_("pawns"), *material.pawns),
 		]
-		balance = sum(
-			value * (count(piece_type, me) - count(piece_type, them))
-			for piece_type, value in self.MATERIAL_VALUES.items()
-		)
+		balance = material.balance
 		# Translators: Heading of the material count announcement.
 		spoken_commands = [_("Material.")]
 		for label, mine, theirs in lines:
@@ -772,12 +739,10 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 		else:
 			# Translators: Spoken when both sides have the same material.
 			spoken_commands.append(_("Material is even."))
-		my_bishops = count(chess.BISHOP, me)
-		their_bishops = count(chess.BISHOP, them)
-		if my_bishops == 2 and their_bishops < 2:
+		if material.bishop_pair is True:
 			# Translators: Spoken in the material count.
 			spoken_commands.append(_("You have the bishop pair."))
-		elif their_bishops == 2 and my_bishops < 2:
+		elif material.bishop_pair is False:
 			# Translators: Spoken in the material count.
 			spoken_commands.append(_("Opponent has the bishop pair."))
 		speak_next(intersperse(spoken_commands, speech.commands.BreakCommand(150)))
@@ -798,31 +763,23 @@ class BaseVirtualChessboard(KeyboardNavigableNVDAObjectMixin, NVDAObject):
 		else:
 			self.set_focus_to_cell(self._focused_cell)
 
-	def navigate_left(self, anchor):
-		row_range = self.get_containing_row(anchor.index) or range(0, 64)
-		prev_index = anchor.index - 1
-		if prev_index not in row_range:
+	def _navigate(self, anchor, direction):
+		target = neighbour(anchor.index, direction)
+		if target is None:
 			return self.notify_invalid_navigation()
-		self.set_focus_to_cell(prev_index)
+		self.set_focus_to_cell(target)
+
+	def navigate_left(self, anchor):
+		self._navigate(anchor, LEFT)
 
 	def navigate_right(self, anchor):
-		row_range = self.get_containing_row(anchor.index) or range(0, 64)
-		next_index = anchor.index + 1
-		if next_index not in row_range:
-			return self.notify_invalid_navigation()
-		self.set_focus_to_cell(next_index)
+		self._navigate(anchor, RIGHT)
 
 	def navigate_up(self, anchor):
-		next_index = anchor.index + 8
-		if next_index > 63:
-			return self.notify_invalid_navigation()
-		self.set_focus_to_cell(next_index)
+		self._navigate(anchor, UP)
 
 	def navigate_down(self, anchor):
-		prev_index = anchor.index - 8
-		if prev_index < 0:
-			return self.notify_invalid_navigation()
-		self.set_focus_to_cell(prev_index)
+		self._navigate(anchor, DOWN)
 
 	# -- leaving the board ----------------------------------------------------
 

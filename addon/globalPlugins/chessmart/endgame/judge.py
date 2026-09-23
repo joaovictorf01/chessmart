@@ -178,6 +178,15 @@ def describe_spoiled(move_verdict: MoveVerdict) -> str | None:
 	return _("That move lost the draw: the position is now lost.")
 
 
+def result_for(outcome: "chess.Outcome | None", color: chess.Color) -> str | None:
+	"""WIN, DRAW or LOSS for `color` in a finished game; None while it goes on."""
+	if outcome is None:
+		return None
+	if outcome.winner is None:
+		return DRAW
+	return WIN if outcome.winner == color else LOSS
+
+
 def result_names() -> dict[str, str]:
 	return {
 		# Translators: One of the answers to "win or draw?".
