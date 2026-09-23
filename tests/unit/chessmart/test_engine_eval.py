@@ -51,6 +51,20 @@ class AssessmentTest(unittest.TestCase):
 		self.assertEqual(cp(37).pawns, 0.4)
 		self.assertEqual(cp(-130).pawns, -1.3)
 
+	def test_band_edges(self):
+		# The upper bound of each band belongs to it; one centipawn more is the next band.
+		self.assertEqual(cp(75).symbol, "+=")
+		self.assertEqual(cp(76).symbol, "±")
+		self.assertEqual(cp(200).symbol, "±")
+		self.assertEqual(cp(201).symbol, "+-")
+		self.assertEqual(cp(-201).symbol, "-+")
+
+	def test_win_chance_matches_lichess(self):
+		# Lichess (ui/ceval winningChances): 2 / (1 + exp(-0.00368208 * cp)) - 1, from -1 to 1.
+		# At +100 that is 0.18203, which is 59.10 on the 0 to 100 scale used here.
+		self.assertAlmostEqual(cp(100).win_chance(chess.WHITE), 59.10, places=2)
+		self.assertAlmostEqual(cp(-300).win_chance(chess.WHITE), 24.89, places=2)
+
 	def test_win_chance_is_fifty_at_zero_and_symmetric(self):
 		self.assertAlmostEqual(cp(0).win_chance(chess.WHITE), 50.0)
 		self.assertAlmostEqual(cp(300).win_chance(chess.WHITE) + cp(300).win_chance(chess.BLACK), 100.0)
@@ -82,6 +96,15 @@ class MoveReviewTest(unittest.TestCase):
 		review = self.review(0, -150)
 		self.assertEqual(review.verdict, MoveVerdict.MISTAKE)
 		self.assertEqual(review.suggested_mark, chess.pgn.NAG_MISTAKE)
+
+	def test_verdict_edges_follow_lichess(self):
+		# From a level position, how many centipawns lose 5, 10 and 15 points of winning chance.
+		self.assertEqual(self.review(0, -54).verdict, MoveVerdict.GOOD)  # 4.95 points lost
+		self.assertEqual(self.review(0, -56).verdict, MoveVerdict.INACCURACY)  # 5.14
+		self.assertEqual(self.review(0, -110).verdict, MoveVerdict.INACCURACY)  # 9.99
+		self.assertEqual(self.review(0, -120).verdict, MoveVerdict.MISTAKE)  # 10.87
+		self.assertEqual(self.review(0, -166).verdict, MoveVerdict.MISTAKE)  # 14.82
+		self.assertEqual(self.review(0, -170).verdict, MoveVerdict.BLUNDER)  # 15.16
 
 	def test_losing_a_pawn_a_rook_up_hardly_matters(self):
 		self.assertEqual(self.review(600, 500).verdict, MoveVerdict.GOOD)
