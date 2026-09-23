@@ -14,8 +14,10 @@ from gui import guiHelper
 
 from ..addon_config import (
 	TacticsDefaults,
+	get_games_folder,
 	get_move_notation,
 	get_tactics_defaults,
+	save_games_folder,
 	save_move_notation,
 	save_tactics_defaults,
 )
@@ -74,6 +76,23 @@ class ChessboardSettingsDialog(TacticsSetupMixin, gui.SettingsDialog):
 		guiHelper.associateElements(notationLabel, self.notationChoice)
 		helper.addItem(notationLabel)
 		helper.addItem(self.notationChoice)
+
+		# The same grouping NVDA uses for the portable copy folder: the group's
+		# label is what the screen reader says for the path field.
+		# Translators: Label of the group with the folder where the analysis board saves games.
+		groupSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label=_("Games folder"))
+		groupHelper = helper.addItem(guiHelper.BoxSizerHelper(self, sizer=groupSizer))
+		gamesFolder = groupHelper.addItem(
+			guiHelper.PathSelectionHelper(
+				groupSizer.GetStaticBox(),
+				# Translators: Button that browses for the games folder.
+				_("Browse &folder..."),
+				# Translators: Title of the dialog that chooses the games folder.
+				_("Choose the folder for your games"),
+			),
+		)
+		self.gamesFolderTextCtrl = gamesFolder.pathControl
+		self.gamesFolderTextCtrl.SetValue(get_games_folder())
 		self._bind_shared_events()
 
 	def postInit(self):
@@ -101,4 +120,5 @@ class ChessboardSettingsDialog(TacticsSetupMixin, gui.SettingsDialog):
 			),
 		)
 		save_move_notation(NOTATION_STYLES[self.notationChoice.GetSelection()][0])
+		save_games_folder(self.gamesFolderTextCtrl.GetValue())
 		super().onOk(event)

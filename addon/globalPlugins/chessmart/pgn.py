@@ -104,6 +104,16 @@ class PGNGameInfo:
 		return _("Unknown result")
 
 
+def read_game_at(filename: str, offset: t.Optional[int]) -> "chess.pgn.Game":
+	"""The whole game at `offset`, variations and comments included (the analysis board needs them all)."""
+	with open(filename, "r", encoding=PGN_ENCODING, errors=PGN_ERRORS) as file:
+		file.seek(offset or 0)
+		game = chess.pgn.read_game(file)
+	if game is None:
+		raise ValueError(f"no game at offset {offset} of {filename}")
+	return game
+
+
 @dataclasses.dataclass
 class PGNGame:
 	game_obj: chess.pgn.Game

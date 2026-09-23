@@ -92,7 +92,7 @@ All the board commands below work here too.
 * **Variant**: standard chess, Chess 960, Antichess, Atomic, King of the hill, Racing kings, Horde, Three check and Crazyhouse.
 * **Time control**: classical, rapid, blitz, bullet or custom (for example `10+5`).
 * **Starting FEN**: any position.
-* **Engine options**: strength (Elo) and thinking time, when playing the computer. Standard chess uses Stockfish 14; variants use Fairy-Stockfish.
+* **Engine options**: strength (Elo) and thinking time, when playing the computer. Standard chess uses Stockfish 16 (the official 64-bit build); variants use Fairy-Stockfish.
 
 **Replay PGN File...** opens a PGN file: Enter plays the next move of the game and Backspace takes it back, while the arrow keys let you inspect the board at any point.
 
@@ -116,6 +116,45 @@ All the board commands below work here too.
 | Control+Shift+S | Save the board as a PNG image |
 | Escape | Close the board. During a game it asks first: leaving abandons the game against the engine |
 
+## Record and Analyse a Game
+
+**Record and Analyse Game** opens an empty board where you enter a game move by move, both sides from the keyboard — a game you played over the board, following it on your tactile set, or any game you want to study. **Analyse PGN File...** opens a saved game on the same board, variations and comments included.
+
+Nothing ends the session: a checkmate inside a variation is only a position. Wherever the line already continues, a different move starts a **variation**; you can come back to the main line at any time. Each move can carry a **comment** (what you were thinking, what you missed) and a **mark**: ! good move, ? mistake, !! brilliant, ?? blunder, !? interesting, ?! dubious. The marks are spoken in words.
+
+**Control+S** asks for the players, the event, the date and the result, and saves the game in your **games folder** (Settings; by default `Documents\Chessmart`) as `year-month-day_White-vs-Black.pgn`. A game opened from a file with a single game is saved back to that file.
+
+### Engine analysis
+
+The engine is Stockfish 16. An evaluation is said the way players say it: "white slightly better, plus 0.4" (a pawn is 1.0). Shift+E judges a move the way Lichess does: the evaluation becomes a winning chance from 0 to 100, and the move is an inaccuracy when it gives away 5 points of it, a mistake at 10, a blunder at 15. That is why losing a pawn in a level position is an inaccuracy, while losing one with a rook up is nothing. The suggested mark is only a suggestion: the mark stays yours.
+
+Opening names come from Lichess ([lichess-org/chess-openings](https://github.com/lichess-org/chess-openings), public domain), looked up by position, so a transposition is recognised too. A move that reaches a new named opening says its name, the first move out of the table says "out of theory", Shift+E on a theory move says so instead of asking the engine, and saving writes the ECO and Opening tags.
+
+Your own variations have no limit: calculate until you can say how the position stands, and stop there. The engine's line added with Control+E stops at 8 half-moves, enough to see the idea.
+
+### Keyboard commands on the analysis board
+
+The commands of the game board work here too (arrows, Enter, A, M, F1, F4...). On top of them:
+
+| Key | Action |
+|---|---|
+| Alt+Left / Alt+Right | Back / forward one move along the current line |
+| Alt+Home / Alt+End | Start of the game / end of the current line |
+| Alt+Up | Leave the variation: back to the position where it branched off |
+| Alt+Down | The moves recorded from this position: the continuation and its variations |
+| Backspace | Take back the last move of a line, to fix a move entered by mistake |
+| C / Shift+C | Write / read the comment of the current move |
+| Control+1 to Control+6 | Mark the move: ! ? !! ?? !? ?! |
+| Control+0 | Remove the mark |
+| Control+P | Make the current variation the main line |
+| E | Engine evaluation: who is better and by how much, the best move with its line, and two other candidates. Press twice to let the engine think 8 seconds instead of 2 |
+| Shift+E | Review the move that led here against the engine's best: the engine's move, good, inaccuracy, mistake or blunder, and the mark that suggests |
+| Control+E | After E, add the engine's line (up to 8 half-moves) as a variation, with the evaluation as its comment |
+| O | The opening the line is in, with its ECO code, and whether the position is still theory |
+| Tab / Shift+Tab | All these actions as a bar, each with its key: for when a key is forgotten. Also flips the board |
+| Control+S | Save the game in the games folder |
+| Escape | Close the board; if something changed since the last save, it asks first |
+
 ## Settings
 
 **Settings...** in the Chessmart menu:
@@ -123,6 +162,7 @@ All the board commands below work here too.
 * Default training plan, challenge level and themes for new tactics sessions.
 * The puzzle database in use, with **Browse...** to point at a database elsewhere and **Download or update...**.
 * **Move notation**: how moves and squares are spoken.
+* **Games folder**: where the analysis board saves games.
 
 ### Move notation
 
@@ -154,7 +194,7 @@ Everything is under `addon/globalPlugins/chessmart/`. Read it in this order:
 * `tactic/` — the data layer, pure Python with no NVDA imports. `store.py` talks to the two SQLite files (`puzzles.db`, the Lichess base; `tactic.db`, the player's history) and returns the dataclasses in `models.py`; `glicko2.py` is the rating maths; `repository.py` is the facade the rest of the add-on calls; `download.py` fetches the database. This package is type-checked with pyright and covered by unit tests.
 * `trainer.py`, `theme_names.py`, `theme_catalog.py` — the rules: training plans, challenge levels, the name and description of every Lichess theme. Also pure Python.
 * `training_session.py` — one training session: the options the user chose (`TrainingOptions`) and the puzzle sequence (`TrainingSession`), with prefetch of the next puzzle.
-* `virtual_chessboard/` — the boards the screen reader user navigates: `base.py` (squares, moves, speech), `user_driven.py` (drag and drop of pieces), `user_engine.py` (against Stockfish), `user_user.py`, `internet_chessboard.py` (Lichess), `pgn_player.py`, `puzzle_board.py` (the trainer).
+* `virtual_chessboard/` — the boards the screen reader user navigates: `base.py` (squares, moves, speech), `user_driven.py` (drag and drop of pieces), `user_engine.py` (against Stockfish), `user_user.py`, `internet_chessboard.py` (Lichess), `pgn_player.py`, `puzzle_board.py` (the trainer), `analysis_board.py` (recording and analysis, over the tree in `game_tree.py`).
 * `graphical_interface/` — the wx dialogs: new game, tactics session, settings, download.
 * `chessboard.py` is the wx window that hosts a board; `__init__.py` is the NVDA plugin and menu; `addon_config.py`, `notation.py`, `spoken_messages.py`, `signals.py`, `concurrency.py`, `paths.py`, `sounds.py` and `speaking.py` are the small shared pieces their names say.
 

@@ -10,6 +10,7 @@ two sources for the same data, and they have already diverged once.
 """
 
 import dataclasses
+import os
 from typing import Any
 
 import config
@@ -27,6 +28,8 @@ CONFIG_SPEC = {
 	# How moves are spoken; see notation.py. Free text validated by us, not
 	# `option(...)`, so a value from a future version doesn't blow up the config.
 	"moveNotation": 'string(default="descriptive")',
+	# Where the analysis board saves games; empty means the default below.
+	"gamesFolder": 'string(default="")',
 }
 
 
@@ -81,3 +84,17 @@ def save_move_notation(style: str) -> None:
 	from .notation import DEFAULT_STYLE, STYLE_IDS
 
 	_section()["moveNotation"] = style if style in STYLE_IDS else DEFAULT_STYLE
+
+
+def default_games_folder() -> str:
+	"""The Chessmart folder in Documents: visible in the Explorer, unlike the add-on's own data folder."""
+	return os.path.join(os.path.expanduser("~"), "Documents", "Chessmart")
+
+
+def get_games_folder() -> str:
+	"""The folder the analysis board saves to: the one chosen in the settings, or the default."""
+	return str(_section()["gamesFolder"]).strip() or default_games_folder()
+
+
+def save_games_folder(folder: str) -> None:
+	_section()["gamesFolder"] = folder.strip()

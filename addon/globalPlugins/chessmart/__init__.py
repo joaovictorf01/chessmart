@@ -2,6 +2,7 @@
 # pyright: basic
 
 import functools
+import os
 import wx
 import globalPluginHandler
 import gui
@@ -19,13 +20,15 @@ with import_bundled():
 	import chess
 
 from . import concurrency
-from .addon_config import ensure_config_spec
+from .addon_config import ensure_config_spec, get_games_folder
 from .time_control import NULL_TIME_CONTROL, ChessTimeControl, NullChessTimeControl
 from .chessboard import ChessboardDialog
 from .game_elements import GameInfo, ChessVariant
 from .graphical_interface.settings_panel import ChessboardSettingsDialog
-from .pgn import PGNGame, PGNGameInfo
+from .game_tree import GameTree
+from .pgn import PGNGame, PGNGameInfo, read_game_at
 from .virtual_chessboard import (
+	AnalysisChessboard,
 	EndgameDrillChessboard,
 	EndgameLessonChessboard,
 	PGNPlayerChessboard,
@@ -66,6 +69,22 @@ class ChessboardMenu(wx.Menu):
 			_("&Replay PGN File..."),
 			_("Load an replay a portable game notation (.pgn) file"),
 		)
+		record_game_item = self.Append(
+			wx.ID_ANY,
+			# Translators: Menu item that opens an empty analysis board to record a game.
+			_("Record and &Analyse Game"),
+			# Translators: Help text of the menu item that opens an empty analysis board.
+			_(
+				"Enter a game move by move, with variations, comments and marks, and save it in your games folder"
+			),
+		)
+		analyse_pgn_item = self.Append(
+			wx.ID_ANY,
+			# Translators: Menu item that opens a PGN file on the analysis board.
+			_("Analyse PGN &File..."),
+			# Translators: Help text of the menu item that opens a PGN file on the analysis board.
+			_("Open a saved game on the analysis board to go through it and add variations and comments"),
+		)
 		self.AppendSeparator()
 		settings_item = self.Append(
 			wx.ID_ANY,
@@ -86,6 +105,8 @@ class ChessboardMenu(wx.Menu):
 		self.Bind(wx.EVT_MENU, self.onEndgames, endgames_item)
 		self.Bind(wx.EVT_MENU, self.onStudyLog, study_item)
 		self.Bind(wx.EVT_MENU, self.onReplayPGN, replay_pgn_file_item)
+		self.Bind(wx.EVT_MENU, self.onRecordGame, record_game_item)
+		self.Bind(wx.EVT_MENU, self.onAnalysePGN, analyse_pgn_item)
 		self.Bind(wx.EVT_MENU, self.onSettings, settings_item)
 
 	def onNewGame(self, event):
@@ -109,22 +130,23 @@ class ChessboardMenu(wx.Menu):
 		run_modal(dialog)
 
 	def open_tactics_session(self, options):
+		self._open_session(
+			options,
+			_(
+				"The tactics database was not found. Use Browse in the tactics dialog to point at your puzzle database, or place it in the add-on's data folder as puzzles.db.",
+			),
+		)
+
+	def _open_session(self, options, missing_database_message):
+		"""Opens a tactics session, or says why it cannot: no database, or no puzzle for these options."""
 		session = TrainingSession(options)
 		try:
 			session.ensure_ready()
 		except FileNotFoundError:
-			show_error(
-				_(
-					"The tactics database was not found. Use Browse in the tactics dialog to point at your puzzle database, or place it in the add-on's data folder as puzzles.db.",
-				),
-				_("Tactics Database Not Found"),
-			)
+			show_error(missing_database_message, _("Tactics Database Not Found"))
 			return
 		except LookupError as error:
-			show_warning(
-				str(error),
-				_("No Tactics Found"),
-			)
+			show_warning(str(error), _("No Tactics Found"))
 			return
 		self.open_training_session(session)
 
@@ -152,21 +174,10 @@ class ChessboardMenu(wx.Menu):
 		"""A session using the options saved in the configuration, without going through the dialog."""
 		if not self._ensure_puzzle_database():
 			return
-		session = TrainingSession(default_training_options())
-		try:
-			session.ensure_ready()
-		except FileNotFoundError:
-			show_error(
-				_(
-					"The tactics database was not found. Choose a valid database in Chessboard settings first.",
-				),
-				_("Tactics Database Not Found"),
-			)
-			return
-		except LookupError as error:
-			show_warning(str(error), _("No Tactics Found"))
-			return
-		self.open_training_session(session)
+		self._open_session(
+			default_training_options(),
+			_("The tactics database was not found. Choose a valid database in Chessboard settings first."),
+		)
 
 	def onEndgames(self, event):
 		from .graphical_interface.endgame_dialog import EndgameDialog
@@ -292,6 +303,74 @@ class ChessboardMenu(wx.Menu):
 		self.global_plugin_object.initialize_and_show_chessboard_dialog(
 			PuzzleChessboard,
 			game_info,
+		)
+
+	def onRecordGame(self, event):
+		self.open_analysis_board(GameTree())
+
+	def onAnalysePGN(self, event):
+		folder = get_games_folder()
+		openFileDialog = wx.FileDialog(
+			parent=gui.mainFrame,
+			# Translators: Title of the dialog that opens a PGN file on the analysis board.
+			message=_("Open Game for Analysis"),
+			defaultDir=folder if os.path.isdir(folder) else wx.GetUserHome(),
+			wildcard=_("Portable Game Notation *.pgn | *.pgn"),
+			style=wx.FD_OPEN,
+		)
+		run_modal(openFileDialog, functools.partial(self._on_analysis_file_chosen, openFileDialog))
+
+	def _on_analysis_file_chosen(self, dialog, res):
+		if res != wx.ID_OK:
+			return
+		filepath = dialog.GetPath().strip()
+		if not filepath:
+			return
+		try:
+			games = tuple(PGNGameInfo.game_info_from_pgn_filename(filepath))
+		except (OSError, UnicodeDecodeError, ValueError) as error:
+			log.warning("chessmart: could not read PGN file %s: %s", filepath, error)
+			self._say_pgn_unreadable(error)
+			return
+		if not games:
+			queueHandler.queueFunction(queueHandler.eventQueue, ui.message, _("The file contains no games"))
+			return
+		if len(games) == 1:
+			self._open_game_for_analysis(games[0], single_game_file=True)
+			return
+		choiceDg = wx.SingleChoiceDialog(
+			gui.mainFrame,
+			_("The file contains the following games"),
+			_("Select Game"),
+			choices=[g.description for g in games],
+		)
+		run_modal(choiceDg, functools.partial(self._on_analysis_game_chosen, choiceDg, games))
+
+	def _on_analysis_game_chosen(self, dialog, games, res):
+		if res == wx.ID_OK:
+			self._open_game_for_analysis(games[dialog.GetSelection()], single_game_file=False)
+
+	def _open_game_for_analysis(self, game_info, single_game_file):
+		try:
+			game = read_game_at(game_info.filename, game_info.offset)
+		except (OSError, UnicodeDecodeError, ValueError) as error:
+			log.warning("chessmart: could not read PGN game %s: %s", game_info.description, error)
+			self._say_pgn_unreadable(error)
+			return
+		# A file with one game is saved back in place; a game out of a collection
+		# is saved as a new file, so the rest of the collection is never rewritten.
+		self.open_analysis_board(GameTree(game), source_path=game_info.filename if single_game_file else None)
+
+	def open_analysis_board(self, tree, source_path=None):
+		chess_new_game_info = GameInfo(
+			variant=ChessVariant.STANDARD,
+			time_control=NULL_TIME_CONTROL,
+			pychess_board=None,
+			prospective=None,
+			vboard_kwargs=dict(tree=tree, source_path=source_path, use_visuals=True, visual_arrows=True),
+		)
+		self.global_plugin_object.initialize_and_show_chessboard_dialog(
+			AnalysisChessboard, chess_new_game_info
 		)
 
 	def onReplayPGN(self, event):
