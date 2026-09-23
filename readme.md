@@ -124,6 +124,18 @@ Nothing ends the session: a checkmate inside a variation is only a position. Whe
 
 **Control+S** asks for the players, the event, the date and the result, and saves the game in your **games folder** (Settings; by default `Documents\Chessmart`) as `year-month-day_White-vs-Black.pgn`. A game opened from a file with a single game is saved back to that file.
 
+### Import a Lichess game
+
+**Import Lichess Game...** asks for a game link, a game code, or a Lichess username (that player's last game; the name is remembered for next time). The game is saved in the games folder as `year-month-day_White-vs-Black_lichess-code.pgn` and opens on the analysis board, from Black's side when the remembered user played Black. Importing the same game again opens your saved copy, with your notes, instead of downloading over it. Lichess's own evaluations are left out: the engine answers you, it does not speak first.
+
+Every move carries its clock: moving through the game says the time left and the time the move took ("clock 0:48, took 0:12, under a minute"). **T** sums up the clock for both sides: from which move a player was under a minute, the lowest clock, the longest think.
+
+### Import a Lichess game
+
+**Import Lichess Game...** asks for a game link, a game code, or a Lichess username (that player's last game; the name is remembered for next time). The game is saved in the games folder as `year-month-day_White-vs-Black_lichess-code.pgn` and opens on the analysis board, from Black's side when the remembered user played Black. Importing the same game again opens your saved copy, with your notes, instead of downloading over it. Lichess's own evaluations are left out: the engine answers you, it does not speak first.
+
+Every move carries its clock: moving through the game says the time left and the time the move took ("clock 0:48, took 0:12, under a minute"). **T** sums up the clock for both sides: from which move a player was under a minute, the lowest clock, the longest think.
+
 ### Engine analysis
 
 The engine is Stockfish 16. An evaluation is said the way players say it: "white slightly better, plus 0.4" (a pawn is 1.0). Shift+E judges a move the way Lichess does: the evaluation becomes a winning chance from 0 to 100, and the move is an inaccuracy when it gives away 5 points of it, a mistake at 10, a blunder at 15. That is why losing a pawn in a level position is an inaccuracy, while losing one with a rook up is nothing. The suggested mark is only a suggestion: the mark stays yours.
@@ -150,6 +162,8 @@ The commands of the game board work here too (arrows, Enter, A, M, F1, F4...). O
 | E | Engine evaluation: who is better and by how much, the best move with its line, and two other candidates. Press twice to let the engine think 8 seconds instead of 2 |
 | Shift+E | Review the move that led here against the engine's best: the engine's move, good, inaccuracy, mistake or blunder, and the mark that suggests |
 | Control+E | After E, add the engine's line (up to 8 half-moves) as a variation, with the evaluation as its comment |
+| T | The clock of the game, for both sides (imported games) |
+| T | The clock of the game, for both sides (imported games) |
 | O | The opening the line is in, with its ECO code, and whether the position is still theory |
 | Tab / Shift+Tab | All these actions as a bar, each with its key: for when a key is forgotten. Also flips the board |
 | Control+S | Save the game in the games folder |

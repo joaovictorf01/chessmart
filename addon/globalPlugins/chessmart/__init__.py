@@ -20,12 +20,14 @@ with import_bundled():
 	import chess
 
 from . import concurrency
-from .addon_config import ensure_config_spec, get_games_folder
+from .addon_config import ensure_config_spec, get_games_folder, get_lichess_user, save_lichess_user
 from .time_control import NULL_TIME_CONTROL, ChessTimeControl, NullChessTimeControl
 from .chessboard import ChessboardDialog
 from .game_elements import GameInfo, ChessVariant
 from .graphical_interface.settings_panel import ChessboardSettingsDialog
-from .game_tree import GameTree
+from .game_tree import GameTree, write_pgn
+from .lichess_import import fetch_game, imported_filename, parse_reference
+from .tactic.download import DownloadError
 from .pgn import PGNGame, PGNGameInfo, read_game_at
 from .virtual_chessboard import (
 	AnalysisChessboard,
@@ -82,6 +84,15 @@ class ChessboardMenu(wx.Menu):
 				"Enter a game move by move, with variations, comments and marks, and save it in your games folder"
 			),
 		)
+		import_lichess_item = self.Append(
+			wx.ID_ANY,
+			# Translators: Menu item that downloads a game from Lichess and opens it on the analysis board.
+			_("&Import Lichess Game..."),
+			# Translators: Help text of the menu item that imports a Lichess game.
+			_(
+				"Download a game from Lichess, with the clock of every move, and open it on the analysis board"
+			),
+		)
 		analyse_pgn_item = self.Append(
 			wx.ID_ANY,
 			# Translators: Menu item that opens a PGN file on the analysis board.
@@ -114,6 +125,7 @@ class ChessboardMenu(wx.Menu):
 		self.Bind(wx.EVT_MENU, self.onReplayPGN, replay_pgn_file_item)
 		self.Bind(wx.EVT_MENU, self.onRecordGame, record_game_item)
 		self.Bind(wx.EVT_MENU, self.onAnalysePGN, analyse_pgn_item)
+		self.Bind(wx.EVT_MENU, self.onImportLichess, import_lichess_item)
 		self.Bind(wx.EVT_MENU, self.onSettings, settings_item)
 
 	def onNewGame(self, event):
@@ -374,13 +386,86 @@ class ChessboardMenu(wx.Menu):
 		# is saved as a new file, so the rest of the collection is never rewritten.
 		self.open_analysis_board(GameTree(game), source_path=game_info.filename if single_game_file else None)
 
-	def open_analysis_board(self, tree, source_path=None):
+	def onImportLichess(self, event):
+		dialog = wx.TextEntryDialog(
+			gui.mainFrame,
+			# Translators: Prompt of the Lichess import dialog.
+			_("Game link or code, or a Lichess username for that player's last game:"),
+			# Translators: Title of the Lichess import dialog.
+			_("Import Lichess Game"),
+			value=get_lichess_user(),
+		)
+		run_modal(dialog, functools.partial(self._on_lichess_reference, dialog))
+
+	def _on_lichess_reference(self, dialog, res):
+		if res != wx.ID_OK:
+			return
+		ref = parse_reference(dialog.GetValue())
+		if ref is None:
+			show_error(
+				# Translators: Shown when the text in the Lichess import dialog is not a game or a username.
+				_("That is not a Lichess game link, game code or username."),
+				_("Import Lichess Game"),
+			)
+			return
+		if ref.kind == "user":
+			save_lichess_user(ref.value)
+		# Translators: Spoken while the game is being downloaded from Lichess.
+		ui.message(_("Downloading from Lichess..."))
+		concurrency.call_threaded(fetch_game)(ref).add_done_callback(
+			lambda future: wx.CallAfter(self._on_lichess_game, future),
+		)
+
+	def _on_lichess_game(self, future):
+		try:
+			game = future.result()
+		except DownloadError as error:
+			log.warning("chessmart: Lichess import failed: %s", error)
+			show_error(
+				# Translators: Shown when a Lichess game could not be downloaded; {error} is the reason.
+				_("Could not get the game from Lichess: {error}").format(error=error),
+				_("Import Lichess Game"),
+			)
+			return
+		folder = get_games_folder()
+		path = os.path.join(folder, imported_filename(game))
+		if os.path.exists(path):
+			# Imported before: the saved copy may already hold comments and variations.
+			try:
+				game = read_game_at(path, 0)
+			except (OSError, UnicodeDecodeError, ValueError) as error:
+				log.warning("chessmart: could not read %s: %s", path, error)
+				self._say_pgn_unreadable(error)
+				return
+			# Translators: Spoken when the Lichess game was imported before; its saved copy opens.
+			ui.message(_("Already imported: opening your copy, with your notes."))
+		else:
+			try:
+				os.makedirs(folder, exist_ok=True)
+				write_pgn(GameTree(game), path)
+			except OSError as error:
+				show_error(
+					_("Could not save the game. Details: {error}").format(error=error),
+					_("Import Lichess Game"),
+				)
+				return
+		user = get_lichess_user().lower()
+		flipped = bool(user) and game.headers.get("Black", "").lower() == user
+		self.open_analysis_board(GameTree(game), source_path=path, flipped=flipped)
+
+	def open_analysis_board(self, tree, source_path=None, flipped=False):
 		chess_new_game_info = GameInfo(
 			variant=ChessVariant.STANDARD,
 			time_control=NULL_TIME_CONTROL,
 			pychess_board=None,
 			prospective=None,
-			vboard_kwargs=dict(tree=tree, source_path=source_path, use_visuals=True, visual_arrows=True),
+			vboard_kwargs=dict(
+				tree=tree,
+				source_path=source_path,
+				flipped=flipped,
+				use_visuals=True,
+				visual_arrows=True,
+			),
 		)
 		self.global_plugin_object.initialize_and_show_chessboard_dialog(
 			AnalysisChessboard, chess_new_game_info

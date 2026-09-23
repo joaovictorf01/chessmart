@@ -30,6 +30,8 @@ CONFIG_SPEC = {
 	"moveNotation": 'string(default="descriptive")',
 	# Where the analysis board saves games; empty means the default below.
 	"gamesFolder": 'string(default="")',
+	# The Lichess username last imported from, offered again in the import dialog.
+	"lichessUser": 'string(default="")',
 }
 
 
@@ -98,3 +100,11 @@ def get_games_folder() -> str:
 
 def save_games_folder(folder: str) -> None:
 	_section()["gamesFolder"] = folder.strip()
+
+
+def get_lichess_user() -> str:
+	return str(_section()["lichessUser"]).strip()
+
+
+def save_lichess_user(user: str) -> None:
+	_section()["lichessUser"] = user.strip()

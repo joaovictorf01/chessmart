@@ -39,6 +39,12 @@ What the unit tests cannot see. After a change, run the parts it touches, with t
 - A named opening is spoken; O repeats it; "out of theory" after the last book move.
 - Control+S asks for the headers and says the file name; the file opens again with Analyse PGN File.
 
+## Lichess import
+
+- Tools > Chessmart > Import Lichess Game: a link, a code, a username; the game opens and says its opening and clock on each move.
+- T sums up both clocks. Importing the same game again says it opens your copy.
+- A wrong code or no connection says why, in a message.
+
 ## Downloads
 
 - Progress is spoken every ten percent; Escape cancels; the next download resumes.

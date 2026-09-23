@@ -52,7 +52,8 @@ from ..game_tree import (
 	unique_path,
 	write_pgn,
 )
-from ..analysis_words import MARK_KEYS, spoken_mark
+from ..analysis_words import MARK_KEYS, spoken_clock_summary, spoken_mark, spoken_move_clock
+from ..game_clock import move_clocks, node_clock, plain_comment, summarize
 from ..i18n import _, ngettext
 from ..notation import render_san
 from ..openings import last_book_node, lookup, opening_of_line
@@ -181,6 +182,10 @@ class AnalysisCell(UserDrivenCell):
 	def script_opening(self, gesture):
 		self.parent.announce_opening()
 
+	@script(gesture="kb:t")
+	def script_clock(self, gesture):
+		self.parent.announce_clock_summary()
+
 	@script(gesture="kb:tab")
 	def script_actions(self, gesture):
 		self.parent.focus_action_bar()
@@ -224,6 +229,8 @@ class AnalysisChessboard(EngineActionsMixin, ActionsBarMixin, UserDrivenChessboa
 				),
 				# Translators: Tab bar action on the analysis board, with its key.
 				(_("Opening, O"), self._from_actions(self.announce_opening)),
+				# Translators: Tab bar action on the analysis board, with its key.
+				(_("Clock of the game, T"), self._from_actions(self.announce_clock_summary)),
 				# Translators: Tab bar action on the analysis board, with its key.
 				(_("Write a comment, C"), self._from_actions(self.edit_comment)),
 				# Translators: Tab bar action on the analysis board, with its key.
@@ -553,6 +560,22 @@ class AnalysisChessboard(EngineActionsMixin, ActionsBarMixin, UserDrivenChessboa
 		headers["ECO"] = opening.eco
 		headers["Opening"] = opening.name
 
+	# -- the clock of an imported game ------------------------------------------------
+
+	def announce_clock_summary(self):
+		clocks = move_clocks(self.tree.game)
+		if not clocks:
+			# Translators: Spoken by T when the game carries no clock (entered by hand, or an old PGN).
+			ui.message(_("This game has no clock. Games imported from Lichess have one."))
+			return
+		speak_next(
+			[
+				spoken_clock_summary(summarize(clocks, chess.WHITE)),
+				speech.commands.BreakCommand(300),
+				spoken_clock_summary(summarize(clocks, chess.BLACK)),
+			],
+		)
+
 	# -- openings ---------------------------------------------------------------------
 
 	def announce_opening(self):
@@ -604,8 +627,9 @@ class AnalysisChessboard(EngineActionsMixin, ActionsBarMixin, UserDrivenChessboa
 		# The score sheet lists the latest move first (SimpleList.add_item inserts at the top).
 		for child in reversed(nodes):
 			text = self._numbered_move(child)
-			if child.comment:
-				text += " " + child.comment
+			comment = plain_comment(child.comment)
+			if comment:
+				text += " " + comment
 			self.score_sheet_menu.add_item(text)
 
 	def _san_text(self, board, move):
@@ -636,6 +660,9 @@ class AnalysisChessboard(EngineActionsMixin, ActionsBarMixin, UserDrivenChessboa
 			details.append(spoken_mark(self.tree.move_mark))
 		if self.tree.comment:
 			details += [speech.commands.BreakCommand(200), self.tree.comment]
+		clock = node_clock(self.tree.node)
+		if clock is not None:
+			details += [speech.commands.BreakCommand(150), spoken_move_clock(*clock)]
 		others = len(self.tree.alternatives()) - 1
 		if others > 0:
 			# Translators: Spoken when the position has variations recorded besides the main continuation.

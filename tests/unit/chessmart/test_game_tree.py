@@ -171,6 +171,17 @@ class EditTest(unittest.TestCase):
 		tree.back()
 		self.assertEqual(tree.comment, "I thought the queen could come out.")
 
+	def test_editing_a_comment_keeps_the_clock(self):
+		tree = GameTree()
+		play(tree, "e4")
+		tree.node.comment = "[%clk 0:14:52]"
+		self.assertEqual(tree.comment, "")
+		tree.set_comment("Played fast")
+		self.assertEqual(tree.comment, "Played fast")
+		self.assertEqual(tree.node.clock(), 892.0)
+		tree.set_comment("")
+		self.assertEqual(tree.node.comment, "[%clk 0:14:52]")
+
 	def test_a_move_has_one_mark_and_a_new_one_replaces_it(self):
 		tree = GameTree()
 		play(tree, "e4", "e5", "Qh5")

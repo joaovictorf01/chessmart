@@ -11,6 +11,7 @@ plus 0.4", "black mates in 3", "dubious move".
 """
 
 from .engine_eval import Advantage, Assessment, MoveVerdict
+from .game_clock import TIME_TROUBLE_SECONDS, ClockSummary, format_clock
 from .game_tree import MOVE_MARK_SYMBOLS
 from .i18n import _, ngettext
 from .paths import import_bundled
@@ -98,3 +99,58 @@ def spoken_verdict(verdict: MoveVerdict) -> str:
 		# Translators: Engine verdict on a move (??).
 		MoveVerdict.BLUNDER: _("blunder"),
 	}[verdict]
+
+
+def spoken_move_clock(left: float, spent: "float | None") -> str:
+	"""After a move of an imported game: the clock left, the time the move took, and time trouble."""
+	# Whole sentences for each case, never a piece glued on: word order changes with the language.
+	trouble = left < TIME_TROUBLE_SECONDS
+	if spent is None and trouble:
+		# Translators: The clock after a move, under a minute, e.g. "clock 0:48, under a minute".
+		text = _("clock {left}, under a minute")
+	elif spent is None:
+		# Translators: The clock after a move, e.g. "clock 14:52".
+		text = _("clock {left}")
+	elif trouble:
+		# Translators: The clock after a move, the time it took, under a minute, e.g. "clock 0:48, took 0:12, under a minute".
+		text = _("clock {left}, took {spent}, under a minute")
+	else:
+		# Translators: The clock after a move and the time it took, e.g. "clock 14:52, took 0:25".
+		text = _("clock {left}, took {spent}")
+	return text.format(left=format_clock(left), spent=format_clock(spent) if spent is not None else "")
+
+
+def spoken_clock_summary(summary: ClockSummary) -> str:
+	"""One side's clock over the game: time trouble, the lowest clock, the longest think."""
+	color = spoken_color_name(summary.color)
+	if summary.lowest is None:
+		# Translators: Clock summary of a side whose moves carry no clock, e.g. "white: no clock".
+		return _("{color}: no clock").format(color=color)
+	parts = []
+	trouble = summary.first_in_time_trouble
+	if trouble is None:
+		# Translators: Part of the clock summary, e.g. "white: never under a minute".
+		parts.append(_("{color}: never under a minute").format(color=color))
+	else:
+		# Translators: Part of the clock summary, e.g. "black: under a minute from move 34".
+		parts.append(
+			_("{color}: under a minute from move {move}").format(color=color, move=trouble.move_number)
+		)
+	# Translators: Part of the clock summary, e.g. "lowest clock 0:41 at move 36".
+	parts.append(
+		_("lowest clock {clock} at move {move}").format(
+			clock=format_clock(summary.lowest.left),
+			move=summary.lowest.move_number,
+		),
+	)
+	think = summary.longest_think
+	if think is not None and think.spent is not None:
+		dots = "." if think.color == chess.WHITE else "..."
+		# Translators: Part of the clock summary, e.g. "longest think 5... Qxg5, 3:10".
+		parts.append(
+			_("longest think {move}, {spent}").format(
+				move=f"{think.move_number}{dots} {think.san}",
+				spent=format_clock(think.spent),
+			),
+		)
+	return "; ".join(parts) + "."

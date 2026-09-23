@@ -22,6 +22,7 @@ import os
 import re
 import typing as t
 
+from .game_clock import annotations, plain_comment
 from .paths import import_bundled
 
 
@@ -195,10 +196,13 @@ class GameTree:
 
 	@property
 	def comment(self) -> str:
-		return self.node.comment
+		"""What the person wrote; `[%clk ...]` and other annotations are not part of it."""
+		return plain_comment(self.node.comment)
 
 	def set_comment(self, text: str) -> None:
-		self.node.comment = text.strip()
+		"""Replaces the written comment, keeping the annotations (clock, evaluation) that were there."""
+		kept = annotations(self.node.comment)
+		self.node.comment = " ".join(part for part in (text.strip(), kept) if part)
 
 	@property
 	def move_mark(self) -> t.Optional[int]:

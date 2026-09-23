@@ -5,11 +5,21 @@
 
 import unittest
 
-from chessmart.analysis_words import MARK_KEYS, spoken_assessment, spoken_mark, spoken_pawns, spoken_verdict
+from chessmart.analysis_words import (
+	MARK_KEYS,
+	spoken_assessment,
+	spoken_clock_summary,
+	spoken_mark,
+	spoken_move_clock,
+	spoken_pawns,
+	spoken_verdict,
+)
+from chessmart.game_clock import ClockSummary, MoveClock
 from chessmart.engine_eval import Assessment, MoveVerdict
 from chessmart.paths import import_bundled
 
 with import_bundled():
+	import chess
 	import chess.pgn
 
 
@@ -43,6 +53,26 @@ class MarksTest(unittest.TestCase):
 	def test_marks_and_verdicts_are_words(self):
 		self.assertEqual(spoken_mark(chess.pgn.NAG_SPECULATIVE_MOVE), "interesting move")
 		self.assertEqual(spoken_verdict(MoveVerdict.BLUNDER), "blunder")
+
+
+class ClockTest(unittest.TestCase):
+	def test_move_clock(self):
+		self.assertEqual(spoken_move_clock(892, 25), "clock 14:52, took 0:25")
+		self.assertEqual(spoken_move_clock(48, 12), "clock 0:48, took 0:12, under a minute")
+		self.assertEqual(spoken_move_clock(892, None), "clock 14:52")
+
+	def test_summary(self):
+		qxg5 = MoveClock(ply=10, color=chess.BLACK, san="Qxg5", left=50, spent=866)
+		qd8 = MoveClock(ply=12, color=chess.BLACK, san="Qd8", left=41, spent=19)
+		summary = ClockSummary(color=chess.BLACK, lowest=qd8, first_in_time_trouble=qxg5, longest_think=qxg5)
+		self.assertEqual(
+			spoken_clock_summary(summary),
+			"black: under a minute from move 5; lowest clock 0:41 at move 6; longest think 5... Qxg5, 14:26.",
+		)
+
+	def test_summary_without_clock(self):
+		empty = ClockSummary(color=chess.WHITE, lowest=None, first_in_time_trouble=None, longest_think=None)
+		self.assertEqual(spoken_clock_summary(empty), "white: no clock")
 
 
 if __name__ == "__main__":
