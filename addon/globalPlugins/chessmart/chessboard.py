@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 from .paths import BIN_DIRECTORY, import_bundled
 from .sounds import GameSound
 from .signals import chessboard_closed_signal, chessboard_signals
-from .concurrency import call_threaded
+from .concurrency import LatestWins, call_threaded
 
 
 with import_bundled():
@@ -58,6 +58,9 @@ class ChessboardDialog(wx.Frame):
 		self.SetSize(size)
 		self.CenterOnScreen()
 		self.bitmap_buffer = wx.Bitmap(*size)
+		# Board pictures: one conversion at a time, and only the newest request
+		# is drawn (see set_board_image).
+		self._renders = LatestWins()
 		self.Bind(wx.EVT_PAINT, self.onPaint, self)
 		self.Bind(wx.EVT_CLOSE, self.onClose, self)
 		# The virtual chessboard is created the first time the window receives focus (set_focus_to_board).
@@ -146,8 +149,30 @@ class ChessboardDialog(wx.Frame):
 		sound.play()
 
 	def set_board_image(self, **chess_svg_kwargs):
-		board_svg_bytes = self.get_board_svg(**chess_svg_kwargs)
-		self._get_png_from_svg(board_svg_bytes).add_done_callback(self.set_background_png)
+		"""Redraws the picture of the board, for whoever is watching the screen.
+
+		Called on every move and every focus change. The SVG is built here, from
+		the board as it is now; turning it into pixels takes an rsvg_convert
+		process, so at most one runs at a time and a burst of arrow presses
+		collapses into the latest one instead of queueing a process per key.
+		"""
+		job = self._renders.request(self.get_board_svg(**chess_svg_kwargs))
+		if job is not None:
+			self._start_render(job)
+
+	def _start_render(self, job):
+		generation, board_svg_bytes = job
+		self._get_png_from_svg(board_svg_bytes).add_done_callback(
+			lambda future: self._on_rendered(generation, future),
+		)
+
+	def _on_rendered(self, generation, future):
+		next_job = self._renders.finished()
+		if next_job is not None:
+			self._start_render(next_job)
+		# A newer picture was asked for while this one was drawn: it will land next.
+		if self._renders.is_current(generation):
+			self.set_background_png(future)
 
 	@call_threaded
 	def _get_png_from_svg(self, board_svg_bytes):
@@ -169,7 +194,11 @@ class ChessboardDialog(wx.Frame):
 		)
 
 	def set_background_png(self, future):
-		sp_result = future.result()
+		try:
+			sp_result = future.result()
+		except (OSError, RuntimeError) as error:
+			log.error("chessmart: could not run the board picture converter: %s", error)
+			return
 		if sp_result.returncode != 0:
 			# Not an exception: the converter simply returned an error code.
 			log.error("chessmart: failed to convert the board SVG to PNG: %s", sp_result.stderr)
