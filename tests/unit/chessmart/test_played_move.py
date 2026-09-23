@@ -32,6 +32,14 @@ class PlayedMoveTest(unittest.TestCase):
 		self.assertEqual(played.captured_piece, chess.Piece(chess.PAWN, chess.BLACK))
 		self.assertEqual(played.sound_name, "en_passant")
 
+	def test_black_en_passant_takes_the_white_pawn(self):
+		board = chess.Board("4k3/8/8/8/3p4/8/4P3/4K3 w - - 0 1")
+		board.push_san("e4")
+		played = PlayedMove.capture(board, chess.Move.from_uci("d4e3"))
+		self.assertTrue(played.is_en_passant)
+		self.assertEqual(played.captured_piece, chess.Piece(chess.PAWN, chess.WHITE))
+		self.assertEqual(played.sound_name, "en_passant")
+
 	def test_castling_is_seen_before_the_rook_moves(self):
 		board = chess.Board("4k3/8/8/8/8/8/8/4K2R w K - 0 1")
 		played = PlayedMove.capture(board, chess.Move.from_uci("e1g1"))

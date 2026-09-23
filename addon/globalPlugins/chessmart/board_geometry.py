@@ -35,7 +35,7 @@ LEFT, RIGHT, UP, DOWN = "left", "right", "up", "down"
 
 def square_color(square: int) -> bool:
 	"""chess.WHITE for a light square, chess.BLACK for a dark one (a1 is dark)."""
-	return chess.WHITE if (chess.square_file(square) % 2) != (chess.square_rank(square) % 2) else chess.BLACK
+	return chess.WHITE if chess.BB_SQUARES[square] & chess.BB_LIGHT_SQUARES else chess.BLACK
 
 
 def neighbour(square: int, direction: str) -> t.Optional[int]:

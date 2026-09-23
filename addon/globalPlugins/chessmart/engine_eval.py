@@ -11,12 +11,16 @@ Free of NVDA imports so the thresholds can be tested. Two scales:
 * The position: centipawns (hundredths of a pawn, White's point of view) turned
   into the usual assessment symbols: = equal, += / =+ slightly better,
   ± / ∓ clearly better, +- / -+ winning.
-* A move: how much winning chance it gave away, as Lichess judges it. Losing a
-  pawn in a level position is serious; losing one when a rook up hardly
-  matters. So centipawns become a winning chance (Lichess's formula) and the
-  drop of that chance decides the mark. Lichess measures the chance from -1 to
-  1 and calls a drop of 0.1 an inaccuracy (?!), 0.2 a mistake (?), 0.3 a
-  blunder (??); on the 0 to 100 scale used here that is 5, 10 and 15 points.
+* A move: judged the way Lichess's computer analysis does (lila,
+  modules/tree/src/main/Advice.scala; scalachess, eval.scala). Losing a pawn
+  in a level position is serious; losing one when a rook up hardly matters.
+  So centipawns become a winning chance and the drop of that chance decides
+  the mark. Lichess measures the chance from -1 to 1 and calls a drop of 0.1
+  an inaccuracy (?!), 0.2 a mistake (?), 0.3 a blunder (??); on the 0 to 100
+  scale used here that is 5, 10 and 15 points. Mates have their own rule:
+  walking into a forced mate, or letting one's own forced mate go, is a
+  blunder, a mistake when the position was already lost (or still won) by
+  more than 7 pawns, an inaccuracy past 10.
 """
 
 import dataclasses
@@ -33,10 +37,10 @@ with import_bundled():
 	import chess.pgn
 
 
-# Lichess's constant: a winning chance curve fitted to its own games.
+# Lichess's constant: a winning chance curve fitted to its own games (lila pull 11148).
 _WIN_CURVE = 0.00368208
-# A mate is worth this much when turned into centipawns (only for the curve).
-_MATE_AS_CP = 10000
+# Lichess's ceiling: a mate counts as 10 pawns when turned into a winning chance.
+_MATE_AS_CP = 1000
 
 
 class Advantage(enum.IntEnum):
@@ -72,6 +76,13 @@ class Assessment:
 	def from_score(cls, score: "chess.engine.PovScore") -> "Assessment":
 		white = score.white()
 		return cls(centipawns=white.score(), mate=white.mate())
+
+	def to_pov_score(self) -> "chess.engine.PovScore":
+		"""Back to python-chess's score, for `GameNode.set_eval` ([%eval ...] in the PGN)."""
+		if self.mate is not None:
+			return chess.engine.PovScore(chess.engine.Mate(self.mate), chess.WHITE)
+		assert self.centipawns is not None
+		return chess.engine.PovScore(chess.engine.Cp(self.centipawns), chess.WHITE)
 
 	@property
 	def side_ahead(self) -> t.Optional[bool]:
@@ -111,7 +122,7 @@ class Assessment:
 			cp = _MATE_AS_CP if self.mate > 0 else -_MATE_AS_CP
 		else:
 			assert self.centipawns is not None
-			cp = max(-_MATE_AS_CP, min(_MATE_AS_CP, self.centipawns))
+			cp = self.centipawns
 		white = 50 + 50 * (2 / (1 + math.exp(-_WIN_CURVE * cp)) - 1)
 		return white if color == chess.WHITE else 100 - white
 
@@ -149,6 +160,38 @@ class MoveReview:
 	def is_best(self) -> bool:
 		return self.played_move == self.best_move
 
+	def _pov(self, assessment: Assessment) -> tuple[t.Optional[int], t.Optional[int]]:
+		"""(centipawns, mate) from the mover's side: positive is good for the mover."""
+		sign = 1 if self.mover == chess.WHITE else -1
+		cp = None if assessment.centipawns is None else sign * assessment.centipawns
+		mate = None if assessment.mate is None else sign * assessment.mate
+		return cp, mate
+
+	def _mate_verdict(self) -> t.Optional[MoveVerdict]:
+		"""Lichess's MateAdvice; None when no mate changed hands and centipawns decide."""
+		best_cp, best_mate = self._pov(self.best)
+		played_cp, played_mate = self._pov(self.played)
+		if best_mate is None and played_mate is not None and played_mate < 0:
+			# Walked into a forced mate.
+			before = best_cp or 0
+			if before < -999:
+				return MoveVerdict.INACCURACY
+			if before < -700:
+				return MoveVerdict.MISTAKE
+			return MoveVerdict.BLUNDER
+		if best_mate is not None and best_mate > 0 and (played_mate is None or played_mate < 0):
+			# Let a forced mate go.
+			after = played_cp or 0
+			if after > 999:
+				return MoveVerdict.INACCURACY
+			if after > 700:
+				return MoveVerdict.MISTAKE
+			return MoveVerdict.BLUNDER
+		if best_mate is not None or played_mate is not None:
+			# A slower mate, or still being mated: Lichess marks nothing.
+			return MoveVerdict.GOOD
+		return None
+
 	@property
 	def lost_chance(self) -> float:
 		"""Points of winning chance the move gave away, never below zero."""
@@ -158,6 +201,9 @@ class MoveReview:
 	def verdict(self) -> MoveVerdict:
 		if self.is_best:
 			return MoveVerdict.BEST
+		mate_verdict = self._mate_verdict()
+		if mate_verdict is not None:
+			return mate_verdict
 		lost = self.lost_chance
 		for bound, verdict in VERDICT_BANDS:
 			if lost < bound:
@@ -167,17 +213,3 @@ class MoveReview:
 	@property
 	def suggested_mark(self) -> t.Optional[int]:
 		return VERDICT_MARKS.get(self.verdict)
-
-
-def numbered_line(board: "chess.Board", moves: t.Sequence["chess.Move"], limit: int = 6) -> list[str]:
-	"""The engine's line as a player reads it: `12. Nf3 Nc6 13. Bb5`, at most `limit` moves."""
-	board = board.copy(stack=False)
-	words = []
-	for index, move in enumerate(moves[:limit]):
-		if board.turn == chess.WHITE:
-			words.append(f"{board.fullmove_number}.")
-		elif index == 0:
-			words.append(f"{board.fullmove_number}...")
-		words.append(board.san(move))
-		board.push(move)
-	return words

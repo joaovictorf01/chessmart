@@ -14,7 +14,6 @@ from chessmart.engine_eval import (
 	Assessment,
 	MoveReview,
 	MoveVerdict,
-	numbered_line,
 )
 from chessmart.paths import import_bundled
 
@@ -46,6 +45,14 @@ class AssessmentTest(unittest.TestCase):
 	def test_from_engine_score_is_from_whites_point_of_view(self):
 		score = chess.engine.PovScore(chess.engine.Cp(120), chess.BLACK)
 		self.assertEqual(Assessment.from_score(score).centipawns, -120)
+
+	def test_written_to_pgn_as_lichess_reads_it(self):
+		node = chess.pgn.Game().add_variation(chess.Move.from_uci("e2e4"))
+		node.set_eval(cp(-42).to_pov_score(), 20)
+		self.assertIn("[%eval -0.42,20]", node.comment)
+		self.assertEqual(node.eval().white().score(), -42)
+		node.set_eval(Assessment(None, 3).to_pov_score(), 25)
+		self.assertIn("[%eval #3,25]", node.comment)
 
 	def test_pawns_are_rounded_to_one_decimal(self):
 		self.assertEqual(cp(37).pawns, 0.4)
@@ -106,6 +113,51 @@ class MoveReviewTest(unittest.TestCase):
 		self.assertEqual(self.review(0, -166).verdict, MoveVerdict.MISTAKE)  # 14.82
 		self.assertEqual(self.review(0, -170).verdict, MoveVerdict.BLUNDER)  # 15.16
 
+	def mate_review(self, best, played, mover=chess.WHITE):
+		return MoveReview(
+			mover=mover,
+			played=played,
+			best=best,
+			best_move=chess.Move.from_uci("e2e4"),
+			played_move=chess.Move.from_uci("a2a3"),
+		)
+
+	def test_walking_into_mate_from_a_level_position_is_a_blunder(self):
+		self.assertEqual(self.mate_review(cp(0), Assessment(None, -3)).verdict, MoveVerdict.BLUNDER)
+
+	def test_walking_into_mate_when_already_lost_counts_less(self):
+		# Lichess: already 7 pawns down, a mistake; more than 10 down, an inaccuracy.
+		self.assertEqual(self.mate_review(cp(-800), Assessment(None, -3)).verdict, MoveVerdict.MISTAKE)
+		self.assertEqual(self.mate_review(cp(-1200), Assessment(None, -3)).verdict, MoveVerdict.INACCURACY)
+
+	def test_letting_a_forced_mate_go(self):
+		self.assertEqual(self.mate_review(Assessment(None, 2), cp(300)).verdict, MoveVerdict.BLUNDER)
+		self.assertEqual(self.mate_review(Assessment(None, 2), cp(800)).verdict, MoveVerdict.MISTAKE)
+		self.assertEqual(self.mate_review(Assessment(None, 2), cp(1500)).verdict, MoveVerdict.INACCURACY)
+
+	def test_mate_rule_edges_follow_lichess(self):
+		# Advice.scala: "< -700" and "< -999" before the move, "> 700" and "> 999" after it.
+		mated = Assessment(None, -3)
+		self.assertEqual(self.mate_review(cp(-700), mated).verdict, MoveVerdict.BLUNDER)
+		self.assertEqual(self.mate_review(cp(-701), mated).verdict, MoveVerdict.MISTAKE)
+		self.assertEqual(self.mate_review(cp(-999), mated).verdict, MoveVerdict.MISTAKE)
+		self.assertEqual(self.mate_review(cp(-1000), mated).verdict, MoveVerdict.INACCURACY)
+		mating = Assessment(None, 2)
+		self.assertEqual(self.mate_review(mating, cp(700)).verdict, MoveVerdict.BLUNDER)
+		self.assertEqual(self.mate_review(mating, cp(701)).verdict, MoveVerdict.MISTAKE)
+		self.assertEqual(self.mate_review(mating, cp(999)).verdict, MoveVerdict.MISTAKE)
+		self.assertEqual(self.mate_review(mating, cp(1000)).verdict, MoveVerdict.INACCURACY)
+
+	def test_a_slower_mate_is_not_marked(self):
+		self.assertEqual(self.mate_review(Assessment(None, 2), Assessment(None, 5)).verdict, MoveVerdict.GOOD)
+
+	def test_mate_rules_are_from_the_movers_side(self):
+		# Black walks into mate: White mates, which is a positive mate from White's side.
+		self.assertEqual(
+			self.mate_review(cp(0), Assessment(None, 4), mover=chess.BLACK).verdict,
+			MoveVerdict.BLUNDER,
+		)
+
 	def test_losing_a_pawn_a_rook_up_hardly_matters(self):
 		self.assertEqual(self.review(600, 500).verdict, MoveVerdict.GOOD)
 
@@ -123,24 +175,6 @@ class MoveReviewTest(unittest.TestCase):
 
 	def test_a_better_than_expected_move_loses_nothing(self):
 		self.assertEqual(self.review(0, 40).lost_chance, 0.0)
-
-
-class NumberedLineTest(unittest.TestCase):
-	def test_line_from_white(self):
-		board = chess.Board()
-		moves = [chess.Move.from_uci(u) for u in ("e2e4", "e7e5", "g1f3")]
-		self.assertEqual(numbered_line(board, moves), ["1.", "e4", "e5", "2.", "Nf3"])
-
-	def test_line_from_black_starts_with_ellipsis(self):
-		board = chess.Board()
-		board.push_san("e4")
-		moves = [chess.Move.from_uci(u) for u in ("c7c5", "g1f3")]
-		self.assertEqual(numbered_line(board, moves), ["1...", "c5", "2.", "Nf3"])
-
-	def test_line_is_cut_at_the_limit(self):
-		board = chess.Board()
-		moves = [chess.Move.from_uci(u) for u in ("e2e4", "e7e5", "g1f3", "b8c6")]
-		self.assertEqual(len([w for w in numbered_line(board, moves, limit=2) if not w.endswith(".")]), 2)
 
 
 if __name__ == "__main__":

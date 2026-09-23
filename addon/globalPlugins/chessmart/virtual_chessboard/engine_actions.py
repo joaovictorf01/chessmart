@@ -209,6 +209,8 @@ class EngineActionsMixin:
 			comment=f"{self._engine_name()}: {self._short_value(evaluation.assessment, written=True)}",
 		)
 		assert first is not None
+		# Also as [%eval ...], the annotation Lichess and ChessBase read and chart.
+		first.set_eval(evaluation.assessment.to_pov_score(), evaluation.depth)
 		self.unsaved = True
 		self._rebuild_score_sheet()
 		ui.message(

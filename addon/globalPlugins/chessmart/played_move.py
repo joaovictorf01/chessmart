@@ -43,8 +43,12 @@ class PlayedMove:
 		is_castling = board.is_castling(move)
 		is_en_passant = board.is_en_passant(move)
 		if is_en_passant:
-			# The captured pawn is not on the destination square, but behind it.
-			captured = board.piece_at(move.to_square - 8)
+			# The captured pawn is not on the destination square: it stands beside
+			# the capturing pawn, on the file it moves to and the rank it leaves.
+			# (Always "one rank below" was right for White only.)
+			captured = board.piece_at(
+				chess.square(chess.square_file(move.to_square), chess.square_rank(move.from_square))
+			)
 		else:
 			captured = board.piece_at(move.to_square)
 		return cls(
