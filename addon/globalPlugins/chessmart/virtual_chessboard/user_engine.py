@@ -11,6 +11,8 @@ from ..paths import BIN_DIRECTORY, import_bundled
 from ..i18n import _
 from ..signals import move_completed_signal, game_started_signal, game_over_signal
 from ..concurrency import call_threaded
+from ..engine_eval import engine_accepts_draw
+from ..speaking import speak_next
 from .user_driven import UserDrivenChessboard
 
 
@@ -84,6 +86,10 @@ class UserEngineChessboard(UserDrivenChessboard):
 	def engine_play(self, future):
 		# Always reached through `wx.CallAfter` from the engine future's callback,
 		# so this already runs on the main thread: no further deferral needed.
+		if self.is_game_over:
+			# The game ended while the engine was thinking (time, or the window
+			# closed and the engine was shut down): its answer no longer counts.
+			return
 		try:
 			play_result = future.result()
 		except chess.engine.EngineError:
@@ -92,10 +98,27 @@ class UserEngineChessboard(UserDrivenChessboard):
 		if play_result.resigned:
 			# The engine plays the side the user does not.
 			self.game_resigned(not self.prospective)
-		else:
-			if play_result.draw_offered:
-				self.draw_offered = True
-			self.move_piece_and_check_game_status(play_result.move)
+			return
+		if self.draw_offered:
+			# The player's offer (Control+D) is answered on the engine's turn,
+			# with the score from the search that just chose its move.
+			self.draw_offered = False
+			if self.answer_draw_offer(play_result.info.get("score")):
+				return
+		self.move_piece_and_check_game_status(play_result.move)
+
+	def answer_draw_offer(self, score):
+		"""Speaks the engine's answer to the player's draw offer; True when it ends the game."""
+		accepted = engine_accepts_draw(score, not self.prospective, self.board.fullmove_number)
+		log.debug("chessmart: engine answers draw offer, score %s, accepted %s", score, accepted)
+		if accepted:
+			# Translators: Spoken when the player offered a draw in a game against the computer and it agrees; the game then ends as a draw.
+			speak_next([_("The computer accepts the draw.")])
+			self.game_drawn()
+			return True
+		# Translators: Spoken when the player offered a draw in a game against the computer and it refuses; the computer's move follows.
+		speak_next([_("The computer declines the draw.")])
+		return False
 
 	@call_threaded
 	def get_next_move_from_engine(self):
@@ -107,9 +130,12 @@ class UserEngineChessboard(UserDrivenChessboard):
 			white_inc=white_clock.increment,
 			black_inc=black_clock.increment,
 		)
+		# The score comes along with the move, so a pending draw offer is
+		# answered without a second search.
 		return self.uci_engine.play(
 			self.board,
 			limit,
+			info=chess.engine.INFO_SCORE,
 		)
 
 	def make_first_move(self):

@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from chessmart.endgame import judge, lessons, log, tablebase
+from chessmart.endgame import drills, judge, lessons, log, tablebase
 from chessmart.paths import LIB_DIRECTORY
 
 if LIB_DIRECTORY not in sys.path:
@@ -37,6 +37,57 @@ class TestCatalog(unittest.TestCase):
 		self.assertIsNotNone(lessons.ENDGAME_LESSONS[0].drill)
 		self.assertIsNotNone(lessons.ENDGAME_LESSONS[1].drill)
 		self.assertEqual(lessons.ENDGAME_LESSONS[0].positions, ())
+
+	def test_every_drill_is_reachable_from_exactly_one_lesson(self):
+		reached = [lesson.drill.drill_id for lesson in lessons.ENDGAME_LESSONS if lesson.drill is not None]
+		self.assertCountEqual(reached, [drill.drill_id for drill in drills.ENDGAME_DRILLS])
+
+	def test_existing_lesson_ids_are_kept(self):
+		# tactic.db and My Study key the history by these ids: renaming one loses it.
+		lesson_ids = {lesson.lesson_id for lesson in lessons.ENDGAME_LESSONS}
+		for lesson_id in (
+			"mateQueen",
+			"mateRook",
+			"mateTwoRooks",
+			"mateTwoBishops",
+			"mateBishopKnight",
+			"kingAndOpposition",
+			"kingAndPawn",
+			"pieceVsPawn",
+			"pawnsBothSides",
+			"rookAndPawnVsRook",
+			"queenVsPawn",
+			"bishopAndRookPawn",
+			"rookEndingsPractical",
+		):
+			self.assertIn(lesson_id, lesson_ids)
+
+	def test_drill_ids_do_not_collide_with_position_ids(self):
+		# A drill's attempts are logged with its drill id as the position id.
+		position_ids = {position.position_id for _, position in lessons.all_positions()}
+		for drill in drills.ENDGAME_DRILLS:
+			self.assertNotIn(drill.drill_id, position_ids)
+
+	def test_king_and_pawn_drill_follows_the_king_and_pawn_questions(self):
+		lesson_ids = [lesson.lesson_id for lesson in lessons.ENDGAME_LESSONS]
+		index = lesson_ids.index("kingAndPawnDrill")
+		self.assertEqual(lesson_ids[index - 1], "kingAndPawn")
+		lesson = lessons.ENDGAME_LESSONS[index]
+		self.assertIsNotNone(lesson.drill)
+		self.assertEqual(lesson.drill.drill_id, "pawnVsKing")
+		self.assertIsNone(lesson.drill.target_moves)
+		self.assertEqual(lesson.positions, ())
+		self.assertTrue(lessons.lesson_label(lesson).startswith("3b. "))
+
+	def test_king_and_pawn_drill_examples_are_won_for_white(self):
+		tb = tablebase.open_tablebase(FIXTURES)
+		try:
+			for fen in drills.get_endgame_drill("pawnVsKing").example_fens:
+				verdict = judge.probe(tb, chess.Board(fen))
+				self.assertIsNotNone(verdict, fen)
+				self.assertGreater(verdict.wdl, 0, fen)
+		finally:
+			tb.close()
 
 	def test_lost_positions_are_not_played_out(self):
 		lost = [p for _, p in lessons.all_positions() if p.expected == judge.LOSS]

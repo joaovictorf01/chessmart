@@ -19,6 +19,7 @@ import dataclasses
 import datetime
 
 from .endgame import log as endgame_log
+from .endgame.drills import drill_label
 from .endgame.lessons import ENDGAME_LESSONS, EndgameLesson, lesson_label, position_title
 from .i18n import _
 from .tactic.db import load_store
@@ -260,6 +261,14 @@ def render_progress(progress: list[LessonProgress]) -> list[str]:
 		for lesson in ENDGAME_LESSONS
 		for position in lesson.positions
 	}
+	# A drill lesson's only item is the drill itself, logged under its drill id.
+	titles.update(
+		{
+			lesson.drill.drill_id: drill_label(lesson.drill)
+			for lesson in ENDGAME_LESSONS
+			if lesson.drill is not None
+		},
+	)
 	for item in progress:
 		total = len(item.firm) + len(item.pending)
 		label = lesson_label(item.lesson)

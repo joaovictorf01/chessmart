@@ -130,7 +130,7 @@ msgstr "Disponível: base do Lichess de {when}."
 #: addon/globalPlugins/chessmart/virtual_chessboard/editor_board.py:135
 #: addon/globalPlugins/chessmart/virtual_chessboard/endgame_board.py:265
 #: addon/globalPlugins/chessmart/virtual_chessboard/endgame_board.py:462
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:146
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:154
 msgid "Back to board"
 msgstr "Voltar ao tabuleiro"
 
@@ -251,7 +251,7 @@ msgid "Chessboard"
 msgstr "Chessmart"
 
 #. Title of the tactics window before a puzzle is loaded.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:343
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:351
 msgid "Chessboard Tactics"
 msgstr "Táticas do Chessmart"
 
@@ -302,37 +302,37 @@ msgid "Complete"
 msgstr "Completa"
 
 #. Part of the puzzle shortcuts announcement.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:395
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:403
 msgid "Control+Enter twice to play the expected move."
 msgstr "Control+Enter duas vezes joga o lance esperado."
 
 #. Part of the puzzle shortcuts announcement.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:389
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:397
 msgid "Control+F1 for puzzle details."
 msgstr "Control+F1 para os detalhes do puzzle."
 
 #. Part of the puzzle shortcuts announcement.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:380
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:388
 msgid "Control+H for a hint."
 msgstr "Control+H para uma dica."
 
 #. Part of the puzzle shortcuts announcement.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:383
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:391
 msgid "Control+N for the next puzzle."
 msgstr "Control+N para o próximo puzzle."
 
 #. Spoken after a puzzle ends: how to go on.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:540
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:548
 msgid "Control+N loads another puzzle."
 msgstr "Control+N carrega outro puzzle."
 
 #. Spoken after a puzzle ends: how to try it again.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:546
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:554
 msgid "Control+R restarts this one."
 msgstr "Control+R reinicia este."
 
 #. Part of the puzzle shortcuts announcement.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:386
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:394
 msgid "Control+R to restart this puzzle."
 msgstr "Control+R para reiniciar este puzzle."
 
@@ -351,7 +351,7 @@ msgstr "Não foi possível salvar a partida. O NVDA está em modo seguro."
 
 #. Spoken after the first wrong move of a puzzle: the rating is settled, the
 #. puzzle goes on.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:454
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:462
 msgid "Counted as a failure. Keep going to learn the solution."
 msgstr "Contado como erro. Continue para aprender a solução."
 
@@ -367,7 +367,7 @@ msgid "Custom Time Control"
 msgstr "Controle de tempo personalizado"
 
 #. Part of the session status: all puzzles ever tried.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:863
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:871
 msgid "Database history: {solved} solved out of {total} attempts."
 msgstr "Histórico da base: {solved} resolvidos em {total} tentativas."
 
@@ -467,12 +467,12 @@ msgstr "Tempo de reflexão do motor (em segundos)"
 
 #. Part of the session status: the themes and levels in use; "none" when there
 #. are none.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:868
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:876
 msgid "Filters: {filters}."
 msgstr "Filtros: {filters}."
 
 #. Completes the rating report, e.g. "Rating 1450, from 40 rated attempts".
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:660
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:668
 msgid "from {count} rated attempts"
 msgstr "em {count} tentativas valendo rating"
 
@@ -518,37 +518,37 @@ msgid "Game terminated due to an error"
 msgstr "Partida encerrada por um erro"
 
 #. The puzzle goal; {color} is white or black.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:723
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:731
 msgid "Goal: find the best continuation for {color}."
 msgstr "Objetivo: encontre a melhor continuação para as {color}."
 
 #. Spoken after a correct move in a puzzle that is not finished yet.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:470
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:478
 msgid "Good move."
 msgstr "Bom lance."
 
 #. Button of the tactics actions bar.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:138
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:146
 msgid "Hint"
 msgstr "Dica"
 
 #. Third hint of a puzzle: the destination square.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:807
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:815
 msgid "Hint: the move ends on {square}."
 msgstr "Dica: o lance termina em {square}."
 
 #. Second hint of a puzzle: the square the piece moves from.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:803
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:811
 msgid "Hint: the move starts from {square}."
 msgstr "Dica: o lance começa em {square}."
 
 #. First hint of a puzzle: its tactical themes.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:796
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:804
 msgid "Hint: themes include {themes}."
 msgstr "Dica: os temas incluem {themes}."
 
 #. Part of the puzzle details: hints used in this puzzle.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:841
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:849
 msgid "Hints here: {count}."
 msgstr "Dicas neste puzzle: {count}."
 
@@ -600,7 +600,7 @@ msgid "Invalid FEN String"
 msgstr "FEN inválido"
 
 #. Title of the error about an invalid time control.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:157
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:158
 #: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:141
 msgid "Invalid Time Control String"
 msgstr "Controle de tempo inválido"
@@ -644,12 +644,12 @@ msgid "Literate: knight f 3"
 msgstr "Por extenso: cavalo f 3"
 
 #. Spoken while the next puzzle loads.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:312
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:320
 msgid "Loading next training puzzle."
 msgstr "Carregando o próximo puzzle de treino."
 
 #. Spoken while the first puzzle loads.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:315
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:323
 msgid "Loading training puzzle."
 msgstr "Carregando o puzzle de treino."
 
@@ -679,7 +679,7 @@ msgid "minor pieces"
 msgstr "peças menores"
 
 #. Part of the puzzle details: wrong moves in this puzzle.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:838
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:846
 msgid "Mistakes here: {count}."
 msgstr "Erros neste puzzle: {count}."
 
@@ -704,7 +704,7 @@ msgid "New Game"
 msgstr "Nova partida"
 
 #. Button of the tactics actions bar.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:145
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:153
 msgid "Next puzzle"
 msgstr "Próximo puzzle"
 
@@ -714,26 +714,26 @@ msgid "No Database Selected"
 msgstr "Nenhuma base selecionada"
 
 #. Part of the puzzle details.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:844
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:852
 msgid "No mistakes and no hints so far."
 msgstr "Nenhum erro e nenhuma dica até agora."
 
 #. Spoken when every hint of the puzzle was already given.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:814
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:822
 msgid "No more hints for this puzzle."
 msgstr "Não há mais dicas para este puzzle."
 
 #. Spoken when the session has no puzzle left for its filters.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:258
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:266
 msgid "No more tactics in this session."
 msgstr "Não há mais táticas nesta sessão."
 
 #. Spoken when a puzzle action is used before a puzzle is on the board.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:274
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:685
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:718
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:741
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:856
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:282
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:693
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:726
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:749
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:864
 msgid "No puzzle loaded."
 msgstr "Nenhum puzzle carregado."
 
@@ -744,12 +744,12 @@ msgstr "Nenhum puzzle encontrado para os filtros escolhidos."
 
 #. Completes the rating report, e.g. "Provisional rating 1500, ..., no rated
 #. attempts yet".
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:663
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:671
 msgid "no rated attempts yet"
 msgstr "ainda sem tentativas valendo rating"
 
 #. Title of the message shown when no puzzle matches the selection.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:252
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:260
 msgid "No tactics available"
 msgstr "Nenhuma tática disponível"
 
@@ -759,12 +759,12 @@ msgid "No Tactics Found"
 msgstr "Nenhuma tática encontrada"
 
 #. Spoken by Control+Shift+R before any rated puzzle.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:656
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:664
 msgid "No tactics rating yet."
 msgstr "Ainda não há rating de táticas."
 
 #. Message shown when no puzzle matches the selection.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:248
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:256
 msgid "No tactics were found for the current selection."
 msgstr "Nenhuma tática foi encontrada para a seleção atual."
 
@@ -774,7 +774,7 @@ msgid "No theme filter at all: the whole puzzle database is in play."
 msgstr "Nenhum filtro de tema: a base inteira entra em jogo."
 
 #. Puzzle details when the puzzle has no themes.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:744
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:752
 msgid "No themes"
 msgstr "Sem temas"
 
@@ -798,7 +798,7 @@ msgstr "Não, recusar a oferta e continuar a partida"
 
 #. Part of the session status: the themes and levels in use; "none" when there
 #. are none.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:868
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:876
 msgid "none"
 msgstr "nenhum"
 
@@ -818,7 +818,7 @@ msgid "Open tactics from the Lichess tactics database"
 msgstr "Abrir táticas da base de táticas do Lichess"
 
 #. Part of the puzzle details: the opening of the source game.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:770
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:778
 msgid "Opening tags: {opening}."
 msgstr "Abertura: {opening}."
 
@@ -855,7 +855,7 @@ msgid "Play Mode"
 msgstr "Modo de jogo"
 
 #. Part of the puzzle details: how many times it was played on Lichess.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:758
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:766
 msgid "Plays: {plays}."
 msgstr "Jogadas: {plays}."
 
@@ -875,7 +875,7 @@ msgstr ""
 
 #. Error about an invalid time control. Keep the line break and the 10+5
 #. notation.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:153
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:154
 #: addon/globalPlugins/chessmart/graphical_interface/new_game_dialog.py:137
 msgid ""
 "Please enter a valid time control string.\n"
@@ -885,7 +885,7 @@ msgstr ""
 "Exemplo: 10+5 para 10 minutos de base com 5 segundos de acréscimo por lance."
 
 #. Part of the puzzle details: the Lichess popularity score.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:753
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:761
 msgid "Popularity: {popularity}."
 msgstr "Popularidade: {popularity}."
 
@@ -912,18 +912,18 @@ msgstr ""
 "ouvirá um aviso quando estiver pronto."
 
 #. Spoken after the first Control+Enter: it asks for a second press.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:105
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:113
 msgid "Press Control+Enter twice to play the expected move."
 msgstr "Pressione Control+Enter duas vezes para jogar o lance esperado."
 
 #. Spoken when the session has no puzzle left.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:261
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:269
 msgid "Press Control+R to retry the current puzzle."
 msgstr "Pressione Control+R para tentar de novo o puzzle atual."
 
 #. Part of the puzzle shortcuts announcement.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:392
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:543
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:400
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:551
 msgid "Press Tab for training actions."
 msgstr "Pressione Tab para as ações de treino."
 
@@ -946,7 +946,7 @@ msgstr "promove a"
 
 #. Rating report while the rating is uncertain, e.g. "Provisional rating 1500,
 #. somewhere between 1200 and 1800, from 3 rated attempts".
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:667
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:675
 msgid ""
 "Provisional rating {rating}, somewhere between {low} and {high}, {attempts}."
 msgstr ""
@@ -962,12 +962,12 @@ msgid "Puzzle Database"
 msgstr "Base de puzzles"
 
 #. Button of the tactics actions bar.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:140
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:148
 msgid "Puzzle details"
 msgstr "Detalhes do puzzle"
 
 #. Button of the tactics actions bar.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:136
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:144
 msgid "Puzzle goal"
 msgstr "Objetivo do puzzle"
 
@@ -992,12 +992,12 @@ msgid "Puzzle not found: {puzzle_id}"
 msgstr "Puzzle não encontrado: {puzzle_id}"
 
 #. Spoken when a puzzle is solved.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:691
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:699
 msgid "Puzzle solved."
 msgstr "Puzzle resolvido."
 
 #. Part of the puzzle details: the Lichess puzzle id.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:747
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:755
 msgid "Puzzle {puzzle_id}."
 msgstr "Puzzle {puzzle_id}."
 
@@ -1063,52 +1063,52 @@ msgid "Rapid Play (15+10)"
 msgstr "Rápida (15+10)"
 
 #. Spoken after a rated puzzle, e.g. "Rating 1432, down 12.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:633
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:641
 msgid "Rating {rating}, down {delta}."
 msgstr "Rating {rating}, caiu {delta}."
 
 #. Spoken after a rated puzzle that did not change the rating.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:636
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:644
 msgid "Rating {rating}, unchanged."
 msgstr "Rating {rating}, sem mudança."
 
 #. Spoken after a rated puzzle, e.g. "Rating 1450, up 13.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:630
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:638
 msgid "Rating {rating}, up {delta}."
 msgstr "Rating {rating}, subiu {delta}."
 
 #. Rating report, e.g. "Rating 1450, from 40 rated attempts.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:677
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:685
 msgid "Rating {rating}, {attempts}."
 msgstr "Rating {rating}, {attempts}."
 
 #. Part of the puzzle details: the puzzle rating.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:750
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:758
 msgid "Rating: {rating}."
 msgstr "Rating: {rating}."
 
 #. Button of the tactics actions bar.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:134
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:142
 msgid "Repeat instruction"
 msgstr "Repetir a instrução"
 
 #. Input help message for the report tactics rating command.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:644
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:59
 msgid "Report your current tactics rating"
 msgstr "Anuncia o seu rating de táticas atual"
 
 #. Button of the tactics actions bar.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:143
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:151
 msgid "Restart puzzle"
 msgstr "Reiniciar o puzzle"
 
 #. Spoken when the puzzle starts again.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:301
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:309
 msgid "Restarting puzzle."
 msgstr "Reiniciando o puzzle."
 
 #. Spoken after solving a retried puzzle: retries do not change the rating.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:561
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:569
 msgid "Retry: not rated."
 msgstr "Nova tentativa: não vale rating."
 
@@ -1177,7 +1177,7 @@ msgstr "Sessão recém-começada: nenhum puzzle terminado ainda."
 #. Button of the tactics actions bar, before any puzzle is finished. Button of
 #. the tactics actions bar.
 #: addon/globalPlugins/chessmart/puzzle_attempt.py:109
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:141
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:149
 msgid "Session status"
 msgstr "Estado da sessão"
 
@@ -1202,17 +1202,17 @@ msgid "Solved after a mistake, not rated: {count}."
 msgstr "Resolvidos depois de um erro, sem valer rating: {count}."
 
 #. Spoken when a puzzle is finished after a wrong move.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:567
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:575
 msgid "Solved after a mistake: already counted as a failure."
 msgstr "Resolvido depois de um erro: já contado como falha."
 
 #. Window title after a puzzle is solved.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:528
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:536
 msgid "Solved tactic {puzzle_id}"
 msgstr "Tática {puzzle_id} resolvida"
 
 #. Part of the puzzle details.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:778
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:786
 msgid "Source game available on Lichess."
 msgstr "Partida de origem disponível no Lichess."
 
@@ -1262,12 +1262,12 @@ msgid "Starting FEN"
 msgstr "FEN inicial"
 
 #. Spoken when a puzzle is solved.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:536
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:544
 msgid "Tactic solved."
 msgstr "Tática resolvida."
 
 #. Window title during a puzzle.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:357
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:365
 msgid "Tactic {puzzle_id} - rating {rating}"
 msgstr "Tática {puzzle_id} - rating {rating}"
 
@@ -1292,7 +1292,7 @@ msgid "takes"
 msgstr "toma"
 
 #. Spoken after a wrong move in a puzzle.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:435
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:443
 msgid "That move does not solve the tactic."
 msgstr "Esse lance não resolve a tática."
 
@@ -1376,27 +1376,27 @@ msgid "Themes: {themes}"
 msgstr "Temas: {themes}"
 
 #. Part of the puzzle details: its tactical themes.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:763
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:771
 msgid "Themes: {themes}."
 msgstr "Temas: {themes}."
 
 #. Spoken by Control+H when the puzzle is finished.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:787
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:795
 msgid "There are no more hints for this puzzle."
 msgstr "Não há mais dicas para este puzzle."
 
 #. Part of the puzzle details.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:828
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:836
 msgid "This puzzle is already solved."
 msgstr "Este puzzle já foi resolvido."
 
 #. Part of the puzzle goal: its tactical themes.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:730
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:738
 msgid "This puzzle trains {themes}."
 msgstr "Este puzzle treina {themes}."
 
 #. Part of the puzzle details, e.g. "your move 2 of 3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:831
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:839
 msgid "This puzzle: your move {current} of {total}."
 msgstr "Este puzzle: seu lance {current} de {total}."
 
@@ -1406,8 +1406,8 @@ msgid "This square is not under attack"
 msgstr "Esta casa não está atacada"
 
 #. Spoken by Control+Enter on a finished puzzle.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:97
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:425
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:105
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:433
 msgid "This tactic is already finished."
 msgstr "Esta tática já terminou."
 
@@ -1432,7 +1432,7 @@ msgid "Trainer summary"
 msgstr "Resumo do treino"
 
 #. Name of the tactics actions bar, reached with Tab.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:131
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:139
 msgid "Training actions"
 msgstr "Ações de treino"
 
@@ -1456,30 +1456,30 @@ msgstr "UCI: g1f3"
 #. Lichess popularity score. Part of the puzzle details: how many times it was
 #. played on Lichess.
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:158
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:345
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:750
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:754
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:759
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:353
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:758
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:762
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:767
 msgid "unknown"
 msgstr "desconhecido"
 
 #. Part of the first-puzzle instructions.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:708
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:716
 msgid "Use Enter to make a move on the virtual board."
 msgstr "Use Enter para fazer um lance no tabuleiro virtual."
 
 #. Spoken after a puzzle ends.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:694
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:702
 msgid "Use Tab for next puzzle or restart."
 msgstr "Use Tab para o próximo puzzle ou para reiniciar."
 
 #. Part of the first-puzzle instructions.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:711
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:719
 msgid "Use Tab for training actions."
 msgstr "Use Tab para as ações de treino."
 
 #. Part of the first-puzzle instructions.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:705
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:713
 msgid "Use the arrow keys to inspect the board."
 msgstr "Use as setas para examinar o tabuleiro."
 
@@ -1573,9 +1573,9 @@ msgid "{color} resigned the game"
 msgstr "{color} desistiram da partida"
 
 #. Spoken when a puzzle starts; {color} is white or black.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:373
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:516
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:702
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:381
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:524
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:710
 msgid "{color} to move."
 msgstr "{color} jogam."
 
@@ -2617,7 +2617,7 @@ msgstr ""
 "{theme_text} Popularidade mínima {min_popularity}."
 
 #. Asked when Escape is pressed during a game against the engine.
-#: addon/globalPlugins/chessmart/virtual_chessboard/user_engine.py:74
+#: addon/globalPlugins/chessmart/virtual_chessboard/user_engine.py:76
 msgid "Leave the game? The game against the engine will be abandoned."
 msgstr "Sair da partida? A partida contra o motor será abandonada."
 
@@ -2629,12 +2629,12 @@ msgstr "Sair da partida? Os lances jogados até aqui serão perdidos."
 
 #. Asked when Escape is pressed during a puzzle the player has already started
 #. solving.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:174
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:182
 msgid "Leave training? The current puzzle will count as unsolved."
 msgstr "Sair do treino? O puzzle atual vai contar como não resolvido."
 
 #. Asked when Escape is pressed during tactics training.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:176
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:184
 msgid "Leave training? The session status will be lost."
 msgstr "Sair do treino? O status da sessão será perdido."
 
@@ -2689,7 +2689,7 @@ msgid "Draw. The position was won."
 msgstr "Empate. A posição estava ganha."
 
 #. Title of the endgames dialog.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:30
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:31
 msgid "Endgames"
 msgstr "Finais"
 
@@ -2757,52 +2757,52 @@ msgid "{seconds} seconds left on the clock."
 msgstr "{seconds} segundos no relógio."
 
 #. Name of the first endgame lesson (a drill).
-#: addon/globalPlugins/chessmart/endgame/lessons.py:75
+#: addon/globalPlugins/chessmart/endgame/lessons.py:76
 msgid "1a. Mate with queen and king"
 msgstr "1a. Mate de dama e rei"
 
 #. Name of the second endgame lesson (a drill).
-#: addon/globalPlugins/chessmart/endgame/lessons.py:86
+#: addon/globalPlugins/chessmart/endgame/lessons.py:87
 msgid "1b. Mate with rook and king"
 msgstr "1b. Mate de torre e rei"
 
 #. Name of the endgame lesson on the king and the opposition.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:130
+#: addon/globalPlugins/chessmart/endgame/lessons.py:131
 msgid "2. The king and the opposition"
 msgstr "2. O rei e a oposição"
 
 #. Name of the endgame lesson on king and pawn against king.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:214
+#: addon/globalPlugins/chessmart/endgame/lessons.py:215
 msgid "3. King and pawn against king"
 msgstr "3. Rei e peão contra rei"
 
 #. Name of the endgame lesson on a piece against a pawn.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:310
+#: addon/globalPlugins/chessmart/endgame/lessons.py:326
 msgid "4. A piece against a pawn"
 msgstr "4. Uma peça contra um peão"
 
 #. Name of the endgame lesson on pawns on both sides.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:382
+#: addon/globalPlugins/chessmart/endgame/lessons.py:398
 msgid "5. Pawns on both sides"
 msgstr "5. Peões dos dois lados"
 
 #. Name of the endgame lesson on rook and pawn against rook.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:430
+#: addon/globalPlugins/chessmart/endgame/lessons.py:446
 msgid "6. Rook and pawn against rook"
 msgstr "6. Torre e peão contra torre"
 
 #. Name of the endgame lesson on queen against pawn.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:493
+#: addon/globalPlugins/chessmart/endgame/lessons.py:509
 msgid "7. Queen against a pawn on the seventh"
 msgstr "7. Dama contra peão na sétima"
 
 #. Name of the endgame lesson on bishop and rook pawn.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:553
+#: addon/globalPlugins/chessmart/endgame/lessons.py:569
 msgid "8. Bishop and rook pawn"
 msgstr "8. Bispo e peão de torre"
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:372
+#: addon/globalPlugins/chessmart/endgame/lessons.py:388
 msgid ""
 "A bishop that reaches the diagonal of the promotion square holds the pawn "
 "from any distance. Draw."
@@ -2811,7 +2811,7 @@ msgstr ""
 "qualquer distância. Empate."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:348
+#: addon/globalPlugins/chessmart/endgame/lessons.py:364
 msgid ""
 "A knight that controls the promotion square holds a seventh-rank pawn on its"
 " own: it moves away and comes back, and the pawn cannot pass. Draw."
@@ -2820,7 +2820,7 @@ msgstr ""
 "ele sai e volta, e o peão não passa. Empate."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:180
+#: addon/globalPlugins/chessmart/endgame/lessons.py:181
 msgid ""
 "A rook pawn is the exception: if the defending king reaches the corner, or "
 "the square in front of the pawn, it is a draw. There is no side to go "
@@ -2830,7 +2830,7 @@ msgstr ""
 "frente do peão, é empate. Não há lado por onde contornar."
 
 #. Label for the read-only field describing the chosen lesson.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:67
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:68
 msgid "About this lesson"
 msgstr "Sobre esta lição"
 
@@ -2845,17 +2845,12 @@ msgid "Best moves: {moves}"
 msgstr "Melhores lances: {moves}"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:370
+#: addon/globalPlugins/chessmart/endgame/lessons.py:386
 msgid "Bishop against a pawn"
 msgstr "Bispo contra peão"
 
-#. First choice of position for a mate drill.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:105
-msgid "Capablanca's example"
-msgstr "Exemplo do Capablanca"
-
 #. Description of the lesson on queen against pawn.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:495
+#: addon/globalPlugins/chessmart/endgame/lessons.py:511
 msgid ""
 "Central and knight pawns lose to the queen; bishop and rook pawns draw by "
 "stalemate when the attacking king is far."
@@ -2864,7 +2859,7 @@ msgstr ""
 "empatam por afogamento quando o rei atacante está longe."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:507
+#: addon/globalPlugins/chessmart/endgame/lessons.py:523
 msgid ""
 "Checks force the defending king in front of its pawn; each time it stands "
 "there, your king gains a step. Repeat until your king arrives, then take the"
@@ -2875,7 +2870,7 @@ msgstr ""
 "aí tome o peão. Ganha."
 
 #. Label for the optional clock of the mate drills.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:74
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:75
 msgid "Clock for the mate drills (minutes+seconds, empty for none)"
 msgstr "Relógio dos treinos de mate (minutos+segundos; vazio é sem relógio)"
 
@@ -2890,7 +2885,7 @@ msgid "Correct: {result}."
 msgstr "Certo: {result}."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:324
+#: addon/globalPlugins/chessmart/endgame/lessons.py:340
 msgid ""
 "Count: how many moves the pawn needs to promote, how many the king needs to "
 "arrive. The rook stops the pawn from behind and the king comes: here it "
@@ -2901,12 +2896,12 @@ msgstr ""
 "Ganha."
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:394
+#: addon/globalPlugins/chessmart/endgame/lessons.py:410
 msgid "Doubled pawns win"
 msgstr "Peões dobrados ganham"
 
 #. Button that opens the tablebase download dialog.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:83
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:84
 msgid "Download &tablebases..."
 msgstr "Baixar &tablebases..."
 
@@ -2930,7 +2925,7 @@ msgid "Draw"
 msgstr "Empate"
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:228
+#: addon/globalPlugins/chessmart/endgame/lessons.py:229
 msgid ""
 "Draw a square from the pawn to its promotion rank. If the defending king, on"
 " its move, cannot step into that square, the pawn promotes on its own. The "
@@ -2952,7 +2947,7 @@ msgid "Draw."
 msgstr "Empate."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:420
+#: addon/globalPlugins/chessmart/endgame/lessons.py:436
 msgid ""
 "Each side has a passed pawn and each king can stop the other's: count the "
 "squares and nobody promotes. Draw. Do not run the pawn before counting."
@@ -2969,7 +2964,7 @@ msgid "Endgame Tablebases"
 msgstr "Tablebases de finais"
 
 #. Description of the rook mate lesson.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:88
+#: addon/globalPlugins/chessmart/endgame/lessons.py:89
 msgid ""
 "Keep your king on the same rank or file as the other king, next to the rook,"
 " and push the king to the edge. Under 20 moves."
@@ -2978,7 +2973,7 @@ msgstr ""
 "torre, e empurre o rei para a borda. Menos de 20 lances."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:144
+#: addon/globalPlugins/chessmart/endgame/lessons.py:145
 msgid ""
 "King and pawn against king: the king goes in front of the pawn, and the pawn"
 " moves last. Run the king up before touching the pawn."
@@ -2987,22 +2982,22 @@ msgstr ""
 "último. Suba com o rei antes de tocar no peão."
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:262
+#: addon/globalPlugins/chessmart/endgame/lessons.py:263
 msgid "King behind the pawn"
 msgstr "Rei atrás do peão"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:274
+#: addon/globalPlugins/chessmart/endgame/lessons.py:275
 msgid "King on the sixth in front of the pawn"
 msgstr "Rei na sexta na frente do peão"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:250
+#: addon/globalPlugins/chessmart/endgame/lessons.py:251
 msgid "King two squares in front of the pawn"
 msgstr "Rei duas casas na frente do peão"
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:156
+#: addon/globalPlugins/chessmart/endgame/lessons.py:157
 msgid ""
 "Kings face to face with one square between them: that is the opposition, and"
 " whoever has to move loses it. White to move here cannot get past: draw."
@@ -3011,12 +3006,12 @@ msgstr ""
 "que mover perde ela. Brancas a jogar aqui não passam: empate."
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:346
+#: addon/globalPlugins/chessmart/endgame/lessons.py:362
 msgid "Knight against a pawn on the seventh"
 msgstr "Cavalo contra peão na sétima"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:358
+#: addon/globalPlugins/chessmart/endgame/lessons.py:374
 msgid "Knight against a rook pawn on the seventh"
 msgstr "Cavalo contra peão de torre na sétima"
 
@@ -3026,12 +3021,12 @@ msgid "Leave the lesson? This attempt will count as not held."
 msgstr "Sair da lição? Esta tentativa vai contar como resultado não mantido."
 
 #. Label for the list of endgame lessons.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:52
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:53
 msgid "Lesson"
 msgstr "Lição"
 
 #. Intro text of the endgames dialog.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:43
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:44
 msgid ""
 "Lessons follow the endgame course order: first the mates, then what draws "
 "and what does not. Each position asks win, draw or loss, tells the rule, and"
@@ -3047,7 +3042,7 @@ msgid "Loss"
 msgstr "Perde"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:481
+#: addon/globalPlugins/chessmart/endgame/lessons.py:497
 msgid "Lucena: the bridge"
 msgstr "Lucena: a ponte"
 
@@ -3068,17 +3063,17 @@ msgid "No: it is a {result}."
 msgstr "Não: é {result}."
 
 #. Instruction after the question in a lesson: the position is a draw.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:749
+#: addon/globalPlugins/chessmart/endgame/lessons.py:765
 msgid "Now hold the draw: play the position out against the engine."
 msgstr "Agora segure o empate: jogue a posição até o fim contra o motor."
 
 #. Instruction after the question in a lesson: the position is won.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:746
+#: addon/globalPlugins/chessmart/endgame/lessons.py:762
 msgid "Now win it: play the position out against the engine."
 msgstr "Agora ganhe: jogue a posição até o fim contra o motor."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:240
+#: addon/globalPlugins/chessmart/endgame/lessons.py:241
 msgid ""
 "One file closer and the king steps into the square: it catches the pawn. "
 "Draw. Diagonal steps cost nothing, so the king moves on the diagonal."
@@ -3087,7 +3082,7 @@ msgstr ""
 "Andar na diagonal não custa nada, então o rei anda na diagonal."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:336
+#: addon/globalPlugins/chessmart/endgame/lessons.py:352
 msgid ""
 "One more step for the pawn and the count turns: the king does not arrive, "
 "and the rook alone must give itself up for the pawn. Draw."
@@ -3102,17 +3097,17 @@ msgid "Only move: {moves}"
 msgstr "Único lance: {moves}"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:154
+#: addon/globalPlugins/chessmart/endgame/lessons.py:155
 msgid "Opposition: the side to move loses it"
 msgstr "Oposição: quem joga perde ela"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:418
+#: addon/globalPlugins/chessmart/endgame/lessons.py:434
 msgid "Pawn against pawn, each king holds one"
 msgstr "Peão contra peão, cada rei segura um"
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:483
+#: addon/globalPlugins/chessmart/endgame/lessons.py:499
 msgid ""
 "Pawn on the seventh, your king in front of it, the defending king cut off by"
 " your rook. The bridge: rook to the fourth rank, the king steps out, and "
@@ -3123,7 +3118,7 @@ msgstr ""
 "vierem a torre bloqueia. Ganha."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:288
+#: addon/globalPlugins/chessmart/endgame/lessons.py:289
 msgid ""
 "Pawn on the sixth with the king beside it and the move: push the pawn. The "
 "defending king cannot hold the promotion square. Win."
@@ -3132,52 +3127,52 @@ msgstr ""
 "não segura a casa de coroação. Ganha."
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:298
+#: addon/globalPlugins/chessmart/endgame/lessons.py:299
 msgid "Pawn on the sixth, king beside it, Black to move"
 msgstr "Peão na sexta, rei ao lado, Pretas jogam"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:286
+#: addon/globalPlugins/chessmart/endgame/lessons.py:287
 msgid "Pawn on the sixth, king beside it, White to move"
 msgstr "Peão na sexta, rei ao lado, Brancas jogam"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:455
+#: addon/globalPlugins/chessmart/endgame/lessons.py:471
 msgid "Philidor: the checks from behind"
 msgstr "Philidor: os xeques por trás"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:442
+#: addon/globalPlugins/chessmart/endgame/lessons.py:458
 msgid "Philidor: the rook on the third rank"
 msgstr "Philidor: a torre na terceira fileira"
 
 #. Label for the list of positions of the chosen lesson.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:60
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:61
 msgid "Position"
 msgstr "Posição"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:529
+#: addon/globalPlugins/chessmart/endgame/lessons.py:545
 msgid "Queen against a bishop pawn"
 msgstr "Dama contra peão de bispo"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:505
+#: addon/globalPlugins/chessmart/endgame/lessons.py:521
 msgid "Queen against a central pawn"
 msgstr "Dama contra peão central"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:517
+#: addon/globalPlugins/chessmart/endgame/lessons.py:533
 msgid "Queen against a knight pawn"
 msgstr "Dama contra peão de cavalo"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:541
+#: addon/globalPlugins/chessmart/endgame/lessons.py:557
 msgid "Queen against a rook pawn"
 msgstr "Dama contra peão de torre"
 
 #. Second choice of position for a mate drill.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:107
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:108
 msgid "Random position"
 msgstr "Posição sorteada"
 
@@ -3197,7 +3192,7 @@ msgstr ""
 "Mais uma vez, sem eles."
 
 #. Description of the lesson on a piece against a pawn.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:312
+#: addon/globalPlugins/chessmart/endgame/lessons.py:328
 msgid ""
 "Rook against pawn is counting; the knight holds a seventh-rank pawn except "
 "the rook pawn; the bishop holds from a distance."
@@ -3206,32 +3201,32 @@ msgstr ""
 "torre; o bispo segura de longe."
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:322
+#: addon/globalPlugins/chessmart/endgame/lessons.py:338
 msgid "Rook against pawn: just counting"
 msgstr "Torre contra peão: só contar"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:334
+#: addon/globalPlugins/chessmart/endgame/lessons.py:350
 msgid "Rook against pawn: one step too late"
 msgstr "Torre contra peão: um passo atrasado"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:190
+#: addon/globalPlugins/chessmart/endgame/lessons.py:191
 msgid "Rook pawn: the attacking king is imprisoned"
 msgstr "Peão de torre: o rei atacante preso"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:178
+#: addon/globalPlugins/chessmart/endgame/lessons.py:179
 msgid "Rook pawn: the corner draws"
 msgstr "Peão de torre: o canto empata"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:202
+#: addon/globalPlugins/chessmart/endgame/lessons.py:203
 msgid "Rook pawn: the defender arrives too late"
 msgstr "Peão de torre: o defensor chega tarde"
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:168
+#: addon/globalPlugins/chessmart/endgame/lessons.py:169
 msgid ""
 "Same pieces, other side to move: now Black must step aside and White has the"
 " opposition. The king walks through, and only then the pawn advances."
@@ -3287,7 +3282,7 @@ msgid "That move turned a won position into a lost one."
 msgstr "Esse lance transformou uma posição ganha em perdida."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:192
+#: addon/globalPlugins/chessmart/endgame/lessons.py:193
 msgid ""
 "The attacking king stuck in the corner in front of its own rook pawn cannot "
 "get out: the defender only needs to guard f7 and f8. Draw."
@@ -3296,7 +3291,7 @@ msgstr ""
 "defensor só precisa guardar f7 e f8. Empate."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:579
+#: addon/globalPlugins/chessmart/endgame/lessons.py:595
 msgid ""
 "The bishop controls the promotion square: it takes the corner from the king,"
 " and the pawn promotes. Win."
@@ -3305,7 +3300,7 @@ msgstr ""
 "Ganha."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:567
+#: addon/globalPlugins/chessmart/endgame/lessons.py:583
 msgid ""
 "The bishop does not control the promotion square and the defending king sits"
 " in the corner: nothing can push it out. Draw. Check the color of the corner"
@@ -3315,7 +3310,7 @@ msgstr ""
 "nada tira ele de lá. Empate. Confira a cor do canto antes de trocar peças."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:531
+#: addon/globalPlugins/chessmart/endgame/lessons.py:547
 msgid ""
 "The bishop pawn draws: when the queen forces the king in front, it goes to "
 "the corner instead, and taking the pawn is stalemate. Draw while your king "
@@ -3326,7 +3321,7 @@ msgstr ""
 "longe."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:360
+#: addon/globalPlugins/chessmart/endgame/lessons.py:376
 msgid ""
 "The exception: against a rook pawn the knight in the corner has no square to"
 " come back to, and it falls. Lost for the knight."
@@ -3335,12 +3330,12 @@ msgstr ""
 "voltar, e cai. Perdido para o cavalo."
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:142
+#: addon/globalPlugins/chessmart/endgame/lessons.py:143
 msgid "The king leads"
 msgstr "O rei na frente"
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:276
+#: addon/globalPlugins/chessmart/endgame/lessons.py:277
 msgid ""
 "The king on the sixth rank in front of its pawn wins whoever is to move. "
 "Step to the side, the pawn follows, and the defending king cannot cover both"
@@ -3351,7 +3346,7 @@ msgstr ""
 "casas."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:252
+#: addon/globalPlugins/chessmart/endgame/lessons.py:253
 msgid ""
 "The king two squares in front of its pawn wins whoever is to move: it takes "
 "the opposition, or the pawn's spare move gives it back."
@@ -3360,7 +3355,7 @@ msgstr ""
 "ele toma a oposição, ou o lance de reserva do peão devolve ela."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:519
+#: addon/globalPlugins/chessmart/endgame/lessons.py:535
 msgid ""
 "The knight pawn loses the same way: the king in front of the pawn gives your"
 " king a step each time. Win."
@@ -3369,7 +3364,7 @@ msgstr ""
 "ao seu rei a cada vez. Ganha."
 
 #. Description of the lesson on rook and pawn against rook.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:432
+#: addon/globalPlugins/chessmart/endgame/lessons.py:448
 msgid ""
 "The most common endgame in practice. Philidor draws, a passive rook loses, "
 "Lucena wins with the bridge."
@@ -3378,12 +3373,12 @@ msgstr ""
 "ganha com a ponte."
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:406
+#: addon/globalPlugins/chessmart/endgame/lessons.py:422
 msgid "The outside passed pawn"
 msgstr "O peão passado afastado"
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:408
+#: addon/globalPlugins/chessmart/endgame/lessons.py:424
 msgid ""
 "The outside passed pawn does not promote: it decoys. The defending king must"
 " go and fetch it, and your king eats on the other side."
@@ -3392,12 +3387,12 @@ msgstr ""
 "buscá-lo, e o seu rei come do outro lado."
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:468
+#: addon/globalPlugins/chessmart/endgame/lessons.py:484
 msgid "The passive rook loses"
 msgstr "A torre passiva perde"
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:457
+#: addon/globalPlugins/chessmart/endgame/lessons.py:473
 msgid ""
 "The pawn is on the sixth and the attacking king wants the sixth too: now the"
 " rook checks from behind, without stopping. The king has nowhere to hide "
@@ -3408,7 +3403,7 @@ msgstr ""
 "Empate."
 
 #. Description of the queen mate lesson.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:77
+#: addon/globalPlugins/chessmart/endgame/lessons.py:78
 msgid ""
 "The queen alone cannot mate: drive the king to the edge, bring your own king"
 " up, mind the stalemate. Under 10 moves."
@@ -3422,12 +3417,12 @@ msgid "The result slipped. Control+R plays the same position again."
 msgstr "O resultado escapou. Control+R joga a mesma posição de novo."
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:577
+#: addon/globalPlugins/chessmart/endgame/lessons.py:593
 msgid "The right bishop"
 msgstr "O bispo certo"
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:470
+#: addon/globalPlugins/chessmart/endgame/lessons.py:486
 msgid ""
 "The rook on the seventh instead of the third rank, and the king in front of "
 "the pawn: the attacking king reaches the sixth and it is lost. Without the "
@@ -3438,7 +3433,7 @@ msgstr ""
 " Philidor."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:543
+#: addon/globalPlugins/chessmart/endgame/lessons.py:559
 msgid ""
 "The rook pawn draws: the king hides in the corner in front of it and there "
 "is no check that does not stalemate. Draw while your king is far."
@@ -3447,7 +3442,7 @@ msgstr ""
 "xeque que não afogue. Empate enquanto o seu rei está longe."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:204
+#: addon/globalPlugins/chessmart/endgame/lessons.py:205
 msgid ""
 "The rook pawn wins when the defending king reaches neither the corner nor "
 "the square of the pawn. Push it: count the squares first."
@@ -3456,7 +3451,7 @@ msgstr ""
 "quadrado do peão. Empurre: conte as casas primeiro."
 
 #. Description of the lesson on king and pawn against king.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:216
+#: addon/globalPlugins/chessmart/endgame/lessons.py:217
 msgid ""
 "The rule of the square, the king in front of the pawn, and the pawn on the "
 "sixth: what wins, what draws, and why."
@@ -3465,22 +3460,22 @@ msgstr ""
 "ganha, o que empata, e por quê."
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:238
+#: addon/globalPlugins/chessmart/endgame/lessons.py:239
 msgid "The rule of the square: inside"
 msgstr "A regra do quadrado: dentro"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:226
+#: addon/globalPlugins/chessmart/endgame/lessons.py:227
 msgid "The rule of the square: outside"
 msgstr "A regra do quadrado: fora"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:166
+#: addon/globalPlugins/chessmart/endgame/lessons.py:167
 msgid "The same position, Black to move"
 msgstr "A mesma posição, Pretas jogam"
 
 #. Description of the lesson on pawns on both sides.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:384
+#: addon/globalPlugins/chessmart/endgame/lessons.py:400
 msgid ""
 "The spare tempo of doubled pawns, the outside passed pawn that decoys, and "
 "pawn against pawn where each king holds one."
@@ -3489,12 +3484,12 @@ msgstr ""
 "e peão contra peão onde cada rei segura um."
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:565
+#: addon/globalPlugins/chessmart/endgame/lessons.py:581
 msgid "The wrong bishop"
 msgstr "O bispo errado"
 
 #. Description of the lesson on bishop and rook pawn.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:555
+#: addon/globalPlugins/chessmart/endgame/lessons.py:571
 msgid ""
 "The wrong bishop cannot win: it does not control the promotion square, and "
 "the king in the corner never leaves."
@@ -3509,7 +3504,7 @@ msgstr "Essas tabelas já estão instaladas."
 
 #. Instruction after the question in a lesson: the position is lost, nothing
 #. to play.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:751
+#: addon/globalPlugins/chessmart/endgame/lessons.py:767
 msgid ""
 "This one is lost with best play; there is nothing to play out. Control+N "
 "goes on."
@@ -3528,7 +3523,7 @@ msgid "Took back {move}. Your move."
 msgstr "Desfeito {move}. Sua vez."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:396
+#: addon/globalPlugins/chessmart/endgame/lessons.py:412
 msgid ""
 "Two doubled pawns win where one draws: the rear pawn is a spare tempo. When "
 "the opposition is against you, move the rear pawn and it is against them."
@@ -3557,7 +3552,7 @@ msgid "Win"
 msgstr "Ganha"
 
 #. Description of the lesson on the king and the opposition.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:132
+#: addon/globalPlugins/chessmart/endgame/lessons.py:133
 msgid ""
 "With king and pawn against king the king leads, the pawn goes last. The "
 "opposition decides who passes, and the rook pawn is the exception that "
@@ -3567,7 +3562,7 @@ msgstr ""
 " decide quem passa, e o peão de torre é a exceção que empata."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:264
+#: addon/globalPlugins/chessmart/endgame/lessons.py:265
 msgid ""
 "With the king behind its pawn and the defending king in front, the attacking"
 " king never gets past. Draw. This is why the king must lead."
@@ -3576,7 +3571,7 @@ msgstr ""
 "nunca passa. Empate. É por isso que o rei tem que ir na frente."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:300
+#: addon/globalPlugins/chessmart/endgame/lessons.py:301
 msgid ""
 "Without the move it is a draw: Black plays the king in front of the pawn, "
 "and after the pawn checks on the seventh the attacking king cannot support "
@@ -3588,7 +3583,7 @@ msgstr ""
 "Peão que dá xeque na sétima é sinal de empate."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:444
+#: addon/globalPlugins/chessmart/endgame/lessons.py:460
 msgid ""
 "You defend. Keep the rook on your third rank (the sixth from the other side)"
 " so the attacking king cannot cross. When the pawn reaches that rank, the "
@@ -3623,13 +3618,13 @@ msgid "{name}: {total}, {remaining} still to download"
 msgstr "{name}: {total}, faltam {remaining}"
 
 #. Suffix of a lesson position attempted but not yet held.
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:124
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:125
 msgid "{title} (not held yet)"
 msgstr "{title} (ainda não mantida)"
 
 #. Suffix of a lesson position with its streak, e.g. "The king leads (3 in a
 #. row)".
-#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:122
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:123
 msgid "{title} ({streak} in a row)"
 msgstr "{title} ({streak} seguidas)"
 
@@ -3669,17 +3664,17 @@ msgstr "Lições de final: até onde você vai"
 
 #. One day's endgame work in the study log, e.g. "endgames: 4 positions, 3
 #. held, 18 min".
-#: addon/globalPlugins/chessmart/study_log.py:211
+#: addon/globalPlugins/chessmart/study_log.py:212
 msgid "endgames: {n} positions, {held} held, {minutes} min"
 msgstr "finais: {n} posições, {held} mantidas, {minutes} min"
 
 #. Shown when every lesson is firm.
-#: addon/globalPlugins/chessmart/study_log.py:292
+#: addon/globalPlugins/chessmart/study_log.py:301
 msgid "Every lesson is firm. Time for the next book."
 msgstr "Todas as lições estão firmes. Hora do próximo livro."
 
 #. Explains what "firm" means in the study log.
-#: addon/globalPlugins/chessmart/study_log.py:298
+#: addon/globalPlugins/chessmart/study_log.py:307
 msgid ""
 "Firm means held {streak} times in a row, question answered right and result "
 "kept without a slip."
@@ -3710,7 +3705,7 @@ msgid "My Study"
 msgstr "Meu estudo"
 
 #. Shown in the study log when nothing was recorded in the period.
-#: addon/globalPlugins/chessmart/study_log.py:185
+#: addon/globalPlugins/chessmart/study_log.py:186
 msgid "Nothing recorded in the last {days} days."
 msgstr "Nada registrado nos últimos {days} dias."
 
@@ -3726,7 +3721,7 @@ msgstr "Registro de estudo"
 
 #. One day's tactics in the study log, e.g. "tactics: 3 puzzles, 2 solved, 25
 #. min".
-#: addon/globalPlugins/chessmart/study_log.py:193
+#: addon/globalPlugins/chessmart/study_log.py:194
 msgid "tactics: {n} puzzles, {solved} solved, {minutes} min"
 msgstr "tática: {n} puzzles, {solved} certos, {minutes} min"
 
@@ -3742,35 +3737,35 @@ msgstr "Hoje"
 
 #. Where the player is in the endgame lessons, e.g. "You are at: 3. King and
 #. pawn against king."
-#: addon/globalPlugins/chessmart/study_log.py:295
+#: addon/globalPlugins/chessmart/study_log.py:304
 msgid "You are at: {lesson}."
 msgstr "Você está em: {lesson}."
 
 #. Closing line of the study log, e.g. "6 days with study in the last 7, 210
 #. min in all."
-#: addon/globalPlugins/chessmart/study_log.py:228
+#: addon/globalPlugins/chessmart/study_log.py:229
 msgid "{active} days with study in the last {days}, {minutes} min in all."
 msgstr "{active} dias com estudo nos últimos {days}, {minutes} min ao todo."
 
 #. One day in the study log, e.g. "2026-09-19: tactics: ...; endgames: ...
 #. Total 43 min."
-#: addon/globalPlugins/chessmart/study_log.py:220
+#: addon/globalPlugins/chessmart/study_log.py:221
 msgid "{day}: {parts}. Total {minutes} min."
 msgstr "{day}: {parts}. Total {minutes} min."
 
 #. A lesson whose positions are all firm, e.g. "2. The king and the
 #. opposition: firm, 6 of 6."
-#: addon/globalPlugins/chessmart/study_log.py:269
+#: addon/globalPlugins/chessmart/study_log.py:278
 msgid "{lesson}: firm, {firm} of {total}."
 msgstr "{lesson}: firme, {firm} de {total}."
 
 #. A lesson not started yet.
-#: addon/globalPlugins/chessmart/study_log.py:277
+#: addon/globalPlugins/chessmart/study_log.py:286
 msgid "{lesson}: not started."
 msgstr "{lesson}: não começada."
 
 #. A lesson in progress, e.g. "3. King and pawn: 4 of 7 firm. Pending: ...".
-#: addon/globalPlugins/chessmart/study_log.py:282
+#: addon/globalPlugins/chessmart/study_log.py:291
 msgid "{lesson}: {firm} of {total} firm. Pending: {pending}."
 msgstr "{lesson}: {firm} de {total} firmes. Pendentes: {pending}."
 
@@ -3848,12 +3843,12 @@ msgstr "Com {hints} ajudas da tablebase: vale como treino, não como mantida."
 
 #. Spoken after the first Control+N during a puzzle: it asks for a second
 #. press.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:74
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:82
 msgid "Press Control+N twice to skip tactic {puzzle_id}."
 msgstr "Pressione Control+N duas vezes para pular a tática {puzzle_id}."
 
 #. Spoken on the second Control+N: the puzzle is skipped.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:82
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:90
 msgid "Skipping tactic {puzzle_id}."
 msgstr "Pulando a tática {puzzle_id}."
 
@@ -3885,7 +3880,7 @@ msgstr ""
 "relógio mais longo."
 
 #. Description of the two bishops mate lesson.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:110
+#: addon/globalPlugins/chessmart/endgame/lessons.py:111
 msgid ""
 "The bishops side by side make a wall the king cannot cross. Push it to the "
 "edge, then into a corner, and mate with the king close behind. Under 20 "
@@ -3896,7 +3891,7 @@ msgstr ""
 "20 lances."
 
 #. Description of the bishop and knight mate lesson.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:121
+#: addon/globalPlugins/chessmart/endgame/lessons.py:122
 msgid ""
 "The hardest elementary mate: it only exists in the corner of the bishop's "
 "colour. Drive the king to the edge, then along the edge to the right corner,"
@@ -3912,17 +3907,17 @@ msgid "Two bishops and king against king"
 msgstr "Dois bispos e rei contra rei"
 
 #. Name of the endgame lesson (a drill) with two rooks.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:97
+#: addon/globalPlugins/chessmart/endgame/lessons.py:98
 msgid "1c. Mate with two rooks"
 msgstr "1c. Mate de duas torres"
 
 #. Name of the endgame lesson (a drill) with two bishops.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:108
+#: addon/globalPlugins/chessmart/endgame/lessons.py:109
 msgid "1d. Mate with two bishops"
 msgstr "1d. Mate de dois bispos"
 
 #. Name of the endgame lesson (a drill) with bishop and knight.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:119
+#: addon/globalPlugins/chessmart/endgame/lessons.py:120
 msgid "1e. Mate with bishop and knight"
 msgstr "1e. Mate de bispo e cavalo"
 
@@ -3940,7 +3935,7 @@ msgstr ""
 "fica de fora."
 
 #. Description of the two rooks mate lesson.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:99
+#: addon/globalPlugins/chessmart/endgame/lessons.py:100
 msgid ""
 "The ladder mate: the rooks take turns cutting off a rank and checking on the"
 " next, until the king runs out of board. Under 10 moves."
@@ -3954,12 +3949,12 @@ msgid "Two rooks and king against king"
 msgstr "Duas torres e rei contra rei"
 
 #. Name of the endgame lesson on practical rook endings.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:589
+#: addon/globalPlugins/chessmart/endgame/lessons.py:605
 msgid "9. Rook endings: the ones that decide games"
 msgstr "9. Finais de torre: os que decidem partidas"
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:668
+#: addon/globalPlugins/chessmart/endgame/lessons.py:684
 msgid ""
 "Add the pawn's rank to the number of files between the defending king and "
 "the pawn. Four plus two is six, more than five: the king cannot get back in "
@@ -3970,7 +3965,7 @@ msgstr ""
 "rei na frente do peão e ganha."
 
 #. Description of the lesson on practical rook endings.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:591
+#: addon/globalPlugins/chessmart/endgame/lessons.py:607
 msgid ""
 "Beyond Philidor and Lucena: the short side, Vancura against the rook pawn, "
 "the back-rank defence, the rule of five, and the rook behind the passed "
@@ -3981,7 +3976,7 @@ msgstr ""
 "passado. Quatro deles vêm em pares, do jeito certo e do jeito errado."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:680
+#: addon/globalPlugins/chessmart/endgame/lessons.py:696
 msgid ""
 "Same cut, pawn one rank back. Three plus two is five, not more: the "
 "defending king gets back to the pawn's file in time. Draw. Do not force it; "
@@ -3992,7 +3987,7 @@ msgstr ""
 "peças ativas."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:642
+#: addon/globalPlugins/chessmart/endgame/lessons.py:658
 msgid ""
 "Same ending with your rook behind the pawn. The attacking king walks to b7, "
 "the rook leaves a8 with check, and the pawn promotes. Lost: against the rook"
@@ -4003,7 +3998,7 @@ msgstr ""
 "atrás é o lugar errado."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:616
+#: addon/globalPlugins/chessmart/endgame/lessons.py:632
 msgid ""
 "Same ending, king on the wrong side. Now the rook checks from the short "
 "side, two files away, and the king walks up to it: the checks run out and "
@@ -4014,52 +4009,52 @@ msgstr ""
 "Perdido."
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:690
+#: addon/globalPlugins/chessmart/endgame/lessons.py:706
 msgid "Tarrasch: the rook behind the passed pawn"
 msgstr "Tarrasch: a torre atrás do peão passado"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:702
+#: addon/globalPlugins/chessmart/endgame/lessons.py:718
 msgid "Tarrasch: the rook in front of its own pawn"
 msgstr "Tarrasch: a torre na frente do próprio peão"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:653
+#: addon/globalPlugins/chessmart/endgame/lessons.py:669
 msgid "The back-rank defence against a knight pawn"
 msgstr "A defesa da última fila contra o peão de cavalo"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:666
+#: addon/globalPlugins/chessmart/endgame/lessons.py:682
 msgid "The rule of five: pawn on the fourth, king cut off by two files"
 msgstr "A regra dos cinco: peão na quarta, rei cortado por duas colunas"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:678
+#: addon/globalPlugins/chessmart/endgame/lessons.py:694
 msgid "The rule of five: pawn on the third"
 msgstr "A regra dos cinco: peão na terceira"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:614
+#: addon/globalPlugins/chessmart/endgame/lessons.py:630
 msgid "The short side: king on the long side"
 msgstr "O lado curto: rei do lado longo"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:601
+#: addon/globalPlugins/chessmart/endgame/lessons.py:617
 msgid "The short side: king on the short side, rook on the long side"
 msgstr "O lado curto: rei do lado curto, torre do lado longo"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:640
+#: addon/globalPlugins/chessmart/endgame/lessons.py:656
 msgid "Vancura: the passive rook behind the pawn"
 msgstr "Vancura: a torre passiva atrás do peão"
 
 #. Title of a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:627
+#: addon/globalPlugins/chessmart/endgame/lessons.py:643
 msgid "Vancura: the rook attacks the rook pawn from the side"
 msgstr "Vancura: a torre ataca o peão de torre pelo lado"
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:629
+#: addon/globalPlugins/chessmart/endgame/lessons.py:645
 msgid ""
 "You defend against a rook pawn on the sixth with the attacking rook in front"
 " of it. Keep your rook on the third rank, hitting the pawn from the side, "
@@ -4071,7 +4066,7 @@ msgstr ""
 "e dê xeque sempre que o rei vier protegê-lo: ele nunca acha abrigo. Empate."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:655
+#: addon/globalPlugins/chessmart/endgame/lessons.py:671
 msgid ""
 "You defend with the king in front of a knight pawn on the sixth and the rook"
 " on the back rank. Just wait: the rook shuffles along the back rank, the "
@@ -4084,7 +4079,7 @@ msgstr ""
 "cavalo."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:603
+#: addon/globalPlugins/chessmart/endgame/lessons.py:619
 msgid ""
 "You defend, and the pawn is already on the seventh. Your king stays on the "
 "short side of the pawn, so the rook has the long side to check from: three "
@@ -4095,7 +4090,7 @@ msgstr ""
 " mais, e os xeques nunca acabam. Empate."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:704
+#: addon/globalPlugins/chessmart/endgame/lessons.py:720
 msgid ""
 "You defend, and their rook is in front of its own rook pawn: it cannot leave"
 " a8 without losing the pawn. Keep your rook behind the pawn and your king on"
@@ -4108,7 +4103,7 @@ msgstr ""
 "enquanto o rei ficar longe."
 
 #. Rule taught by a lesson position.
-#: addon/globalPlugins/chessmart/endgame/lessons.py:692
+#: addon/globalPlugins/chessmart/endgame/lessons.py:708
 msgid ""
 "Your rook stands behind your passed pawn, theirs stands in front of it and "
 "is tied to it. Every pawn step gains your rook a rank and costs theirs one. "
@@ -4873,19 +4868,19 @@ msgstr "{name}, {eco}, ainda teoria"
 
 #. Spoken after a rated puzzle while the rating is uncertain, e.g.
 #. "Provisional rating 1410, down 40.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:624
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:632
 msgid "Provisional rating {rating}, down {delta}."
 msgstr "Rating provisório {rating}, caiu {delta}."
 
 #. Spoken after a rated puzzle while the rating is uncertain and did not
 #. change.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:627
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:635
 msgid "Provisional rating {rating}, unchanged."
 msgstr "Rating provisório {rating}, sem mudança."
 
 #. Spoken after a rated puzzle while the rating is uncertain, e.g.
 #. "Provisional rating 1450, up 40.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:621
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:629
 msgid "Provisional rating {rating}, up {delta}."
 msgstr "Rating provisório {rating}, subiu {delta}."
 
@@ -5585,7 +5580,7 @@ msgstr[1] ""
 "lances acrescentados."
 
 #. Explains the review queue in the study log.
-#: addon/globalPlugins/chessmart/study_log.py:250
+#: addon/globalPlugins/chessmart/study_log.py:251
 msgid ""
 "A missed puzzle comes back the next day; two clean reviews in a row, days "
 "apart, make it firm. Up to {count} reviews open each tactics session."
@@ -5594,37 +5589,37 @@ msgstr ""
 "dias entre elas, deixam ele firme. Até {count} revisões abrem cada sessão de"
 " tática."
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:584
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:592
 msgid "Clean review. It comes back in {days} day for the last check."
 msgid_plural "Clean review. It comes back in {days} days for the last check."
 msgstr[0] "Revisão limpa. Ele volta em {days} dia para a última conferida."
 msgstr[1] "Revisão limpa. Ele volta em {days} dias para a última conferida."
 
 #. Spoken after a clean review that makes the puzzle firm.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:580
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:588
 msgid "Clean review. This one is firm: it leaves the review queue."
 msgstr "Revisão limpa. Esse ficou firme: sai da fila de revisão."
 
 #. Spoken when the player chose not to skip the reviews.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:233
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:241
 msgid "Good choice. Back to the review."
 msgstr "Boa. De volta à revisão."
 
 #. The review queue in the study log, e.g. "In the queue: 3 due today, 5
 #. waiting for their day. Firm: 2.".
-#: addon/globalPlugins/chessmart/study_log.py:244
+#: addon/globalPlugins/chessmart/study_log.py:245
 msgid ""
 "In the queue: {due} due today, {waiting} waiting for their day. Firm: "
 "{firm}."
 msgstr "Na fila: {due} para hoje, {waiting} esperando o dia. Firmes: {firm}."
 
 #. Spoken after the first wrong move of a review: it will be reviewed again.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:444
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:452
 msgid "It comes back tomorrow. Keep going to learn the solution."
 msgstr "Ele volta amanhã. Continue para aprender a solução."
 
 #. Shown in the study log when no puzzle was ever missed.
-#: addon/globalPlugins/chessmart/study_log.py:241
+#: addon/globalPlugins/chessmart/study_log.py:242
 msgid "No missed puzzles to review."
 msgstr "Nenhum puzzle errado para revisar."
 
@@ -5634,19 +5629,19 @@ msgid "Puzzles you missed"
 msgstr "Puzzles que você errou"
 
 #. Window title during a review of a missed puzzle.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:349
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:357
 msgid "Review of tactic {puzzle_id} - rating {rating}"
 msgstr "Revisão da tática {puzzle_id} - rating {rating}"
 
 #. Spoken when a review puzzle loads, e.g. "Review 1 of 3: a puzzle you
 #. missed. Not rated.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:305
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:313
 msgid "Review {number} of {total}: a puzzle you missed. Not rated."
 msgstr ""
 "Revisão {number} de {total}: um puzzle que você errou. Não vale rating."
 
 #. Spoken when the first new puzzle follows the reviews.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:324
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:332
 msgid "Reviews done. Now new puzzles."
 msgstr "Revisão feita. Agora, puzzles novos."
 
@@ -5658,16 +5653,16 @@ msgstr "Revisões: {clean} limpas de {reviews}."
 
 #. One day's reviews of missed puzzles in the study log, e.g. "reviews: 3, 2
 #. clean, 6 min".
-#: addon/globalPlugins/chessmart/study_log.py:202
+#: addon/globalPlugins/chessmart/study_log.py:203
 msgid "reviews: {n}, {clean} clean, {minutes} min"
 msgstr "revisões: {n}, {clean} limpas, {minutes} min"
 
 #. Title of the dialog asked when the player tries to skip the reviews.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:216
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:224
 msgid "Skip review"
 msgstr "Pular revisão"
 
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:209
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:217
 msgid ""
 "Skip the review? Come on, going back to what you missed is what makes the "
 "pattern stick. {count} puzzle left to review. Skip it anyway?"
@@ -5682,17 +5677,17 @@ msgstr[1] ""
 "Faltam {count} puzzles para revisar. Pular mesmo assim?"
 
 #. Spoken when a review is finished after a wrong move.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:593
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:601
 msgid "Solved after a mistake: it comes back tomorrow."
 msgstr "Resolvido depois de um erro: volta amanhã."
 
 #. Spoken after a review finished with a hint or Control+Enter.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:596
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:604
 msgid "Solved with help: it comes back tomorrow."
 msgstr "Resolvido com ajuda: volta amanhã."
 
 #. Spoken after the last review of the session.
-#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:601
+#: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:609
 msgid "That was the last review."
 msgstr "Essa foi a última revisão."
 
@@ -5879,6 +5874,43 @@ msgstr ""
 #: addon/globalPlugins/chessmart/__init__.py:79
 msgid "Load and replay a portable game notation (.pgn) file"
 msgstr "Carregar e reproduzir um arquivo PGN"
+
+#. Name of the endgame lesson (a drill) that follows lesson 3: king and pawn
+#. against king, played until mate.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:315
+msgid "3b. Promote and mate with king and pawn"
+msgstr "3b. Promover e dar mate com rei e peão"
+
+#. Description of the king and pawn drill lesson.
+#: addon/globalPlugins/chessmart/endgame/lessons.py:317
+msgid ""
+"Lesson 3 played to the end: the king leads and takes the opposition, the "
+"pawn moves last. Promote, then mate, without stalemate. With the tablebases "
+"installed, a random position puts the pawn on any file and is always a won "
+"one."
+msgstr ""
+"A lição 3 jogada até o fim: o rei vai na frente e toma a oposição, o peão "
+"anda por último. Promova e depois dê mate, sem afogar. Com as tablebases "
+"instaladas, uma posição sorteada põe o peão em qualquer coluna e é sempre "
+"uma posição ganha."
+
+#. Spoken when the player offered a draw in a game against the computer and it
+#. agrees; the game then ends as a draw.
+#: addon/globalPlugins/chessmart/virtual_chessboard/user_engine.py:116
+msgid "The computer accepts the draw."
+msgstr "O computador aceita o empate."
+
+#. Spoken when the player offered a draw in a game against the computer and it
+#. refuses; the computer's move follows.
+#: addon/globalPlugins/chessmart/virtual_chessboard/user_engine.py:120
+msgid "The computer declines the draw."
+msgstr "O computador recusa o empate."
+
+#. First choice of position for an endgame drill: the example position from
+#. the lesson's books.
+#: addon/globalPlugins/chessmart/graphical_interface/endgame_dialog.py:106
+msgid "Book example"
+msgstr "Exemplo do livro"
 
 #~ msgid "Also: {moves}"
 #~ msgstr "Também: {moves}"

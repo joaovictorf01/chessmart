@@ -54,6 +54,14 @@ class PuzzleCell(UserDrivenCell):
 	def script_hint(self, gesture):
 		self.parent.speak_hint()
 
+	@script(
+		# Translators: Input help message for the report tactics rating command.
+		description=_("Report your current tactics rating"),
+		gesture="kb:control+shift+r",
+	)
+	def script_report_rating(self, gesture):
+		self.parent.report_rating()
+
 	@script(gesture="kb:control+n")
 	def script_next_puzzle(self, gesture):
 		# Puzzle finished: Control+N goes through immediately. Puzzle in
@@ -639,13 +647,13 @@ class PuzzleChessboard(ActionsBarMixin, UserDrivenChessboard):
 			speech.commands.BreakCommand(120),
 		]
 
-	@script(
-		# Translators: Input help message for the report tactics rating command.
-		description=_("Report your current tactics rating"),
-		gesture="kb:control+shift+r",
-	)
-	def script_report_rating(self, gesture):
-		"""Speaks the current rating at any time, without waiting for the puzzle to end."""
+	def report_rating(self):
+		"""Speaks the current rating at any time, without waiting for the puzzle to end.
+
+		Control+Shift+R reaches it through PuzzleCell: the focus is always on a
+		square, and NVDA does not run a script of the board (a focus ancestor)
+		unless it sets canPropagate.
+		"""
 		try:
 			summary = self.session.rating()
 		except Exception:

@@ -84,3 +84,13 @@ class TestStudyLog(unittest.TestCase):
 			any(line.startswith("2. The king and the opposition: 1 of 6 firm. Pending: ") for line in lines),
 		)
 		self.assertIn("You are at: 1a. Mate with queen and king.", lines)
+
+	def test_a_drill_in_progress_names_the_drill_not_its_id(self):
+		self._endgame("2026-09-19 10:00:00", "pawnVsKing", False)
+		progress = study_log.lesson_progress(self.connection)
+		drill = {item.lesson.lesson_id: item for item in progress}["kingAndPawnDrill"]
+		self.assertEqual((drill.firm, drill.pending, drill.attempted), ((), ("pawnVsKing",), 1))
+		self.assertIn(
+			"3b. Promote and mate with king and pawn: 0 of 1 firm. Pending: King and pawn against king.",
+			study_log.render_progress(progress),
+		)

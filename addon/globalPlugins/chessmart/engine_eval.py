@@ -215,6 +215,29 @@ class MoveReview:
 		return VERDICT_MARKS.get(self.verdict)
 
 
+# No draw by agreement in the opening: before this move number (the board's
+# fullmove counter, as a custom FEN sets it) the engine declines every offer.
+ENGINE_DRAW_MIN_FULLMOVE = 20
+
+
+def engine_accepts_draw(
+	score: t.Optional["chess.engine.PovScore"],
+	engine_color: bool,
+	fullmove_number: int,
+) -> bool:
+	"""Whether the engine takes a draw offer, judged by its own score of the position.
+
+	The way chess programs usually answer: yes when the position is level
+	(Advantage.EQUAL, within a quarter of a pawn) or better for the other
+	side, no when the engine is ahead. Never before move
+	ENGINE_DRAW_MIN_FULLMOVE, and never with no score (the engine sent none):
+	a draw is not given away on a guess.
+	"""
+	if fullmove_number < ENGINE_DRAW_MIN_FULLMOVE or score is None:
+		return False
+	return Assessment.from_score(score).side_ahead != engine_color
+
+
 def threat_position(board: "chess.Board") -> t.Optional["chess.Board"]:
 	"""The position with the move handed to the other side: its best move there is the threat.
 

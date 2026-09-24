@@ -14,6 +14,7 @@ What the unit tests cannot see. After a change, run the parts it touches, with t
 
 - The engine answers; at the chosen strength it does not play instantly perfect moves.
 - Control+S saves a PGN; Control+Shift+S saves a picture.
+- Control+D before move 20: "The computer declines the draw." and its move follows. From move 20 in a level position, then a move: "The computer accepts the draw." and the game ends drawn. Control+D twice before moving: "Draw offer withdrawn", and the computer says nothing about a draw. Closing the window while it thinks: no error.
 
 ## Tactics
 
@@ -25,6 +26,7 @@ What the unit tests cannot see. After a change, run the parts it touches, with t
 - With a puzzle missed yesterday or before, Tactics opens with "Review 1 of N"; the title says "Review of tactic". A wrong move says it comes back tomorrow, with no rating sentence; a clean finish says when it comes back or that it is firm; Control+Shift+R shows the rating unchanged.
 - Control+N during a review opens the skip question with No focused; Escape or No returns to the board and says so; Yes loads a new puzzle. After the last review the next puzzle says "Reviews done".
 - My Study shows "Puzzles you missed" with the queue, and the day's reviews.
+- Control+Shift+R on a square of the puzzle board speaks the tactics rating, during a puzzle and after it.
 
 ## Endgames
 
@@ -32,6 +34,7 @@ What the unit tests cannot see. After a change, run the parts it touches, with t
 - A spoiled move is announced by the judge; Backspace takes back.
 - Control+T and Control+Shift+T give hints; the end says hints count as practice.
 - Control+N goes to the next position. Tab opens the actions bar.
+- Lesson 3b comes after lesson 3 and offers "Book example" and "Random position" with the clock enabled; with the tablebases, Control+N puts the pawn on any file; promoting and mating says the moves with no target; My Study names the drill, not its id.
 
 ## Analysis board
 

@@ -109,14 +109,15 @@ Lichess publishes a new puzzle base every month. This project regenerates the da
 **Endgames...** is the endgame trainer. It follows the order of the endgame courses (Silman's *Complete Endgame Course*, Parts 1 to 4, and De la Villa's *100 Endgames You Must Know*), and every position is a theoretical one: known result, known method, checked against the Syzygy tablebases.
 
 * **Lessons 1a to 1e** are the mate drills: queen and king, rook and king, two rooks (the ladder), two bishops, and bishop and knight, against a bare king, played against the engine at full strength. The first position is the book example; **Control+N** opens a random one (two bishops always land on opposite colours). An optional clock can be set for records; by default there is none. At the end the board says how many moves the mate took and whether it fit the target (under 10 with the queen or two rooks, under 20 with the rook or two bishops, under 35 with bishop and knight), and names a stalemate for what it is.
+* **Lesson 3b** is lesson 3 played to the end: king and pawn against king, promote and mate, without stalemate. With the tablebases installed, Control+N puts the pawn on any file, rook pawns included, and only in a won position. There is no move target.
 * **Lessons 2 to 9** are the ideas: the king and the opposition; king and pawn against king (rule of the square, king in front, pawn on the sixth); a piece against a pawn; pawns on both sides; rook and pawn against rook (Philidor, the passive rook, Lucena); queen against a pawn on the seventh; bishop and rook pawn; and the rook endings that decide games (the short side, Vancura, the back-rank defence, the rule of five, the rook behind the passed pawn), each with its right and wrong version. Every position is checked against the Syzygy tablebase before it goes in. Each position is set up on the board and asks **win, draw or loss** for your side. Answer, and the board says whether you were right and speaks the rule. Then you play the position out against the engine: win it, or hold the draw. Lost positions are only the question and the rule.
 
 ### The Endgames dialog
 
 * **Lesson** — the lessons, in course order.
-* **Position** — for a mate drill, "Capablanca's example" or "Random position"; for a lesson, its positions, each with how many times in a row you held it ("(3 in a row)") or "(not held yet)" once you have tried it.
+* **Position** — for a drill (1a to 1e, 3b), "Book example" or "Random position"; for a lesson, its positions, each with how many times in a row you held it ("(3 in a row)") or "(not held yet)" once you have tried it.
 * **About this lesson** — a read-only text: what the lesson teaches and its source.
-* **Clock for the mate drills** — minutes+seconds (for example `5+0`), or empty for no clock. Only the mate drills use it.
+* **Clock for the mate drills** — minutes+seconds (for example `5+0`), or empty for no clock. Only the drills (1a to 1e, 3b) use it.
 * The tablebases installed, and **Download tablebases...** (see "The tablebase judge").
 
 ### The tablebase judge
@@ -138,7 +139,7 @@ Every attempt is recorded in your history (`tactic.db`): the starting position a
 | Control+Shift+T | The moves that keep the result |
 | Escape | Leave. During a game it asks first |
 
-The commands of the game board (see "Keyboard commands on the board") work here too, except Control+D, which does nothing here, and F2 / Shift+F2, which say "No Time Control" unless a mate drill was given a clock.
+The commands of the game board (see "Keyboard commands on the board") work here too, except Control+D, which does nothing here, and F2 / Shift+F2, which say "No Time Control" unless a drill was given a clock.
 
 ## My Study
 
@@ -175,7 +176,7 @@ The commands of the game board (see "Keyboard commands on the board") work here 
 | F3 | The focused square and piece in IBCA notation |
 | F4 | Score sheet: the moves played so far, as a list. Up and Down arrows move through it; F4 or Escape closes it |
 | F6 / Shift+F6 | Your pocket / the opponent's pocket (Crazyhouse) |
-| Control+D | Human versus human only: offer a draw, or withdraw the offer; after the next move the other player accepts or declines. Against the computer it has no effect |
+| Control+D | Offer a draw, or withdraw the offer. Human versus human: after the next move the other player accepts or declines. Against the computer: it answers on its turn, "The computer accepts the draw." or "The computer declines the draw."; it always declines before move 20, and after that accepts only when it judges the position level or worse for itself |
 | Control+S | Save the game as a PGN file |
 | Control+Shift+S | Save the board as a PNG image |
 | Escape | Close the board. During a game it asks first: leaving abandons the game against the engine |

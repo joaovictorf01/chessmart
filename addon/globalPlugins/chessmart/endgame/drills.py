@@ -5,12 +5,12 @@
 
 What is being trained here is not calculation, it's technique: drive the
 opposing king to the edge, bring up your own king, and deliver mate without
-stalemating, on a short clock. Each endgame has Capablanca's positions
-(*Chess Fundamentals*, chapter 1) as an example and, for queen and rook,
-randomly generated positions -- with only three pieces on the board, any
-one is won, and randomizing avoids memorizing a single case. King and pawn
-against king uses fixed positions, checked as won with White to move: there,
-not every position is won, and the drill is precisely about knowing why.
+stalemating, on a short clock. Each drill has a book example (Capablanca's
+*Chess Fundamentals*, chapter 1, for queen and rook) and randomly generated
+positions, so no single case gets memorized. King and pawn against king
+(lesson 3b) is different: not every position is won, and the drill is
+precisely about knowing why. Its examples are checked as won with White to
+move, and a random position needs the tablebase to confirm it is won.
 
 No NVDA in this module, on purpose: it's what the tests import.
 """

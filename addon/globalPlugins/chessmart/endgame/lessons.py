@@ -56,7 +56,8 @@ class EndgameLesson:
 	description: str
 	source: str
 	positions: tuple[LessonPosition, ...] = ()
-	# Lesson 1 is the elementary mates: drills against the engine, no question.
+	# A drill against the engine, no question: the elementary mates (1a to 1e)
+	# and king and pawn played to mate (3b).
 	drill: EndgameDrill | None = None
 
 
@@ -303,6 +304,21 @@ ENDGAME_LESSONS: tuple[EndgameLesson, ...] = (
 				f"{VILLA}, ending 2",
 			),
 		),
+	),
+	EndgameLesson(
+		# Right after the questions of lesson 3: the same ending, now played
+		# to the end as a drill. A new id, so the history of the other
+		# lessons keeps its meaning; the attempts are logged under the drill's
+		# id ("pawnVsKing"), which no lesson position uses.
+		lesson_id="kingAndPawnDrill",
+		# Translators: Name of the endgame lesson (a drill) that follows lesson 3: king and pawn against king, played until mate.
+		label=N_("3b. Promote and mate with king and pawn"),
+		# Translators: Description of the king and pawn drill lesson.
+		description=N_(
+			"Lesson 3 played to the end: the king leads and takes the opposition, the pawn moves last. Promote, then mate, without stalemate. With the tablebases installed, a random position puts the pawn on any file and is always a won one.",
+		),
+		source=f"{SILMAN}, Part 3 (King and Pawn vs. Lone King); {VILLA}, endings 1 to 3",
+		drill=get_endgame_drill("pawnVsKing"),
 	),
 	EndgameLesson(
 		lesson_id="pieceVsPawn",

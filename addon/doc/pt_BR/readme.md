@@ -109,14 +109,15 @@ O Lichess publica uma base de puzzles nova todo mês. Este projeto regenera as b
 **Finais...** é o treinador de finais. Ele segue a ordem dos cursos de finais (o *Complete Endgame Course*, do Silman, Partes 1 a 4, e o *100 Endgames You Must Know*, do De la Villa), e toda posição é teórica: resultado conhecido, método conhecido, conferida nas tablebases Syzygy.
 
 * **As lições 1a a 1e** são os treinos de mate: dama e rei, torre e rei, duas torres (a escada), dois bispos, e bispo e cavalo, contra o rei nu, jogados contra o motor em força total. A primeira posição é o exemplo do livro; **Control+N** abre uma sorteada (os dois bispos sempre caem em cores opostas). Dá para definir um relógio opcional, para bater recordes; por padrão não há nenhum. No fim, o tabuleiro diz em quantos lances saiu o mate e se ficou dentro da meta (menos de 10 com a dama ou com as duas torres, menos de 20 com a torre ou com os dois bispos, menos de 35 com bispo e cavalo), e chama o afogamento pelo nome.
+* **A lição 3b** é a lição 3 jogada até o fim: rei e peão contra rei, promover e dar mate, sem afogar. Com as tablebases instaladas, o Control+N põe o peão em qualquer coluna, peão de torre incluído, e só em posição ganha. Não há meta de lances.
 * **As lições 2 a 9** são as ideias: o rei e a oposição; rei e peão contra rei (regra do quadrado, rei na frente, peão na sexta); uma peça contra um peão; peões dos dois lados; torre e peão contra torre (Philidor, a torre passiva, Lucena); dama contra peão na sétima; bispo e peão de torre; e os finais de torre que decidem partidas (o lado curto, Vancura, a defesa da última fileira, a regra dos cinco, a torre atrás do peão passado), cada um na versão certa e na errada. Toda posição é conferida na tablebase Syzygy antes de entrar. Cada posição é montada no tabuleiro e pergunta **ganha, empata ou perde** para o seu lado. Responda, e o tabuleiro diz se você acertou e fala a regra. Depois você joga a posição até o fim contra o motor: ganhe, ou segure o empate. As posições perdidas são só a pergunta e a regra.
 
 ### O diálogo Finais
 
 * **Lição** — as lições, na ordem do curso.
-* **Posição** — num treino de mate, "Exemplo do Capablanca" ou "Posição sorteada"; numa lição, as posições dela, cada uma com quantas vezes seguidas você a manteve ("(3 seguidas)") ou "(ainda não mantida)", depois que você já tentou.
+* **Posição** — num treino (1a a 1e, 3b), "Exemplo do livro" ou "Posição sorteada"; numa lição, as posições dela, cada uma com quantas vezes seguidas você a manteve ("(3 seguidas)") ou "(ainda não mantida)", depois que você já tentou.
 * **Sobre esta lição** — um texto só de leitura: o que a lição ensina e a fonte.
-* **Relógio dos treinos de mate** — minutos+segundos (por exemplo `5+0`), ou vazio para ficar sem relógio. Só os treinos de mate usam.
+* **Relógio dos treinos de mate** — minutos+segundos (por exemplo `5+0`), ou vazio para ficar sem relógio. Só os treinos (1a a 1e, 3b) usam.
 * As tablebases instaladas, e **Baixar tablebases...** (veja "O juiz das tablebases").
 
 ### O juiz das tablebases
@@ -138,7 +139,7 @@ Cada tentativa fica registrada no seu histórico (`tactic.db`): a posição de p
 | Control+Shift+T | Os lances que mantêm o resultado |
 | Escape | Sair. Durante uma partida, pergunta antes |
 
-Os comandos do tabuleiro de partida (veja "Comandos de teclado no tabuleiro") também funcionam aqui, menos o Control+D, que aqui não faz nada, e o F2 / Shift+F2, que dizem "Sem controle de tempo", a não ser que um treino de mate tenha recebido um relógio.
+Os comandos do tabuleiro de partida (veja "Comandos de teclado no tabuleiro") também funcionam aqui, menos o Control+D, que aqui não faz nada, e o F2 / Shift+F2, que dizem "Sem controle de tempo", a não ser que um treino tenha recebido um relógio.
 
 ## Meu estudo
 
@@ -175,7 +176,7 @@ Os comandos do tabuleiro de partida (veja "Comandos de teclado no tabuleiro") ta
 | F3 | A casa em foco e a peça, em notação IBCA |
 | F4 | Planilha de lances: os lances jogados até agora, como uma lista. Seta acima e Seta abaixo percorrem; F4 ou Escape fecha |
 | F6 / Shift+F6 | A sua reserva / a reserva do adversário (Crazyhouse) |
-| Control+D | Só humano contra humano: oferecer empate, ou retirar a oferta; depois do próximo lance o outro jogador aceita ou recusa. Contra o computador, não tem efeito |
+| Control+D | Oferecer empate, ou retirar a oferta. Humano contra humano: depois do próximo lance o outro jogador aceita ou recusa. Contra o computador: ele responde na vez dele, "O computador aceita o empate." ou "O computador recusa o empate."; antes do lance 20 sempre recusa, e depois só aceita quando avalia a posição como igual ou pior para ele |
 | Control+S | Salvar a partida como arquivo PGN |
 | Control+Shift+S | Salvar o tabuleiro como imagem PNG |
 | Escape | Fechar o tabuleiro. Durante uma partida, pergunta antes: sair abandona a partida contra o motor |

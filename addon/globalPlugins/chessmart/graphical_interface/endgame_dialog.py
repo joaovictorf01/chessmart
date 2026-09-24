@@ -3,8 +3,9 @@
 
 """Endgames dialog: which lesson, which position, and the tables.
 
-Lesson 1 is the mate drills (Capablanca's position or a random one, with an
-optional clock); the others are the course positions, each annotated with
+The drill lessons (1a to 1e, the mates, and 3b, king and pawn played to mate)
+offer the book position or a random one, with an optional clock; the others
+are the course positions, each annotated with
 what the log says about it: how many times in a row the player got it right
 and held the result. Each position's rule is deliberately left out here --
 it appears after the answer, on the board.
@@ -101,8 +102,8 @@ class EndgameDialog(gui.SettingsDialog):
 		self._stats = self._load_stats(lesson.lesson_id)
 		self.positionChoice.Clear()
 		if lesson.drill is not None:
-			# Translators: First choice of position for a mate drill.
-			self.positionChoice.Append(_("Capablanca's example"))
+			# Translators: First choice of position for an endgame drill: the example position from the lesson's books.
+			self.positionChoice.Append(_("Book example"))
 			# Translators: Second choice of position for a mate drill.
 			self.positionChoice.Append(_("Random position"))
 		else:

@@ -10,10 +10,12 @@ mark is suggested, so their edges are pinned here.
 import unittest
 
 from chessmart.engine_eval import (
+	ENGINE_DRAW_MIN_FULLMOVE,
 	Advantage,
 	Assessment,
 	MoveReview,
 	MoveVerdict,
+	engine_accepts_draw,
 	threat_position,
 )
 from chessmart.paths import import_bundled
@@ -199,6 +201,58 @@ class ThreatTest(unittest.TestCase):
 	def test_no_threat_question_in_check(self):
 		board = chess.Board("4k3/8/8/8/8/8/4q3/4K3 w - - 0 1")
 		self.assertIsNone(threat_position(board))
+
+
+# A move number past the opening minimum, for the tests about the score alone.
+LATE = ENGINE_DRAW_MIN_FULLMOVE
+
+
+class EngineDrawAnswerTest(unittest.TestCase):
+	"""Control+D against the computer: its own score of the position decides."""
+
+	@staticmethod
+	def score(centipawns=None, mate=None, pov=chess.WHITE):
+		if mate is not None:
+			return chess.engine.PovScore(chess.engine.Mate(mate), pov)
+		return chess.engine.PovScore(chess.engine.Cp(centipawns), pov)
+
+	def test_level_position_is_accepted(self):
+		self.assertTrue(engine_accepts_draw(self.score(0), chess.BLACK, LATE))
+		self.assertTrue(engine_accepts_draw(self.score(25), chess.WHITE, LATE))
+		self.assertTrue(engine_accepts_draw(self.score(-25), chess.WHITE, LATE))
+
+	def test_ahead_by_more_than_a_quarter_pawn_declines(self):
+		self.assertFalse(engine_accepts_draw(self.score(26), chess.WHITE, LATE))
+		self.assertFalse(engine_accepts_draw(self.score(-26), chess.BLACK, LATE))
+
+	def test_worse_for_the_engine_is_accepted(self):
+		self.assertTrue(engine_accepts_draw(self.score(-300), chess.WHITE, LATE))
+		self.assertTrue(engine_accepts_draw(self.score(300), chess.BLACK, LATE))
+
+	def test_score_from_the_engines_point_of_view(self):
+		# Black's engine reports +80 for itself: ahead, so no.
+		self.assertFalse(engine_accepts_draw(self.score(80, pov=chess.BLACK), chess.BLACK, LATE))
+
+	def test_mates(self):
+		self.assertFalse(engine_accepts_draw(self.score(mate=3), chess.WHITE, LATE))
+		self.assertTrue(engine_accepts_draw(self.score(mate=-3), chess.WHITE, LATE))
+
+	def test_no_score_declines(self):
+		self.assertFalse(engine_accepts_draw(None, chess.WHITE, LATE))
+
+	def test_no_draw_before_move_twenty(self):
+		self.assertEqual(ENGINE_DRAW_MIN_FULLMOVE, 20)
+		level, losing = self.score(0), self.score(-500)
+		for score in (level, losing):
+			self.assertFalse(engine_accepts_draw(score, chess.WHITE, 1))
+			self.assertFalse(engine_accepts_draw(score, chess.WHITE, 19))
+			self.assertTrue(engine_accepts_draw(score, chess.WHITE, 20))
+
+	def test_move_number_from_a_custom_fen_counts_as_is(self):
+		board = chess.Board("4k3/8/8/8/8/8/8/4K2R w - - 0 45")
+		self.assertTrue(engine_accepts_draw(self.score(-400), chess.WHITE, board.fullmove_number))
+		# Still ahead late in the game: no.
+		self.assertFalse(engine_accepts_draw(self.score(400), chess.WHITE, board.fullmove_number))
 
 
 if __name__ == "__main__":
