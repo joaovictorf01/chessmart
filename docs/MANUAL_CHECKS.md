@@ -47,6 +47,8 @@ What the unit tests cannot see. After a change, run the parts it touches, with t
 - Control+S on a new game asks for the headers and says the file name; the file opens again with Analyse PGN File.
 - Autosave: on an imported game, write a comment, close with Escape (no question), reopen from Analyse PGN File: the comment is there. Control+S says "Saved" without a dialog; Control+Alt+S opens the details. With the setting off, Escape asks again.
 
+- My Games lists the saved games newest first with their notes; Enter opens one; a comment written there is in the list's count the next time. With an empty games folder it says where games go.
+
 ## Board editor
 
 - Shift+K on e1 says "white king, e1"; k on e8 "black king, e8"; Delete empties; Enter says the square.

@@ -25,7 +25,7 @@ msgid "&Cancel"
 msgstr "&Cancelar"
 
 #. Name of the add-on submenu under NVDA's Tools menu.
-#: addon/globalPlugins/chessmart/__init__.py:125
+#: addon/globalPlugins/chessmart/__init__.py:134
 msgid "&Chessboard"
 msgstr "&Chessmart"
 
@@ -59,7 +59,7 @@ msgid "&Save training setup as default"
 msgstr "&Salvar esta configuração de treino como padrão"
 
 #. Menu item that opens the add-on settings, and its help text.
-#: addon/globalPlugins/chessmart/__init__.py:117
+#: addon/globalPlugins/chessmart/__init__.py:126
 msgid "&Settings..."
 msgstr "&Configurações..."
 
@@ -264,7 +264,7 @@ msgstr "Táticas do Chessmart"
 
 #. Summary/title for this add-on Category of the add-on's scripts in the Input
 #. Gestures dialog.
-#: buildVars.py:25 addon/globalPlugins/chessmart/__init__.py:605
+#: buildVars.py:25 addon/globalPlugins/chessmart/__init__.py:647
 msgid "Chessmart"
 msgstr "Chessmart"
 
@@ -772,7 +772,7 @@ msgid "No tactics available"
 msgstr "Nenhuma tática disponível"
 
 #. Title of the warning shown when no puzzle matches the options.
-#: addon/globalPlugins/chessmart/__init__.py:186
+#: addon/globalPlugins/chessmart/__init__.py:196
 msgid "No Tactics Found"
 msgstr "Nenhuma tática encontrada"
 
@@ -821,17 +821,17 @@ msgid "none"
 msgstr "nenhum"
 
 #. Help text of the add-on submenu.
-#: addon/globalPlugins/chessmart/__init__.py:127
+#: addon/globalPlugins/chessmart/__init__.py:136
 msgid "Open a chess game, tactics session, replay, or settings"
 msgstr "Abrir uma partida, sessão de táticas, reprodução ou configurações"
 
 #. Menu item that opens the add-on settings, and its help text.
-#: addon/globalPlugins/chessmart/__init__.py:118
+#: addon/globalPlugins/chessmart/__init__.py:127
 msgid "Open Chessboard settings"
 msgstr "Abrir as configurações do Chessmart"
 
 #. Title of the dialog that opens a PGN file.
-#: addon/globalPlugins/chessmart/__init__.py:524
+#: addon/globalPlugins/chessmart/__init__.py:566
 msgid "Open PGN File"
 msgstr "Abrir arquivo PGN"
 
@@ -914,8 +914,8 @@ msgstr "Popularidade: {popularity}."
 
 #. Title of the dialog that opens a PGN file on the analysis board. File type
 #. filter of the PGN open dialog.
-#: addon/globalPlugins/chessmart/__init__.py:357
-#: addon/globalPlugins/chessmart/__init__.py:527
+#: addon/globalPlugins/chessmart/__init__.py:367
+#: addon/globalPlugins/chessmart/__init__.py:569
 msgid "Portable Game Notation *.pgn | *.pgn"
 msgstr "Portable Game Notation *.pgn | *.pgn"
 
@@ -977,7 +977,7 @@ msgstr ""
 
 #. Title of the message about the puzzle database. Title of the puzzle
 #. database download dialog.
-#: addon/globalPlugins/chessmart/__init__.py:200
+#: addon/globalPlugins/chessmart/__init__.py:210
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:49
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:332
 #: addon/globalPlugins/chessmart/graphical_interface/download_dialog.py:355
@@ -1177,8 +1177,8 @@ msgid "Select &themes..."
 msgstr "Selecionar &temas..."
 
 #. Title of the list of games in a PGN file.
-#: addon/globalPlugins/chessmart/__init__.py:386
-#: addon/globalPlugins/chessmart/__init__.py:561
+#: addon/globalPlugins/chessmart/__init__.py:428
+#: addon/globalPlugins/chessmart/__init__.py:603
 msgid "Select Game"
 msgstr "Selecionar partida"
 
@@ -1305,7 +1305,7 @@ msgid "Tactics database"
 msgstr "Base de táticas"
 
 #. Title of the error shown when the puzzle database is missing.
-#: addon/globalPlugins/chessmart/__init__.py:182
+#: addon/globalPlugins/chessmart/__init__.py:192
 msgid "Tactics Database Not Found"
 msgstr "Base de táticas não encontrada"
 
@@ -1327,14 +1327,14 @@ msgid "The download failed: {reason}"
 msgstr "O download falhou: {reason}"
 
 #. Spoken when the chosen PGN file has no games.
-#: addon/globalPlugins/chessmart/__init__.py:376
-#: addon/globalPlugins/chessmart/__init__.py:551
+#: addon/globalPlugins/chessmart/__init__.py:418
+#: addon/globalPlugins/chessmart/__init__.py:593
 msgid "The file contains no games"
 msgstr "O arquivo não contém partidas"
 
 #. Prompt of the list of games in a PGN file.
-#: addon/globalPlugins/chessmart/__init__.py:384
-#: addon/globalPlugins/chessmart/__init__.py:559
+#: addon/globalPlugins/chessmart/__init__.py:426
+#: addon/globalPlugins/chessmart/__init__.py:601
 msgid "The file contains the following games"
 msgstr "O arquivo contém as seguintes partidas"
 
@@ -1345,7 +1345,7 @@ msgid "The game has been terminated because of: {reason}"
 msgstr "A partida foi encerrada por: {reason}"
 
 #. Error when Random Puzzle finds no puzzle database.
-#: addon/globalPlugins/chessmart/__init__.py:218
+#: addon/globalPlugins/chessmart/__init__.py:228
 msgid ""
 "The tactics database was not found. Choose a valid database in Chessboard "
 "settings first."
@@ -1355,7 +1355,7 @@ msgstr ""
 
 #. Error when the tactics dialog finds no puzzle database. Keep "puzzles.db"
 #. as is.
-#: addon/globalPlugins/chessmart/__init__.py:170
+#: addon/globalPlugins/chessmart/__init__.py:180
 msgid ""
 "The tactics database was not found. Use Browse in the tactics dialog to "
 "point at your puzzle database, or place it in the add-on's data folder as "
@@ -4208,32 +4208,32 @@ msgstr ""
 "do Brasil."
 
 #. Spoken when a shortcut is used while NVDA runs in secure mode.
-#: addon/globalPlugins/chessmart/__init__.py:624
+#: addon/globalPlugins/chessmart/__init__.py:666
 msgid "Chessmart is not available in secure mode."
 msgstr "O Chessmart não está disponível no modo seguro."
 
 #. Description of the shortcut that opens the endgame lessons.
-#: addon/globalPlugins/chessmart/__init__.py:645
+#: addon/globalPlugins/chessmart/__init__.py:687
 msgid "Opens Chessmart endgames"
 msgstr "Abre os Finais do Chessmart"
 
 #. Description of the shortcut that opens the study log.
-#: addon/globalPlugins/chessmart/__init__.py:652
+#: addon/globalPlugins/chessmart/__init__.py:694
 msgid "Opens Chessmart My Study"
 msgstr "Abre o Meu estudo do Chessmart"
 
 #. Description of the shortcut that opens the tactics trainer.
-#: addon/globalPlugins/chessmart/__init__.py:630
+#: addon/globalPlugins/chessmart/__init__.py:672
 msgid "Opens Chessmart tactics"
 msgstr "Abre a Tática do Chessmart"
 
 #. Description of the shortcut that starts a new game.
-#: addon/globalPlugins/chessmart/__init__.py:659
+#: addon/globalPlugins/chessmart/__init__.py:701
 msgid "Starts a new Chessmart game"
 msgstr "Inicia uma nova partida do Chessmart"
 
 #. Description of the shortcut that starts a random puzzle.
-#: addon/globalPlugins/chessmart/__init__.py:638
+#: addon/globalPlugins/chessmart/__init__.py:680
 msgid "Starts a random Chessmart puzzle with the saved training setup"
 msgstr ""
 "Inicia um puzzle aleatório do Chessmart com a configuração de treino salva"
@@ -4266,7 +4266,7 @@ msgstr ""
 "a internet e tente de novo. Detalhe: {reason}"
 
 #. Spoken when the chosen PGN file cannot be read, followed by the error.
-#: addon/globalPlugins/chessmart/__init__.py:580
+#: addon/globalPlugins/chessmart/__init__.py:622
 msgid "Could not read the PGN file. Details: {error}"
 msgstr "Não foi possível ler o arquivo PGN. Detalhe: {error}"
 
@@ -4339,7 +4339,7 @@ msgid "{white} versus {black}"
 msgstr "{white} contra {black}"
 
 #. Asked when tactics are opened and no puzzle database is installed yet.
-#: addon/globalPlugins/chessmart/__init__.py:196
+#: addon/globalPlugins/chessmart/__init__.py:206
 msgid ""
 "Tactics need a puzzle database, which is downloaded once. The next dialog "
 "gives the size of each. Download it now?"
@@ -4449,7 +4449,7 @@ msgstr "Continua com {move}; variantes: {others}"
 
 #. Shown when the imported game could not be written, followed by the error.
 #. Spoken when the game could not be written, followed by the error.
-#: addon/globalPlugins/chessmart/__init__.py:492
+#: addon/globalPlugins/chessmart/__init__.py:534
 #: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:613
 #: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:648
 msgid "Could not save the game. Details: {error}"
@@ -4557,7 +4557,7 @@ msgstr ""
 "variantes e comentários"
 
 #. Title of the dialog that opens a PGN file on the analysis board.
-#: addon/globalPlugins/chessmart/__init__.py:355
+#: addon/globalPlugins/chessmart/__init__.py:365
 msgid "Open Game for Analysis"
 msgstr "Abrir partida para análise"
 
@@ -4961,7 +4961,7 @@ msgid "&Import Lichess Game..."
 msgstr "&Importar partida do Lichess..."
 
 #. Spoken when the Lichess game was imported before; its saved copy opens.
-#: addon/globalPlugins/chessmart/__init__.py:484
+#: addon/globalPlugins/chessmart/__init__.py:526
 msgid "Already imported: opening your copy, with your notes."
 msgstr "Já importada: abrindo a sua cópia, com as suas anotações."
 
@@ -4992,7 +4992,7 @@ msgid "clock {left}, under a minute"
 msgstr "relógio {left}, menos de um minuto"
 
 #. Shown when a Lichess game could not be downloaded; {error} is the reason.
-#: addon/globalPlugins/chessmart/__init__.py:469
+#: addon/globalPlugins/chessmart/__init__.py:511
 msgid "Could not get the game from Lichess: {error}"
 msgstr "Não foi possível baixar a partida do Lichess: {error}"
 
@@ -5006,12 +5006,12 @@ msgstr ""
 "tabuleiro de análise"
 
 #. Spoken while the game is being downloaded from Lichess.
-#: addon/globalPlugins/chessmart/__init__.py:457
+#: addon/globalPlugins/chessmart/__init__.py:499
 msgid "Downloading from Lichess..."
 msgstr "Baixando do Lichess..."
 
 #. Prompt of the Lichess import dialog.
-#: addon/globalPlugins/chessmart/__init__.py:436
+#: addon/globalPlugins/chessmart/__init__.py:478
 msgid "Game link or code, or a Lichess username for that player's last game:"
 msgstr ""
 "Link ou código da partida, ou um usuário do Lichess para a última partida "
@@ -5021,10 +5021,10 @@ msgstr ""
 #. import dialog is not a game or a username. Shown when a Lichess game could
 #. not be downloaded; {error} is the reason. Title of the Lichess import
 #. messages.
-#: addon/globalPlugins/chessmart/__init__.py:438
-#: addon/globalPlugins/chessmart/__init__.py:451
-#: addon/globalPlugins/chessmart/__init__.py:470
-#: addon/globalPlugins/chessmart/__init__.py:494
+#: addon/globalPlugins/chessmart/__init__.py:480
+#: addon/globalPlugins/chessmart/__init__.py:493
+#: addon/globalPlugins/chessmart/__init__.py:512
+#: addon/globalPlugins/chessmart/__init__.py:536
 msgid "Import Lichess Game"
 msgstr "Importar partida do Lichess"
 
@@ -5040,7 +5040,7 @@ msgstr "menor relógio {clock} no lance {move}"
 
 #. Shown when the text in the Lichess import dialog is not a game or a
 #. username.
-#: addon/globalPlugins/chessmart/__init__.py:450
+#: addon/globalPlugins/chessmart/__init__.py:492
 msgid "That is not a Lichess game link, game code or username."
 msgstr "Isso não é um link, código de partida ou usuário do Lichess."
 
@@ -5785,6 +5785,70 @@ msgstr "Detalhes da partida e salvar, Control+Alt+S"
 msgid "Save analysed games &automatically, once they have a file"
 msgstr ""
 "Salvar partidas analisadas &automaticamente, depois que tiverem arquivo"
+
+#. In My Games, what the player added to a game, e.g. "Comments: 12, marks: 4,
+#. variations: 2.".
+#: addon/globalPlugins/chessmart/my_games.py:73
+msgid "Comments: {comments}, marks: {marks}, variations: {variations}."
+msgstr "Comentários: {comments}, marcas: {marks}, variantes: {variations}."
+
+#. Menu item that lists the games in the games folder.
+#: addon/globalPlugins/chessmart/__init__.py:116
+msgid "My &Games..."
+msgstr "Minhas parti&das..."
+
+#. Title of the My Games list.
+#: addon/globalPlugins/chessmart/__init__.py:386
+#: addon/globalPlugins/chessmart/__init__.py:394
+msgid "My Games"
+msgstr "Minhas partidas"
+
+#. In My Games, for a game whose date is unknown.
+#: addon/globalPlugins/chessmart/my_games.py:61
+msgid "no date"
+msgstr "sem data"
+
+#. Shown by My Games when the games folder has no game; {folder} is its path.
+#: addon/globalPlugins/chessmart/__init__.py:382
+msgid ""
+"No games in {folder} yet. Games you save on the analysis board or import "
+"from Lichess go there."
+msgstr ""
+"Ainda não há partidas em {folder}. As partidas que você salva no tabuleiro "
+"de análise ou importa do Lichess vão para lá."
+
+#. In My Games, after a game the player has not annotated.
+#: addon/globalPlugins/chessmart/my_games.py:70
+msgid "No notes."
+msgstr "Sem anotações."
+
+#. Description of the shortcut that opens My Games.
+#: addon/globalPlugins/chessmart/__init__.py:708
+msgid "Opens Chessmart My Games"
+msgstr "Abre Minhas partidas do Chessmart"
+
+#. Help text of the My Games menu item.
+#: addon/globalPlugins/chessmart/__init__.py:118
+msgid ""
+"The games in your games folder, the most recently changed first, to open on "
+"the analysis board"
+msgstr ""
+"As partidas da sua pasta de partidas, as alteradas mais recentemente "
+"primeiro, para abrir no tabuleiro de análise"
+
+#. Prompt of the My Games list.
+#: addon/globalPlugins/chessmart/__init__.py:392
+msgid ""
+"The most recently changed first. Enter opens the game on the analysis board."
+msgstr ""
+"As alteradas mais recentemente primeiro. Enter abre a partida no tabuleiro "
+"de análise."
+
+#. A game in My Games, e.g. "2026-09-23, victorf01 versus dheekshan2020, Black
+#. won.".
+#: addon/globalPlugins/chessmart/my_games.py:63
+msgid "{date}, {players}, {result}."
+msgstr "{date}, {players}, {result}."
 
 #~ msgid "Provisional "
 #~ msgstr "Provisório "

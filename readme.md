@@ -11,7 +11,7 @@ Requires NVDA 2026.1 or later (64-bit Python 3.13). Nothing else needs to be ins
 1. Install the add-on and restart NVDA.
 2. Open the NVDA menu (NVDA+N), go to **Tools** and find the **Chessmart** submenu.
 3. Choose **Tactics...** to train, **Endgames...** for the endgame lessons, **My Study...** to see how far you have come, or **New Game...** to play.
-4. **NVDA+Alt+X** opens Tactics from anywhere. Shortcuts for a random puzzle, Endgames, My Study and New Game have no key by default: assign them in NVDA's Input Gestures dialog, under the Chessmart category.
+4. **NVDA+Alt+X** opens Tactics from anywhere. Shortcuts for a random puzzle, Endgames, My Study, My Games and New Game have no key by default: assign them in NVDA's Input Gestures dialog, under the Chessmart category.
 
 The first time you open Tactics, the add-on offers to download the puzzle database. Pick **Light** (about 90 MB, the puzzles many players have solved and approved -- around 880,000 of them) or **Complete** (about 600 MB, the whole Lichess base, over 6 million). The download dialog gives the exact size and puzzle count of each, which grow a little every month as Lichess publishes a new base. The download runs in the background with spoken progress; you can cancel with Escape. The database is stored in your NVDA configuration folder, under `chessmart`, together with your training history.
 
@@ -133,6 +133,10 @@ Nothing ends the session: a checkmate inside a variation is only a position. Whe
 **Control+S** saves. The first time, a new game asks for the players, the event, the date and the result, and goes to your **games folder** (Settings; by default `Documents\Chessmart`) as `year-month-day_White-vs-Black.pgn`. After that, and for a game opened from a file with a single game or imported from Lichess, Control+S saves to that file without asking. **Control+Alt+S** opens the details (players, event, date, result) at any time, and saves.
 
 Once the game has a file, every change -- a move, a comment, a mark, a line added by the engine -- is saved by itself, so nothing is lost if you close the board or NVDA. Settings, "Save analysed games automatically", turns this off; then Control+S saves and Escape asks before leaving unsaved changes.
+
+### My games
+
+**My Games...** lists every game in your games folder, the most recently changed first: the date, the players, the result, and how much you have annotated it ("Comments: 12, marks: 4, variations: 2", or "No notes"). Enter opens the game on the analysis board, where it keeps saving to its own file. A file with several games shows each of them; a game opened out of such a file is saved as a new file. The shortcut has no key by default: assign one in Input Gestures, under Chessmart.
 
 ### Game review
 

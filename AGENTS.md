@@ -12,7 +12,7 @@ Unit tests, ruff lint, ruff format check, translation catalog check, and pyright
 
 ## The boundary
 
-These modules import nothing from NVDA and must stay that way (`tests/unit/chessmart/test_boundaries.py` fails otherwise): `tactic/`, `endgame/`, `trainer.py`, `theme_catalog.py`, `theme_names.py`, `notation.py`, `study_log.py`, `training_session.py`, `paths.py`, `pgn.py`, `game_tree.py`, `engine_eval.py`, `openings/`, `puzzle_attempt.py`, `board_geometry.py`, `played_move.py`, `analysis_words.py`, `concurrency.py`, `i18n.py`.
+These modules import nothing from NVDA and must stay that way (`tests/unit/chessmart/test_boundaries.py` fails otherwise): `tactic/`, `endgame/`, `trainer.py`, `theme_catalog.py`, `theme_names.py`, `notation.py`, `study_log.py`, `my_games.py`, `training_session.py`, `paths.py`, `pgn.py`, `game_tree.py`, `engine_eval.py`, `openings/`, `puzzle_attempt.py`, `board_geometry.py`, `played_move.py`, `analysis_words.py`, `concurrency.py`, `i18n.py`.
 
 The rest (`virtual_chessboard/`, `graphical_interface/`, `chessboard.py`, `__init__.py`) cannot be imported outside NVDA. Do not write tests that import them: move the rule into a pure module and test it there.
 

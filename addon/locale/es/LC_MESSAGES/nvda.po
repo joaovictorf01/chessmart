@@ -4321,6 +4321,47 @@ msgid "Save analysed games &automatically, once they have a file"
 msgstr ""
 "Guardar las partidas analizadas &automáticamente, cuando ya tengan archivo"
 
+msgid "Comments: {comments}, marks: {marks}, variations: {variations}."
+msgstr "Comentarios: {comments}, signos: {marks}, variantes: {variations}."
+
+msgid "My &Games..."
+msgstr "Mis parti&das..."
+
+msgid "My Games"
+msgstr "Mis partidas"
+
+msgid "no date"
+msgstr "sin fecha"
+
+msgid ""
+"No games in {folder} yet. Games you save on the analysis board or import "
+"from Lichess go there."
+msgstr ""
+"Todavía no hay partidas en {folder}. Las partidas que guardas en el tablero "
+"de análisis o importas de Lichess van ahí."
+
+msgid "No notes."
+msgstr "Sin anotaciones."
+
+msgid "Opens Chessmart My Games"
+msgstr "Abre Mis partidas de Chessmart"
+
+msgid ""
+"The games in your games folder, the most recently changed first, to open on "
+"the analysis board"
+msgstr ""
+"Las partidas de tu carpeta de partidas, las modificadas más recientemente "
+"primero, para abrir en el tablero de análisis"
+
+msgid ""
+"The most recently changed first. Enter opens the game on the analysis board."
+msgstr ""
+"Las modificadas más recientemente primero. Intro abre la partida en el "
+"tablero de análisis."
+
+msgid "{date}, {players}, {result}."
+msgstr "{date}, {players}, {result}."
+
 #~ msgid ""
 #~ "Tactics need a puzzle database, which is downloaded once (about 76 MB for "
 #~ "the light version). Download it now?"

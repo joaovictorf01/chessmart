@@ -38,6 +38,7 @@ PURE_MODULES = (
 	"position_editor",
 	"puzzle_attempt",
 	"study_log",
+	"my_games",
 	"tactic.download",
 	"tactic.repository",
 	"tactic.store",

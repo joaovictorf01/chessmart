@@ -42,7 +42,7 @@ from .virtual_chessboard import (
 from .training_session import TrainingSession, default_training_options
 from .endgame.drills import opening_fen, random_fen
 from .endgame.lessons import EndgameLesson
-from .graphical_interface.messages import ask_yes_no, run_modal, show_error, show_warning
+from .graphical_interface.messages import ask_yes_no, run_modal, show_error, show_message, show_warning
 
 
 class ChessboardMenu(wx.Menu):
@@ -110,6 +110,15 @@ class ChessboardMenu(wx.Menu):
 			# Translators: Help text of the menu item that opens a PGN file on the analysis board.
 			_("Open a saved game on the analysis board to go through it and add variations and comments"),
 		)
+		my_games_item = self.Append(
+			wx.ID_ANY,
+			# Translators: Menu item that lists the games in the games folder.
+			_("My &Games..."),
+			# Translators: Help text of the My Games menu item.
+			_(
+				"The games in your games folder, the most recently changed first, to open on the analysis board"
+			),
+		)
 		self.AppendSeparator()
 		settings_item = self.Append(
 			wx.ID_ANY,
@@ -135,6 +144,7 @@ class ChessboardMenu(wx.Menu):
 		self.Bind(wx.EVT_MENU, self.onReplayPGN, replay_pgn_file_item)
 		self.Bind(wx.EVT_MENU, self.onRecordGame, record_game_item)
 		self.Bind(wx.EVT_MENU, self.onAnalysePGN, analyse_pgn_item)
+		self.Bind(wx.EVT_MENU, self.onMyGames, my_games_item)
 		self.Bind(wx.EVT_MENU, self.onImportLichess, import_lichess_item)
 		self.Bind(wx.EVT_MENU, self.onBoardEditor, board_editor_item)
 		self.Bind(wx.EVT_MENU, self.onSettings, settings_item)
@@ -358,6 +368,38 @@ class ChessboardMenu(wx.Menu):
 			style=wx.FD_OPEN,
 		)
 		run_modal(openFileDialog, functools.partial(self._on_analysis_file_chosen, openFileDialog))
+
+	def onMyGames(self, event):
+		from .my_games import list_saved_games
+
+		folder = get_games_folder()
+		games, unreadable = list_saved_games(folder)
+		for name in unreadable:
+			log.warning("chessmart: My Games could not read %s", name)
+		if not games:
+			show_message(
+				# Translators: Shown by My Games when the games folder has no game; {folder} is its path.
+				_(
+					"No games in {folder} yet. Games you save on the analysis board or import from Lichess go there.",
+				).format(folder=folder),
+				# Translators: Title of the My Games list.
+				_("My Games"),
+			)
+			return
+		dialog = wx.SingleChoiceDialog(
+			gui.mainFrame,
+			# Translators: Prompt of the My Games list.
+			_("The most recently changed first. Enter opens the game on the analysis board."),
+			# Translators: Title of the My Games list.
+			_("My Games"),
+			choices=[game.description() for game in games],
+		)
+		run_modal(dialog, functools.partial(self._on_my_game_chosen, dialog, games))
+
+	def _on_my_game_chosen(self, dialog, games, res):
+		if res == wx.ID_OK:
+			game = games[dialog.GetSelection()]
+			self._open_game_for_analysis(game.info, single_game_file=game.single_game_file)
 
 	def _on_analysis_file_chosen(self, dialog, res):
 		if res != wx.ID_OK:
@@ -660,6 +702,13 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	)
 	def script_new_game(self, gesture):
 		self._menu_action("onNewGame")
+
+	@script(
+		# Translators: Description of the shortcut that opens My Games.
+		description=_("Opens Chessmart My Games"),
+	)
+	def script_my_games(self, gesture):
+		self._menu_action("onMyGames")
 
 	def terminate(self):
 		super().terminate()
