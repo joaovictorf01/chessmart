@@ -39,7 +39,9 @@ with import_bundled():
 # four for each side, enough to see the idea without burying the game in engine moves.
 ENGINE_LINE_MOVES = 8
 # How much of it is spoken by E, in half-moves.
-SPOKEN_LINE_MOVES = 6
+# Moves of the engine's line said after its first move: three can be held by ear; the
+# whole line goes into the game with Control+E.
+SPOKEN_LINE_MOVES = 3
 
 
 class EngineActionsMixin:
@@ -115,20 +117,22 @@ class EngineActionsMixin:
 					lambda future: wx.CallAfter(self._on_evaluation, node, future),
 				)
 				return
+		# What matters first: who is better. Then the move, a short line, the
+		# other candidates; each a sentence of its own, so the pauses fall between them.
+		# The engine's name and depth are not said: Control+E writes them in the game.
 		spoken = [
-			# Translators: Start of an engine evaluation, e.g. "Stockfish 16, depth 20:".
-			_("{engine}, depth {depth}:").format(engine=self._engine_name(), depth=best.depth),
-			spoken_assessment(best.assessment),
+			# Translators: The engine's evaluation as a sentence, e.g. "white slightly better, plus 0.4.".
+			_("{evaluation}.").format(evaluation=spoken_assessment(best.assessment)),
 		]
 		if best.best_move is not None:
 			spoken.append(
-				# Translators: The engine's best move, e.g. "best: Nf3".
-				_("best: {move}").format(move=self._san_text(best.board, best.best_move)),
+				# Translators: The engine's best move, e.g. "Best move: Nf3.".
+				_("Best move: {move}.").format(move=self._san_text(best.board, best.best_move)),
 			)
-			line = self._spoken_line(best.board, best.line[1:SPOKEN_LINE_MOVES], after=best.best_move)
+			line = self._spoken_line(best.board, best.line[1 : 1 + SPOKEN_LINE_MOVES], after=best.best_move)
 			if line:
-				# Translators: The rest of the engine's line after its best move.
-				spoken.append(_("then {line}").format(line=line))
+				# Translators: The engine's line after its best move, e.g. "Line: e5, Bc4, Nc6.".
+				spoken.append(_("Line: {line}.").format(line=line))
 		others = [
 			# Translators: One of the engine's other candidate moves, e.g. "e4, plus 0.3".
 			_("{move}, {pawns}").format(
@@ -139,9 +143,11 @@ class EngineActionsMixin:
 			if other.best_move is not None
 		]
 		if others:
-			# Translators: The engine's other candidate moves, after the best one.
-			spoken.append(_("Also: {moves}").format(moves="; ".join(others)))
-		sequence: list = [speech.commands.BreakCommand(100), *spoken]
+			# Translators: The engine's other candidate moves, e.g. "Others: e4, plus 0.3; d4, plus 0.2.".
+			spoken.append(_("Others: {moves}.").format(moves="; ".join(others)))
+		sequence: list = [speech.commands.BreakCommand(100)]
+		for sentence in spoken:
+			sequence.extend([sentence, speech.commands.BreakCommand(150)])
 		speak_next(sequence)
 
 	# -- the tablebase: exact answers with few pieces ------------------------------------
@@ -229,10 +235,9 @@ class EngineActionsMixin:
 				evaluation=spoken_assessment(threat.assessment),
 			),
 		]
-		line = self._spoken_line(threat.board, threat.line[1:SPOKEN_LINE_MOVES], after=threat.best_move)
+		line = self._spoken_line(threat.board, threat.line[1 : 1 + SPOKEN_LINE_MOVES], after=threat.best_move)
 		if line:
-			# Translators: The rest of the engine's line after the threat.
-			spoken.append(_("then {line}").format(line=line))
+			spoken.append(_("Line: {line}.").format(line=line))
 		speak_next(spoken)
 
 	def review_move(self):

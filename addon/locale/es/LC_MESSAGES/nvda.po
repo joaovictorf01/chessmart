@@ -4391,6 +4391,18 @@ msgstr[1] ""
 "Revisando {count} posiciones, unos {minutes} minutos y {seconds} segundos. "
 "F7 otra vez detiene."
 
+msgid "{evaluation}."
+msgstr "{evaluation}."
+
+msgid "Best move: {move}."
+msgstr "Mejor jugada: {move}."
+
+msgid "Line: {line}."
+msgstr "Línea: {line}."
+
+msgid "Others: {moves}."
+msgstr "Otras: {moves}."
+
 #~ msgid ""
 #~ "Tactics need a puzzle database, which is downloaded once (about 76 MB for "
 #~ "the light version). Download it now?"

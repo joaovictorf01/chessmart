@@ -4641,28 +4641,18 @@ msgstr "Pôr a linha do motor como variante, Control+E"
 
 #. The evaluation after the move actually played, e.g. "After Nf3: equal, plus
 #. 0.1.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:290
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:295
 msgid "After {move}: {evaluation}."
 msgstr "Depois de {move}: {evaluation}."
-
-#. The engine's other candidate moves, after the best one.
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:143
-msgid "Also: {moves}"
-msgstr "Também: {moves}"
 
 #. Name of the Tab bar on the analysis board.
 #: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:250
 msgid "Analysis actions"
 msgstr "Ações da análise"
 
-#. The engine's best move, e.g. "best: Nf3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:126
-msgid "best: {move}"
-msgstr "melhor: {move}"
-
 #. Spoken after Control+E, e.g. "Engine line added from 12. Nf3, 8 moves.
 #. Alt+Down lists it.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:337
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:342
 msgid "Engine line added from {move}, {count} move. Alt+Down lists it."
 msgid_plural ""
 "Engine line added from {move}, {count} moves. Alt+Down lists it."
@@ -4685,7 +4675,7 @@ msgid "Evaluate the position, E"
 msgstr "Avaliar a posição, E"
 
 #. Spoken when Control+E is pressed before evaluating this position.
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:311
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:316
 msgid ""
 "Evaluate this position first with E; then Control+E adds the engine's line."
 msgstr ""
@@ -4730,7 +4720,7 @@ msgid "Mark {move}"
 msgstr "Marcar {move}"
 
 #. Short engine value for a forced mate, e.g. "mate in 3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:359
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:364
 msgid "mate in {moves}"
 msgstr "mate em {moves}"
 
@@ -4750,7 +4740,7 @@ msgid "No mark, Control+0"
 msgstr "Sem sinal, Control+0"
 
 #. Spoken when Shift+E is pressed before any move.
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:243
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:248
 msgid "Play or go to a move first; the engine reviews the move that led here."
 msgstr ""
 "Jogue ou vá até um lance primeiro; o motor avalia o lance que levou até "
@@ -4772,7 +4762,7 @@ msgid "Review the move played, Shift+E"
 msgstr "Avaliar o lance jogado, Shift+E"
 
 #. Spoken while the engine reviews the move, e.g. "Reviewing 12. Nf3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:259
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:264
 msgid "Reviewing {move}"
 msgstr "Avaliando {move}"
 
@@ -4783,31 +4773,31 @@ msgstr "Salvar, Control+S"
 
 #. The mark the engine's verdict suggests, e.g. "Suggested mark: dubious move,
 #. Control+6.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:298
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:303
 msgid "Suggested mark: {mark}, Control+{key}."
 msgstr "Sinal sugerido: {mark}, Control+{key}."
 
 #. Spoken when the engine failed, followed by the error. Spoken when the
 #. engine failed during the review, followed by the error.
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:367
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:372
 #: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:141
 msgid "The engine could not answer. Details: {error}"
 msgstr "O motor não conseguiu responder. Detalhes: {error}"
 
 #. Spoken when the engine returned no moves for the position.
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:316
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:321
 msgid "The engine has no line for this position."
 msgstr "O motor não tem linha para esta posição."
 
 #. Spoken when an engine key is pressed while the engine is still thinking.
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:66
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:68
 msgid "The engine is still thinking"
 msgstr "O motor ainda está pensando"
 
 #. What the engine preferred, e.g. "The engine preferred e4, white slightly
 #. better, plus 0.5.". The engine's move at a critical moment, e.g. "The
 #. engine preferred Nf3, equal, plus 0.1.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:283
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:288
 #: addon/globalPlugins/chessmart/virtual_chessboard/review_actions.py:260
 msgid "The engine preferred {move}, {evaluation}."
 msgstr "O motor preferia {move}, {evaluation}."
@@ -4817,22 +4807,15 @@ msgstr "O motor preferia {move}, {evaluation}."
 msgid "the engine's move"
 msgstr "o lance do motor"
 
-#. The rest of the engine's line after its best move. The rest of the engine's
-#. line after the threat.
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:131
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:235
-msgid "then {line}"
-msgstr "depois {line}"
-
 #. Spoken when E is pressed on a checkmate or stalemate.
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:73
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:202
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:75
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:208
 msgid "There is nothing to evaluate: the game is over in this position."
 msgstr "Não há o que avaliar: a partida terminou nesta posição."
 
 #. Spoken when the engine starts the long think (E pressed twice).
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:81
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:88
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:83
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:90
 msgid "Thinking longer, {seconds} seconds"
 msgstr "Pensando mais, {seconds} segundos"
 
@@ -4851,7 +4834,7 @@ msgstr "{color} embaixo"
 #. Engine evaluation, e.g. "black clearly better, minus 1.4".
 #: addon/globalPlugins/chessmart/analysis_words.py:83
 msgid "{color} clearly better, {pawns}"
-msgstr "{color} claramente melhores, {pawns}"
+msgstr "{color} claramente melhor, {pawns}"
 
 #. Engine evaluation: a forced mate, e.g. "white mates in 3".
 #: addon/globalPlugins/chessmart/analysis_words.py:69
@@ -4863,7 +4846,7 @@ msgstr[1] "{color} dão mate em {moves}"
 #. Engine evaluation, e.g. "white slightly better, plus 0.5".
 #: addon/globalPlugins/chessmart/analysis_words.py:81
 msgid "{color} slightly better, {pawns}"
-msgstr "{color} um pouco melhores, {pawns}"
+msgstr "{color} um pouco melhor, {pawns}"
 
 #. Engine evaluation, e.g. "white winning, plus 4.2".
 #: addon/globalPlugins/chessmart/analysis_words.py:85
@@ -4878,18 +4861,13 @@ msgid_plural "{count} variations from here"
 msgstr[0] "{count} variante daqui"
 msgstr[1] "{count} variantes daqui"
 
-#. Start of an engine evaluation, e.g. "Stockfish 16, depth 20:".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:120
-msgid "{engine}, depth {depth}:"
-msgstr "{engine}, profundidade {depth}:"
-
 #. One of the engine's other candidate moves, e.g. "e4, plus 0.3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:134
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:138
 msgid "{move}, {pawns}"
 msgstr "{move}, {pawns}"
 
 #. Engine review of a move, e.g. "Nf3: inaccuracy.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:278
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:283
 msgid "{move}: {verdict}."
 msgstr "{move}: {verdict}."
 
@@ -4921,7 +4899,7 @@ msgstr "fora da teoria"
 
 #. Shift+E on a move that is still opening theory, e.g. "Nf3: theory, Sicilian
 #. Defense, B50.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:249
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:254
 msgid "{move}: theory, {name}, {eco}."
 msgstr "{move}: teoria, {name}, {eco}."
 
@@ -5559,12 +5537,12 @@ msgid "Your accuracy {mine} percent, opponent {theirs}."
 msgstr "Sua precisão {mine} por cento, adversário {theirs}."
 
 #. Spoken by X when the side to move is in check.
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:200
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:206
 msgid "In check: the threat is already on the board."
 msgstr "Em xeque: a ameaça já está no tabuleiro."
 
 #. Spoken by X when the engine finds no move for the other side.
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:223
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:229
 msgid "No threat found."
 msgstr "Nenhuma ameaça encontrada."
 
@@ -5574,17 +5552,17 @@ msgid "Threat: what the other side would play, X"
 msgstr "Ameaça: o que o outro lado jogaria, X"
 
 #. The threat found by X, e.g. "Threat: Qxf7, white mates in 1.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:227
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:233
 msgid "Threat: {move}, {evaluation}."
 msgstr "Ameaça: {move}, {evaluation}."
 
 #. The moves that keep the tablebase result, e.g. "Best: Kd6, Qe7.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:187
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:193
 msgid "Best: {moves}."
 msgstr "Melhores: {moves}."
 
 #. Start of a tablebase answer on the analysis board.
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:180
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:186
 msgid "Tablebase:"
 msgstr "Tablebase:"
 
@@ -5606,7 +5584,7 @@ msgstr "Não foi possível salvar. Detalhes: {error}"
 
 #. Spoken by Control+E when every move of the engine's line is already
 #. recorded.
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:328
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:333
 msgid "The engine's line is already recorded here."
 msgstr "A linha do motor já está registrada aqui."
 
@@ -5635,7 +5613,7 @@ msgstr "{piece}, {square}"
 #. Spoken after Control+E when the engine agrees with recorded moves first,
 #. e.g. "The engine follows 2 recorded moves, then branches at 13. Bb5: 6
 #. moves added.".
-#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:346
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:351
 msgid ""
 "The engine follows {followed} recorded move, then branches at {move}: "
 "{count} moves added."
@@ -5873,6 +5851,41 @@ msgstr[0] ""
 "Revisando {count} posições, cerca de {seconds} segundo. F7 de novo para."
 msgstr[1] ""
 "Revisando {count} posições, cerca de {seconds} segundos. F7 de novo para."
+
+#. The engine's best move, e.g. "Best move: Nf3.".
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:130
+msgid "Best move: {move}."
+msgstr "Melhor lance: {move}."
+
+#. The engine's line after its best move, e.g. "Line: e5, Bc4, Nc6.".
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:135
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:240
+msgid "Line: {line}."
+msgstr "Linha: {line}."
+
+#. The engine's other candidate moves, e.g. "Others: e4, plus 0.3; d4, plus
+#. 0.2.".
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:147
+msgid "Others: {moves}."
+msgstr "Outros: {moves}."
+
+#. The engine's evaluation as a sentence, e.g. "white slightly better, plus
+#. 0.4.".
+#: addon/globalPlugins/chessmart/virtual_chessboard/engine_actions.py:125
+msgid "{evaluation}."
+msgstr "{evaluation}."
+
+#~ msgid "Also: {moves}"
+#~ msgstr "Também: {moves}"
+
+#~ msgid "best: {move}"
+#~ msgstr "melhor: {move}"
+
+#~ msgid "then {line}"
+#~ msgstr "depois {line}"
+
+#~ msgid "{engine}, depth {depth}:"
+#~ msgstr "{engine}, profundidade {depth}:"
 
 #~ msgid "Reviewing {count} positions, about {seconds} seconds. F7 again stops."
 #~ msgstr ""
