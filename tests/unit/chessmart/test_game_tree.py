@@ -123,7 +123,8 @@ class NavigationTest(unittest.TestCase):
 		tree.back()
 		board = tree.board()
 		self.assertEqual(
-			board.fen(), chess.Board("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2").fen()
+			board.fen(),
+			chess.Board("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2").fen(),
 		)
 		self.assertEqual(len(board.move_stack), 2)
 
@@ -278,7 +279,8 @@ class FileTest(unittest.TestCase):
 	def test_filename_has_the_date_first_and_safe_names(self):
 		date = datetime.date(2026, 9, 23)
 		self.assertEqual(
-			record_filename(date, "João Victor", "Jeferson"), "2026-09-23_João-Victor-vs-Jeferson.pgn"
+			record_filename(date, "João Victor", "Jeferson"),
+			"2026-09-23_João-Victor-vs-Jeferson.pgn",
 		)
 		self.assertEqual(record_filename(date, "a/b:c?", "d"), "2026-09-23_a-b-c-vs-d.pgn")
 		self.assertEqual(record_filename(date, "", "  "), "2026-09-23.pgn")

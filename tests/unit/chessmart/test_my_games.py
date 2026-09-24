@@ -62,7 +62,8 @@ class TestMyGames(unittest.TestCase):
 		self.write("collection.pgn", PLAIN + "\n" + PLAIN)
 		games, _ = list_saved_games(str(self.folder))
 		self.assertEqual(
-			[Path(g.info.filename).name for g in games], ["collection.pgn", "collection.pgn", "old.pgn"]
+			[Path(g.info.filename).name for g in games],
+			["collection.pgn", "collection.pgn", "old.pgn"],
 		)
 		self.assertFalse(games[0].single_game_file)
 		self.assertEqual(games[0].description(), "no date, A versus B, Game ended in a draw. No notes.")

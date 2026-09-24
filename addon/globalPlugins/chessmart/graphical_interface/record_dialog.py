@@ -54,7 +54,7 @@ class RecordHeadersDialog(wx.Dialog):
 		# Translators: Label of the result choice in the save dialog.
 		self.resultChoice = helper.addLabeledControl(_("&Result"), wx.Choice, choices=_result_labels())
 		self.resultChoice.SetSelection(
-			RESULTS.index(initial.result) if initial.result in RESULTS else len(RESULTS) - 1
+			RESULTS.index(initial.result) if initial.result in RESULTS else len(RESULTS) - 1,
 		)
 		helper.addDialogDismissButtons(wx.OK | wx.CANCEL)
 		mainSizer.Add(helper.sizer, border=guiHelper.BORDER_FOR_DIALOGS, flag=wx.ALL)

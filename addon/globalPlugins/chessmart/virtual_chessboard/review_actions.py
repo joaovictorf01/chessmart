@@ -168,7 +168,7 @@ class ReviewActionsMixin:
 			self._rebuild_score_sheet()
 		accuracy = spoken_accuracy(accuracy_by_color(game, position_evals), my_color)
 		speak_next(
-			([accuracy, speech.commands.BreakCommand(200)] if accuracy else []) + self._summary(moments)
+			([accuracy, speech.commands.BreakCommand(200)] if accuracy else []) + self._summary(moments),
 		)
 
 	def _summary(self, moments) -> list:
@@ -179,7 +179,8 @@ class ReviewActionsMixin:
 			"; ".join(
 				# Translators: One critical moment in the review summary, e.g. "move 14, mistake".
 				_("move {move}, {verdict}").format(
-					move=moment.move_number, verdict=spoken_verdict(moment.review.verdict)
+					move=moment.move_number,
+					verdict=spoken_verdict(moment.review.verdict),
 				)
 				for moment in moments
 			),
@@ -187,7 +188,7 @@ class ReviewActionsMixin:
 		return [
 			# Translators: Start of the review summary, e.g. "3 critical moments:".
 			ngettext("{count} critical moment:", "{count} critical moments:", len(moments)).format(
-				count=len(moments)
+				count=len(moments),
 			),
 			*items,
 			speech.commands.BreakCommand(200),

@@ -119,7 +119,8 @@ class SessionStats:
 			details.append(
 				# Translators: Part of the session status: reviews of missed puzzles, e.g. "Reviews: 2 clean out of 3.".
 				_("Reviews: {clean} clean out of {reviews}.").format(
-					clean=self.reviews_clean, reviews=self.reviews
+					clean=self.reviews_clean,
+					reviews=self.reviews,
 				),
 			)
 		if not self.attempts:

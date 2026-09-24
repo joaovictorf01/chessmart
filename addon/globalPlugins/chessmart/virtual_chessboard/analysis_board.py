@@ -478,7 +478,8 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 		ui.message(
 			# Translators: Spoken by Alt+Down: the main continuation, then the variations recorded here.
 			_("Continues with {move}; variations: {others}").format(
-				move=names[0], others=", ".join(names[1:])
+				move=names[0],
+				others=", ".join(names[1:]),
 			),
 		)
 

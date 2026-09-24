@@ -285,7 +285,7 @@ class PuzzleDownloadDialog(DownloadDialogBase):
 		self._last_announced_percent = -1
 		# Translators: Announced when a piece of the download has to be fetched again; {reason} is the technical error.
 		message = _(
-			"{file} did not arrive whole (attempt {attempt} of {attempts}: {reason}). Downloading it again."
+			"{file} did not arrive whole (attempt {attempt} of {attempts}: {reason}). Downloading it again.",
 		).format(
 			file=file,
 			attempt=attempt,

@@ -134,7 +134,7 @@ def spoken_clock_summary(summary: ClockSummary) -> str:
 	else:
 		# Translators: Part of the clock summary, e.g. "black: under a minute from move 34".
 		parts.append(
-			_("{color}: under a minute from move {move}").format(color=color, move=trouble.move_number)
+			_("{color}: under a minute from move {move}").format(color=color, move=trouble.move_number),
 		)
 	# Translators: Part of the clock summary, e.g. "lowest clock 0:41 at move 36".
 	parts.append(
@@ -163,7 +163,8 @@ def spoken_accuracy(accuracy: dict, my_color: bool) -> str:
 		return ""
 	# Translators: After a game review, e.g. "Your accuracy 96 percent, opponent 87.".
 	return _("Your accuracy {mine} percent, opponent {theirs}.").format(
-		mine=round(mine), theirs=round(theirs)
+		mine=round(mine),
+		theirs=round(theirs),
 	)
 
 

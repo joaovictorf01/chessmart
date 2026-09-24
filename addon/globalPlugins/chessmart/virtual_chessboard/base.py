@@ -328,7 +328,10 @@ class LeaveGameMenu(MenuObject):
 
 
 class BaseVirtualChessboard(
-	AnnouncementsMixin, BoardFilesMixin, KeyboardNavigableNVDAObjectMixin, NVDAObject
+	AnnouncementsMixin,
+	BoardFilesMixin,
+	KeyboardNavigableNVDAObjectMixin,
+	NVDAObject,
 ):
 	role = controlTypes.Role.TABLE
 	# Translators: Role of the chessboard control, spoken by the screen reader.

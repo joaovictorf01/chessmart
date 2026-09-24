@@ -93,7 +93,8 @@ if __name__ == "__main__":
 class TestReviewStart(unittest.TestCase):
 	def test_under_a_minute_in_seconds(self):
 		self.assertEqual(
-			spoken_review_start(40, 40.0), "Reviewing 40 positions, about 40 seconds. F7 again stops."
+			spoken_review_start(40, 40.0),
+			"Reviewing 40 positions, about 40 seconds. F7 again stops.",
 		)
 
 	def test_minutes_and_seconds_rounded_to_ten(self):
@@ -108,8 +109,10 @@ class TestReviewStart(unittest.TestCase):
 
 	def test_whole_minutes(self):
 		self.assertEqual(
-			spoken_review_start(120, 120.0), "Reviewing 120 positions, about 2 minutes. F7 again stops."
+			spoken_review_start(120, 120.0),
+			"Reviewing 120 positions, about 2 minutes. F7 again stops.",
 		)
 		self.assertEqual(
-			spoken_review_start(58, 58.0), "Reviewing 58 positions, about 58 seconds. F7 again stops."
+			spoken_review_start(58, 58.0),
+			"Reviewing 58 positions, about 58 seconds. F7 again stops.",
 		)

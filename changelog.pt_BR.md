@@ -2,6 +2,12 @@
 
 O versionamento segue o [Semantic Versioning](https://semver.org/lang/pt-BR/): versão de correção (1.1.x) só corrige; versão menor (1.x.0) acrescenta recurso; versão maior muda o que quem já usa depende. O número é decidido na hora de lançar, pelo que esta seção contém.
 
+## A fazer
+
+- Download de puzzles: aceitar um `.db.gz` baixado à mão no navegador (pra máquina que não alcança o GitHub pelo add-on); registrar o erro exato quando o manifesto não vem. Primeiro relato: 21-09-2026, "não foi possível alcançar o servidor de download".
+
+# Chessmart 1.2.0
+
 ## Acrescentado
 
 - **Lição 3b, Promover e dar mate com rei e peão**, em Finais: a lição 3 jogada até o fim. O treino estava no add-on desde a 1.1.0, com as posições sorteadas de peão em qualquer coluna, mas nenhuma lição abria ele. A primeira posição de todo treino agora se chama "Exemplo do livro" (dizia "Exemplo do Capablanca", o que só as lições 1a e 1b são). O Meu estudo diz o nome de uma lição de treino em andamento, não um id interno.
@@ -30,10 +36,6 @@ O versionamento segue o [Semantic Versioning](https://semver.org/lang/pt-BR/): v
 - O submenu no menu Ferramentas do NVDA e o diálogo de configurações se chamam Chessmart também em inglês; ainda eram "Chessboard", o nome que tinham no add-on original.
 - O manual está em dia com todos os recursos: cada item do menu, os diálogos, cada barra do Tab e quais comandos do tabuleiro não valem nos tabuleiros de treino e de análise. Agora ele tem uma versão em português do Brasil, que o botão Ajuda do NVDA abre quando o NVDA está em português.
 - A descrição na Loja de Complementos lista o que o add-on faz hoje: táticas com revisão dos puzzles errados, finais julgados pelas tablebases, gravação e análise de partidas com o Stockfish 16, revisão da partida e importação do Lichess, e jogo contra o motor ou contra um amigo.
-
-## A fazer
-
-- Download de puzzles: aceitar um `.db.gz` baixado à mão no navegador (pra máquina que não alcança o GitHub pelo add-on); registrar o erro exato quando o manifesto não vem. Primeiro relato: 21-09-2026, "não foi possível alcançar o servidor de download".
 
 ## Removido
 

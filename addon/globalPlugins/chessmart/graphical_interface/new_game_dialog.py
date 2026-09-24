@@ -97,7 +97,7 @@ class NewGameOptionsDialog(gui.SettingsDialog):
 			self.customStartingFEN.SetValue(self._initial_fen)
 			turn = chess.Board(self._initial_fen).turn
 			self.playerColorRadioBox.SetSelectionByValue(
-				PlayerColor.WHITE if turn == chess.WHITE else PlayerColor.BLACK
+				PlayerColor.WHITE if turn == chess.WHITE else PlayerColor.BLACK,
 			)
 		# Custom Time Control
 		# Translators: Time control choice: the user types their own, e.g. 10+5.

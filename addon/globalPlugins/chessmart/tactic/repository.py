@@ -63,7 +63,13 @@ class PuzzleRepository:
 	) -> AttemptResult:
 		with self._open() as (store, connection):
 			return store.record_attempt(
-				connection, puzzle_id, solved, mistakes, hints_used, elapsed_ms, revealed
+				connection,
+				puzzle_id,
+				solved,
+				mistakes,
+				hints_used,
+				elapsed_ms,
+				revealed,
 			)
 
 	def due_review_puzzles(self, today: datetime.date, limit: int) -> list[Puzzle]:
@@ -85,7 +91,13 @@ class PuzzleRepository:
 	) -> ReviewOutcome:
 		with self._open() as (store, connection):
 			return store.record_review(
-				connection, puzzle_id, solved, mistakes, hints_used, revealed, elapsed_ms
+				connection,
+				puzzle_id,
+				solved,
+				mistakes,
+				hints_used,
+				revealed,
+				elapsed_ms,
 			)
 
 	def rating(self) -> RatingSummary:

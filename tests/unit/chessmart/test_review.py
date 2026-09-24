@@ -82,7 +82,7 @@ class TestBuildQueue(unittest.TestCase):
 
 	def test_due_puzzles_come_oldest_first(self):
 		queue = build_queue(
-			[event("b", 2, clean=False), event("a", 0, clean=False), event("c", 1, clean=False)]
+			[event("b", 2, clean=False), event("a", 0, clean=False), event("c", 1, clean=False)],
 		)
 		due = queue.due(DAY + datetime.timedelta(days=10))
 		self.assertEqual([item.puzzle_id for item in due], ["a", "c", "b"])
@@ -313,7 +313,8 @@ class TestStudyLogReviews(ReviewDatabaseTestCase):
 			load_store().prepare_history(connection)
 			queue = study_log.review_queue(connection)
 			self.assertEqual(
-				study_log.render_reviews(queue, datetime.date.today()), ["No missed puzzles to review."]
+				study_log.render_reviews(queue, datetime.date.today()),
+				["No missed puzzles to review."],
 			)
 		finally:
 			connection.close()

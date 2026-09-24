@@ -179,7 +179,7 @@ class PositionEditorChessboard(ActionsBarMixin, BaseVirtualChessboard):
 		GameSound.drop_piece.play()
 		# Translators: A piece and its square in the board editor, e.g. "white king, e1".
 		ui.message(
-			_("{piece}, {square}").format(piece=spoken_piece(piece), square=self.spoken_square_name(index))
+			_("{piece}, {square}").format(piece=spoken_piece(piece), square=self.spoken_square_name(index)),
 		)
 
 	def clear_square(self, index):
@@ -206,8 +206,8 @@ class PositionEditorChessboard(ActionsBarMixin, BaseVirtualChessboard):
 			# Translators: Spoken when a castling right is asked for while king or rook is not on its square.
 			ui.message(
 				_("{castling}: not possible, the king or the rook is not on its starting square").format(
-					castling=name
-				)
+					castling=name,
+				),
 			)
 			return
 		on = self.draft.toggle_castling(rook_square)
@@ -283,7 +283,7 @@ class PositionEditorChessboard(ActionsBarMixin, BaseVirtualChessboard):
 		self._sync()
 		# Translators: Spoken after a FEN was pasted into the board editor.
 		ui.message(
-			_("Position pasted, {color} to move.").format(color=spoken_color_name(self.draft.board.turn))
+			_("Position pasted, {color} to move.").format(color=spoken_color_name(self.draft.board.turn)),
 		)
 
 	def _sync(self):

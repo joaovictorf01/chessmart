@@ -155,7 +155,8 @@ class CriticalMomentsTest(unittest.TestCase):
 
 	def test_only_blunders(self):
 		self.assertEqual(
-			[moment.node.san() for moment in self.moments(threshold=MoveVerdict.BLUNDER)], ["g6"]
+			[moment.node.san() for moment in self.moments(threshold=MoveVerdict.BLUNDER)],
+			["g6"],
 		)
 
 	def test_the_cap_keeps_the_worst_then_orders_by_move(self):

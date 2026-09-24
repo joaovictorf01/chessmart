@@ -158,7 +158,10 @@ def main(argv: list[str] | None = None) -> int:
 	parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
 	source = parser.add_mutually_exclusive_group(required=True)
 	source.add_argument(
-		"--local", type=Path, metavar="DIR", help="a directory holding manifest.json and its files"
+		"--local",
+		type=Path,
+		metavar="DIR",
+		help="a directory holding manifest.json and its files",
 	)
 	source.add_argument("--release", metavar="TAG", help="a published release, read through the GitHub CLI")
 	parser.add_argument("--repo", help="owner/name, when the release is not in the current repository")

@@ -293,7 +293,8 @@ class EngineActionsMixin:
 			spoken.append(
 				# Translators: The evaluation after the move actually played, e.g. "After Nf3: equal, plus 0.1.".
 				_("After {move}: {evaluation}.").format(
-					move=played, evaluation=spoken_assessment(review.played)
+					move=played,
+					evaluation=spoken_assessment(review.played),
 				),
 			)
 		mark = review.suggested_mark

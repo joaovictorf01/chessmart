@@ -47,7 +47,7 @@ class PlayedMove:
 			# the capturing pawn, on the file it moves to and the rank it leaves.
 			# (Always "one rank below" was right for White only.)
 			captured = board.piece_at(
-				chess.square(chess.square_file(move.to_square), chess.square_rank(move.from_square))
+				chess.square(chess.square_file(move.to_square), chess.square_rank(move.from_square)),
 			)
 		else:
 			captured = board.piece_at(move.to_square)

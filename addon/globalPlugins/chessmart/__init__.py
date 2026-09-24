@@ -84,7 +84,7 @@ class ChessboardMenu(wx.Menu):
 			_("Record and &Analyse Game"),
 			# Translators: Help text of the menu item that opens an empty analysis board.
 			_(
-				"Enter a game move by move, with variations, comments and marks, and save it in your games folder"
+				"Enter a game move by move, with variations, comments and marks, and save it in your games folder",
 			),
 		)
 		board_editor_item = self.Append(
@@ -100,7 +100,7 @@ class ChessboardMenu(wx.Menu):
 			_("&Import Lichess Game..."),
 			# Translators: Help text of the menu item that imports a Lichess game.
 			_(
-				"Download a game from Lichess, with the clock of every move, and open it on the analysis board"
+				"Download a game from Lichess, with the clock of every move, and open it on the analysis board",
 			),
 		)
 		analyse_pgn_item = self.Append(
@@ -116,7 +116,7 @@ class ChessboardMenu(wx.Menu):
 			_("My &Games..."),
 			# Translators: Help text of the My Games menu item.
 			_(
-				"The games in your games folder, the most recently changed first, to open on the analysis board"
+				"The games in your games folder, the most recently changed first, to open on the analysis board",
 			),
 		)
 		self.AppendSeparator()
@@ -556,7 +556,8 @@ class ChessboardMenu(wx.Menu):
 			),
 		)
 		self.global_plugin_object.initialize_and_show_chessboard_dialog(
-			AnalysisChessboard, chess_new_game_info
+			AnalysisChessboard,
+			chess_new_game_info,
 		)
 
 	def onReplayPGN(self, event):

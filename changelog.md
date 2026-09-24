@@ -2,6 +2,12 @@
 
 Versioning follows [Semantic Versioning](https://semver.org/): a patch release (1.1.x) only fixes; a minor release (1.x.0) adds features; a major release changes what existing users rely on. The version is decided when the release is cut, from what this section holds.
 
+## To do
+
+- Puzzle download: accept a `.db.gz` downloaded by hand in the browser (for machines that cannot reach GitHub from the add-on); log the exact error when the manifest cannot be fetched. First report: 21-09-2026, "could not reach the download server".
+
+# Chessmart 1.2.0
+
 ## Added
 
 - **Lesson 3b, Promote and mate with king and pawn**, in Endgames: lesson 3 played to the end. The drill had been in the add-on since 1.1.0, random positions with a pawn on any file included, but no lesson opened it. The first position of every drill is now called "Book example" (it said "Capablanca's example", which only lessons 1a and 1b are). My Study names a drill lesson in progress by its name, not by an internal id.
@@ -30,10 +36,6 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 - The submenu under NVDA's Tools menu and the settings dialog are called Chessmart in English too; they were still "Chessboard", the name they had in the original add-on.
 - The manual is up to date with every feature: every menu item, the dialogs, every Tab bar, and which board commands do not apply on the training and analysis boards. It now has a Brazilian Portuguese version, which NVDA's Help button opens when NVDA is in Portuguese.
 - The description in the Add-on Store lists what the add-on does now: tactics with reviews of missed puzzles, endgames judged by the tablebases, game recording and analysis with Stockfish 16, game review and Lichess import, and play against the engine or a friend.
-
-## To do
-
-- Puzzle download: accept a `.db.gz` downloaded by hand in the browser (for machines that cannot reach GitHub from the add-on); log the exact error when the manifest cannot be fetched. First report: 21-09-2026, "could not reach the download server".
 
 ## Removed
 
