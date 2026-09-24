@@ -76,11 +76,11 @@ class ChessboardMenu(wx.Menu):
 			wx.ID_ANY,
 			# Translators: Menu item that replays a PGN file, and its help text.
 			_("&Replay PGN File..."),
-			_("Load an replay a portable game notation (.pgn) file"),
+			_("Load and replay a portable game notation (.pgn) file"),
 		)
 		record_game_item = self.Append(
 			wx.ID_ANY,
-			# Translators: Menu item that opens an empty analysis board to record a game.
+			# Translators: Menu item that opens the analysis board at the starting position, to record a game.
 			_("Record and &Analyse Game"),
 			# Translators: Help text of the menu item that opens an empty analysis board.
 			_(
@@ -124,14 +124,14 @@ class ChessboardMenu(wx.Menu):
 			wx.ID_ANY,
 			# Translators: Menu item that opens the add-on settings, and its help text.
 			_("&Settings..."),
-			_("Open Chessboard settings"),
+			_("Open Chessmart settings"),
 		)
 		# Attach this submenu under NVDA's Tools menu.
 		assert gui.mainFrame is not None
 		self.itemHandle = gui.mainFrame.sysTrayIcon.toolsMenu.AppendSubMenu(
 			self,
 			# Translators: Name of the add-on submenu under NVDA's Tools menu.
-			_("&Chessboard"),
+			_("&Chessmart"),
 			# Translators: Help text of the add-on submenu.
 			_("Open a chess game, tactics session, replay, or settings"),
 		)
@@ -225,7 +225,7 @@ class ChessboardMenu(wx.Menu):
 		self._open_session(
 			default_training_options(),
 			# Translators: Error when Random Puzzle finds no puzzle database.
-			_("The tactics database was not found. Choose a valid database in Chessboard settings first."),
+			_("The tactics database was not found. Choose a valid database in Chessmart settings first."),
 		)
 
 	def onEndgames(self, event):

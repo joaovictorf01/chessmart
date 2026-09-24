@@ -26,7 +26,7 @@ addon_info = AddonInfo(
 	# Add-on description
 	# Translators: Long description to be shown for this add-on on add-on information from add-on store
 	addon_description=_(
-		"An accessible chessboard and tactics trainer for NVDA. Play against Stockfish or a friend, replay PGN files, and train tactics from the Lichess puzzle database with a rating that follows you.",
+		"An accessible chess environment for NVDA. Train tactics from the Lichess puzzle database with a rating that follows you and missed puzzles that come back for review; learn endgames with mate drills and lessons judged by the Syzygy tablebases; record and analyse your games with Stockfish 16, a full game review and Lichess import; and play against the engine or a friend.",
 	),
 	# version
 	addon_version="1.1.0",

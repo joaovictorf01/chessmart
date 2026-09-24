@@ -23,6 +23,12 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 - **Record and Analyse Game** and **Analyse PGN File...**: a board where both sides are entered from the keyboard and nothing ends the session. A different move where the line already continues starts a variation; Alt+Left/Right walk the line, Alt+Up leaves the variation, Alt+Down lists the moves recorded from the position, Backspace takes back the last move of a line. Each move takes a comment (C writes, Shift+C reads) and a mark (Control+1 to 6: ! ? !! ?? !? ?!, spoken in words). Control+S asks for players, event, date and result and saves to the games folder, a new setting (default `Documents\Chessmart`), as `year-month-day_White-vs-Black.pgn`.
 - **NVDA+Alt+X** opens Tactics from anywhere. Scripts for a random puzzle, Endgames, My Study and New Game are in the Input Gestures dialog, under Chessmart, with no default key.
 
+## Changed
+
+- The submenu under NVDA's Tools menu and the settings dialog are called Chessmart in English too; they were still "Chessboard", the name they had in the original add-on.
+- The manual is up to date with every feature: every menu item, the dialogs, every Tab bar, and which board commands do not apply on the training and analysis boards. It now has a Brazilian Portuguese version, which NVDA's Help button opens when NVDA is in Portuguese.
+- The description in the Add-on Store lists what the add-on does now: tactics with reviews of missed puzzles, endgames judged by the tablebases, game recording and analysis with Stockfish 16, game review and Lichess import, and play against the engine or a friend.
+
 ## To do
 
 - Puzzle download: accept a `.db.gz` downloaded by hand in the browser (for machines that cannot reach GitHub from the add-on); log the exact error when the manifest cannot be fetched. First report: 21-09-2026, "could not reach the download server".
@@ -35,6 +41,7 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 
 ## Fixed
 
+- In Portuguese, the tablebase verdict and the engine evaluation now agree with the side: "brancas ganham", "pretas claramente melhores" (they said "brancas ganha", "pretas claramente melhor"). The help text of Replay PGN File no longer says "Load an replay".
 - Found by an independent review of the new code, before any release: editing the main line while F7 ran broke the review (or, after promoting a variation of the same length, matched evaluations to the wrong moves); it now says the game changed and asks for F7 again, and a critical moment whose move was taken back is no longer offered. Control+E on a position where the engine agrees with the move played replaced that move's comment and clock; recorded moves are now never touched, and the engine's comment goes on the first move its line adds. Closing the board during Shift+E could leave a Stockfish process running; closing during F7 or quitting NVDA waited for the whole review; answers from the engine could be spoken after the window closed; E pressed twice while X or F7 ran left a long think pending; a new comment did not reach the score sheet; M on the analysis board counted from the side to move, now from the side at the bottom; a Lichess download cut short, or a failed save of a game or picture, raised into NVDA instead of being said.
 - python-chess, the chess library inside the add-on, goes from 1.7.0 (2021) to 1.11.2 (2025): among the fixes, a SAN such as "d5" no longer matches the capture "cxd5" when a PGN is read, engine communication handles unusual option names and whitespace, and the tablebase checks that the board matches its variant. The bundled 1.7.0 had been reformatted but not changed; 1.11.2 goes in untouched. The Crazyhouse pocket (F6, dropping pieces) now reads the library's public API, which 1.11 requires.
 - An en passant capture by Black was announced as a plain move, with the plain-move sound: the captured pawn was looked for one rank below the destination, which is right for White only.

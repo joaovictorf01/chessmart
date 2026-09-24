@@ -33,8 +33,8 @@ from .tactics_setup import TacticsSetupMixin
 
 
 class ChessboardSettingsDialog(TacticsSetupMixin, gui.SettingsDialog):
-	# Translators: Title of the Chessboard settings dialog.
-	title = _("Chessboard")
+	# Translators: Title of the Chessmart settings dialog.
+	title = _("Chessmart")
 
 	def __init__(self, *args, **kwargs):
 		# Before super(): NVDA's SettingsDialog calls makeSettings() from
@@ -50,8 +50,8 @@ class ChessboardSettingsDialog(TacticsSetupMixin, gui.SettingsDialog):
 		introLabel = wx.StaticText(
 			self,
 			-1,
-			# Translators: Intro text of the Chessboard settings dialog.
-			_("Configure the default trainer plan used when you open Chessboard tactics."),
+			# Translators: Intro text of the Chessmart settings dialog.
+			_("Configure the default trainer plan used when you open Chessmart tactics."),
 			style=wx.ST_ELLIPSIZE_END,
 		)
 		introLabel.Wrap(self.GetSize().Width)
