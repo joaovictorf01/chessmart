@@ -18,15 +18,23 @@ import typing
 
 import speech
 import speech.commands
+import tones
 import ui
 import wx
 
-from ..addon_config import get_review_options
-from ..analysis_words import spoken_accuracy, spoken_assessment, spoken_mark, spoken_verdict
+from ..addon_config import get_review_options, nvda_progress_bar_output
+from ..analysis_words import (
+	spoken_accuracy,
+	spoken_assessment,
+	spoken_mark,
+	spoken_review_start,
+	spoken_verdict,
+)
 from ..game_tree import MOVE_MARKS
 from ..game_review import (
 	PositionEval,
 	Reveal,
+	ReviewProgress,
 	accuracy_by_color,
 	critical_moments,
 	mainline_nodes,
@@ -64,7 +72,8 @@ class ReviewActionsMixin:
 	_moments: tuple = ()
 	_moment_index: int = -1
 	_review_cancel: typing.Optional[threading.Event] = None
-	_announced_percent: int = 0
+	_progress: typing.Optional[ReviewProgress] = None
+	_beep_min_hz: int = 110
 
 	def stop_review(self):
 		"""Called when the board closes: the engine is about to quit, the review must not go on."""
@@ -90,15 +99,10 @@ class ReviewActionsMixin:
 		# The user's side is the one at the bottom of the board (an imported game opens from their side).
 		my_color = chess.BLACK if self._flipped else chess.WHITE
 		self._review_cancel = threading.Event()
-		self._announced_percent = 0
-		seconds_total = int(len(nodes) * options.seconds)
-		ui.message(
-			# Translators: Spoken when the game review starts, e.g. "Reviewing 70 positions, about 70 seconds. F7 again stops.".
-			_("Reviewing {count} positions, about {seconds} seconds. F7 again stops.").format(
-				count=len(nodes),
-				seconds=seconds_total,
-			),
-		)
+		# NVDA's own "Progress bar output" decides: beeps, speech, both or nothing.
+		mode, beep_interval, self._beep_min_hz = nvda_progress_bar_output()
+		self._progress = ReviewProgress(mode=mode, beep_interval=beep_interval)
+		ui.message(spoken_review_start(len(nodes), len(nodes) * options.seconds))
 		self.engine.evaluate_positions(
 			[node.board() for node in nodes],
 			options.seconds,
@@ -112,11 +116,15 @@ class ReviewActionsMixin:
 		# Worker thread: speech goes through wx.CallAfter, and not after the board closed.
 		if self._review_cancel is None or self._review_cancel.is_set():
 			return
-		percent = done * 100 // total
-		if percent // 25 > self._announced_percent // 25 and percent < 100:
-			self._announced_percent = percent
+		if self._progress is None:
+			return
+		beep, percent = self._progress.update(done, total)
+		if beep is not None:
+			# The pitch of NVDA's progress bars: an octave for every quarter.
+			wx.CallAfter(tones.beep, int(self._beep_min_hz * 2 ** (beep / 25.0)), 40)
+		if percent is not None:
 			# Translators: Game review progress, e.g. "50 percent reviewed".
-			wx.CallAfter(ui.message, _("{percent} percent reviewed").format(percent=percent - percent % 25))
+			wx.CallAfter(ui.message, _("{percent} percent reviewed").format(percent=percent))
 
 	def _on_review_done(self, nodes, options, my_color, future):
 		cancel = self._review_cancel

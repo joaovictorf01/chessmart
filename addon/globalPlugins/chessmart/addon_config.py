@@ -162,3 +162,14 @@ def save_review_options(options) -> None:
 	section["reviewReveal"] = options.reveal.value
 	section["reviewSeconds"] = options.seconds
 	section["reviewSkipTheory"] = options.skip_theory
+
+
+def nvda_progress_bar_output() -> tuple[str, float, int]:
+	"""NVDA's own "Progress bar output": the mode (beep, speak, both, off), the beep interval in percent, the lowest beep in Hz."""
+	conf: Any = config.conf
+	progress = conf["presentation"]["progressBarUpdates"]
+	return (
+		str(progress["progressBarOutputMode"]),
+		float(progress["beepPercentageInterval"]),
+		int(progress["beepMinHZ"]),
+	)

@@ -195,3 +195,38 @@ def accuracy_by_color(
 			centipawns.append(None)
 	start_color = nodes[0].board().turn
 	return game_accuracy(centipawns, start_color=start_color)
+
+
+@dataclasses.dataclass
+class ReviewProgress:
+	"""What to play and say while the review runs, following NVDA's own progress bar setting.
+
+	`mode` is NVDA's "Progress bar output": beep, speak, both or off. The beep
+	rises with the percentage the way NVDA's progress bars do; the speech says
+	every quarter, as a sentence. Anything unknown speaks, as the review always did.
+	"""
+
+	mode: str = "speak"
+	beep_interval: float = 1.0
+	speech_step: int = 25
+	_beeped: t.Optional[float] = None
+	_spoken: int = 0
+
+	def update(self, done: int, total: int) -> tuple[t.Optional[float], t.Optional[int]]:
+		"""(percent to beep, or None; percent to say, or None) after `done` of `total` positions."""
+		if total <= 0:
+			return None, None
+		percent = done * 100 / total
+		mode = self.mode if self.mode in ("beep", "speak", "both", "off") else "speak"
+		beep = None
+		if mode in ("beep", "both") and (
+			self._beeped is None or percent - self._beeped >= self.beep_interval
+		):
+			self._beeped = percent
+			beep = percent
+		speak = None
+		step = int(percent) // self.speech_step * self.speech_step
+		if mode in ("speak", "both") and step > self._spoken and percent < 100:
+			self._spoken = step
+			speak = step
+		return beep, speak

@@ -165,3 +165,33 @@ def spoken_accuracy(accuracy: dict, my_color: bool) -> str:
 	return _("Your accuracy {mine} percent, opponent {theirs}.").format(
 		mine=round(mine), theirs=round(theirs)
 	)
+
+
+def spoken_review_start(positions: int, seconds: float) -> str:
+	"""What F7 says as the review starts: how many positions, and roughly how long, the way a person says it.
+
+	Under a minute, the seconds; from a minute on, minutes and seconds rounded
+	to ten ("about 1 minute and 30 seconds", not "about 86 seconds").
+	"""
+	total = max(1, round(seconds))
+	if total < 60:
+		return ngettext(
+			# Translators: Spoken when the game review starts, e.g. "Reviewing 40 positions, about 40 seconds. F7 again stops.".
+			"Reviewing {count} positions, about {seconds} second. F7 again stops.",
+			"Reviewing {count} positions, about {seconds} seconds. F7 again stops.",
+			total,
+		).format(count=positions, seconds=total)
+	minutes, rest = divmod(int(round(total / 10.0) * 10), 60)
+	if rest == 0:
+		return ngettext(
+			# Translators: Spoken when the game review starts, e.g. "Reviewing 120 positions, about 2 minutes. F7 again stops.".
+			"Reviewing {count} positions, about {minutes} minute. F7 again stops.",
+			"Reviewing {count} positions, about {minutes} minutes. F7 again stops.",
+			minutes,
+		).format(count=positions, minutes=minutes)
+	return ngettext(
+		# Translators: Spoken when the game review starts, e.g. "Reviewing 86 positions, about 1 minute and 30 seconds. F7 again stops.".
+		"Reviewing {count} positions, about {minutes} minute and {seconds} seconds. F7 again stops.",
+		"Reviewing {count} positions, about {minutes} minutes and {seconds} seconds. F7 again stops.",
+		minutes,
+	).format(count=positions, minutes=minutes, seconds=rest)

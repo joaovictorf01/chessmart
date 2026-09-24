@@ -15,6 +15,7 @@ from chessmart.engine_eval import Assessment, MoveVerdict
 from chessmart.game_review import (
 	PositionEval,
 	ReviewOptions,
+	ReviewProgress,
 	Side,
 	accuracy_by_color,
 	critical_moments,
@@ -165,3 +166,38 @@ class CriticalMomentsTest(unittest.TestCase):
 
 if __name__ == "__main__":
 	unittest.main()
+
+
+class TestReviewProgress(unittest.TestCase):
+	def run_through(self, mode, total=84, **kwargs):
+		progress = ReviewProgress(mode=mode, **kwargs)
+		beeps, spoken = [], []
+		for done in range(1, total + 1):
+			beep, percent = progress.update(done, total)
+			if beep is not None:
+				beeps.append(beep)
+			if percent is not None:
+				spoken.append(percent)
+		return beeps, spoken
+
+	def test_beep_mode_beeps_every_position_and_rises(self):
+		beeps, spoken = self.run_through("beep")
+		self.assertEqual(len(beeps), 84)
+		self.assertEqual(beeps, sorted(beeps))
+		self.assertEqual(spoken, [])
+
+	def test_speak_mode_says_each_quarter_but_not_the_end(self):
+		beeps, spoken = self.run_through("speak")
+		self.assertEqual((beeps, spoken), ([], [25, 50, 75]))
+
+	def test_both_and_off(self):
+		beeps, spoken = self.run_through("both")
+		self.assertEqual((len(beeps), spoken), (84, [25, 50, 75]))
+		self.assertEqual(self.run_through("off"), ([], []))
+
+	def test_beep_interval_is_respected(self):
+		beeps, _ = self.run_through("beep", total=200, beep_interval=10)
+		self.assertEqual(len(beeps), 10)
+
+	def test_an_unknown_mode_speaks(self):
+		self.assertEqual(self.run_through("future-mode")[1], [25, 50, 75])

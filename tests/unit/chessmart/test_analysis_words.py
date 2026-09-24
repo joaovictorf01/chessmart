@@ -9,6 +9,7 @@ from chessmart.analysis_words import (
 	MARK_KEYS,
 	spoken_accuracy,
 	spoken_assessment,
+	spoken_review_start,
 	spoken_clock_summary,
 	spoken_mark,
 	spoken_move_clock,
@@ -87,3 +88,28 @@ class ClockTest(unittest.TestCase):
 
 if __name__ == "__main__":
 	unittest.main()
+
+
+class TestReviewStart(unittest.TestCase):
+	def test_under_a_minute_in_seconds(self):
+		self.assertEqual(
+			spoken_review_start(40, 40.0), "Reviewing 40 positions, about 40 seconds. F7 again stops."
+		)
+
+	def test_minutes_and_seconds_rounded_to_ten(self):
+		self.assertEqual(
+			spoken_review_start(86, 86.0),
+			"Reviewing 86 positions, about 1 minute and 30 seconds. F7 again stops.",
+		)
+		self.assertEqual(
+			spoken_review_start(84, 168.0),
+			"Reviewing 84 positions, about 2 minutes and 50 seconds. F7 again stops.",
+		)
+
+	def test_whole_minutes(self):
+		self.assertEqual(
+			spoken_review_start(120, 120.0), "Reviewing 120 positions, about 2 minutes. F7 again stops."
+		)
+		self.assertEqual(
+			spoken_review_start(58, 58.0), "Reviewing 58 positions, about 58 seconds. F7 again stops."
+		)
