@@ -44,7 +44,8 @@ What the unit tests cannot see. After a change, run the parts it touches, with t
 - X says the threat and its line; in check it says the threat is already on the board.
 - Tab, "Play from here against the computer...": New Game opens with the FEN filled in and the side to move chosen; the game starts from that position.
 - F7 reviews with spoken progress; F7 again stops; the summary lists the moments; Alt+Page Down / Up walk them, from the position before the move, the engine's move hidden by default.
-- Control+S asks for the headers and says the file name; the file opens again with Analyse PGN File.
+- Control+S on a new game asks for the headers and says the file name; the file opens again with Analyse PGN File.
+- Autosave: on an imported game, write a comment, close with Escape (no question), reopen from Analyse PGN File: the comment is there. Control+S says "Saved" without a dialog; Control+Alt+S opens the details. With the setting off, Escape asks again.
 
 ## Board editor
 

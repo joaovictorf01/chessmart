@@ -130,7 +130,9 @@ All the board commands below work here too.
 
 Nothing ends the session: a checkmate inside a variation is only a position. Wherever the line already continues, a different move starts a **variation**; you can come back to the main line at any time. Each move can carry a **comment** (what you were thinking, what you missed) and a **mark**: ! good move, ? mistake, !! brilliant, ?? blunder, !? interesting, ?! dubious. The marks are spoken in words.
 
-**Control+S** asks for the players, the event, the date and the result, and saves the game in your **games folder** (Settings; by default `Documents\Chessmart`) as `year-month-day_White-vs-Black.pgn`. A game opened from a file with a single game is saved back to that file.
+**Control+S** saves. The first time, a new game asks for the players, the event, the date and the result, and goes to your **games folder** (Settings; by default `Documents\Chessmart`) as `year-month-day_White-vs-Black.pgn`. After that, and for a game opened from a file with a single game or imported from Lichess, Control+S saves to that file without asking. **Control+Alt+S** opens the details (players, event, date, result) at any time, and saves.
+
+Once the game has a file, every change -- a move, a comment, a mark, a line added by the engine -- is saved by itself, so nothing is lost if you close the board or NVDA. Settings, "Save analysed games automatically", turns this off; then Control+S saves and Escape asks before leaving unsaved changes.
 
 ### Game review
 
@@ -173,6 +175,8 @@ The commands of the game board work here too (arrows, Enter, A, M, F1, F4...). O
 | Control+1 to Control+6 | Mark the move: ! ? !! ?? !? ?! |
 | Control+0 | Remove the mark |
 | Control+P | Make the current variation the main line |
+| Control+S | Save (a new game asks for its details the first time) |
+| Control+Alt+S | Edit the players, event, date and result, and save |
 | E | With five pieces or fewer and the tablebases installed (Endgames, Download tablebases): the exact result and the moves that keep it, instead of the engine. Otherwise the engine evaluation: who is better and by how much, the best move with its line, and two other candidates. Press twice to let the engine think 8 seconds instead of 2 |
 | X | The threat, as on Lichess: what the other side would play if it were its move, with the evaluation and the line. Not in check (the threat is already there) |
 | Shift+E | Review the move that led here against the engine's best: the engine's move, good, inaccuracy, mistake or blunder, and the mark that suggests |

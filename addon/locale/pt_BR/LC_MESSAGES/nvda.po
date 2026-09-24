@@ -131,7 +131,7 @@ msgstr "Disponível: base do Lichess de {when}."
 
 #. Tab bar action that returns to the board. Action in the endgame toolbar.
 #. Button of the tactics actions bar.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:291
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:305
 #: addon/globalPlugins/chessmart/virtual_chessboard/editor_board.py:135
 #: addon/globalPlugins/chessmart/virtual_chessboard/endgame_board.py:265
 #: addon/globalPlugins/chessmart/virtual_chessboard/endgame_board.py:462
@@ -226,7 +226,7 @@ msgstr "xeque"
 #. over. Spoken when a position on the analysis board is checkmate.
 #: addon/globalPlugins/chessmart/notation.py:147
 #: addon/globalPlugins/chessmart/spoken_messages.py:96
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:739
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:796
 msgid "checkmate"
 msgstr "mate"
 
@@ -253,7 +253,7 @@ msgstr "Partida de xadrez *.pgn | *.pgn"
 #. Accessible name of the chessboard window. Title of the Chessboard settings
 #. dialog.
 #: addon/globalPlugins/chessmart/chessboard.py:55
-#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:35
+#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:37
 msgid "Chessboard"
 msgstr "Chessmart"
 
@@ -274,7 +274,7 @@ msgid "Choose a tactics database before selecting themes."
 msgstr "Escolha uma base de táticas antes de selecionar temas."
 
 #. Prompt in the theme picker, when choosing the saved default themes.
-#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:109
+#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:116
 msgid ""
 "Choose one or more Lichess themes to use in the custom default trainer plan."
 msgstr ""
@@ -308,7 +308,7 @@ msgid "Complete"
 msgstr "Completa"
 
 #. Intro text of the Chessboard settings dialog.
-#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:52
+#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:54
 msgid ""
 "Configure the default trainer plan used when you open Chessboard tactics."
 msgstr ""
@@ -356,6 +356,7 @@ msgstr "Não foi possível carregar os temas"
 
 #. Spoken when saving is refused because NVDA runs in secure mode. Spoken when
 #. saving the picture is refused because NVDA runs in secure mode.
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:206
 #: addon/globalPlugins/chessmart/virtual_chessboard/base.py:254
 #: addon/globalPlugins/chessmart/virtual_chessboard/base.py:261
 msgid "Could not save game. NVDA running in secure mode."
@@ -389,17 +390,17 @@ msgid "Database to download"
 msgstr "Base para baixar"
 
 #. Label for the default challenge level combo box.
-#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:65
+#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:67
 msgid "Default challenge level"
 msgstr "Nível de desafio padrão"
 
 #. Label for the default themes field.
-#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:69
+#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:71
 msgid "Default themes"
 msgstr "Temas padrão"
 
 #. Label for the default training plan combo box.
-#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:63
+#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:65
 msgid "Default training plan"
 msgstr "Plano de treino padrão"
 
@@ -585,7 +586,7 @@ msgid "Human versus human"
 msgstr "Humano contra humano"
 
 #. Spoken when the requested move is not legal.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:378
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:392
 #: addon/globalPlugins/chessmart/virtual_chessboard/base.py:475
 msgid "Illegal move"
 msgstr "Lance ilegal"
@@ -706,7 +707,7 @@ msgid "Mistakes in the session: {count}."
 msgstr "Erros na sessão: {count}."
 
 #. Label of the combo box that chooses how moves are spoken.
-#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:72
+#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:74
 msgid "Move &notation"
 msgstr "&Notação dos lances"
 
@@ -1576,7 +1577,7 @@ msgid "Your puzzle database is up to date (Lichess base of {when})."
 msgstr "Sua base de puzzles está atualizada (base do Lichess de {when})."
 
 #. Spoken when a king is in check, e.g. "white is in check".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:747
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:804
 #: addon/globalPlugins/chessmart/virtual_chessboard/base.py:496
 msgid "{color} is in check"
 msgstr "{color} em xeque"
@@ -4271,7 +4272,7 @@ msgstr "Não foi possível ler o arquivo PGN. Detalhe: {error}"
 
 #. Spoken after Backspace removed a move, e.g. "took back e4". Spoken after
 #. Backspace took a move back in a PGN replay, e.g. "Took back Nf3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:487
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:501
 #: addon/globalPlugins/chessmart/virtual_chessboard/pgn_player.py:92
 msgid "Took back {move}"
 msgstr "Desfeito {move}"
@@ -4317,7 +4318,7 @@ msgstr "regra dos setenta e cinco lances"
 #. How a game ended, spoken at game over. Spoken when a position on the
 #. analysis board is stalemate.
 #: addon/globalPlugins/chessmart/spoken_messages.py:98
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:742
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:799
 msgid "stalemate"
 msgstr "afogamento"
 
@@ -4389,7 +4390,7 @@ msgstr "Analisar arquivo &PGN..."
 
 #. Spoken after leaving a variation; followed by the move the position comes
 #. after.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:450
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:464
 msgid "back from the variation"
 msgstr "de volta da variante"
 
@@ -4410,46 +4411,47 @@ msgid "brilliant move"
 msgstr "lance brilhante"
 
 #. Title of the dialog that chooses the games folder.
-#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:93
+#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:95
 msgid "Choose the folder for your games"
 msgstr "Escolha a pasta das suas partidas"
 
 #. Title of the dialog that writes the comment of a move.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:506
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:520
 msgid "Comment"
 msgstr "Comentário"
 
 #. Prompt of the dialog that writes the comment of a move, e.g. "Comment on
 #. 12. Nf3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:504
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:518
 msgid "Comment on {move}"
 msgstr "Comentário sobre {move}"
 
 #. Spoken after the comment dialog was confirmed.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:520
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:534
 msgid "Comment removed"
 msgstr "Comentário removido"
 
 #. Spoken after the comment dialog was confirmed.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:520
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:534
 msgid "Comment saved"
 msgstr "Comentário salvo"
 
 #. Spoken by Alt+Down: the only move recorded from this position.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:462
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:476
 msgid "Continues with {move}"
 msgstr "Continua com {move}"
 
 #. Spoken by Alt+Down: the main continuation, then the variations recorded
 #. here.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:466
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:480
 msgid "Continues with {move}; variations: {others}"
 msgstr "Continua com {move}; variantes: {others}"
 
 #. Shown when the imported game could not be written, followed by the error.
 #. Spoken when the game could not be written, followed by the error.
 #: addon/globalPlugins/chessmart/__init__.py:492
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:590
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:613
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:648
 msgid "Could not save the game. Details: {error}"
 msgstr "Não foi possível salvar a partida. Detalhes: {error}"
 
@@ -4464,7 +4466,7 @@ msgid "dubious move"
 msgstr "lance duvidoso"
 
 #. Spoken when going forward at the last move of a line.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:418
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:432
 msgid "End of the line"
 msgstr "Fim da linha"
 
@@ -4478,7 +4480,7 @@ msgstr ""
 "salve na sua pasta de partidas"
 
 #. Label of the group with the folder where the analysis board saves games.
-#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:85
+#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:87
 msgid "Games folder"
 msgstr "Pasta de partidas"
 
@@ -4498,14 +4500,14 @@ msgid "Invalid Date"
 msgstr "Data inválida"
 
 #. Asked when Escape is pressed on the analysis board with changes not saved.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:371
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:385
 msgid "Leave the analysis? The changes since the last save will be lost."
 msgstr ""
 "Sair da análise? O que mudou desde a última vez que você salvou será "
 "perdido."
 
 #. Spoken when Control+0 removed the mark of a move.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:542
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:556
 msgid "Mark removed"
 msgstr "Sinal removido"
 
@@ -4516,29 +4518,29 @@ msgid "mistake"
 msgstr "erro"
 
 #. Spoken before a move that starts a new variation.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:389
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:403
 msgid "new variation"
 msgstr "nova variante"
 
 #. Spoken by Shift+C when the current move has no comment.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:528
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:542
 msgid "No comment"
 msgstr "Sem comentário"
 
 #. Spoken by Alt+Down when no move was recorded from this position.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:456
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:470
 msgid "No moves recorded from here"
 msgstr "Nenhum lance registrado a partir daqui"
 
 #. Spoken when Alt+Up is pressed on the main line. Spoken by Control+P on the
 #. main line.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:446
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:550
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:460
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:564
 msgid "Not in a variation"
 msgstr "Você não está numa variante"
 
 #. Spoken when Backspace is pressed on a move that has moves after it.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:482
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:496
 msgid ""
 "Only the last move of a line can be taken back. Use Alt+Left to go back."
 msgstr ""
@@ -4560,18 +4562,18 @@ msgid "Open Game for Analysis"
 msgstr "Abrir partida para análise"
 
 #. Spoken when going back past the first move of a variation.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:410
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:424
 msgid "out of the variation"
 msgstr "fora da variante"
 
 #. Spoken when C is pressed before any move.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:497
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:511
 msgid "Play or go to a move first; the comment belongs to a move."
 msgstr "Jogue ou vá até um lance primeiro; o comentário pertence a um lance."
 
 #. Spoken when a mark is set before any move on the analysis board.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:303
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:536
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:317
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:550
 msgid "Play or go to a move first; the mark belongs to a move."
 msgstr "Jogue ou vá até um lance primeiro; o sinal pertence a um lance."
 
@@ -4587,21 +4589,22 @@ msgstr "Salvar partida"
 
 #. Spoken after saving, with the file name, e.g. "Saved: 2026-09-23_Joao-vs-
 #. Ana.pgn".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:599
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:616
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:656
 msgid "Saved: {name}"
 msgstr "Salvo: {name}"
 
 #. Spoken when going back at the start of the game. Spoken by Alt+Home: the
 #. start of the game. Where the pointer is, before any move.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:404
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:434
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:476
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:711
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:418
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:448
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:490
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:768
 msgid "Start of the game"
 msgstr "Início da partida"
 
 #. Spoken after Control+P made the current variation the main line.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:555
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:569
 msgid "This variation is now the main line"
 msgstr "Esta variante agora é a linha principal"
 
@@ -4616,8 +4619,8 @@ msgid "Unfinished or unknown (*)"
 msgstr "Não terminada ou desconhecido (*)"
 
 #. Spoken before a move that enters a variation already recorded.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:392
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:424
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:406
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:438
 msgid "variation"
 msgstr "variante"
 
@@ -4627,12 +4630,12 @@ msgid "White won (1-0)"
 msgstr "Brancas venceram (1-0)"
 
 #. Button that browses for the games folder.
-#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:91
+#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:93
 msgid "Browse &folder..."
 msgstr "Procurar &pasta..."
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:251
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:260
 msgid "Add the engine's line as a variation, Control+E"
 msgstr "Pôr a linha do motor como variante, Control+E"
 
@@ -4648,7 +4651,7 @@ msgid "Also: {moves}"
 msgstr "Também: {moves}"
 
 #. Name of the Tab bar on the analysis board.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:241
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:250
 msgid "Analysis actions"
 msgstr "Ações da análise"
 
@@ -4677,7 +4680,7 @@ msgid "equal, {pawns}"
 msgstr "igual, {pawns}"
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:244
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:253
 msgid "Evaluate the position, E"
 msgstr "Avaliar a posição, E"
 
@@ -4691,7 +4694,7 @@ msgstr ""
 
 #. Tab bar action on the analysis board: turns the board around. Board editor
 #. action: turns the board around.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:287
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:296
 #: addon/globalPlugins/chessmart/virtual_chessboard/editor_board.py:133
 msgid "Flip the board"
 msgstr "Virar o tabuleiro"
@@ -4707,22 +4710,22 @@ msgid "inaccuracy"
 msgstr "imprecisão"
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:278
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:287
 msgid "Leave the variation, Alt+Up"
 msgstr "Sair da variante, Alt+Seta acima"
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:281
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:290
 msgid "Make this variation the main line, Control+P"
 msgstr "Tornar esta variante a linha principal, Control+P"
 
 #. Tab bar action on the analysis board, with its keys.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:274
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:283
 msgid "Mark the move, Control+1 to 6"
 msgstr "Marcar o lance, Control+1 a 6"
 
 #. Name of the menu that marks the current move, e.g. "Mark 12. Nf3".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:308
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:322
 msgid "Mark {move}"
 msgstr "Marcar {move}"
 
@@ -4737,7 +4740,7 @@ msgid "minus {number}"
 msgstr "menos {number}"
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:276
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:285
 msgid "Moves recorded from here, Alt+Down"
 msgstr "Lances registrados daqui, Alt+Seta abaixo"
 
@@ -4759,12 +4762,12 @@ msgid "plus {number}"
 msgstr "mais {number}"
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:272
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:281
 msgid "Read the comment, Shift+C"
 msgstr "Ler o comentário, Shift+C"
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:248
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:257
 msgid "Review the move played, Shift+E"
 msgstr "Avaliar o lance jogado, Shift+E"
 
@@ -4774,7 +4777,7 @@ msgid "Reviewing {move}"
 msgstr "Avaliando {move}"
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:289
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:298
 msgid "Save, Control+S"
 msgstr "Salvar, Control+S"
 
@@ -4834,13 +4837,13 @@ msgid "Thinking longer, {seconds} seconds"
 msgstr "Pensando mais, {seconds} segundos"
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:270
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:279
 msgid "Write a comment, C"
 msgstr "Escrever comentário, C"
 
 #. Spoken after flipping the analysis board, e.g. "black at the bottom".
 #. Spoken after flipping the board, e.g. "black at the bottom".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:343
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:357
 #: addon/globalPlugins/chessmart/virtual_chessboard/editor_board.py:234
 msgid "{color} at the bottom"
 msgstr "{color} embaixo"
@@ -4869,7 +4872,7 @@ msgstr "{color} ganhando, {pawns}"
 
 #. Spoken when the position has variations recorded besides the main
 #. continuation.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:729
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:786
 msgid "{count} variation from here"
 msgid_plural "{count} variations from here"
 msgstr[0] "{count} variante daqui"
@@ -4902,17 +4905,17 @@ msgid "{whole}.{tenth}"
 msgstr "{whole},{tenth}"
 
 #. Spoken by O when no position of the line has an opening name.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:643
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:700
 msgid "No named opening yet"
 msgstr "Nenhuma abertura com nome ainda"
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:255
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:264
 msgid "Opening, O"
 msgstr "Abertura, O"
 
 #. Spoken after the first move that is not in the opening table.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:666
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:723
 msgid "out of theory"
 msgstr "fora da teoria"
 
@@ -4924,12 +4927,12 @@ msgstr "{move}: teoria, {name}, {eco}."
 
 #. Spoken by O after the game left theory, e.g. "Sicilian Defense, B20, out of
 #. theory".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:651
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:708
 msgid "{name}, {eco}, out of theory"
 msgstr "{name}, {eco}, fora da teoria"
 
 #. Spoken by O, e.g. "Sicilian Defense: Najdorf Variation, B90, still theory".
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:648
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:705
 msgid "{name}, {eco}, still theory"
 msgstr "{name}, {eco}, ainda teoria"
 
@@ -4963,7 +4966,7 @@ msgid "Already imported: opening your copy, with your notes."
 msgstr "Já importada: abrindo a sua cópia, com as suas anotações."
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:268
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:277
 msgid "Clock of the game, T"
 msgstr "Relógio da partida, T"
 
@@ -5043,7 +5046,7 @@ msgstr "Isso não é um link, código de partida ou usuário do Lichess."
 
 #. Spoken by T when the game carries no clock (entered by hand, or an old
 #. PGN).
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:627
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:684
 msgid "This game has no clock. Games imported from Lichess have one."
 msgstr "Esta partida não tem relógio. As partidas importadas do Lichess têm."
 
@@ -5448,7 +5451,7 @@ msgid "move {move}, {verdict}"
 msgstr "lance {move}, {verdict}"
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:259
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:268
 msgid "Next critical moment, Alt+Page Down"
 msgstr "Próximo momento crítico, Alt+Page Down"
 
@@ -5499,7 +5502,7 @@ msgid "Review stopped."
 msgstr "Revisão interrompida."
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:257
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:266
 msgid "Review the game, F7"
 msgstr "Revisar a partida, F7"
 
@@ -5544,7 +5547,7 @@ msgid "Game Review Options"
 msgstr "Opções da revisão da partida"
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:262
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:271
 msgid "Previous critical moment, Alt+Page Up"
 msgstr "Momento crítico anterior, Alt+Page Up"
 
@@ -5554,7 +5557,7 @@ msgid "Review options saved. F7 reviews with them."
 msgstr "Opções da revisão salvas. O F7 revisa com elas."
 
 #. Tab bar action on the analysis board: opens the game review options.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:266
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:275
 msgid "Review options..."
 msgstr "Opções da revisão..."
 
@@ -5574,7 +5577,7 @@ msgid "No threat found."
 msgstr "Nenhuma ameaça encontrada."
 
 #. Tab bar action on the analysis board, with its key.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:246
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:255
 msgid "Threat: what the other side would play, X"
 msgstr "Ameaça: o que o outro lado jogaria, X"
 
@@ -5595,12 +5598,12 @@ msgstr "Tablebase:"
 
 #. Tab bar action on the analysis board: plays the current position against
 #. the engine.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:285
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:294
 msgid "Play from here against the computer..."
 msgstr "Jogar daqui contra o computador..."
 
 #. Spoken by "Play from here" on a checkmate or stalemate.
-#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:334
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:348
 msgid "The game is over in this position: there is nothing to play."
 msgstr "A partida terminou nesta posição: não há o que jogar."
 
@@ -5765,6 +5768,23 @@ msgstr "Resolvido com ajuda: volta amanhã."
 #: addon/globalPlugins/chessmart/virtual_chessboard/puzzle_board.py:601
 msgid "That was the last review."
 msgstr "Essa foi a última revisão."
+
+#. Spoken once when the automatic save fails, followed by the error.
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:595
+msgid "Could not save automatically. Details: {error}"
+msgstr "Não foi possível salvar automaticamente. Detalhes: {error}"
+
+#. Tab bar action on the analysis board: edit players, event, date and result,
+#. then save.
+#: addon/globalPlugins/chessmart/virtual_chessboard/analysis_board.py:301
+msgid "Game details and save, Control+Alt+S"
+msgstr "Detalhes da partida e salvar, Control+Alt+S"
+
+#. Checkbox in the settings: the analysis board saves every change by itself.
+#: addon/globalPlugins/chessmart/graphical_interface/settings_panel.py:102
+msgid "Save analysed games &automatically, once they have a file"
+msgstr ""
+"Salvar partidas analisadas &automaticamente, depois que tiverem arquivo"
 
 #~ msgid "Provisional "
 #~ msgstr "Provisório "

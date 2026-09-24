@@ -30,6 +30,8 @@ CONFIG_SPEC = {
 	"moveNotation": 'string(default="descriptive")',
 	# Where the analysis board saves games; empty means the default below.
 	"gamesFolder": 'string(default="")',
+	# The analysis board writes every change to the game's file, once it has one.
+	"autosaveAnalysis": "boolean(default=True)",
 	# The Lichess username last imported from, offered again in the import dialog.
 	"lichessUser": 'string(default="")',
 	# Game review: whose moves, from which verdict, how many, what the engine
@@ -108,6 +110,14 @@ def get_games_folder() -> str:
 
 def save_games_folder(folder: str) -> None:
 	_section()["gamesFolder"] = folder.strip()
+
+
+def get_autosave_analysis() -> bool:
+	return bool(_section()["autosaveAnalysis"])
+
+
+def save_autosave_analysis(enabled: bool) -> None:
+	_section()["autosaveAnalysis"] = bool(enabled)
 
 
 def get_lichess_user() -> str:

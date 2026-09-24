@@ -4311,6 +4311,16 @@ msgstr[1] ""
 "¿Saltar el repaso? Vamos, volver a lo que fallaste es lo que fija el patrón."
 " Quedan {count} problemas por repasar. ¿Saltarlos de todos modos?"
 
+msgid "Could not save automatically. Details: {error}"
+msgstr "No se pudo guardar automáticamente. Detalles: {error}"
+
+msgid "Game details and save, Control+Alt+S"
+msgstr "Datos de la partida y guardar, Control+Alt+S"
+
+msgid "Save analysed games &automatically, once they have a file"
+msgstr ""
+"Guardar las partidas analizadas &automáticamente, cuando ya tengan archivo"
+
 #~ msgid ""
 #~ "Tactics need a puzzle database, which is downloaded once (about 76 MB for "
 #~ "the light version). Download it now?"

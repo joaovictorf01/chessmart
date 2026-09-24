@@ -42,7 +42,7 @@ import wx
 from logHandler import log
 from scriptHandler import getLastScriptRepeatCount, script
 
-from ..addon_config import get_games_folder, get_move_notation
+from ..addon_config import get_autosave_analysis, get_games_folder, get_move_notation
 from ..game_tree import (
 	MOVE_MARK_SYMBOLS,
 	GameTree,
@@ -199,6 +199,13 @@ class AnalysisCell(UserDrivenCell):
 	def script_previous_moment(self, gesture):
 		self.parent.next_moment(-1)
 
+	@script(gesture="kb:control+alt+s")
+	def script_save_with_details(self, gesture):
+		if globalVars.appArgs.secure:
+			# Translators: Spoken when saving is refused because NVDA runs in secure mode.
+			return ui.message(_("Could not save game. NVDA running in secure mode."))
+		self.parent.save_game_with_details()
+
 	@script(gesture="kb:t")
 	def script_clock(self, gesture):
 		self.parent.announce_clock_summary()
@@ -223,7 +230,9 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 		self.source_path = source_path
 		# Opens the New Game dialog on a FEN; given by the menu that opened this board.
 		self.on_play_from = on_play_from
-		self.unsaved = False
+		self._unsaved = False
+		# Said once: a failing automatic save must not speak on every move.
+		self._autosave_failed = False
 		kwargs["pychess_board"] = self.tree.board()
 		super().__init__(*args, **kwargs)
 		self.engine = AnalysisEngine()
@@ -287,6 +296,11 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 				(_("Flip the board"), self._from_actions(self.flip_board)),
 				# Translators: Tab bar action on the analysis board, with its key.
 				(_("Save, Control+S"), self._from_actions(self.save_game)),
+				(
+					# Translators: Tab bar action on the analysis board: edit players, event, date and result, then save.
+					_("Game details and save, Control+Alt+S"),
+					self._from_actions(self.save_game_with_details),
+				),
 				# Translators: Tab bar action that returns to the board.
 				(_("Back to board"), self.focus_board_from_actions),
 			],
@@ -556,7 +570,52 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 
 	# -- saving --------------------------------------------------------------------
 
+	@property
+	def unsaved(self) -> bool:
+		return self._unsaved
+
+	@unsaved.setter
+	def unsaved(self, value: bool) -> None:
+		# Every change goes through here (moves, comments, marks, the engine's
+		# lines, the review's marks), so this is the one place that saves by itself.
+		self._unsaved = value
+		if value:
+			self._autosave()
+
+	def _autosave(self):
+		if not self.source_path or not get_autosave_analysis():
+			return
+		try:
+			self._write(self.source_path)
+		except OSError as error:
+			log.warning("chessmart: automatic save failed: %s", error)
+			if not self._autosave_failed:
+				self._autosave_failed = True
+				# Translators: Spoken once when the automatic save fails, followed by the error.
+				ui.message(_("Could not save automatically. Details: {error}").format(error=error))
+
+	def _write(self, path):
+		self._set_opening_headers()
+		write_pgn(self.tree, path)
+		self._unsaved = False
+		self._autosave_failed = False
+
 	def save_game(self):
+		"""Control+S: a game that already has a file is saved there, quietly; a new one asks for its details first."""
+		if not self.source_path:
+			self.save_game_with_details()
+			return
+		try:
+			self._write(self.source_path)
+		except OSError as error:
+			log.warning("chessmart: could not save the analysed game: %s", error)
+			# Translators: Spoken when the game could not be written, followed by the error.
+			ui.message(_("Could not save the game. Details: {error}").format(error=error))
+			return
+		# Translators: Spoken after saving, with the file name, e.g. "Saved: 2026-09-23_Joao-vs-Ana.pgn".
+		ui.message(_("Saved: {name}").format(name=os.path.basename(self.source_path)))
+
+	def save_game_with_details(self):
 		from ..graphical_interface.record_dialog import RecordHeadersDialog
 		from ..graphical_interface.messages import run_modal
 
@@ -575,14 +634,13 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 		if result == wx.ID_OK:
 			record = dialog.get_headers()
 			record.apply(self.tree)
-			self._set_opening_headers()
 			try:
 				path = self._save_path(record)
-				write_pgn(self.tree, path)
+				self._write(path)
 			except OSError as error:
 				log.warning("chessmart: could not save the analysed game: %s", error)
 				# The new headers are in the tree but not on disk: Escape must still ask.
-				self.unsaved = True
+				self._unsaved = True
 				queueHandler.queueFunction(
 					queueHandler.eventQueue,
 					ui.message,
@@ -591,7 +649,6 @@ class AnalysisChessboard(ReviewActionsMixin, EngineActionsMixin, ActionsBarMixin
 				)
 			else:
 				self.source_path = path
-				self.unsaved = False
 				queueHandler.queueFunction(
 					queueHandler.eventQueue,
 					ui.message,

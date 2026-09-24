@@ -14,9 +14,11 @@ from gui import guiHelper
 
 from ..addon_config import (
 	TacticsDefaults,
+	get_autosave_analysis,
 	get_games_folder,
 	get_move_notation,
 	get_tactics_defaults,
+	save_autosave_analysis,
 	save_games_folder,
 	save_review_options,
 	save_move_notation,
@@ -95,6 +97,11 @@ class ChessboardSettingsDialog(TacticsSetupMixin, gui.SettingsDialog):
 		)
 		self.gamesFolderTextCtrl = gamesFolder.pathControl
 		self.gamesFolderTextCtrl.SetValue(get_games_folder())
+		self.autosaveCheckBox = helper.addItem(
+			# Translators: Checkbox in the settings: the analysis board saves every change by itself.
+			wx.CheckBox(self, label=_("Save analysed games &automatically, once they have a file")),
+		)
+		self.autosaveCheckBox.SetValue(get_autosave_analysis())
 		self.reviewControls = build_review_controls(self, helper)
 		self._bind_shared_events()
 
@@ -124,5 +131,6 @@ class ChessboardSettingsDialog(TacticsSetupMixin, gui.SettingsDialog):
 		)
 		save_move_notation(NOTATION_STYLES[self.notationChoice.GetSelection()][0])
 		save_games_folder(self.gamesFolderTextCtrl.GetValue())
+		save_autosave_analysis(self.autosaveCheckBox.GetValue())
 		save_review_options(options_from(self.reviewControls))
 		super().onOk(event)

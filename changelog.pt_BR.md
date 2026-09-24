@@ -4,6 +4,7 @@ O versionamento segue o [Semantic Versioning](https://semver.org/lang/pt-BR/): v
 
 ## Acrescentado
 
+- O tabuleiro de análise salva sozinho: quando a partida já tem arquivo (salva uma vez, aberta de um PGN com uma partida só, ou importada do Lichess), cada lance, comentário, marca e linha da engine vai para o arquivo na hora. Uma configuração, "Salvar partidas analisadas automaticamente", desliga isso. O Control+S agora salva direto no arquivo da partida, sem perguntar; o Control+Alt+S abre jogadores, evento, data e resultado, o que antes o Control+S abria toda vez.
 - **Revisão dos puzzles que você errou.** Um puzzle errado (lance errado, dica, ou a solução jogada com Control+Enter) volta no dia seguinte, antes dos novos: até 3 abrem cada sessão de tática, os mais antigos primeiro, seja qual for o plano e o nível. Uma revisão limpa (sem lance errado, sem dica) traz ele de volta mais uma vez três dias depois; a segunda revisão limpa seguida deixa ele firme e ele sai da fila; um deslize recomeça a contagem. Revisão nunca vale rating -- a solução já foi vista --, mas conta: o status da sessão diz quantas foram limpas, e o Meu estudo mostra a fila (para hoje, esperando, firmes) e as revisões de cada dia. Pular uma revisão com Control+N ou Próximo puzzle pergunta antes, com Não como padrão. Os puzzles errados antes desta versão também entram na fila.
 - **NVDA+Alt+X** abre a Tática de qualquer lugar. Os comandos de puzzle aleatório, Finais, Meu estudo e Nova partida estão no diálogo Definir gestos, na categoria Chessmart, sem tecla de fábrica.
 
