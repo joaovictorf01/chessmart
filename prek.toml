@@ -4,8 +4,8 @@
 
 default_language_version = { python = "python3.13" }
 
-# chessmart: bibliotecas de terceiros embarcadas em lib/ (python-chess, yarl, ...) ficam como vieram.
-exclude = "^addon/globalPlugins/chessmart/lib/"
+# chessStudy: bibliotecas de terceiros embarcadas em lib/ (python-chess, yarl, ...) ficam como vieram.
+exclude = "^addon/globalPlugins/chessStudy/lib/"
 
 [[repos]]
 repo = "meta"

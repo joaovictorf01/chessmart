@@ -61,7 +61,7 @@ What the unit tests cannot see. After a change, run the parts it touches, with t
 
 ## Lichess import
 
-- Tools > Chessmart > Import Lichess Game: a link, a code, a username; the game opens and says its opening and clock on each move.
+- Tools > Chess Study > Import Lichess Game: a link, a code, a username; the game opens and says its opening and clock on each move.
 - T sums up both clocks. Importing the same game again says it opens your copy.
 - A wrong code or no connection says why, in a message.
 

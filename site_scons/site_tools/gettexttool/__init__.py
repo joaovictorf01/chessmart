@@ -44,7 +44,7 @@ def generate(env):
 	env.SetDefault(gettext_package_name="")
 	env.SetDefault(gettext_package_version="")
 
-	# chessmart: sem `msgfmt` no PATH (Windows sem GNU gettext), compila o .mo com polib.
+	# chessStudy: sem `msgfmt` no PATH (Windows sem GNU gettext), compila o .mo com polib.
 	# O CI (ubuntu, com gettext instalado) segue o caminho original do template.
 	if env.WhereIs("msgfmt"):
 		moAction = Action("msgfmt -o $TARGET $SOURCE", "Compiling translation $SOURCE")

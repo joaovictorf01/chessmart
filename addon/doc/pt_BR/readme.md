@@ -1,12 +1,12 @@
-# Chessmart
+# Chess Study
 
-* Autores: João Victor; add-on original de Musharraf Omer
+* Autor: João Victor, a partir do Chessmart de Musharraf Omer
 * Compatibilidade: NVDA 2026.1 ou posterior
-* Download: [versões do Chessmart no GitHub](https://github.com/joaovictorf01/chessmart/releases) (e a Loja de Complementos do NVDA, quando for publicado lá)
-* Código-fonte: [o repositório do Chessmart no GitHub](https://github.com/joaovictorf01/chessmart)
+* Download: [versões do Chess Study no GitHub](https://github.com/joaovictorf01/chessStudy/releases) (e a Loja de Complementos do NVDA, quando for publicado lá)
+* Código-fonte: [o repositório do Chess Study no GitHub](https://github.com/joaovictorf01/chessStudy)
 * Licença: GNU GPL v2
 
-O **Chessmart** é um add-on do NVDA que transforma o leitor de tela num ambiente de xadrez acessível, todo pelo teclado e todo falado:
+O **Chess Study** é um add-on do NVDA que transforma o leitor de tela num ambiente de xadrez acessível, todo pelo teclado e todo falado:
 
 * um treinador de táticas construído sobre a [base de puzzles do Lichess](https://database.lichess.org/#puzzles), com um rating que acompanha você, e os puzzles que você errou voltam para revisão;
 * treinos de mate e lições de finais, julgados lance a lance pelas tablebases Syzygy;
@@ -15,19 +15,23 @@ O **Chessmart** é um add-on do NVDA que transforma o leitor de tela num ambient
 * partidas contra o motor ou contra um amigo no mesmo teclado, no xadrez padrão e em oito variantes, e reprodução de PGN;
 * o Meu estudo, um registro de quanto e como você estudou.
 
-Ele é um fork do [Chessmart de Musharraf Omer](https://github.com/blindpandas/chessmart), que fornece o tabuleiro, os motores e as variantes. Os dois são distribuídos sob a GNU GPL v2.
+Ele começou como um fork do [Chessmart de Musharraf Omer](https://github.com/blindpandas/chessmart), que fornece o tabuleiro, os motores e as variantes, e também se chamava Chessmart até a versão 1.2.0. Desde a 2.0.0, a pedido dele, tem nome próprio. Os dois são distribuídos sob a GNU GPL v2.
 
 Não é preciso instalar mais nada: os motores e o runtime do SQLite de que o treinador precisa vêm dentro do add-on (o NVDA 2026.1 roda o Python 3.13 de 64 bits para o qual eles foram compilados).
 
-O que mudou em cada versão: [o changelog do Chessmart](https://github.com/joaovictorf01/chessmart/blob/main/changelog.pt_BR.md).
+O que mudou em cada versão: [o changelog do Chess Study](https://github.com/joaovictorf01/chessStudy/blob/main/changelog.pt_BR.md).
 
 ## Primeiros passos
 
 1. Instale o add-on e reinicie o NVDA.
-2. Abra o menu do NVDA (NVDA+N), vá até **Ferramentas** e encontre o submenu **Chessmart**.
+2. Abra o menu do NVDA (NVDA+N), vá até **Ferramentas** e encontre o submenu **Chess Study**.
 3. Escolha o que você quer fazer.
 
-### O menu Chessmart
+### Vindo do Chessmart
+
+Se você usava o Chessmart 1.x, o NVDA vê o Chess Study como outro add-on e não atualiza um no outro. Remova o Chessmart na Loja de Complementos, instale o Chess Study e reinicie o NVDA. Na primeira vez que abre, o Chess Study assume o que era do Chessmart: o seu rating e histórico, os puzzles errados esperando revisão, a base de puzzles e as tablebases (a pasta é renomeada, nada é baixado de novo) e as suas configurações. As suas partidas continuam em `Documents\Chessmart`, que segue sendo a pasta de partidas.
+
+### O menu Chess Study
 
 * **Nova partida...** — jogue contra o computador ou contra um amigo no mesmo teclado (veja "Jogar uma partida").
 * **Táticas...** — monte uma sessão de táticas e treine (veja "Treino de táticas").
@@ -40,15 +44,15 @@ O que mudou em cada versão: [o changelog do Chessmart](https://github.com/joaov
 * **Importar partida do Lichess...** — baixa uma partida do Lichess e abre no tabuleiro de análise (veja "Importar uma partida do Lichess").
 * **Analisar arquivo PGN...** — abre uma partida salva no tabuleiro de análise.
 * **Minhas partidas...** — as partidas da sua pasta de partidas (veja "Minhas partidas").
-* **Configurações...** — as configurações do Chessmart (veja "Configurações").
+* **Configurações...** — as configurações do Chess Study (veja "Configurações").
 
 ### Atalhos
 
-**NVDA+Alt+X** abre as Táticas de qualquer lugar. Puzzle aleatório, Finais, Meu estudo, Minhas partidas e Nova partida também têm atalhos, sem tecla de fábrica: atribua uma no diálogo Definir comandos do NVDA (menu Preferências), na categoria Chessmart.
+**NVDA+Alt+X** abre as Táticas de qualquer lugar. Puzzle aleatório, Finais, Meu estudo, Minhas partidas e Nova partida também têm atalhos, sem tecla de fábrica: atribua uma no diálogo Definir comandos do NVDA (menu Preferências), na categoria Chess Study.
 
 ### A base de puzzles
 
-Na primeira vez que você abre as Táticas ou o Puzzle aleatório, o add-on oferece baixar a base de puzzles. Escolha a **Leve** (cerca de 90 MB, os puzzles que muitos jogadores já resolveram e aprovaram -- perto de 880.000) ou a **Completa** (cerca de 600 MB, a base inteira do Lichess, mais de 6 milhões). Esses números são aproximados: o diálogo de download dá os exatos de cada base, a quantidade de puzzles, o tamanho para baixar e o tamanho no disco, que crescem um pouco todo mês, quando o Lichess publica uma base nova. O download roda em segundo plano, com o progresso falado; você pode cancelar com Escape. A base fica guardada na pasta de configuração do NVDA, em `chessmart`, junto com o seu histórico de treino.
+Na primeira vez que você abre as Táticas ou o Puzzle aleatório, o add-on oferece baixar a base de puzzles. Escolha a **Leve** (cerca de 90 MB, os puzzles que muitos jogadores já resolveram e aprovaram -- perto de 880.000) ou a **Completa** (cerca de 600 MB, a base inteira do Lichess, mais de 6 milhões). Esses números são aproximados: o diálogo de download dá os exatos de cada base, a quantidade de puzzles, o tamanho para baixar e o tamanho no disco, que crescem um pouco todo mês, quando o Lichess publica uma base nova. O download roda em segundo plano, com o progresso falado; você pode cancelar com Escape. A base fica guardada na pasta de configuração do NVDA, em `chessStudy`, junto com o seu histórico de treino.
 
 ### A barra do Tab
 
@@ -102,7 +106,7 @@ Os comandos do tabuleiro de partida (veja "Comandos de teclado no tabuleiro") ta
 
 ### Manter a base atualizada
 
-O Lichess publica uma base de puzzles nova todo mês. Este projeto regenera as bases a partir dela e as publica na [release `puzzles-latest`](https://github.com/joaovictorf01/chessmart/releases/tag/puzzles-latest). No diálogo Táticas ou nas configurações, **Baixar ou atualizar...** mostra o que você tem instalado em comparação com o que está publicado e deixa você atualizar. As atualizações nunca são instaladas automaticamente.
+O Lichess publica uma base de puzzles nova todo mês. Este projeto regenera as bases a partir dela e as publica na [release `puzzles-latest`](https://github.com/joaovictorf01/chessStudy/releases/tag/puzzles-latest). No diálogo Táticas ou nas configurações, **Baixar ou atualizar...** mostra o que você tem instalado em comparação com o que está publicado e deixa você atualizar. As atualizações nunca são instaladas automaticamente.
 
 ## Finais
 
@@ -187,13 +191,13 @@ Os comandos do tabuleiro de partida (veja "Comandos de teclado no tabuleiro") ta
 
 Nada encerra a sessão: um xeque-mate dentro de uma variante é só uma posição. Onde a linha já continua, um lance diferente abre uma **variante**; você pode voltar à linha principal a qualquer momento. Cada lance pode levar um **comentário** (o que você estava pensando, o que deixou passar) e uma **marca**: ! bom lance, ? erro, !! lance brilhante, ?? erro grave, !? lance interessante, ?! lance duvidoso. As marcas são faladas em palavras.
 
-**Control+S** salva. Na primeira vez, uma partida nova pede os jogadores, o evento, a data e o resultado, e vai para a sua **pasta de partidas** (Configurações; por padrão `Documents\Chessmart`) como `ano-mês-dia_Brancas-vs-Pretas.pgn`. Depois disso, e para uma partida aberta de um arquivo com uma partida só ou importada do Lichess, o Control+S salva nesse arquivo sem perguntar. **Control+Alt+S** abre os detalhes (jogadores, evento, data, resultado) a qualquer momento, e salva.
+**Control+S** salva. Na primeira vez, uma partida nova pede os jogadores, o evento, a data e o resultado, e vai para a sua **pasta de partidas** (Configurações; por padrão `Documents\Chess Study`) como `ano-mês-dia_Brancas-vs-Pretas.pgn`. Depois disso, e para uma partida aberta de um arquivo com uma partida só ou importada do Lichess, o Control+S salva nesse arquivo sem perguntar. **Control+Alt+S** abre os detalhes (jogadores, evento, data, resultado) a qualquer momento, e salva.
 
 Quando a partida já tem arquivo, cada mudança -- um lance, um comentário, uma marca, uma linha acrescentada pelo motor -- é salva sozinha, então nada se perde se você fechar o tabuleiro ou o NVDA. A configuração "Salvar partidas analisadas automaticamente, depois que tiverem arquivo" desliga isso; aí o Control+S salva, e o Escape pergunta antes de sair deixando mudanças sem salvar.
 
 ### Minhas partidas
 
-**Minhas partidas...** lista todas as partidas da sua pasta de partidas, as alteradas mais recentemente primeiro: a data, os jogadores, o resultado e quanto você já anotou ("Comentários: 12, marcas: 4, variantes: 2", ou "Sem anotações"). O Enter abre a partida no tabuleiro de análise, onde ela continua sendo salva no próprio arquivo. Um arquivo com várias partidas mostra cada uma delas; uma partida aberta de um arquivo assim é salva como um arquivo novo. O atalho não tem tecla de fábrica: atribua uma no diálogo Definir comandos do NVDA (menu Preferências), na categoria Chessmart.
+**Minhas partidas...** lista todas as partidas da sua pasta de partidas, as alteradas mais recentemente primeiro: a data, os jogadores, o resultado e quanto você já anotou ("Comentários: 12, marcas: 4, variantes: 2", ou "Sem anotações"). O Enter abre a partida no tabuleiro de análise, onde ela continua sendo salva no próprio arquivo. Um arquivo com várias partidas mostra cada uma delas; uma partida aberta de um arquivo assim é salva como um arquivo novo. O atalho não tem tecla de fábrica: atribua uma no diálogo Definir comandos do NVDA (menu Preferências), na categoria Chess Study.
 
 ### Revisão da partida
 
@@ -255,7 +259,7 @@ O **Escape** fecha o editor; quando há peças no tabuleiro, ele pergunta antes,
 
 ## Configurações
 
-**Configurações...**, no menu Chessmart, abre o diálogo de configurações do Chessmart:
+**Configurações...**, no menu Chess Study, abre o diálogo de configurações do Chess Study:
 
 * **Base de táticas**, com **Procurar...** para apontar uma base em outro lugar e **Baixar ou atualizar...**.
 * **Plano de treino padrão**, **Nível de desafio padrão**, o resumo do treino e **Temas padrão**, para as novas sessões de táticas e para o Puzzle aleatório.
@@ -266,7 +270,7 @@ O **Escape** fecha o editor; quando há peças no tabuleiro, ele pergunta antes,
 
 ### Notação dos lances
 
-Os mesmos estilos do modo para cegos do Lichess, mais o estilo descritivo que o Chessmart sempre teve:
+Os mesmos estilos do modo para cegos do Lichess, mais o estilo descritivo que o Chess Study sempre teve:
 
 | Estilo | Exemplo |
 |---|---|
@@ -283,7 +287,7 @@ Anna é a notação que os jogadores cegos usam no tabuleiro (anna, bella, cesar
 
 A interface está em inglês, português do Brasil e espanhol (uma primeira versão; revisão por falantes nativos é bem-vinda). Este manual também tem uma versão em português do Brasil, que o botão Ajuda do NVDA abre quando o NVDA está em português. As traduções ficam em `addon/locale/<idioma>/LC_MESSAGES/nvda.po`, na estrutura padrão de add-ons do NVDA, e são bem-vindas: para começar uma nova, rode `py -3 tools/i18n.py update <idioma>` e preencha as linhas `msgstr`, ou peça para o add-on entrar no projeto de add-ons do NVDA no Crowdin. Os nomes das casas OTAN e Anna e a notação IBCA são internacionais e não são traduzidos.
 
-Para compilar o add-on ou mexer no código, leia [o guia de contribuição do Chessmart](https://github.com/joaovictorf01/chessmart/blob/main/CONTRIBUTING.md), em inglês.
+Para compilar o add-on ou mexer no código, leia [o guia de contribuição do Chess Study](https://github.com/joaovictorf01/chessStudy/blob/main/CONTRIBUTING.md), em inglês.
 
 ## Créditos
 

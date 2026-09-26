@@ -1,12 +1,12 @@
-# Chessmart
+# Chess Study
 
-* Authors: João Victor; original add-on by Musharraf Omer
+* Author: João Victor, building on Chessmart by Musharraf Omer
 * Compatibility: NVDA 2026.1 or later
-* Download: [Chessmart releases on GitHub](https://github.com/joaovictorf01/chessmart/releases) (the NVDA Add-on Store once it is published there)
-* Source code: [the Chessmart repository on GitHub](https://github.com/joaovictorf01/chessmart)
+* Download: [Chess Study releases on GitHub](https://github.com/joaovictorf01/chessStudy/releases) (the NVDA Add-on Store once it is published there)
+* Source code: [the Chess Study repository on GitHub](https://github.com/joaovictorf01/chessStudy)
 * License: GNU GPL v2
 
-**Chessmart** is an NVDA add-on that turns the screen reader into an accessible chess environment, all from the keyboard and all spoken:
+**Chess Study** is an NVDA add-on that turns the screen reader into an accessible chess environment, all from the keyboard and all spoken:
 
 * a tactics trainer built on the [Lichess puzzle database](https://database.lichess.org/#puzzles), with a rating that follows you and the puzzles you missed coming back for review;
 * endgame mate drills and lessons, judged move by move by the Syzygy tablebases;
@@ -15,19 +15,23 @@
 * games against the engine or a friend on the same keyboard, in standard chess and eight variants, and PGN replay;
 * My Study, a record of how much and how you studied.
 
-It is a fork of [Chessmart by Musharraf Omer](https://github.com/blindpandas/chessmart), which provides the board, the engines and the variants. Both are released under the GNU GPL v2.
+It started as a fork of [Chessmart by Musharraf Omer](https://github.com/blindpandas/chessmart), which provides the board, the engines and the variants, and was itself called Chessmart up to version 1.2.0. Since 2.0.0, at his request, it has a name of its own. Both are released under the GNU GPL v2.
 
 Nothing else needs to be installed: the engines and the SQLite runtime the trainer needs ship inside the add-on (NVDA 2026.1 runs the 64-bit Python 3.13 they are built for).
 
-What changed in each version: [the Chessmart changelog](https://github.com/joaovictorf01/chessmart/blob/main/changelog.md).
+What changed in each version: [the Chess Study changelog](https://github.com/joaovictorf01/chessStudy/blob/main/changelog.md).
 
 ## Getting started
 
 1. Install the add-on and restart NVDA.
-2. Open the NVDA menu (NVDA+N), go to **Tools** and find the **Chessmart** submenu.
+2. Open the NVDA menu (NVDA+N), go to **Tools** and find the **Chess Study** submenu.
 3. Choose what you want to do.
 
-### The Chessmart menu
+### Coming from Chessmart
+
+If you used Chessmart 1.x, NVDA sees Chess Study as a different add-on and does not update one into the other. Remove Chessmart in the Add-on Store, install Chess Study and restart NVDA. The first time it starts, Chess Study takes over what was Chessmart's: your rating and history, the missed puzzles waiting for review, the puzzle database and the tablebases (the folder is renamed, nothing is downloaded again), and your settings. Your games stay in `Documents\Chessmart`, which keeps being the games folder.
+
+### The Chess Study menu
 
 * **New Game...** — play against the computer or against a friend on the same keyboard (see "Playing a game").
 * **Tactics...** — set up a tactics session and train (see "Tactics training").
@@ -40,15 +44,15 @@ What changed in each version: [the Chessmart changelog](https://github.com/joaov
 * **Import Lichess Game...** — download a game from Lichess and open it on the analysis board (see "Import a Lichess game").
 * **Analyse PGN File...** — open a saved game on the analysis board.
 * **My Games...** — the games in your games folder (see "My games").
-* **Settings...** — the Chessmart settings (see "Settings").
+* **Settings...** — the Chess Study settings (see "Settings").
 
 ### Shortcuts
 
-**NVDA+Alt+X** opens Tactics from anywhere. Random Puzzle, Endgames, My Study, My Games and New Game also have shortcuts, with no key by default: assign one in NVDA's Input Gestures dialog, Chessmart category.
+**NVDA+Alt+X** opens Tactics from anywhere. Random Puzzle, Endgames, My Study, My Games and New Game also have shortcuts, with no key by default: assign one in NVDA's Input Gestures dialog, Chess Study category.
 
 ### The puzzle database
 
-The first time you open Tactics or Random Puzzle, the add-on offers to download the puzzle database. Pick **Light** (about 90 MB, the puzzles many players have solved and approved -- around 880,000 of them) or **Complete** (about 600 MB, the whole Lichess base, over 6 million). These figures are approximate: the download dialog gives the exact ones for each database, the puzzle count, the size to download and the size on disk, which grow a little every month as Lichess publishes a new base. The download runs in the background with spoken progress; you can cancel with Escape. The database is stored in your NVDA configuration folder, under `chessmart`, together with your training history.
+The first time you open Tactics or Random Puzzle, the add-on offers to download the puzzle database. Pick **Light** (about 90 MB, the puzzles many players have solved and approved -- around 880,000 of them) or **Complete** (about 600 MB, the whole Lichess base, over 6 million). These figures are approximate: the download dialog gives the exact ones for each database, the puzzle count, the size to download and the size on disk, which grow a little every month as Lichess publishes a new base. The download runs in the background with spoken progress; you can cancel with Escape. The database is stored in your NVDA configuration folder, under `chessStudy`, together with your training history.
 
 ### The Tab bar
 
@@ -102,7 +106,7 @@ The commands of the game board (see "Keyboard commands on the board") work on th
 
 ### Keeping the database up to date
 
-Lichess publishes a new puzzle base every month. This project regenerates the databases from it and publishes them on the [`puzzles-latest` release](https://github.com/joaovictorf01/chessmart/releases/tag/puzzles-latest). In the Tactics dialog or in the settings, **Download or update...** shows what you have installed against what is published and lets you update. Updates are never installed automatically.
+Lichess publishes a new puzzle base every month. This project regenerates the databases from it and publishes them on the [`puzzles-latest` release](https://github.com/joaovictorf01/chessStudy/releases/tag/puzzles-latest). In the Tactics dialog or in the settings, **Download or update...** shows what you have installed against what is published and lets you update. Updates are never installed automatically.
 
 ## Endgames
 
@@ -187,13 +191,13 @@ The commands of the game board (see "Keyboard commands on the board") work here 
 
 Nothing ends the session: a checkmate inside a variation is only a position. Wherever the line already continues, a different move starts a **variation**; you can come back to the main line at any time. Each move can carry a **comment** (what you were thinking, what you missed) and a **mark**: ! good move, ? mistake, !! brilliant, ?? blunder, !? interesting, ?! dubious. The marks are spoken in words.
 
-**Control+S** saves. The first time, a new game asks for the players, the event, the date and the result, and goes to your **games folder** (Settings; by default `Documents\Chessmart`) as `year-month-day_White-vs-Black.pgn`. After that, and for a game opened from a file with a single game or imported from Lichess, Control+S saves to that file without asking. **Control+Alt+S** opens the details (players, event, date, result) at any time, and saves.
+**Control+S** saves. The first time, a new game asks for the players, the event, the date and the result, and goes to your **games folder** (Settings; by default `Documents\Chess Study`) as `year-month-day_White-vs-Black.pgn`. After that, and for a game opened from a file with a single game or imported from Lichess, Control+S saves to that file without asking. **Control+Alt+S** opens the details (players, event, date, result) at any time, and saves.
 
 Once the game has a file, every change -- a move, a comment, a mark, a line added by the engine -- is saved by itself, so nothing is lost if you close the board or NVDA. The setting "Save analysed games automatically, once they have a file" turns this off; then Control+S saves and Escape asks before leaving unsaved changes.
 
 ### My games
 
-**My Games...** lists every game in your games folder, the most recently changed first: the date, the players, the result, and how much you have annotated it ("Comments: 12, marks: 4, variations: 2", or "No notes"). Enter opens the game on the analysis board, where it keeps saving to its own file. A file with several games shows each of them; a game opened out of such a file is saved as a new file. The shortcut has no key by default: assign one in NVDA's Input Gestures dialog, Chessmart category.
+**My Games...** lists every game in your games folder, the most recently changed first: the date, the players, the result, and how much you have annotated it ("Comments: 12, marks: 4, variations: 2", or "No notes"). Enter opens the game on the analysis board, where it keeps saving to its own file. A file with several games shows each of them; a game opened out of such a file is saved as a new file. The shortcut has no key by default: assign one in NVDA's Input Gestures dialog, Chess Study category.
 
 ### Game review
 
@@ -255,7 +259,7 @@ The commands of the game board work here too (arrows, Enter, A, M, F1, F4...), w
 
 ## Settings
 
-**Settings...** in the Chessmart menu opens the Chessmart settings dialog:
+**Settings...** in the Chess Study menu opens the Chess Study settings dialog:
 
 * **Tactics database**, with **Browse...** to point at a database elsewhere and **Download or update...**.
 * **Default training plan**, **Default challenge level**, the trainer summary and **Default themes** for new tactics sessions and Random Puzzle.
@@ -266,7 +270,7 @@ The commands of the game board work here too (arrows, Enter, A, M, F1, F4...), w
 
 ### Move notation
 
-The same styles as the blind mode of Lichess, plus the descriptive style Chessmart always had:
+The same styles as the blind mode of Lichess, plus the descriptive style Chess Study always had:
 
 | Style | Example |
 |---|---|
@@ -283,7 +287,7 @@ Anna is the notation blind players use at the board (anna, bella, cesar, david, 
 
 The interface is in English, Brazilian Portuguese and Spanish (a first pass; native review welcome). This manual also has a Brazilian Portuguese version, which NVDA's Help button opens when NVDA is in Portuguese. Translations live in `addon/locale/<language>/LC_MESSAGES/nvda.po`, in the standard NVDA add-on layout, and are welcome: to start a new one, run `py -3 tools/i18n.py update <language>` and fill in the `msgstr` lines, or ask for the add-on to be added to the NVDA add-ons project on Crowdin. The NATO and Anna square names and the IBCA notation are international and are not translated.
 
-To build the add-on or change its code, read [the Chessmart contributing guide](https://github.com/joaovictorf01/chessmart/blob/main/CONTRIBUTING.md).
+To build the add-on or change its code, read [the Chess Study contributing guide](https://github.com/joaovictorf01/chessStudy/blob/main/CONTRIBUTING.md).
 
 ## Credits
 

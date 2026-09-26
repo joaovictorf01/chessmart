@@ -1,14 +1,14 @@
-# Contributing to Chessmart
+# Contributing to Chess Study
 
-Chessmart is an NVDA add-on. The user-facing side is Python 3.13 (NVDA's runtime), the chess logic is [python-chess](https://python-chess.readthedocs.io/), bundled under `addon/globalPlugins/chessmart/lib/`.
+Chess Study is an NVDA add-on. The user-facing side is Python 3.13 (NVDA's runtime), the chess logic is [python-chess](https://python-chess.readthedocs.io/), bundled under `addon/globalPlugins/chessStudy/lib/`.
 
 ## Building
 
-The repository follows the [NVDA add-on template](https://github.com/nvaccess/addonTemplate): `uv sync` then `uv run scons` builds `chessmart-<version>.nvda-addon`; pushing a `v*` tag builds and publishes a GitHub release. `tools/build_puzzles.py` regenerates the puzzle databases from the Lichess CSV, and `.github/workflows/puzzles.yml` does it monthly.
+The repository follows the [NVDA add-on template](https://github.com/nvaccess/addonTemplate): `uv sync` then `uv run scons` builds `chessStudy-<version>.nvda-addon`; pushing a `v*` tag builds and publishes a GitHub release. `tools/build_puzzles.py` regenerates the puzzle databases from the Lichess CSV, and `.github/workflows/puzzles.yml` does it monthly.
 
 ## Layout
 
-Everything the add-on runs is under `addon/globalPlugins/chessmart/`. Read it in this order:
+Everything the add-on runs is under `addon/globalPlugins/chessStudy/`. Read it in this order:
 
 - `tactic/` — the data layer, pure Python with no NVDA imports. `store.py` talks to the two SQLite files (`puzzles.db`, the Lichess base; `tactic.db`, the player's history) and returns the dataclasses in `models.py`; `glicko2.py` is the rating maths; `review.py` the queue of missed puzzles; `repository.py` is the facade the rest of the add-on calls; `download.py` fetches the database.
 - `endgame/` — mate drills (`drills.py`), endgame lessons (`lessons.py`), the Syzygy tablebase and its judge (`tablebase.py`, `judge.py`), the record of attempts (`log.py`). No NVDA imports here.
@@ -24,7 +24,7 @@ Everything the add-on runs is under `addon/globalPlugins/chessmart/`. Read it in
 Outside the add-on:
 
 - `addon/locale/<lang>/LC_MESSAGES/nvda.po` — translations (English is the source language).
-- `tests/unit/` — unit tests. They run outside NVDA and never touch the user's history; `tests/unit/chessmart/__init__.py` stubs the NVDA modules the code imports.
+- `tests/unit/` — unit tests. They run outside NVDA and never touch the user's history; `tests/unit/chessStudy/__init__.py` stubs the NVDA modules the code imports.
 - `tools/` — `check.py` (the one verification command), `i18n.py` (extract/update/compile translations), `build_puzzles.py` and `verify_puzzles.py` (the monthly puzzle database), `build_openings.py` (the opening table), `build_syzygy_manifest.py`.
 - `readme.md` — the user manual, in English; the build copies it to `addon/doc/en/` and NVDA's Help button opens it. `addon/doc/pt_BR/readme.md` is the Brazilian Portuguese manual: it must follow `readme.md`, the same sections in the same order, so a change to the manual is made in both.
 - `changelog.md` (English) and `changelog.pt_BR.md` (Portuguese).
@@ -43,9 +43,9 @@ One command, the same CI runs: unit tests, ruff lint and format check, the trans
 CI runs the hooks in `prek.toml` (trailing commas, ruff lint and format, pyright) and refuses a release tag that fails them. Run them before pushing:
 
 ```
-uvx --from add-trailing-comma==3.2.0 add-trailing-comma $(git ls-files '*.py' | grep -v chessmart/lib/)
-py -3 -m ruff check --fix --exclude addon/globalPlugins/chessmart/lib .
-py -3 -m ruff format --exclude addon/globalPlugins/chessmart/lib .
+uvx --from add-trailing-comma==3.2.0 add-trailing-comma $(git ls-files '*.py' | grep -v chessStudy/lib/)
+py -3 -m ruff check --fix --exclude addon/globalPlugins/chessStudy/lib .
+py -3 -m ruff format --exclude addon/globalPlugins/chessStudy/lib .
 ```
 
 Tabs for indentation, as in NVDA itself.
@@ -65,13 +65,13 @@ Then fill the new `msgstr` entries in the `.po` files. `tools/i18n.py check` rep
 
 ## Trying your change in NVDA
 
-Replace `%APPDATA%\nvda\addons\chessmart` with a directory junction to this repository's `addon/` folder (`mklink /J`), restart NVDA once, and from then on NVDA+Control+F3 reloads the plugin after edits. Keep no other copy of the add-on inside `addons/`: two add-ons with the same manifest name make NVDA load the wrong one.
+Replace `%APPDATA%\nvda\addons\chessStudy` with a directory junction to this repository's `addon/` folder (`mklink /J`), restart NVDA once, and from then on NVDA+Control+F3 reloads the plugin after edits. Keep no other copy of the add-on inside `addons/`: two add-ons with the same manifest name make NVDA load the wrong one.
 
 ## Comments, commits, pull requests
 
 - Comments and docstrings in English, and only where the code does not already say it: the *why*, a source, a non-obvious constraint.
 - Commit messages in English, one change per commit.
-- Endgame positions cite their source (Silman, De la Villa, Capablanca) and must match the Syzygy tablebase; `tests/unit/chessmart/test_endgame_lessons.py` checks every position that has a table in `tests/fixtures/syzygy`.
+- Endgame positions cite their source (Silman, De la Villa, Capablanca) and must match the Syzygy tablebase; `tests/unit/chessStudy/test_endgame_lessons.py` checks every position that has a table in `tests/fixtures/syzygy`.
 - Open a pull request against `main`. CI runs the tests and the code checks.
 
 ## Releases

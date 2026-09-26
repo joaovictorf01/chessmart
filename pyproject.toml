@@ -3,7 +3,7 @@ requires = ["setuptools~=80.9", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "chessmart"
+name = "chessStudy"
 dynamic = ["version"]
 description = "Accessible chessboard and Lichess tactics trainer for NVDA"
 maintainers = [
@@ -24,7 +24,7 @@ license = {file = "COPYING.txt"}
 # build, translate, or lint the add-on. They are declared as PEP 735 dependency groups.
 dependencies = []
 [project.urls]
-Repository = "https://github.com/joaovictorf01/chessmart"
+Repository = "https://github.com/joaovictorf01/chessStudy"
 
 # PEP 735 dependency groups. `uv sync` installs the `dev` group by default, which
 # pulls in every tool needed to build, translate, and lint the add-on.
@@ -85,7 +85,7 @@ exclude = [
 	"buildVars.py",
 	"tests",
 	# Bibliotecas embarcadas de terceiros
-	"addon/globalPlugins/chessmart/lib",
+	"addon/globalPlugins/chessStudy/lib",
 ]
 
 [tool.ruff.format]
@@ -128,7 +128,7 @@ exclude = [
 	".github/scripts",
 	"tests",
 	# Bibliotecas embarcadas de terceiros: nunca.
-	"addon/globalPlugins/chessmart/lib",
+	"addon/globalPlugins/chessStudy/lib",
 	# Tools run outside the add-on and are not type-checked. NVDA's own modules
 	# resolve through `extraPaths` below, which expects nvaccess/nvda cloned next to this repository.
 	"tools",
@@ -143,7 +143,7 @@ extraPaths = [
 	# Codigo do NVDA (speech, ui, NVDAObjects...): clone nvaccess/nvda ao lado deste repositorio.
 	"../nvda/source",
 	# Bundled libraries: python-chess, chess_clock, wx_svg.
-	"./addon/globalPlugins/chessmart/lib",
+	"./addon/globalPlugins/chessStudy/lib",
 ]
 
 # General config

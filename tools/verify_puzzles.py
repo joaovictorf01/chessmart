@@ -33,7 +33,7 @@ from pathlib import Path
 from typing import Iterator, NamedTuple
 
 CHUNK = 1 << 20
-USER_AGENT = "chessmart-verify"
+USER_AGENT = "chessStudy-verify"
 
 
 class Expected(NamedTuple):

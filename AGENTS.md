@@ -1,6 +1,6 @@
-# Working on Chessmart
+# Working on Chess Study
 
-Chessmart is an NVDA add-on: an accessible chessboard, a Lichess tactics trainer, endgame drills and lessons, and an analysis board. Its users are blind; everything is spoken, and nothing may depend on seeing the screen. `docs/ARCHITECTURE.md` is the map; read it before a change that crosses modules.
+Chess Study is an NVDA add-on: an accessible chessboard, a Lichess tactics trainer, endgame drills and lessons, and an analysis board. Its users are blind; everything is spoken, and nothing may depend on seeing the screen. `docs/ARCHITECTURE.md` is the map; read it before a change that crosses modules.
 
 ## The one command
 
@@ -12,7 +12,7 @@ Unit tests, ruff lint, ruff format check, translation catalog check, and pyright
 
 ## The boundary
 
-These modules import nothing from NVDA and must stay that way (`tests/unit/chessmart/test_boundaries.py` fails otherwise): `tactic/`, `endgame/`, `trainer.py`, `theme_catalog.py`, `theme_names.py`, `notation.py`, `study_log.py`, `my_games.py`, `training_session.py`, `paths.py`, `pgn.py`, `game_tree.py`, `engine_eval.py`, `openings/`, `puzzle_attempt.py`, `board_geometry.py`, `played_move.py`, `analysis_words.py`, `concurrency.py`, `i18n.py`.
+These modules import nothing from NVDA and must stay that way (`tests/unit/chessStudy/test_boundaries.py` fails otherwise): `tactic/`, `endgame/`, `trainer.py`, `theme_catalog.py`, `theme_names.py`, `notation.py`, `study_log.py`, `my_games.py`, `training_session.py`, `paths.py`, `pgn.py`, `game_tree.py`, `engine_eval.py`, `openings/`, `puzzle_attempt.py`, `board_geometry.py`, `played_move.py`, `analysis_words.py`, `concurrency.py`, `i18n.py`.
 
 The rest (`virtual_chessboard/`, `graphical_interface/`, `chessboard.py`, `__init__.py`) cannot be imported outside NVDA. Do not write tests that import them: move the rule into a pure module and test it there.
 
@@ -22,7 +22,7 @@ The rest (`virtual_chessboard/`, `graphical_interface/`, `chessboard.py`, `__ini
 - A script cannot block on `ShowModal`: use `graphical_interface.messages.run_modal`.
 - NVDA binds only the `script_*` methods a class defines itself. Keys cannot come from a mixin; declare them in each cell class (see `actions_bar.py`).
 - A board connects to module-level signals; `ChessboardDialog.onClose` disconnects them. Anything a board starts (an engine, a tablebase) must stop on `chessboard_closed_signal`.
-- Log with the `chessmart:` prefix and lazy formatting (`log.info("chessmart: %s", value)`), so the NVDA log a user pastes can be searched.
+- Log with the `chessStudy:` prefix and lazy formatting (`log.info("chessStudy: %s", value)`), so the NVDA log a user pastes can be searched.
 
 ## Text the user hears
 

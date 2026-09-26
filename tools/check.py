@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-LIB = "addon/globalPlugins/chessmart/lib"
+LIB = "addon/globalPlugins/chessStudy/lib"
 
 STEPS = [
 	("unit tests", [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-t", ".", "-q"]),

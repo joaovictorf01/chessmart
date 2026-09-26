@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates chessmart's `puzzles.db` from Lichess's open puzzle database.
+"""Generates chessStudy's `puzzles.db` from Lichess's open puzzle database.
 
 Typical usage (run by the maintainer or the monthly Action, never the user):
 
@@ -35,7 +35,7 @@ import urllib.request
 from pathlib import Path
 
 LICHESS_URL = "https://database.lichess.org/lichess_db_puzzle.csv.zst"
-USER_AGENT = "chessmart-build-puzzles/1.0 (+https://github.com/joaovictorf01/chessmart)"
+USER_AGENT = "chessStudy-build-puzzles/1.0 (+https://github.com/joaovictorf01/chessStudy)"
 SCHEMA_VERSION = 2
 # Release assets above ~500 MB fail on GitHub ("Error saving asset");
 # the .gz is split into parts of this size and the add-on downloads them in sequence.

@@ -18,11 +18,11 @@ from site_scons.site_tools.NVDATool.utils import _
 # Add-on information variables
 addon_info = AddonInfo(
 	# add-on Name/identifier, internal for NVDA
-	addon_name="chessmart",
+	addon_name="chessStudy",
 	# Add-on summary/title, usually the user visible name of the add-on
 	# Translators: Summary/title for this add-on
 	# to be shown on installation and add-on information found in add-on store
-	addon_summary=_("Chessmart"),
+	addon_summary=_("Chess Study"),
 	# Add-on description
 	# Translators: Long description to be shown for this add-on on add-on information from add-on store
 	addon_description=_(
@@ -36,11 +36,11 @@ addon_info = AddonInfo(
 		"1.2.0: Analysis board: record a game with variations, comments and marks, or open a PGN; Stockfish 16 evaluation (E), the threat (X), move review (Shift+E), opening names, and the Syzygy tablebases with five pieces or fewer; game review (F7) with the critical moments and each player's accuracy as Lichess computes it; saves by itself. Import Lichess Game with the clock of every move; My Games; Board Editor; play from any position against the computer, which now answers draw offers. Tactics: the puzzles you missed come back for review until firm. Endgames: lesson 3b, promote and mate with king and pawn. Stockfish 16 replaces Stockfish 14. The manual is complete and has a Brazilian Portuguese version. 1.1.0: Endgames: mate drills (queen, rook, two rooks, two bishops, and bishop and knight) against the engine at full strength, and nine lessons that follow the endgame course order (opposition, king and pawn, piece against pawn, pawns on both sides, rook and pawn against rook, queen against pawn, bishop and rook pawn, and the practical rook endings: short side, Vancura, back rank, rule of five, rook behind the passed pawn): each position asks win, draw or loss, tells the rule and is played out with the Syzygy tablebase as judge; tablebases up to 5 pieces downloaded from the Lichess mirror; a log of every attempt. 1.0.2: Escape asks before leaving a game in progress and really closes the board (engine, clock and online game included); an untouched puzzle no longer counts as a failure; online board fixes (start, server clock, draw offers, resignation, refused moves, reconnect); challenge levels and puzzle themes with real names and descriptions. 1.0.1: the complete puzzle database is downloaded in parts, with each part verified as it arrives and retried on its own if the connection drops. 1.0.0: first public release of the tactics trainer: Lichess puzzle database downloaded on demand (light or complete) and updated monthly, Glicko-2 tactics rating with adaptive difficulty, training plans by theme, configurable move notation (descriptive, SAN, UCI, literate, NATO, anna) and Brazilian Portuguese translation.",
 	),
 	# Author(s)
-	addon_author="João Victor <joaovictorf01@gmail.com>, Musharraf Omer <ibnomer2011@hotmail.com>",
+	addon_author="João Victor <joaovictorf01@gmail.com>",
 	# URL for the add-on documentation support
-	addon_url="https://github.com/joaovictorf01/chessmart",
+	addon_url="https://github.com/joaovictorf01/chessStudy",
 	# URL for the add-on repository where the source code can be found
-	addon_sourceURL="https://github.com/joaovictorf01/chessmart",
+	addon_sourceURL="https://github.com/joaovictorf01/chessStudy",
 	# Documentation file name
 	addon_docFileName="readme.html",
 	# Minimum NVDA version supported (e.g. "2019.3.0", minor version is optional)
@@ -68,11 +68,11 @@ addon_info = AddonInfo(
 # https://scons.org/doc/production/HTML/scons-user/apd.html
 # The bundled libraries under lib/ are not ours and carry no translatable strings.
 pythonSources: list[str] = [
-	"addon/globalPlugins/chessmart/*.py",
-	"addon/globalPlugins/chessmart/graphical_interface/*.py",
-	"addon/globalPlugins/chessmart/internet_chess/*.py",
-	"addon/globalPlugins/chessmart/tactic/*.py",
-	"addon/globalPlugins/chessmart/virtual_chessboard/*.py",
+	"addon/globalPlugins/chessStudy/*.py",
+	"addon/globalPlugins/chessStudy/graphical_interface/*.py",
+	"addon/globalPlugins/chessStudy/internet_chess/*.py",
+	"addon/globalPlugins/chessStudy/tactic/*.py",
+	"addon/globalPlugins/chessStudy/virtual_chessboard/*.py",
 ]
 
 # Files that contain strings for translation. Usually your python sources
@@ -87,7 +87,7 @@ i18nSources: list[str] = pythonSources + ["buildVars.py"]
 excludedFiles: list[str] = [
 	"*.pyc",
 	"__pycache__/*",
-	"globalPlugins/chessmart/data/*",
+	"globalPlugins/chessStudy/data/*",
 ]
 
 # Base language for the NVDA add-on

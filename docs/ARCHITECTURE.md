@@ -1,6 +1,6 @@
 # Architecture
 
-Everything lives under `addon/globalPlugins/chessmart/`.
+Everything lives under `addon/globalPlugins/chessStudy/`.
 
 ## Two layers
 
@@ -40,6 +40,6 @@ The pool in `concurrency.py` runs the engine, downloads and the board picture. `
 
 ## Data
 
-In NVDA's configuration folder, `chessmart/` (outside the add-on, so updates never touch it): `puzzles.db` (the Lichess puzzles, replaced on update), `tactic.db` (the player's history: attempts, rating, endgame attempts; never replaced), `theme_catalog_cache.json`, `syzygy/` (tablebases). Settings are in NVDA's configuration, section `chessmart` (`addon_config.py`). Analysed games go to the games folder the user chooses.
+In NVDA's configuration folder, `chessStudy/` (outside the add-on, so updates never touch it): `puzzles.db` (the Lichess puzzles, replaced on update), `tactic.db` (the player's history: attempts, rating, endgame attempts; never replaced), `theme_catalog_cache.json`, `syzygy/` (tablebases). Settings are in NVDA's configuration, section `chessStudy` (`addon_config.py`). Analysed games go to the games folder the user chooses.
 
 Shipped with the add-on: `bin/` (Stockfish 16, Fairy-Stockfish, rsvg-convert for the board picture), `lib/` (see `lib/README.md`), `openings/openings.tsv`, `endgame/syzygy_manifest.json`, `sounds/`, `locale/`.

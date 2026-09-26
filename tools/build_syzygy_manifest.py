@@ -5,7 +5,7 @@
 
 Reads the listing of the `3-4-5-wdl` and `3-4-5-dtz` folders (name and size of
 each file) and the mirror's `sha256` file, and writes
-`addon/globalPlugins/chessmart/endgame/syzygy_manifest.json`. The add-on
+`addon/globalPlugins/chessStudy/endgame/syzygy_manifest.json`. The add-on
 downloads file by file from this manifest and checks each one by SHA-256:
 the listing doesn't need to be read at runtime, and the total size is known
 before starting.
@@ -25,7 +25,7 @@ TARGET = (
 	Path(__file__).resolve().parents[1]
 	/ "addon"
 	/ "globalPlugins"
-	/ "chessmart"
+	/ "chessStudy"
 	/ "endgame"
 	/ "syzygy_manifest.json"
 )
@@ -33,7 +33,7 @@ LISTING_LINE = re.compile(r'<a href="(?P<name>[^"]+\.rtb[wz])">[^<]*</a>\s+\S+\s
 
 
 def fetch(url: str) -> str:
-	request = urllib.request.Request(url, headers={"User-Agent": "chessmart-tools/1.0"})
+	request = urllib.request.Request(url, headers={"User-Agent": "chessStudy-tools/1.0"})
 	with urllib.request.urlopen(request, timeout=60) as response:
 		return response.read().decode("utf-8")
 

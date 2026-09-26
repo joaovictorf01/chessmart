@@ -16,11 +16,11 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "addon" / "globalPlugins" / "chessmart" / "lib"))
+sys.path.insert(0, str(ROOT / "addon" / "globalPlugins" / "chessStudy" / "lib"))
 
 import chess  # noqa: E402
 
-OUTPUT = ROOT / "addon" / "globalPlugins" / "chessmart" / "openings" / "openings.tsv"
+OUTPUT = ROOT / "addon" / "globalPlugins" / "chessStudy" / "openings" / "openings.tsv"
 
 
 def build(source: Path, commit: str) -> int:
