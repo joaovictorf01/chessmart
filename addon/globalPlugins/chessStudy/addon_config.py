@@ -80,7 +80,10 @@ def _carry_over_former_settings() -> None:
 
 	former_data_folder = ADDON_DATA_DIRECTORY.parent / former_name.FORMER_NAME
 	settings = former_name.carried_over_settings(
-		former, CONFIG_SPEC, former_data_folder, ADDON_DATA_DIRECTORY
+		former,
+		CONFIG_SPEC,
+		former_data_folder,
+		ADDON_DATA_DIRECTORY,
 	)
 	if settings:
 		config.conf[CONFIG_SECTION] = settings

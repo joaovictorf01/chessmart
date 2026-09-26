@@ -2,6 +2,12 @@
 
 Versioning follows [Semantic Versioning](https://semver.org/): a patch release (1.1.x) only fixes; a minor release (1.x.0) adds features; a major release changes what existing users rely on. The version is decided when the release is cut, from what this section holds.
 
+## To do
+
+- Puzzle download: accept a `.db.gz` downloaded by hand in the browser (for machines that cannot reach GitHub from the add-on); log the exact error when the manifest cannot be fetched. First report: 21-09-2026, "could not reach the download server".
+
+# Chess Study 2.0.0
+
 ## Added
 
 - Spanish: the whole interface is translated (it fell back to English for everything added since 1.0.0), and the manual has a Spanish version.
@@ -9,10 +15,6 @@ Versioning follows [Semantic Versioning](https://semver.org/): a patch release (
 ## Changed
 
 - **Chessmart is now Chess Study**, with a new add-on ID (`chessStudy`), at the request of Musharraf Omer, the original Chessmart's author. NVDA treats it as a new add-on: remove Chessmart and install Chess Study. On its first start it takes over Chessmart's data folder (rating, history, review queue, puzzle database, tablebases) by renaming it, copies Chessmart's settings, and keeps `Documents\Chessmart` as the games folder while it exists. The repository is now joaovictorf01/chessStudy.
-
-## To do
-
-- Puzzle download: accept a `.db.gz` downloaded by hand in the browser (for machines that cannot reach GitHub from the add-on); log the exact error when the manifest cannot be fetched. First report: 21-09-2026, "could not reach the download server".
 
 # Chessmart 1.2.0
 

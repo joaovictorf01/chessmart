@@ -72,14 +72,20 @@ class TestCarriedOverSettings(unittest.TestCase):
 	def test_database_inside_the_former_folder_moves_along(self):
 		inside = os.path.join(str(self.FORMER_DATA), "puzzles.db")
 		settings = former_name.carried_over_settings(
-			{"tacticsDbPath": inside}, self.KEYS, self.FORMER_DATA, self.DATA
+			{"tacticsDbPath": inside},
+			self.KEYS,
+			self.FORMER_DATA,
+			self.DATA,
 		)
 		self.assertEqual(Path(settings["tacticsDbPath"]), self.DATA / "puzzles.db")
 
 	def test_database_elsewhere_is_left_alone(self):
 		elsewhere = r"D:\xadrez\puzzles.db"
 		settings = former_name.carried_over_settings(
-			{"tacticsDbPath": elsewhere}, self.KEYS, self.FORMER_DATA, self.DATA
+			{"tacticsDbPath": elsewhere},
+			self.KEYS,
+			self.FORMER_DATA,
+			self.DATA,
 		)
 		self.assertEqual(settings["tacticsDbPath"], elsewhere)
 
