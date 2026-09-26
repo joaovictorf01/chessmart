@@ -2,6 +2,10 @@
 
 O versionamento segue o [Semantic Versioning](https://semver.org/lang/pt-BR/): versão de correção (1.1.x) só corrige; versão menor (1.x.0) acrescenta recurso; versão maior muda o que quem já usa depende. O número é decidido na hora de lançar, pelo que esta seção contém.
 
+## Acrescentado
+
+- Espanhol: a interface inteira está traduzida (tudo o que entrou desde a 1.0.0 caía no inglês), e o manual tem versão em espanhol.
+
 ## Alterado
 
 - **O Chessmart agora é o Chess Study**, com novo identificador (`chessStudy`), a pedido de Musharraf Omer, autor do Chessmart original. O NVDA trata como um add-on novo: remova o Chessmart e instale o Chess Study. Na primeira vez que abre, ele assume a pasta de dados do Chessmart (rating, histórico, fila de revisão, base de puzzles, tablebases) renomeando-a, copia as configurações do Chessmart e mantém `Documents\Chessmart` como pasta de partidas enquanto ela existir. O repositório agora é joaovictorf01/chessStudy.
